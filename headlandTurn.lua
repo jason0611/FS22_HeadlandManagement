@@ -25,60 +25,44 @@ function headlandTurn.registerEventListeners(vehicleType)
 end
 
 function headlandTurn:onLoad(savegame)
---	local spec = self.spec_fillLevelWarning
---	self.RULaktive = false
---	self.BeepAktive1 = false
---    self.lastBeep = 0
---    self.thisBeep = 0
---	self.attacheble = hasXMLProperty(self.xmlFile, "vehicle.attachable")
---	self.brand = getXMLString (self.xmlFile, "vehicle.storeData.brand")
---	self.loud = 1
---    self.beepIntervall = 2000
---    
---    spec.dirtyFlag = self:getNextDirtyFlag()
---
-----[[
---	alertMode:
---		+1 : Alert if vehicle gets full
---		 0 : Alert disabled
---		-1 : Alert if vehicle gets empty
-----]]
---	self.alertMode = 0
---
---    fillType_DIESEL = g_fillTypeManager:getFillTypeIndexByName("DIESEL")
---    fillType_DEF = g_fillTypeManager:getFillTypeIndexByName("DEF")
---    fillType_AIR = g_fillTypeManager:getFillTypeIndexByName("AIR")
+	local spec = self.spec_headlandTurn
+	spec.dirtyFlag = self:getNextDirtyFlag()
+	
+	self.turnSpeed = 15
+	self.turnActive = false
+	
+	self.actStep = 0
+	self.maxStep = 3
 end
 
 function headlandTurn:onPostLoad(savegame)
---	local spec = self.spec_fillLevelWarning
---	if spec == nil then return end
---	
---	if savegame ~= nil then	
---		local xmlFile = savegame.xmlFile
---		local key = savegame.key .. ".headlandTurn"
---		
---		self.alertMode = Utils.getNoNil(getXMLInt(xmlFile, key.."#alertMode"), self.alertMode)
---		self.loud = Utils.getNoNil(getXMLInt(xmlFile, key.."#alertUnmuted"), self.loud)
---		
---		print("FillLevelWarning: Loaded data for "..self:getName()..": AlertMode = "..tostring(self.alertMode).." / Unmuted = "..tostring(self.loud))
---	end
+	local spec = self.spec_headlandTurn
+	if spec == nil then return end
+
+	if savegame ~= nil then	
+		local xmlFile = savegame.xmlFile
+		local key = savegame.key .. ".headlandTurn"
+	
+		self.turnSpeed = Utils.getNoNil(getXMLInt(xmlFile, key.."#turnSpeed"), self.turnSpeed)
+		self.turnActive = Utils.getNoNil(getXMLInt(xmlFile, key.."#turnActive"), self.turnActive)
+	
+		print("HeadlandTurn: Loaded data for "..self:getName()..": turnSpeed = "..tostring(self.turnSpeed).." / turnActive = "..tostring(self.turnActive))
+	end
 end
 
 function headlandTurn:saveToXMLFile(xmlFile, key)
---	setXMLInt(xmlFile, key.."#alertMode", self.alertMode)
---	setXMLInt(xmlFile, key.."#alertUnmuted", self.loud)
+	setXMLInt(xmlFile, key.."#turnSpeed", self.turnSpeed)
+	setXMLInt(xmlFile, key.."#turnActive", self.turnActive)
 end
 
 function headlandTurn:onRegisterActionEvents(isActiveForInput)
---	if self.isClient then
---		headlandTurn.actionEvents = {} 
---		if self:getIsActiveForInput(true) then 
---			local actionEventId;
---			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'FLW_TOGGLESOUND', self, headlandTurn.TOGGLE_SOUND, false, true, false, true, nil)
---			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'FLW_TOGGLEMODE', self, headlandTurn.TOGGLE_MODE, false, true, false, true, nil)
---		end		
---	end
+	if self.isClient then
+		headlandTurn.actionEvents = {} 
+		if self:getIsActiveForInput(true) then 
+			local actionEventId;	
+			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'HLT_ACTIVATE', self, headlandTurn.ACTIVATE, false, true, false, true, nil)
+		end		
+	end
 end
 
 function headlandTurn:onReadStream(streamId, connection)
@@ -111,24 +95,25 @@ function headlandTurn:onWriteUpdateStream(streamId, connection, dirtyMask)
 --	end
 end
 	
---[[
-function headlandTurn:TOGGLE_MODE(actionName, keyStatus, arg3, arg4, arg5)
-	local spec = self.spec_fillLevelWarning
-	if self.alertMode == 1 then
-		self.alertMode = -1
-	elseif self.alertMode == 0 then
-		self.alertMode = 1
-	else
-		self.alertMode = 0
+function headlandTurn:ACTIVATE(actionName, keyStatus, arg3, arg4, arg5)
+	local spec = self.spec_headlandTurn
+	
+	if not self.turnActive and self.actStep == 0 then
+		self.actStep = 1
+		self.turnActive = true
+	elseif self.turnActive and self.actStep	== self.maxStep then
+		self.actStep = self.maxStep-1
 	end
-	self:raiseDirtyFlags(spec.dirtyFlag)
+	if self.actStep == 0 then self.turnActive = false end
+	
+--	self:raiseDirtyFlags(spec.dirtyFlag)
 end
-]]
+
 
 
 function headlandTurn:onUpdate(dt)
---	
---	if self:getIsActive() and not self.attacheble then
+
+	if self:getIsActive() then
 --        local fillLevel,pickUpAlert = headlandTurn:getFillLevel(self)
 --				
 --		fillLevel = fillLevel * self.alertMode
@@ -223,4 +208,5 @@ function headlandTurn:onUpdate(dt)
 --		g_inputBinding:setActionEventText(headlandTurn.actionEventId, Vehicle.togglesound)
 --	end
 end
+
 
