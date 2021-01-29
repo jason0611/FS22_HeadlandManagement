@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.0.1
+-- Version 0.0.0.3
 -- 
 --
 
@@ -38,7 +38,7 @@ function headlandTurn:onLoad(savegame)
 	self.hltIsActive = false
 	
 	self.hltActStep = 0
-	self.hltMaxStep = 4
+	self.hltMaxStep = 5
 	
 	self.hltAction = {}
 
@@ -46,9 +46,11 @@ function headlandTurn:onLoad(savegame)
 	
 	self.hltModSpeedControlFound = false
 	self.hltUseSpeedControl = true
+
 	
 	self.hltModGuidanceSteeringFound = false
-	self.hltUseGuidanceSteering = true
+	self.hltUseGuidanceSteering = false
+	
 end
 
 function headlandTurn:onPostLoad(savegame)
@@ -75,7 +77,8 @@ function headlandTurn:onPostLoad(savegame)
 	end
 	
 	-- Check if Mod GuidanceSteering exists
-	if GlobalPositioningSystem ~= nil and GlobalPositioningSystem.actionEventEnableSteering ~= nil then
+	local gsSpec = self.spec_globalPositioningSystem
+	if gsSpec ~= nil then
 		self.hltModGuidanceSteeringFound = true
 		print("headlandTurn: Mod GuidanceSteering found!")
 	end
@@ -204,15 +207,23 @@ function headlandTurn:reduceSpeed(self, enable)
 	end
 end
 
-function headlandTurn:raiseFrontImplement(vehicle, enable)
+function headlandTurn:raiseFrontImplement(self, enable)
 end
 
-function headlandTurn:raiseBackImplement(vehicle, enable)
+function headlandTurn:raiseBackImplement(self, enable)
 end
 
-function headlandTurn:stopGPS(vehicle, enable)
+function headlandTurn:stopGPS(self, enable)
+	local gsSpec = self.spec_globalPositioningSystem
 	if enable then
-		GlobalPositioningSystem.actionEventEnableSteering()
+		print("headlandTurn: stopGPS")
+		gsSpec.guidanceSteeringIsActive = false
+		self:onSteeringStateChanged(false)
+	else
+		print("headlandTurn: startGPS")	
+		gsSpec.guidanceSteeringIsActive = true
+		self:onSteeringStateChanged(true)
+	end
 end
 
 

@@ -2,7 +2,7 @@
 -- register
 --
 -- Martin Eller 
--- Version 0.0.0.1
+-- Version 0.0.0.3
 --
 
 if g_specializationManager:getSpecializationByName("headlandTurn") == nil then
@@ -24,7 +24,7 @@ if g_specializationManager:getSpecializationByName("headlandTurn") == nil then
     
     then
       g_vehicleTypeManager:addSpecialization(typeName, "headlandTurn")
-      print("HeadlandTurn registered for "..typeName)
+      print("headlandTurn registered for "..typeName)
     end
   end
 end
