@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="53">
+
+   <author>Jason06</author>
+   	
+	<version>0.0.0.1</version>
+
+    <title>
+		<en>Headland Turn</en>
+		<de>Wendeprogramm im Vorgewende</de>
+    </title>
+	
+    <description>
+		<en>
+		<![CDATA[Headlandturn]]>
+		</en>	
+		<de>
+		<![CDATA[Wendeprogramm im Vorgewende]]>
+		</de>
+ 	</description>	
+    <multiplayer supported="false"/>
+	<iconFilename>icon.dds</iconFilename>
+	
+	<extraSourceFiles>
+        <sourceFile filename="register.lua" />
+    </extraSourceFiles>
+	
+	
+	<actions>
+		<action name="HLT_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
+	</actions>
+
+	<inputBinding>	
+		<actionBinding action="HLT_TOGGLESTATE">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_x" neutralInput="0" index="1" />
+		</actionBinding>
+	</inputBinding>
+
+	<l10n>
+        <text name="input_HLT_TOGGLESTATE">
+            <de>Wendeschaltung: aktivieren/deaktivieren</de>
+            <en>HeadlandTurn: Activate/Deactivate</en>
+        </text>
+	</l10n>
+	
+</modDesc>

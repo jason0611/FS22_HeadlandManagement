@@ -9,15 +9,21 @@
 headlandTurn = {}
 headlandTurn.MOD_NAME = g_currentModName
 
+headlandTurn.REDUCESPEED = 1
+headlandTurn.RAISEFRONTIMPLEMENT = 2
+headlandTurn.RAISEBACKIMPLEMENT = 3
+headlandTurn.STOPGPS = 4
+
 function headlandTurn.prerequisitesPresent(specializations)
   return true
 end
 
 function headlandTurn.registerEventListeners(vehicleType)
---	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "onLoad", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandTurn)--  SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onLoad", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", headlandTurn)
+--	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", headlandTurn)
 --  SpecializationUtil.registerEventListener(vehicleType, "onReadStream", headlandTurn)
 --	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", headlandTurn)
 --	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", headlandTurn)
@@ -28,11 +34,21 @@ function headlandTurn:onLoad(savegame)
 	local spec = self.spec_headlandTurn
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
-	self.turnSpeed = 15
-	self.turnActive = false
+	self.hltTurnSpeed = 5
+	self.hltIsActive = false
 	
-	self.actStep = 0
-	self.maxStep = 3
+	self.hltActStep = 0
+	self.hltMaxStep = 4
+	
+	self.hltAction = {}
+
+	self.hltNormSpeed = 0
+	
+	self.hltModSpeedControlFound = false
+	self.hltUseSpeedControl = true
+	
+	self.hltModGuidanceSteeringFound = false
+	self.hltUseGuidanceSteering = true
 end
 
 function headlandTurn:onPostLoad(savegame)
@@ -43,16 +59,36 @@ function headlandTurn:onPostLoad(savegame)
 		local xmlFile = savegame.xmlFile
 		local key = savegame.key .. ".headlandTurn"
 	
-		self.turnSpeed = Utils.getNoNil(getXMLInt(xmlFile, key.."#turnSpeed"), self.turnSpeed)
-		self.turnActive = Utils.getNoNil(getXMLInt(xmlFile, key.."#turnActive"), self.turnActive)
+		self.hltTurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#hltTurnSpeed"), self.hltTurnSpeed)
+		self.hltIsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#hltIsActive"), self.hltIsActive)
 	
-		print("HeadlandTurn: Loaded data for "..self:getName()..": turnSpeed = "..tostring(self.turnSpeed).." / turnActive = "..tostring(self.turnActive))
+		print("HeadlandTurn: Loaded data for "..self:getName()..": hltTurnSpeed = "..tostring(self.hltTurnSpeed).." / hltIsActive = "..tostring(self.hltIsActive))
 	end
+	
+	-- Check if Mod SpeedControl exists
+	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
+		self.hltModSpeedControlFound = true 
+		self.hltUseSpeedControl = true
+		self.hltTurnSpeed = 1
+		self.hltNormSpeed = 2
+		print("headlandTurn: Mod SpeedControl found!")
+	end
+	
+	-- Check if Mod GuidanceSteering exists
+	if GlobalPositioningSystem ~= nil and GlobalPositioningSystem.actionEventEnableSteering ~= nil then
+		self.hltModGuidanceSteeringFound = true
+		print("headlandTurn: Mod GuidanceSteering found!")
+	end
+
+	self.hltAction[headlandTurn.REDUCESPEED] = self.hltModSpeedControlFound and self.hltUseSpeedControl
+	self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] = false
+	self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] = false
+	self.hltAction[headlandTurn.STOPGPS] = self.hltModGuidanceSteeringFound and self.hltUseGuidanceSteering
 end
 
 function headlandTurn:saveToXMLFile(xmlFile, key)
-	setXMLInt(xmlFile, key.."#turnSpeed", self.turnSpeed)
-	setXMLInt(xmlFile, key.."#turnActive", self.turnActive)
+	setXMLFloat(xmlFile, key.."#hltTurnSpeed", self.hltTurnSpeed)
+	setXMLBool(xmlFile, key.."#hltIsActive", self.hltIsActive)
 end
 
 function headlandTurn:onRegisterActionEvents(isActiveForInput)
@@ -60,7 +96,8 @@ function headlandTurn:onRegisterActionEvents(isActiveForInput)
 		headlandTurn.actionEvents = {} 
 		if self:getIsActiveForInput(true) then 
 			local actionEventId;	
-			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'HLT_ACTIVATE', self, headlandTurn.ACTIVATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'HLT_ACTIVATE', self, headlandTurn.TOGGLESTATE, false, true, false, true, nil)
+			print("headlandTurn: Event registered")
 		end		
 	end
 end
@@ -95,118 +132,108 @@ function headlandTurn:onWriteUpdateStream(streamId, connection, dirtyMask)
 --	end
 end
 	
-function headlandTurn:ACTIVATE(actionName, keyStatus, arg3, arg4, arg5)
+function headlandTurn:onRegisterActionEvents(isActiveForInput)
+	if self.isClient then
+		headlandTurn.actionEvents = {} 
+		if self:getIsActiveForInput(true) then 
+			local actionEventId;
+			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'HLT_TOGGLESTATE', self, headlandTurn.TOGGLESTATE, false, true, false, true, nil)
+		end		
+	end
+end
+
+function headlandTurn:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandTurn
 	
-	if not self.turnActive and self.actStep == 0 then
-		self.actStep = 1
-		self.turnActive = true
-	elseif self.turnActive and self.actStep	== self.maxStep then
-		self.actStep = self.maxStep-1
+	-- anschalten, wenn vollständig inaktiv
+	if not self.hltIsActive then
+		self.hltActStep = 1
+		self.hltIsActive = true
+		print("headlandTurn: Activation initiated")
+	-- abschalten, wenn vollständig aktiv
+	elseif self.hltIsActive and self.hltActStep	== self.hltMaxStep then
+		self.hltActStep = -self.hltMaxStep
+		print(self.hltActStep)
+		print("headlandTurn: Deactivation initiated")
 	end
-	if self.actStep == 0 then self.turnActive = false end
 	
 --	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
-
-
 function headlandTurn:onUpdate(dt)
 
 	if self:getIsActive() then
---        local fillLevel,pickUpAlert = headlandTurn:getFillLevel(self)
---				
---		fillLevel = fillLevel * self.alertMode
---		if fillLevel<0 then 
---			fillLevel = fillLevel + 1	-- if decreasing mode: fillLevel=100%-fillLevel
---		end
---		
---		if self.alertMode ~= 0 and self:getIsActiveForInput() then
---			local modeText, muteText
---			if self.alertMode == 1 then
---				modeText = "Befüllung"
---			else
---				modeText = "Entleerung"
---			end
---			if self.loud == 0 then
---				muteText = "-- stumm geschaltet"
---			else
---				muteText = ""
---			end
---			g_currentMission:addExtraPrintText("Füllstandswarnung aktiv ("..modeText..") "..muteText)
---		end
---	 
---        if pickUpAlert then -- if pickUpAlert set, then trigger beep, but only if mode is active
---			fillLevel = math.abs(self.alertMode)
---		end
---		
---		if fillLevel> 0 then
---            self.thisBeep = self.thisBeep + dt
---				
---            if ((fillLevel>= 0.5) and (not self.BeepAktive1)) or ((fillLevel>= 0.9) and (self.thisBeep-self.lastBeep > self.beepIntervall)) then
---                if self:getIsEntered() then
---                	if fillLevel==1 then 
---                		self.beepIntervall = 1000 
---                	else 
---                		self.beepIntervall = 2000 
---                	end
---                    if self.brand == "AGCO" or self.brand == "FENDT" or self.brand == "MASSEYFERGUSON" or self.brand == "CHALLENGER" then
---                        playSample(AGCOBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                    elseif self.brand == "CLAAS" then
---                        playSample(ClaasBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                    elseif self.brand == "GRIMME" then
---                        playSample(GrimmeBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                    elseif self.brand == "HOLMER" then
---                        playSample(HolmerBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                    elseif self.brand == "JOHNDEERE" then
---                        playSample(JohnDeereSound ,self.loud ,self.loud*5 ,1 ,0 ,0)
---                    elseif self.brand == "NEWHOLLAND" or self.brand == "CASEIH" then
---                        playSample(NewHollandSound ,self.loud ,self.loud ,1 ,0 ,0)
---                    elseif self.brand == "ROPA" then
---                        playSample(RopaSound ,self.loud ,self.loud ,1 ,0 ,0)
---                    end
---                end
---                self.BeepAktive1 = true
---                self.lastBeep = self.thisBeep
---            end
---        
---            if fillLevel< 0.5 then
---                self.BeepAktive1 = false
---                self.lastBeep = 0
---                self.loud = 1
---            end
---
---            if not self.RULaktive and not pickUpAlert then
---                if fillLevel>= 0.8 then
---                    self:setBeaconLightsVisibility(true)
---                    if self:getIsEntered() then
---                        if self.brand == "AGCO" or self.brand == "FENDT" or self.brand == "MASSEYFERGUSON" or self.brand == "CHALLENGER" then
---                            playSample(AGCOBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        elseif self.brand == "CLAAS" then
---                            playSample(ClaasBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        elseif self.brand == "GRIMME" then
---                            playSample(GrimmeBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        elseif self.brand == "HOLMER" then
---                            playSample(HolmerBeepSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        elseif self.brand == "JOHNDEERE" then
---                            playSample(JohnDeereSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        elseif self.brand == "NEWHOLLAND" or self.brand == "CASEIH" then
---                            playSample(NewHollandSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        elseif self.brand == "ROPA" then
---                            playSample(RopaSound ,self.loud ,self.loud ,1 ,0 ,0)
---                        end
---                    end
---                self.RULaktive = true
---                end
---            else
---                if fillLevel< 0.8 then
---                    self:setBeaconLightsVisibility(false)
---                    self.RULaktive = false
---                end
---            end
---        end
---		g_inputBinding:setActionEventText(headlandTurn.actionEventId, Vehicle.togglesound)
---	end
+
+	end
+	
+	if self:getIsActive() and self.hltIsActive and self.hltActStep<self.hltMaxStep then
+		
+		if self.hltAction[math.abs(self.hltActStep)] then 		
+			-- Activation
+			if self.hltActStep == headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, true); end
+			if self.hltActStep == headlandTurn.RAISEFRONTIMPLEMENT and self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] then headlandTurn:raiseFrontImplement(self, true); end
+			if self.hltActStep == headlandTurn.RAISEBACKIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, true); end
+			if self.hltActStep == headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, true); end
+		
+			-- Deactivation
+			if self.hltActStep == -headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, false); end
+			if self.hltActStep == -headlandTurn.RAISEBACKIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, false); end
+			if self.hltActStep == -headlandTurn.RAISEFRONTIMPLEMENT and self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] then headlandTurn:raiseFrontImplement(self, false); end
+			if self.hltActStep == -headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, false); end		
+		end
+		
+		self.hltActStep = self.hltActStep + 1
+		if self.hltActStep == 0 then self.hltIsActive = false; end
+	end
 end
+	
+function headlandTurn:reduceSpeed(self, enable)	
+	if enable then
+		if self.hltUseSpeedControl then
+			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(self.hltTurnSpeed), true, false, false)
+		else
+			self.hltNormSpeed = self:getCruiseControlSpeed()
+			self:setCruiseControlMaxSpeed(self.hltTurnSpeed)
+		end
+	else
+		if self.hltUseSpeedControl then
+			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(self.hltNormSpeed), true, false, false)
+		else
+			self:setCruiseControlMaxSpeed(self.hltNormSpeed)
+		end
+	end
+end
+
+function headlandTurn:raiseFrontImplement(vehicle, enable)
+end
+
+function headlandTurn:raiseBackImplement(vehicle, enable)
+end
+
+function headlandTurn:stopGPS(vehicle, enable)
+	if enable then
+		GlobalPositioningSystem.actionEventEnableSteering()
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
