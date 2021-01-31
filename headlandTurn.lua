@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.0.3
+-- Version 0.0.0.4
 -- 
 --
 
@@ -46,11 +46,13 @@ function headlandTurn:onLoad(savegame)
 	
 	self.hltModSpeedControlFound = false
 	self.hltUseSpeedControl = true
-
+	
+	self.hltUseRaiseFrontImplement = false
+	self.hltUseRaiseBackImplement = true
+	self.hltJointsTable = {}
 	
 	self.hltModGuidanceSteeringFound = false
-	self.hltUseGuidanceSteering = false
-	
+	self.hltUseGuidanceSteering = false	
 end
 
 function headlandTurn:onPostLoad(savegame)
@@ -84,8 +86,8 @@ function headlandTurn:onPostLoad(savegame)
 	end
 
 	self.hltAction[headlandTurn.REDUCESPEED] = self.hltModSpeedControlFound and self.hltUseSpeedControl
-	self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] = false
-	self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] = false
+	self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] = self.hltUseRaiseFrontImplement
+	self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] = self.hltUseRaiseBackImplement
 	self.hltAction[headlandTurn.STOPGPS] = self.hltModGuidanceSteeringFound and self.hltUseGuidanceSteering
 end
 
@@ -164,13 +166,8 @@ function headlandTurn:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 end
 
 function headlandTurn:onUpdate(dt)
-
-	if self:getIsActive() then
-
-	end
-	
 	if self:getIsActive() and self.hltIsActive and self.hltActStep<self.hltMaxStep then
-		
+		print(hltActStep)
 		if self.hltAction[math.abs(self.hltActStep)] then 		
 			-- Activation
 			if self.hltActStep == headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, true); end
@@ -211,6 +208,35 @@ function headlandTurn:raiseFrontImplement(self, enable)
 end
 
 function headlandTurn:raiseBackImplement(self, enable)
+	headlandTurn:raiseImplements(self, enable)
+end
+
+function headlandTurn:raiseImplements(self, raise) -- Front: side==-1, Back: side==+1
+    print("raiseImplements: "..tostring(raise))
+    local jointSpec = self.spec_attacherJoints
+    for _,attachedImplement in pairs(jointSpec.attachedImplements) do
+    	local index = attachedImplement.jointDescIndex
+    	print(index)
+    	local actImplement = self:getImplementByJointDescIndex(index)
+		if actImplement ~= nil then print("actImplement: nonil") end
+		
+		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
+			print("getAllowsLowering exists!")
+			if actImplement:getAllowsLowering() then
+				if raise then
+					local lowered = actImplement:getIsLowered()
+					self.hltJointsTable[joint] = lowered
+					if lowered then 
+						actImplement:setLowered(false)
+		 			else
+		 				if self.hltJointsTable[joint] then
+		 					actImplement:setLowered(true)
+		 				end
+		 			end
+		 		end	
+		 	end
+		end
+	end
 end
 
 function headlandTurn:stopGPS(self, enable)
