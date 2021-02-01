@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.0.5
+-- Version 0.0.1.0
 -- 
 --
 
@@ -47,7 +47,7 @@ function headlandTurn:onLoad(savegame)
 	
 	self.hltUseRaiseImplement = true
 	self.hltImplementsTable = {}
-	self.hltuseTurnPlow = false
+	self.hltuseTurnPlow = true
 	
 	self.hltModGuidanceSteeringFound = false
 	self.hltUseGuidanceSteering = false	
@@ -168,12 +168,11 @@ function headlandTurn:onUpdate(dt)
 		if self.hltAction[math.abs(self.hltActStep)] then 		
 			-- Activation
 			if self.hltActStep == headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, true); end
-			if self.hltActStep == headlandTurn.RAISEIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, true, self.hltuseTurnPlow); end
+			if self.hltActStep == headlandTurn.RAISEIMPLEMENT and self.hltAction[headlandTurn.RAISEIMPLEMENT] then headlandTurn:raiseImplements(self, true, self.hltuseTurnPlow); end
 			if self.hltActStep == headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, true); end
-		
 			-- Deactivation
 			if self.hltActStep == -headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, false); end
-			if self.hltActStep == -headlandTurn.RAISEBACKIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, false); end
+			if self.hltActStep == -headlandTurn.RAISEIMPLEMENT and self.hltAction[headlandTurn.RAISEIMPLEMENT] then headlandTurn:raiseImplements(self, false); end
 			if self.hltActStep == -headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, false); end		
 		end
 		
@@ -213,29 +212,45 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 					local lowered = actImplement:getIsLowered()
 					self.hltImplementsTable[index] = lowered
 					if lowered and actImplement.setLoweredAll ~= nil then 
-						print("lowered -> setLowerall(false)")
 						actImplement:setLoweredAll(false, index)
 						lowered = actImplement:getIsLowered()
 		 			end
 		 			if lowered and actImplement.setLowered ~= nil then
-		 				print("lowered -> setLower(false)")
 		 				actImplement:setLowered(false)
 		 				lowered = actImplement:getIsLowered()
 		 			end
 		 			if lowered and self.setJointMoveDown ~= nil then
-		 				print("lowered -> setJointMoveDown")
 		 				self:setJointMoveDown(index, false)
 		 				lowered = actImplement:getIsLowered()
 		 			end
+		 			if lowered and actImplement.spec_attacherJointControlPlow ~= nil then
+		 				local spec = actImplement.spec_attacherJointControl
+		 				spec.heightTargetAlpha = spec.jointDesc.upperAlpha
+				        actImplement:requestActionEventUpdate()
+				    	lowered = actImplement:getIsLowered()
+				    end
+				    if lowered and actImplement.spec_attacherJointControlCutter~= nil then
+		 				print("attacherJointControlCutter entered")
+		 				local spec = actImplement.spec_attacherJointControl
+		 				spec.heightTargetAlpha = spec.jointDesc.upperAlpha
+				        actImplement:requestActionEventUpdate()
+				    	lowered = actImplement:getIsLowered()
+				    end
+				    if lowered and actImplement.spec_attacherJointControlCultivator~= nil then
+		 				print("attacherJointControlCultivator entered")
+		 				local spec = actImplement.spec_attacherJointControl
+		 				spec.heightTargetAlpha = spec.jointDesc.upperAlpha
+				        actImplement:requestActionEventUpdate()
+				    	lowered = actImplement:getIsLowered()
+				    end
 		 			if lowered then
 		 				print("not raised at all")
 		 			end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and turnPlow then 
-						print("turn plow")
 						if plowSpec.rotationPart.turnAnimation ~= nil then
 					        if actImplement:getIsPlowRotationAllowed() then
-					            actImplement:setRotationMax(not spec.rotationMax)
+					            actImplement:setRotationMax(not plowSpec.rotationMax)
 					        end
 					    end
 		 			end
@@ -243,20 +258,37 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 		 			print("lower")
 		 			local wasLowered = self.hltImplementsTable[index]
 		 			if wasLowered and actImplement.setLoweredAll ~= nil then
-		 				print("wasLowered -> setLowerAll(true)")
 		 				actImplement:setLoweredAll(true, index)
 		 				wasLowered = actImplement:getIsLowered()
 		 			end
 		 			if not wasLowered and actImplement.setLowered ~= nil then
-		 				print("wasLowered -> setLower(true)")
 		 				actImplement:setLowered(true)
 		 				wasLowered = actImplement:getIsLowered()
 		 			end
 		 			if not wasLowered and self.setJointMoveDown ~= nil then
-		 				print("wasLowered -> setJointMoveDown")
 		 				self:setJointMoveDown(index, true)
 		 				wasLowered = actImplement:getIsLowered()
 		 			end
+		 			if not wasLowered and actImplement.spec_attacherJointControlPlow ~= nil then
+		 				local spec = actImplement.spec_attacherJointControl
+		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
+				        actImplement:requestActionEventUpdate()
+				    	wasLowered = actImplement:getIsLowered()
+				    end
+				    if not wasLowered and actImplement.spec_attacherJointControlCutter ~= nil then
+		 				print("attacherJointControlCutter entered")
+		 				local spec = actImplement.spec_attacherJointControl
+		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
+				        actImplement:requestActionEventUpdate()
+				    	wasLowered = actImplement:getIsLowered()
+				    end
+				    if not wasLowered and actImplement.spec_attacherJointControlCultivator ~= nil then
+		 				print("attacherJointControlCultivator entered")
+		 				local spec = actImplement.spec_attacherJointControl
+		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
+				        actImplement:requestActionEventUpdate()
+				    	wasLowered = actImplement:getIsLowered()
+				    end
 		 			if not wasLowered then
 		 				print("not lowered at all")
 		 			end

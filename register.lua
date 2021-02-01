@@ -2,7 +2,7 @@
 -- register
 --
 -- Martin Eller 
--- Version 0.0.0.3
+-- Version 0.0.1.0
 --
 
 if g_specializationManager:getSpecializationByName("headlandTurn") == nil then
