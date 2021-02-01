@@ -40,3 +40,6 @@ luac.out
 *.hex
 
 FS19_HeadlandTurn.bbprojectd/martin.bbprojectsettings
+*.bbprojectdata
+FS19_HeadlandTurn.bbprojectd/Scratchpad.txt
+FS19_HeadlandTurn.bbprojectd/Unix Worksheet.worksheet
