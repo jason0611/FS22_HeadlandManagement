@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.0.4
+-- Version 0.0.0.5
 -- 
 --
 
@@ -10,9 +10,8 @@ headlandTurn = {}
 headlandTurn.MOD_NAME = g_currentModName
 
 headlandTurn.REDUCESPEED = 1
-headlandTurn.RAISEFRONTIMPLEMENT = 2
-headlandTurn.RAISEBACKIMPLEMENT = 3
-headlandTurn.STOPGPS = 4
+headlandTurn.RAISEIMPLEMENT = 2
+headlandTurn.STOPGPS = 3
 
 function headlandTurn.prerequisitesPresent(specializations)
   return true
@@ -34,22 +33,21 @@ function headlandTurn:onLoad(savegame)
 	local spec = self.spec_headlandTurn
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
+	self.hltNormSpeed = 20
 	self.hltTurnSpeed = 5
-	self.hltIsActive = false
-	
-	self.hltActStep = 0
-	self.hltMaxStep = 5
-	
-	self.hltAction = {}
 
-	self.hltNormSpeed = 0
+	self.hltActStep = 0
+	self.hltMaxStep = 4
+	
+	self.hltIsActive = false
+	self.hltAction = {}
 	
 	self.hltModSpeedControlFound = false
 	self.hltUseSpeedControl = true
 	
-	self.hltUseRaiseFrontImplement = false
-	self.hltUseRaiseBackImplement = true
-	self.hltJointsTable = {}
+	self.hltUseRaiseImplement = true
+	self.hltImplementsTable = {}
+	self.hltuseTurnPlow = false
 	
 	self.hltModGuidanceSteeringFound = false
 	self.hltUseGuidanceSteering = false	
@@ -73,8 +71,8 @@ function headlandTurn:onPostLoad(savegame)
 	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
 		self.hltModSpeedControlFound = true 
 		self.hltUseSpeedControl = true
-		self.hltTurnSpeed = 1
-		self.hltNormSpeed = 2
+		self.hltTurnSpeed = 1 --SpeedControl Mode 1
+		self.hltNormSpeed = 2 --SpeedControl Mode 2
 		print("headlandTurn: Mod SpeedControl found!")
 	end
 	
@@ -86,8 +84,7 @@ function headlandTurn:onPostLoad(savegame)
 	end
 
 	self.hltAction[headlandTurn.REDUCESPEED] = self.hltModSpeedControlFound and self.hltUseSpeedControl
-	self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] = self.hltUseRaiseFrontImplement
-	self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] = self.hltUseRaiseBackImplement
+	self.hltAction[headlandTurn.RAISEIMPLEMENT] = self.hltUseRaiseImplement
 	self.hltAction[headlandTurn.STOPGPS] = self.hltModGuidanceSteeringFound and self.hltUseGuidanceSteering
 end
 
@@ -171,14 +168,12 @@ function headlandTurn:onUpdate(dt)
 		if self.hltAction[math.abs(self.hltActStep)] then 		
 			-- Activation
 			if self.hltActStep == headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, true); end
-			if self.hltActStep == headlandTurn.RAISEFRONTIMPLEMENT and self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] then headlandTurn:raiseFrontImplement(self, true); end
-			if self.hltActStep == headlandTurn.RAISEBACKIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, true); end
+			if self.hltActStep == headlandTurn.RAISEIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, true, self.hltuseTurnPlow); end
 			if self.hltActStep == headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, true); end
 		
 			-- Deactivation
 			if self.hltActStep == -headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, false); end
 			if self.hltActStep == -headlandTurn.RAISEBACKIMPLEMENT and self.hltAction[headlandTurn.RAISEBACKIMPLEMENT] then headlandTurn:raiseBackImplement(self, false); end
-			if self.hltActStep == -headlandTurn.RAISEFRONTIMPLEMENT and self.hltAction[headlandTurn.RAISEFRONTIMPLEMENT] then headlandTurn:raiseFrontImplement(self, false); end
 			if self.hltActStep == -headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, false); end		
 		end
 		
@@ -204,34 +199,66 @@ function headlandTurn:reduceSpeed(self, enable)
 	end
 end
 
-function headlandTurn:raiseFrontImplement(self, enable)
-end
-
-function headlandTurn:raiseBackImplement(self, enable)
-	headlandTurn:raiseImplements(self, enable)
-end
-
-function headlandTurn:raiseImplements(self, raise) -- Front: side==-1, Back: side==+1
+function headlandTurn:raiseImplements(self, raise, turnPlow)
     print("raiseImplements: "..tostring(raise))
+    
     local jointSpec = self.spec_attacherJoints
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
-    	print(index)
-    	local actImplement = self:getImplementByJointDescIndex(index)
-		if actImplement ~= nil then print("actImplement: nonil") end
-		
+    	local actImplement = attachedImplement.object
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
-			print("getAllowsLowering exists!")
-			if actImplement:getAllowsLowering() then
+			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
+					print("raise")
 					local lowered = actImplement:getIsLowered()
-					self.hltJointsTable[joint] = lowered
-					if lowered then 
-						actImplement:setLowered(false)
-		 			else
-		 				if self.hltJointsTable[joint] then
-		 					actImplement:setLowered(true)
-		 				end
+					self.hltImplementsTable[index] = lowered
+					if lowered and actImplement.setLoweredAll ~= nil then 
+						print("lowered -> setLowerall(false)")
+						actImplement:setLoweredAll(false, index)
+						lowered = actImplement:getIsLowered()
+		 			end
+		 			if lowered and actImplement.setLowered ~= nil then
+		 				print("lowered -> setLower(false)")
+		 				actImplement:setLowered(false)
+		 				lowered = actImplement:getIsLowered()
+		 			end
+		 			if lowered and self.setJointMoveDown ~= nil then
+		 				print("lowered -> setJointMoveDown")
+		 				self:setJointMoveDown(index, false)
+		 				lowered = actImplement:getIsLowered()
+		 			end
+		 			if lowered then
+		 				print("not raised at all")
+		 			end
+		 			local plowSpec = actImplement.spec_plow
+		 			if plowSpec ~= nil and turnPlow then 
+						print("turn plow")
+						if plowSpec.rotationPart.turnAnimation ~= nil then
+					        if actImplement:getIsPlowRotationAllowed() then
+					            actImplement:setRotationMax(not spec.rotationMax)
+					        end
+					    end
+		 			end
+		 		else
+		 			print("lower")
+		 			local wasLowered = self.hltImplementsTable[index]
+		 			if wasLowered and actImplement.setLoweredAll ~= nil then
+		 				print("wasLowered -> setLowerAll(true)")
+		 				actImplement:setLoweredAll(true, index)
+		 				wasLowered = actImplement:getIsLowered()
+		 			end
+		 			if not wasLowered and actImplement.setLowered ~= nil then
+		 				print("wasLowered -> setLower(true)")
+		 				actImplement:setLowered(true)
+		 				wasLowered = actImplement:getIsLowered()
+		 			end
+		 			if not wasLowered and self.setJointMoveDown ~= nil then
+		 				print("wasLowered -> setJointMoveDown")
+		 				self:setJointMoveDown(index, true)
+		 				wasLowered = actImplement:getIsLowered()
+		 			end
+		 			if not wasLowered then
+		 				print("not lowered at all")
 		 			end
 		 		end	
 		 	end
