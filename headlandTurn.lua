@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.1.2
+-- Version 0.0.1.3
 -- 
 -- MP Ready
 --
@@ -64,10 +64,10 @@ function headlandTurn:onPostLoad(savegame)
 	
 		self.hltTurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), self.hltTurnSpeed)
 		self.hltIsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), self.hltIsActive)
-		self.hltUseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl", self.hltUseSpeedControl)
-		self.hltUseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement", self.hltUseRaiseImplement))
---		self.hltUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering", self.hltUseGuidanceSteering))
-		self.hltUseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow", self.hltUseTurnPlow))
+		self.hltUseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), self.hltUseSpeedControl)
+		self.hltUseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), self.hltUseRaiseImplement)
+--		self.hltUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), self.hltUseGuidanceSteering)
+		self.hltUseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), self.hltUseTurnPlow)
 		print("HeadlandTurn: Loaded data for "..self:getName())
 	end
 	
@@ -130,6 +130,7 @@ end
 function headlandTurn:onReadUpdateStream(streamId, timestamp, connection)
 	if not connection:getIsServer() then
 		if streamReadBool(streamId) then
+			print("receiving data")
 			self.hltTurnSpeed = streamReadFloat32(streamId)
 			self.hltIsActive = streamReadBool(streamId)
 			self.hltUseSpeedControl = streamReadBool(streamId)
@@ -137,13 +138,14 @@ function headlandTurn:onReadUpdateStream(streamId, timestamp, connection)
 --			self.hltUseGuidanceSteering = streamReadBool(streamId)
 			self.hltUseTurnPlow = streamReadBool(streamId)
 		end;
--	end
+	end
 end
 
 function headlandTurn:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
 		local spec = self.spec_headlandTurn
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
+			print("sending data")
 			streamWriteFloat32(streamId, self.hltTurnSpeed)
 			streamWriteBool(streamId, self.hltIsActive)
 			streamWriteBool(streamId, self.hltUseSpeedControl)
@@ -184,6 +186,7 @@ end
 
 function headlandTurn:onUpdate(dt)
 	if self:getIsActive() and self.hltIsActive and self.hltActStep<self.hltMaxStep then
+		local spec = self.spec_headlandTurn
 		print(hltActStep)
 		if self.hltAction[math.abs(self.hltActStep)] then 		
 			-- Activation
@@ -198,6 +201,7 @@ function headlandTurn:onUpdate(dt)
 		
 		self.hltActStep = self.hltActStep + 1
 		if self.hltActStep == 0 then self.hltIsActive = false; end
+		self:raiseDirtyFlags(spec.dirtyFlag)
 	end
 end
 	
@@ -225,6 +229,7 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
     	local actImplement = attachedImplement.object
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
+				print(index)
 				if raise then
 					local lowered = actImplement:getIsLowered()
 					self.hltImplementsTable[index] = lowered
@@ -262,7 +267,7 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 		 				print("headlandTurn: Info: Could not raise implement")
 		 			end
 		 			local plowSpec = actImplement.spec_plow
-		 			if plowSpec ~= nil and turnPlow then 
+		 			if plowSpec ~= nil and turnPlow and self.hltImplementsTable[index] then 
 						if plowSpec.rotationPart.turnAnimation ~= nil then
 					        if actImplement:getIsPlowRotationAllowed() then
 					            actImplement:setRotationMax(not plowSpec.rotationMax)
@@ -271,37 +276,38 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 		 			end
 		 		else
 		 			local wasLowered = self.hltImplementsTable[index]
+		 			local lowered
 		 			if wasLowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, index)
-		 				wasLowered = actImplement:getIsLowered()
+		 				lowered = actImplement:getIsLowered()
 		 			end
-		 			if not wasLowered and actImplement.setLowered ~= nil then
+		 			if wasLowered and not lowered and actImplement.setLowered ~= nil then
 		 				actImplement:setLowered(true)
-		 				wasLowered = actImplement:getIsLowered()
+		 				lowered = actImplement:getIsLowered()
 		 			end
-		 			if not wasLowered and self.setJointMoveDown ~= nil then
+		 			if wasLowered and not lowered and self.setJointMoveDown ~= nil then
 		 				self:setJointMoveDown(index, true)
-		 				wasLowered = actImplement:getIsLowered()
+		 				lowered = actImplement:getIsLowered()
 		 			end
-		 			if not wasLowered and actImplement.spec_attacherJointControlPlow ~= nil then
+		 			if wasLowered and not lowered and actImplement.spec_attacherJointControlPlow ~= nil then
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
 				        actImplement:requestActionEventUpdate()
-				    	wasLowered = actImplement:getIsLowered()
+				    	lowered = actImplement:getIsLowered()
 				    end
-				    if not wasLowered and actImplement.spec_attacherJointControlCutter ~= nil then
+				    if wasLowered and not lowered and actImplement.spec_attacherJointControlCutter ~= nil then
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
 				        actImplement:requestActionEventUpdate()
-				    	wasLowered = actImplement:getIsLowered()
+				    	lowered = actImplement:getIsLowered()
 				    end
-				    if not wasLowered and actImplement.spec_attacherJointControlCultivator ~= nil then
+				    if wasLowered and not lowered and actImplement.spec_attacherJointControlCultivator ~= nil then
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
 				        actImplement:requestActionEventUpdate()
-				    	wasLowered = actImplement:getIsLowered()
+				    	lowered = actImplement:getIsLowered()
 				    end
-		 			if not wasLowered then
+		 			if not lowered then
 		 				print("headlandTurn: Info: Could not lower implement")
 		 			end
 		 		end	
