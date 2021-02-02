@@ -2,8 +2,9 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.1.0
+-- Version 0.0.1.1
 -- 
+-- MP Preparations
 --
 
 headlandTurn = {}
@@ -21,7 +22,7 @@ function headlandTurn.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "onLoad", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", headlandTurn)
 --  SpecializationUtil.registerEventListener(vehicleType, "onReadStream", headlandTurn)
 --	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", headlandTurn)
@@ -47,7 +48,7 @@ function headlandTurn:onLoad(savegame)
 	
 	self.hltUseRaiseImplement = true
 	self.hltImplementsTable = {}
-	self.hltuseTurnPlow = true
+	self.hltUseTurnPlow = true
 	
 	self.hltModGuidanceSteeringFound = false
 	self.hltUseGuidanceSteering = false	
@@ -61,10 +62,13 @@ function headlandTurn:onPostLoad(savegame)
 		local xmlFile = savegame.xmlFile
 		local key = savegame.key .. ".headlandTurn"
 	
-		self.hltTurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#hltTurnSpeed"), self.hltTurnSpeed)
-		self.hltIsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#hltIsActive"), self.hltIsActive)
-	
-		print("HeadlandTurn: Loaded data for "..self:getName()..": hltTurnSpeed = "..tostring(self.hltTurnSpeed).." / hltIsActive = "..tostring(self.hltIsActive))
+		self.hltTurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), self.hltTurnSpeed)
+		self.hltIsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), self.hltIsActive)
+		self.hltUseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl", self.hltUseSpeedControl)
+		self.hltUseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement", self.hltUseRaiseImplement))
+--		self.hltUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering", self.hltUseGuidanceSteering))
+		self.hltUseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow", self.hltUseTurnPlow))
+		print("HeadlandTurn: Loaded data for "..self:getName())
 	end
 	
 	-- Check if Mod SpeedControl exists
@@ -73,14 +77,12 @@ function headlandTurn:onPostLoad(savegame)
 		self.hltUseSpeedControl = true
 		self.hltTurnSpeed = 1 --SpeedControl Mode 1
 		self.hltNormSpeed = 2 --SpeedControl Mode 2
-		print("headlandTurn: Mod SpeedControl found!")
 	end
 	
 	-- Check if Mod GuidanceSteering exists
 	local gsSpec = self.spec_globalPositioningSystem
 	if gsSpec ~= nil then
 		self.hltModGuidanceSteeringFound = true
-		print("headlandTurn: Mod GuidanceSteering found!")
 	end
 
 	self.hltAction[headlandTurn.REDUCESPEED] = self.hltModSpeedControlFound and self.hltUseSpeedControl
@@ -89,8 +91,12 @@ function headlandTurn:onPostLoad(savegame)
 end
 
 function headlandTurn:saveToXMLFile(xmlFile, key)
-	setXMLFloat(xmlFile, key.."#hltTurnSpeed", self.hltTurnSpeed)
-	setXMLBool(xmlFile, key.."#hltIsActive", self.hltIsActive)
+	setXMLFloat(xmlFile, key.."#turnSpeed", self.hltTurnSpeed)
+	setXMLBool(xmlFile, key.."#isActive", self.hltIsActive)
+	setXMLBool(xmlFile, key.."#useSpeedControl", self.hltUseSpeedControl)
+	setXMLBool(xmlFile, key.."#useRaiseImplement", self.hltUseRaiseImplement)
+--	setXMLBool(xmlFile, key.."#useGuidanceSteering", self.hltUseGuidanceSteering)
+	setXMLBool(xmlFile, key.."#turnPlow", self.hltUseTurnPlow)
 end
 
 function headlandTurn:onRegisterActionEvents(isActiveForInput)
@@ -99,7 +105,6 @@ function headlandTurn:onRegisterActionEvents(isActiveForInput)
 		if self:getIsActiveForInput(true) then 
 			local actionEventId;	
 			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'HLT_ACTIVATE', self, headlandTurn.TOGGLESTATE, false, true, false, true, nil)
-			print("headlandTurn: Event registered")
 		end		
 	end
 end
@@ -168,7 +173,7 @@ function headlandTurn:onUpdate(dt)
 		if self.hltAction[math.abs(self.hltActStep)] then 		
 			-- Activation
 			if self.hltActStep == headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, true); end
-			if self.hltActStep == headlandTurn.RAISEIMPLEMENT and self.hltAction[headlandTurn.RAISEIMPLEMENT] then headlandTurn:raiseImplements(self, true, self.hltuseTurnPlow); end
+			if self.hltActStep == headlandTurn.RAISEIMPLEMENT and self.hltAction[headlandTurn.RAISEIMPLEMENT] then headlandTurn:raiseImplements(self, true, self.hltUseTurnPlow); end
 			if self.hltActStep == headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, true); end
 			-- Deactivation
 			if self.hltActStep == -headlandTurn.STOPGPS and self.hltAction[headlandTurn.STOPGPS] then headlandTurn:stopGPS(self, false); end
@@ -199,8 +204,6 @@ function headlandTurn:reduceSpeed(self, enable)
 end
 
 function headlandTurn:raiseImplements(self, raise, turnPlow)
-    print("raiseImplements: "..tostring(raise))
-    
     local jointSpec = self.spec_attacherJoints
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
@@ -208,7 +211,6 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
-					print("raise")
 					local lowered = actImplement:getIsLowered()
 					self.hltImplementsTable[index] = lowered
 					if lowered and actImplement.setLoweredAll ~= nil then 
@@ -230,21 +232,19 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 				    	lowered = actImplement:getIsLowered()
 				    end
 				    if lowered and actImplement.spec_attacherJointControlCutter~= nil then
-		 				print("attacherJointControlCutter entered")
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.upperAlpha
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    end
 				    if lowered and actImplement.spec_attacherJointControlCultivator~= nil then
-		 				print("attacherJointControlCultivator entered")
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.upperAlpha
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    end
 		 			if lowered then
-		 				print("not raised at all")
+		 				print("headlandTurn: Info: Could not raise implement")
 		 			end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and turnPlow then 
@@ -255,7 +255,6 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 					    end
 		 			end
 		 		else
-		 			print("lower")
 		 			local wasLowered = self.hltImplementsTable[index]
 		 			if wasLowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, index)
@@ -276,21 +275,19 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 				    	wasLowered = actImplement:getIsLowered()
 				    end
 				    if not wasLowered and actImplement.spec_attacherJointControlCutter ~= nil then
-		 				print("attacherJointControlCutter entered")
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
 				        actImplement:requestActionEventUpdate()
 				    	wasLowered = actImplement:getIsLowered()
 				    end
 				    if not wasLowered and actImplement.spec_attacherJointControlCultivator ~= nil then
-		 				print("attacherJointControlCultivator entered")
 		 				local spec = actImplement.spec_attacherJointControl
 		 				spec.heightTargetAlpha = spec.jointDesc.lowerAlpha
 				        actImplement:requestActionEventUpdate()
 				    	wasLowered = actImplement:getIsLowered()
 				    end
 		 			if not wasLowered then
-		 				print("not lowered at all")
+		 				print("headlandTurn: Info: Could not lower implement")
 		 			end
 		 		end	
 		 	end
