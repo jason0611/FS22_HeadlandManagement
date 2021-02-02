@@ -2,9 +2,9 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.1.1
+-- Version 0.0.1.2
 -- 
--- MP Preparations
+-- MP Ready
 --
 
 headlandTurn = {}
@@ -24,10 +24,10 @@ function headlandTurn.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", headlandTurn)
---  SpecializationUtil.registerEventListener(vehicleType, "onReadStream", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", headlandTurn)
---	SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", headlandTurn)
+ 	SpecializationUtil.registerEventListener(vehicleType, "onReadStream", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", headlandTurn)
 end
 
 function headlandTurn:onLoad(savegame)
@@ -51,7 +51,7 @@ function headlandTurn:onLoad(savegame)
 	self.hltUseTurnPlow = true
 	
 	self.hltModGuidanceSteeringFound = false
-	self.hltUseGuidanceSteering = false	
+	self.hltUseGuidanceSteering = true	
 end
 
 function headlandTurn:onPostLoad(savegame)
@@ -110,33 +110,48 @@ function headlandTurn:onRegisterActionEvents(isActiveForInput)
 end
 
 function headlandTurn:onReadStream(streamId, connection)
---	self.alertMode = streamReadInt8(streamId)
---	self.loud = streamReadInt8(streamId)
+	self.hltTurnSpeed = streamReadFloat32(streamId)
+	self.hltIsActive = streamReadBool(streamId)
+	self.hltUseSpeedControl = streamReadBool(streamId)
+	self.hltUseRaiseImplement = streamReadBool(streamId)
+--	self.hltUseGuidanceSteering = streamReadBool(streamId)
+	self.hltUseTurnPlow = streamReadBool(streamId)
 end
 
 function headlandTurn:onWriteStream(streamId, connection)
---	streamWriteInt8(streamId, self.alertMode)
---	streamWriteInt8(streamId, self.loud)
+	streamWriteFloat32(streamId, self.hltTurnSpeed)
+	streamWriteBool(streamId, self.hltIsActive)
+	streamWriteBool(streamId, self.hltUseSpeedControl)
+	streamWriteBool(streamId, self.hltUseRaiseImplement)
+--	streamWriteBool(streamId, self.hltUseGuidanceSteering)
+	streamWriteBool(streamId, self.hltUseTurnPlow)
 end
 	
 function headlandTurn:onReadUpdateStream(streamId, timestamp, connection)
---	if not connection:getIsServer() then
---		local spec = spec.spec_fillLevelWarning
---		if streamReadBool(streamId) then
---			self.alertMode = streamReadInt8(streamId)
---			self.loud = streamReadInt8(streamId)
---		end;
---	end
+	if not connection:getIsServer() then
+		if streamReadBool(streamId) then
+			self.hltTurnSpeed = streamReadFloat32(streamId)
+			self.hltIsActive = streamReadBool(streamId)
+			self.hltUseSpeedControl = streamReadBool(streamId)
+			self.hltUseRaiseImplement = streamReadBool(streamId)
+--			self.hltUseGuidanceSteering = streamReadBool(streamId)
+			self.hltUseTurnPlow = streamReadBool(streamId)
+		end;
+-	end
 end
 
 function headlandTurn:onWriteUpdateStream(streamId, connection, dirtyMask)
---	if connection:getIsServer() then
---		local spec = self.spec_fillLevelWarning
---		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
---			streamWriteInt8(streamId, self.alertMode)
---			streamWriteInt8(streamId, self.loud)
---		end
---	end
+	if connection:getIsServer() then
+		local spec = self.spec_headlandTurn
+		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
+			streamWriteFloat32(streamId, self.hltTurnSpeed)
+			streamWriteBool(streamId, self.hltIsActive)
+			streamWriteBool(streamId, self.hltUseSpeedControl)
+			streamWriteBool(streamId, self.hltUseRaiseImplement)
+--			streamWriteBool(streamId, self.hltUseGuidanceSteering)
+			streamWriteBool(streamId, self.hltUseTurnPlow)
+		end
+	end
 end
 	
 function headlandTurn:onRegisterActionEvents(isActiveForInput)
