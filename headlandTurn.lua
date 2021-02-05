@@ -2,9 +2,9 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.1.3
+-- Version 0.0.1.4
 -- 
--- MP Ready
+-- Trying to use Guidance Steering
 --
 
 headlandTurn = {}
@@ -52,6 +52,7 @@ function headlandTurn:onLoad(savegame)
 	
 	self.hltModGuidanceSteeringFound = false
 	self.hltUseGuidanceSteering = true	
+	self.hltGSStatus = false
 end
 
 function headlandTurn:onPostLoad(savegame)
@@ -130,7 +131,6 @@ end
 function headlandTurn:onReadUpdateStream(streamId, timestamp, connection)
 	if not connection:getIsServer() then
 		if streamReadBool(streamId) then
-			print("receiving data")
 			self.hltTurnSpeed = streamReadFloat32(streamId)
 			self.hltIsActive = streamReadBool(streamId)
 			self.hltUseSpeedControl = streamReadBool(streamId)
@@ -145,7 +145,6 @@ function headlandTurn:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
 		local spec = self.spec_headlandTurn
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
-			print("sending data")
 			streamWriteFloat32(streamId, self.hltTurnSpeed)
 			streamWriteBool(streamId, self.hltIsActive)
 			streamWriteBool(streamId, self.hltUseSpeedControl)
@@ -169,19 +168,18 @@ end
 function headlandTurn:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandTurn
 	
-	-- anschalten, wenn vollständig inaktiv
+	-- anschalten nur wenn vollständig inaktiv
 	if not self.hltIsActive then
 		self.hltActStep = 1
 		self.hltIsActive = true
-		print("headlandTurn: Activation initiated")
-	-- abschalten, wenn vollständig aktiv
+		--print("headlandTurn: Activation initiated")
+	-- abschalten nur wenn vollständig aktiv
 	elseif self.hltIsActive and self.hltActStep	== self.hltMaxStep then
 		self.hltActStep = -self.hltMaxStep
-		print(self.hltActStep)
-		print("headlandTurn: Deactivation initiated")
+		--print("headlandTurn: Deactivation initiated")
 	end
 	
---	self:raiseDirtyFlags(spec.dirtyFlag)
+	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 function headlandTurn:onUpdate(dt)
@@ -318,14 +316,24 @@ end
 
 function headlandTurn:stopGPS(self, enable)
 	local gsSpec = self.spec_globalPositioningSystem
+	if self.onSteeringStateChanged == nil then return; end
 	if enable then
-		print("headlandTurn: stopGPS")
-		gsSpec.guidanceSteeringIsActive = false
-		self:onSteeringStateChanged(false)
+		local gpsEnabled = gsSpec.lastInputValues.guidanceSteeringIsActive
+		if gpsEnabled then
+			print("headlandTurn: Trying to stopGPS")
+			self.hltGSStatus = true
+			gsSpec.lastInputValues.guidanceSteeringIsActive = false
+			self:onSteeringStateChanged(false)
+		else
+			self.hltGSStatus = false
+		end
 	else
-		print("headlandTurn: startGPS")	
-		gsSpec.guidanceSteeringIsActive = true
-		self:onSteeringStateChanged(true)
+		local gpsEnabled = self.hltGSStatus	
+		if gpsEnabled then
+			print("headlandTurn: Tryng to startGPS")
+			gsSpec.lastInputValues.guidanceSteeringIsActive = true
+			self:onSteeringStateChanged(true)
+		end
 	end
 end
 
