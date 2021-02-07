@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.2.1
+-- Version 0.0.2.2
 -- 
 -- User Interface Improvements
 --
@@ -68,7 +68,7 @@ function headlandTurn:onPostLoad(savegame)
 		self.hltIsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), self.hltIsActive)
 		self.hltUseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), self.hltUseSpeedControl)
 		self.hltUseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), self.hltUseRaiseImplement)
---		self.hltUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), self.hltUseGuidanceSteering)
+		self.hltUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), self.hltUseGuidanceSteering)
 		self.hltUseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), self.hltUseTurnPlow)
 		print("HeadlandTurn: Loaded data for "..self:getName())
 	end
@@ -97,18 +97,8 @@ function headlandTurn:saveToXMLFile(xmlFile, key)
 	setXMLBool(xmlFile, key.."#isActive", self.hltIsActive)
 	setXMLBool(xmlFile, key.."#useSpeedControl", self.hltUseSpeedControl)
 	setXMLBool(xmlFile, key.."#useRaiseImplement", self.hltUseRaiseImplement)
---	setXMLBool(xmlFile, key.."#useGuidanceSteering", self.hltUseGuidanceSteering)
+	setXMLBool(xmlFile, key.."#useGuidanceSteering", self.hltUseGuidanceSteering)
 	setXMLBool(xmlFile, key.."#turnPlow", self.hltUseTurnPlow)
-end
-
-function headlandTurn:onRegisterActionEvents(isActiveForInput)
-	if self.isClient then
-		headlandTurn.actionEvents = {} 
-		if self:getIsActiveForInput(true) then 
-			local actionEventId;	
-			_, actionEventId = self:addActionEvent(headlandTurn.actionEvents, 'HLT_ACTIVATE', self, headlandTurn.TOGGLESTATE, false, true, false, true, nil)
-		end		
-	end
 end
 
 function headlandTurn:onReadStream(streamId, connection)
@@ -116,7 +106,7 @@ function headlandTurn:onReadStream(streamId, connection)
 	self.hltIsActive = streamReadBool(streamId)
 	self.hltUseSpeedControl = streamReadBool(streamId)
 	self.hltUseRaiseImplement = streamReadBool(streamId)
---	self.hltUseGuidanceSteering = streamReadBool(streamId)
+	self.hltUseGuidanceSteering = streamReadBool(streamId)
 	self.hltUseTurnPlow = streamReadBool(streamId)
 end
 
@@ -125,7 +115,7 @@ function headlandTurn:onWriteStream(streamId, connection)
 	streamWriteBool(streamId, self.hltIsActive)
 	streamWriteBool(streamId, self.hltUseSpeedControl)
 	streamWriteBool(streamId, self.hltUseRaiseImplement)
---	streamWriteBool(streamId, self.hltUseGuidanceSteering)
+	streamWriteBool(streamId, self.hltUseGuidanceSteering)
 	streamWriteBool(streamId, self.hltUseTurnPlow)
 end
 	
@@ -136,7 +126,7 @@ function headlandTurn:onReadUpdateStream(streamId, timestamp, connection)
 			self.hltIsActive = streamReadBool(streamId)
 			self.hltUseSpeedControl = streamReadBool(streamId)
 			self.hltUseRaiseImplement = streamReadBool(streamId)
---			self.hltUseGuidanceSteering = streamReadBool(streamId)
+			self.hltUseGuidanceSteering = streamReadBool(streamId)
 			self.hltUseTurnPlow = streamReadBool(streamId)
 		end;
 	end
@@ -150,7 +140,7 @@ function headlandTurn:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, self.hltIsActive)
 			streamWriteBool(streamId, self.hltUseSpeedControl)
 			streamWriteBool(streamId, self.hltUseRaiseImplement)
---			streamWriteBool(streamId, self.hltUseGuidanceSteering)
+			streamWriteBool(streamId, self.hltUseGuidanceSteering)
 			streamWriteBool(streamId, self.hltUseTurnPlow)
 		end
 	end
@@ -186,7 +176,6 @@ end
 function headlandTurn:onUpdate(dt)
 	if self:getIsActive() and self.hltIsActive and self.hltActStep<self.hltMaxStep then
 		local spec = self.spec_headlandTurn
-		print(hltActStep)
 		if self.hltAction[math.abs(self.hltActStep)] then 		
 			-- Activation
 			if self.hltActStep == headlandTurn.REDUCESPEED and self.hltAction[headlandTurn.REDUCESPEED] then headlandTurn:reduceSpeed(self, true); end
@@ -206,7 +195,6 @@ end
 
 function headlandTurn:onDraw(dt)
 	if self.hltIsActive then 
-		print("Message?")
 		g_currentMission:addExtraPrintText("Wendeprogramm aktiv")
 	end
 end
@@ -270,7 +258,7 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 				    	lowered = actImplement:getIsLowered()
 				    end
 		 			if lowered then
-		 				print("headlandTurn: Info: Could not raise implement")
+		 				print("headlandTurn: Info: No implement to raise")
 		 			end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and turnPlow and self.hltImplementsTable[index] then 
@@ -314,7 +302,7 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
 				    	lowered = actImplement:getIsLowered()
 				    end
 		 			if not lowered then
-		 				print("headlandTurn: Info: Could not lower implement")
+		 				print("headlandTurn: Info: No implement to lower")
 		 			end
 		 		end	
 		 	end
@@ -328,7 +316,6 @@ function headlandTurn:stopGPS(self, enable)
 	if enable then
 		local gpsEnabled = gsSpec.lastInputValues.guidanceSteeringIsActive
 		if gpsEnabled then
-			print("headlandTurn: Trying to stopGPS")
 			self.hltGSStatus = true
 			gsSpec.lastInputValues.guidanceSteeringIsActive = false
 			self:onSteeringStateChanged(false)
@@ -338,7 +325,6 @@ function headlandTurn:stopGPS(self, enable)
 	else
 		local gpsEnabled = self.hltGSStatus	
 		if gpsEnabled then
-			print("headlandTurn: Tryng to startGPS")
 			gsSpec.lastInputValues.guidanceSteeringIsActive = true
 			self:onSteeringStateChanged(true)
 		end
