@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.2.2
+-- Version 0.0.2.3
 -- 
 -- User Interface Improvements
 --
@@ -223,7 +223,6 @@ function headlandTurn:raiseImplements(self, raise, turnPlow)
     	local actImplement = attachedImplement.object
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
-				print(index)
 				if raise then
 					local lowered = actImplement:getIsLowered()
 					self.hltImplementsTable[index] = lowered
