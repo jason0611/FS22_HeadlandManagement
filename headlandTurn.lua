@@ -2,9 +2,9 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.1.4
+-- Version 0.0.2.1
 -- 
--- Trying to use Guidance Steering
+-- User Interface Improvements
 --
 
 headlandTurn = {}
@@ -20,6 +20,7 @@ end
 
 function headlandTurn.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", headlandTurn)
+	SpecializationUtil.registerEventListener(vehicleType, "onDraw", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "onLoad", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", headlandTurn)
 	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandTurn)
@@ -200,6 +201,13 @@ function headlandTurn:onUpdate(dt)
 		self.hltActStep = self.hltActStep + 1
 		if self.hltActStep == 0 then self.hltIsActive = false; end
 		self:raiseDirtyFlags(spec.dirtyFlag)
+	end
+end
+
+function headlandTurn:onDraw(dt)
+	if self.hltIsActive then 
+		print("Message?")
+		g_currentMission:addExtraPrintText("Wendeprogramm aktiv")
 	end
 end
 	
