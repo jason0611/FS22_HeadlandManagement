@@ -2,7 +2,7 @@
 -- FillLevel Warning for LS 19
 --
 -- Martin Eller
--- Version 0.0.2.3
+-- Version 0.0.2.4
 -- 
 -- User Interface Improvements
 --
@@ -313,7 +313,7 @@ function headlandTurn:stopGPS(self, enable)
 	local gsSpec = self.spec_globalPositioningSystem
 	if self.onSteeringStateChanged == nil then return; end
 	if enable then
-		local gpsEnabled = gsSpec.lastInputValues.guidanceSteeringIsActive
+		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
 		if gpsEnabled then
 			self.hltGSStatus = true
 			gsSpec.lastInputValues.guidanceSteeringIsActive = false
