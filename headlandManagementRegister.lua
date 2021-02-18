@@ -2,12 +2,14 @@
 -- register
 --
 -- Martin Eller 
--- Version 0.0.1.0
+-- Version 0.0.3.0
+--
+-- Refactoring
 --
 
-if g_specializationManager:getSpecializationByName("headlandTurn") == nil then
+if g_specializationManager:getSpecializationByName("headlandManagement") == nil then
 
-  g_specializationManager:addSpecialization("headlandTurn", "headlandTurn", g_currentModDirectory.."headlandTurn.lua", true, nil)
+  g_specializationManager:addSpecialization("headlandManagement", "headlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
 
   for typeName, typeEntry in pairs(g_vehicleTypeManager:getVehicleTypes()) do
     
@@ -23,8 +25,8 @@ if g_specializationManager:getSpecializationByName("headlandTurn") == nil then
     )
     
     then
-      g_vehicleTypeManager:addSpecialization(typeName, "headlandTurn")
-      print("headlandTurn registered for "..typeName)
+      g_vehicleTypeManager:addSpecialization(typeName, "headlandManagement")
+      print("headlandManagement registered for "..typeName)
     end
   end
 end

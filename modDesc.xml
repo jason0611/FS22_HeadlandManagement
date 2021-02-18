@@ -3,44 +3,48 @@
 
    <author>Jason06</author>
    	
-	<version>0.0.2.3</version>
+	<version>0.0.3.0</version>
 
     <title>
-		<en>Headland Turn</en>
-		<de>Wendeprogramm im Vorgewende</de>
+		<en>Headland Management</en>
+		<de>Vorgewende Management</de>
     </title>
 	
     <description>
 		<en>
-		<![CDATA[Headlandturn]]>
+		<![CDATA[Headland Management]]>
 		</en>	
 		<de>
-		<![CDATA[Wendeprogramm im Vorgewende]]>
+		<![CDATA[Vorgewende Management]]>
 		</de>
  	</description>	
     <multiplayer supported="true"/>
-	<iconFilename>icon.dds</iconFilename>
+	<iconFilename>headlandmanagement.dds</iconFilename>
 	
 	<extraSourceFiles>
-        <sourceFile filename="register.lua" />
+        <sourceFile filename="headlandManagementRegister.lua" />
     </extraSourceFiles>
 	
 	
 	<actions>
-		<action name="HLT_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
 	</actions>
 
 	<inputBinding>	
-		<actionBinding action="HLT_TOGGLESTATE">
+		<actionBinding action="HLM_TOGGLESTATE">
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_x" neutralInput="0" index="1" />
 		</actionBinding>
 	</inputBinding>
 
 	<l10n>
-        <text name="input_HLT_TOGGLESTATE">
-            <de>Wendeschaltung: aktivieren/deaktivieren</de>
-            <en>HeadlandTurn: Activate/Deactivate</en>
+        <text name="input_HLM_TOGGLESTATE">
+            <de>Vorgewende Management: aktivieren/deaktivieren</de>
+            <en>Headland Management: Activate/Deactivate</en>
         </text>
+		<text name="text_HLM_active">
+			<de>Vorgewende Management aktiv</de>
+			<en>Headland Management activated</en>
+		</text>
 	</l10n>
 	
 </modDesc>
