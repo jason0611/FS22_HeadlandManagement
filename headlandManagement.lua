@@ -199,7 +199,9 @@ end
 
 function headlandManagement:onDraw(dt)
 	if self.hlmIsActive then 
-		g_currentMission:addExtraPrintText("Vorgewendemanagement aktiv")
+		-- g_currentMission:addExtraPrintText(g_i18n.texts["text_HLM_isActive"])
+		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
+		-- g_currentMission:addExtraPrintText("Vorgewendemanagement aktiv")
 	end
 end
 	

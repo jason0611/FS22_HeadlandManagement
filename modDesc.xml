@@ -25,6 +25,7 @@
         <sourceFile filename="headlandManagementRegister.lua" />
     </extraSourceFiles>
 	
+	<l10n filenamePrefix="l10n/l10n" />
 	
 	<actions>
 		<action name="HLM_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
@@ -35,16 +36,4 @@
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_x" neutralInput="0" index="1" />
 		</actionBinding>
 	</inputBinding>
-
-	<l10n>
-        <text name="input_HLM_TOGGLESTATE">
-            <de>Vorgewende Management: aktivieren/deaktivieren</de>
-            <en>Headland Management: Activate/Deactivate</en>
-        </text>
-		<text name="text_HLM_active">
-			<de>Vorgewende Management aktiv</de>
-			<en>Headland Management activated</en>
-		</text>
-	</l10n>
-	
 </modDesc>
