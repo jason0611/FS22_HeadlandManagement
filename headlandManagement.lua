@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.3.0
+-- Version 0.0.3.1
 -- 
 -- Refactoring
 --
@@ -177,6 +177,10 @@ function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
+function headlandManagement:TEST(actionName, keyStatus, arg3, arg4, arg5)
+	print("HLM: Test - "..tostring(actionName).."/"..tostring(keyStatus).."/"..tostring(arg3).."/"..tostring(arg4).."/"..tostring(arg5))
+end
+
 function headlandManagement:onUpdate(dt)
 	if self:getIsActive() and self.hlmIsActive and self.hlmActStep<self.hlmMaxStep then
 		local spec = self.spec_headlandManagement
@@ -199,9 +203,7 @@ end
 
 function headlandManagement:onDraw(dt)
 	if self.hlmIsActive then 
-		-- g_currentMission:addExtraPrintText(g_i18n.texts["text_HLM_isActive"])
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
-		-- g_currentMission:addExtraPrintText("Vorgewendemanagement aktiv")
 	end
 end
 	
