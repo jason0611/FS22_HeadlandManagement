@@ -29,9 +29,8 @@
 	
 	<actions>
 		<action name="HLM_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
-		<!-- action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
-		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" /-->
-		<action name="HLM_TEST" categorie="VEHICLE" ihnoreComboMask="false" />
+		<action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
 	</actions>
 
 	<inputBinding>	

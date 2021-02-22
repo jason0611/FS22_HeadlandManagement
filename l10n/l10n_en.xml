@@ -2,8 +2,8 @@
 <l10n>
     <text>
     	<text name="input_HLM_TOGGLESTATE" text="Headlandmanagement: Start / Stop"/>	
-    	<text name="input_HLM_SWITCHOFF" text="Headlandmanagement: Start" />
-    	<text name="input_HLM_SWITCHON" text="Headlandmanagement: Stop" />	
+    	<text name="input_HLM_SWITCHON" text="Headlandmanagement: Start" />
+    	<text name="input_HLM_SWITCHOFF" text="Headlandmanagement: Stop" />	
 		<text name="text_HLM_isActive" text="Headlandmanagement: activated"/>
 	</texts>
 </l10n>

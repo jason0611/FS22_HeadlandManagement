@@ -157,28 +157,28 @@ function headlandManagement:onRegisterActionEvents(isActiveForInput)
 		if self:getIsActiveForInput(true) then 
 			local actionEventId;
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHON', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHOFF', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
 		end		
 	end
 end
 
 function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
+
+	print("HLM: "..tostring(actionName))
 		
 	-- anschalten nur wenn vollständig inaktiv
-	if not self.hlmIsActive then
+	if not self.hlmIsActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		self.hlmActStep = 1
 		self.hlmIsActive = true
 	--print("headlandManagement: Activation initiated")
 	-- abschalten nur wenn vollständig aktiv
-	elseif self.hlmIsActive and self.hlmActStep	== self.hlmMaxStep then
+	elseif self.hlmIsActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and self.hlmActStep == self.hlmMaxStep then
 		self.hlmActStep = -self.hlmMaxStep
 		--print("headlandManagement: Deactivation initiated")
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
-end
-
-function headlandManagement:TEST(actionName, keyStatus, arg3, arg4, arg5)
-	print("HLM: Test - "..tostring(actionName).."/"..tostring(keyStatus).."/"..tostring(arg3).."/"..tostring(arg4).."/"..tostring(arg5))
 end
 
 function headlandManagement:onUpdate(dt)
