@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
-    <text>
+    <texts>
     	<text name="input_HLM_TOGGLESTATE" text="Headlandmanagement: Start / Stop"/>	
     	<text name="input_HLM_SWITCHON" text="Headlandmanagement: Start" />
     	<text name="input_HLM_SWITCHOFF" text="Headlandmanagement: Stop" />	
