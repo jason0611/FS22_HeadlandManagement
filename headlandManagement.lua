@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.3.1
+-- Version 0.0.4.0
 -- 
--- Refactoring
+-- MP Communication fixed
 --
 
 headlandManagement = {}
@@ -13,6 +13,8 @@ headlandManagement.MOD_NAME = g_currentModName
 headlandManagement.REDUCESPEED = 1
 headlandManagement.RAISEIMPLEMENT = 2
 headlandManagement.STOPGPS = 3
+
+headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 function headlandManagement.prerequisitesPresent(specializations)
   return true
@@ -43,6 +45,7 @@ function headlandManagement:onLoad(savegame)
 	
 	self.hlmIsActive = false
 	self.hlmAction = {}
+	self.hlmAction[0] =false
 	
 	self.hlmModSpeedControlFound = false
 	self.hlmUseSpeedControl = true
@@ -104,7 +107,6 @@ end
 
 function headlandManagement:onReadStream(streamId, connection)
 	self.hlmTurnSpeed = streamReadFloat32(streamId)
-	self.hlmActStep = streamReadInt8(streamId)
 	self.hlmIsActive = streamReadBool(streamId)
 	self.hlmUseSpeedControl = streamReadBool(streamId)
 	self.hlmUseRaiseImplement = streamReadBool(streamId)
@@ -114,7 +116,6 @@ end
 
 function headlandManagement:onWriteStream(streamId, connection)
 	streamWriteFloat32(streamId, self.hlmTurnSpeed)
-	streamWriteInt8(streamId, self.hlmActStep)
 	streamWriteBool(streamId, self.hlmIsActive)
 	streamWriteBool(streamId, self.hlmUseSpeedControl)
 	streamWriteBool(streamId, self.hlmUseRaiseImplement)
@@ -165,15 +166,12 @@ end
 
 function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
-	-- anschalten nur wenn vollständig inaktiv
+	-- anschalten nur wenn inaktiv
 	if not self.hlmIsActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
-		self.hlmActStep = 1
 		self.hlmIsActive = true
-	--print("headlandManagement: Activation initiated")
-	-- abschalten nur wenn vollständig aktiv
+	-- abschalten nur wenn aktiv
 	elseif self.hlmIsActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and self.hlmActStep == self.hlmMaxStep then
-		self.hlmActStep = -self.hlmMaxStep
-		--print("headlandManagement: Deactivation initiated")
+		self.hlmActStep = -self.hlmActStep
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
@@ -181,7 +179,7 @@ end
 function headlandManagement:onUpdate(dt)
 	if self:getIsActive() and self.hlmIsActive and self.hlmActStep<self.hlmMaxStep then
 		local spec = self.spec_headlandManagement
-		if self.hlmAction[math.abs(self.hlmActStep)] then 		
+		if self.hlmAction[math.abs(self.hlmActStep)] and not headlandManagement.isDedi then		
 			-- Activation
 			if self.hlmActStep == headlandManagement.REDUCESPEED and self.hlmAction[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
 			if self.hlmActStep == headlandManagement.RAISEIMPLEMENT and self.hlmAction[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, self.hlmUseTurnPlow); end
@@ -191,10 +189,11 @@ function headlandManagement:onUpdate(dt)
 			if self.hlmActStep == -headlandManagement.RAISEIMPLEMENT and self.hlmAction[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false); end
 			if self.hlmActStep == -headlandManagement.REDUCESPEED and self.hlmAction[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, false); end		
 		end
-		
 		self.hlmActStep = self.hlmActStep + 1
-		if self.hlmActStep == 0 then self.hlmIsActive = false; end
-		self:raiseDirtyFlags(spec.dirtyFlag)
+		if self.hlmActStep == 0 then 
+			self.hlmIsActive = false
+			self:raiseDirtyFlags(spec.dirtyFlag)
+		end	
 	end
 end
 
@@ -261,9 +260,6 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    end
-		 			if lowered then
-		 				print("Info: headlandManagement :: No implement to raise")
-		 			end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and turnPlow and self.hlmImplementsTable[index] then 
 						if plowSpec.rotationPart.turnAnimation ~= nil then
@@ -305,9 +301,6 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    end
-		 			if not lowered then
-		 				print("Info: headlandManagement :: No implement to lower")
-		 			end
 		 		end	
 		 	end
 		end

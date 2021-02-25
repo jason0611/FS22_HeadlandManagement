@@ -2,9 +2,9 @@
 -- register
 --
 -- Martin Eller 
--- Version 0.0.3.0
+-- Version 0.0.4.0
 --
--- Refactoring
+-- 
 --
 
 if g_specializationManager:getSpecializationByName("headlandManagement") == nil then
