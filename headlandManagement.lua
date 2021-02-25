@@ -165,9 +165,6 @@ end
 
 function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
-
-	print("HLM: "..tostring(actionName))
-		
 	-- anschalten nur wenn vollständig inaktiv
 	if not self.hlmIsActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		self.hlmActStep = 1
