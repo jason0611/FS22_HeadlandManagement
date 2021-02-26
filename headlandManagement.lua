@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.4.0
+-- Version 0.0.4.1
 -- 
--- MP Communication fixed
+-- RidgeMarkerSwitching
 --
 
 headlandManagement = {}
@@ -54,6 +54,9 @@ function headlandManagement:onLoad(savegame)
 	self.hlmImplementsTable = {}
 	self.hlmUseTurnPlow = true
 	
+	self.hlmUseRidgeMarker = true
+	self.hlmRidgeMarkerState = 0
+	
 	self.hlmModGuidanceSteeringFound = false
 	self.hlmUseGuidanceSteering = true	
 	self.hlmGSStatus = false
@@ -73,6 +76,7 @@ function headlandManagement:onPostLoad(savegame)
 		self.hlmUseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), self.hlmUseRaiseImplement)
 		self.hlmUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), self.hlmUseGuidanceSteering)
 		self.hlmUseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), self.hlmUseTurnPlow)
+		self.hlmUseRidgeMarker = Utils.getNoNil(getXMLBool(cmlFile, key.."#switchRidge"), self.hlmUseRidgeMarker)
 		print("HeadlandManagement: Loaded data for "..self:getName())
 	end
 	
@@ -103,6 +107,7 @@ function headlandManagement:saveToXMLFile(xmlFile, key)
 	setXMLBool(xmlFile, key.."#useRaiseImplement", self.hlmUseRaiseImplement)
 	setXMLBool(xmlFile, key.."#useGuidanceSteering", self.hlmUseGuidanceSteering)
 	setXMLBool(xmlFile, key.."#turnPlow", self.hlmUseTurnPlow)
+	setXMLBool(xmlFile, key.."#switchRidge", self.hlmUseRidgeMarker)
 end
 
 function headlandManagement:onReadStream(streamId, connection)
@@ -186,7 +191,7 @@ function headlandManagement:onUpdate(dt)
 			if self.hlmActStep == headlandManagement.STOPGPS and self.hlmAction[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, true); end
 			-- Deactivation
 			if self.hlmActStep == -headlandManagement.STOPGPS and self.hlmAction[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, false); end
-			if self.hlmActStep == -headlandManagement.RAISEIMPLEMENT and self.hlmAction[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false); end
+			if self.hlmActStep == -headlandManagement.RAISEIMPLEMENT and self.hlmAction[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, false); end
 			if self.hlmActStep == -headlandManagement.REDUCESPEED and self.hlmAction[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, false); end		
 		end
 		self.hlmActStep = self.hlmActStep + 1
@@ -225,6 +230,7 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
+		-- raise or lower implement and turn plow
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
@@ -304,6 +310,20 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 		 		end	
 		 	end
 		end
+		-- switch ridge marker
+		if actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
+			local specRM = actImplement.spec_ridgeMarker
+			if raise then
+				self.hlmRidgeMarkerState = specRM.ridgeMarkerState
+			else
+				if self.hlmRidgeMarkerState == 1 then 
+					self.hlmRidgeMarkerState = 2 
+				elseif self.hlmRidgeMarkerState == 2 then
+		  			self.hlmRidgeMarkerState = 1
+				end
+				actImplement:setRidgeMarkerState(self.hlmRidgeMarkerState)
+			end
+		end
 	end
 end
 
@@ -327,25 +347,3 @@ function headlandManagement:stopGPS(self, enable)
 		end
 	end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
