@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.4.1
+-- Version 0.0.4.2
 -- 
 -- RidgeMarkerSwitching
 --
@@ -76,7 +76,7 @@ function headlandManagement:onPostLoad(savegame)
 		self.hlmUseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), self.hlmUseRaiseImplement)
 		self.hlmUseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), self.hlmUseGuidanceSteering)
 		self.hlmUseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), self.hlmUseTurnPlow)
-		self.hlmUseRidgeMarker = Utils.getNoNil(getXMLBool(cmlFile, key.."#switchRidge"), self.hlmUseRidgeMarker)
+		self.hlmUseRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), self.hlmUseRidgeMarker)
 		print("HeadlandManagement: Loaded data for "..self:getName())
 	end
 	
