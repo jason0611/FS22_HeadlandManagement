@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.4.3
+-- Version 0.0.4.4
 -- 
 -- GPS by VCA added
 --
@@ -198,7 +198,7 @@ function headlandManagement:onUpdate(dt)
 			if self.hlmActStep == headlandManagement.STOPGPS and self.hlmAction[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, true); end
 			-- Deactivation
 			if self.hlmActStep == -headlandManagement.STOPGPS and self.hlmAction[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, false); end
-			if self.hlmActStep == -headlandManagement.RAISEIMPLEMENT and self.hlmAction[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, false); end
+			if self.hlmActStep == -headlandManagement.RAISEIMPLEMENT and self.hlmAction[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, self.hlmUseTurnPlow); end
 			if self.hlmActStep == -headlandManagement.REDUCESPEED and self.hlmAction[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, false); end		
 		end
 		self.hlmActStep = self.hlmActStep + 1
@@ -242,7 +242,8 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
 					local lowered = actImplement:getIsLowered()
-					self.hlmImplementStatusTable[index] = lowered
+					local wasLowered = lowered
+					self.hlmImplementStatusTable[index] = wasLowered
 					if lowered and actImplement.setLoweredAll ~= nil then 
 						actImplement:setLoweredAll(false, index)
 						lowered = actImplement:getIsLowered()
@@ -274,9 +275,9 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 				    	lowered = actImplement:getIsLowered()
 				    end
 		 			local plowSpec = actImplement.spec_plow
-		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and self.hlmImplementStatusTable[index] then 
+		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
 				        if actImplement:getIsPlowRotationAllowed() then
-							self.hlmPlowRotationMax = not plowSpec.rotationMax
+							self.hlmPlowRotationMaxNew = not plowSpec.rotationMax
 							actImplement:setRotationCenter()
 							-- actImplement:setRotationMax(not plowSpec.rotationMax)
 				        end
@@ -284,12 +285,10 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 		 		else
 		 			local wasLowered = self.hlmImplementStatusTable[index]
 		 			local lowered
-		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and self.hlmImplementStatusTable[index] and self.hlmPlowRotationMax ~= nil then 
-						if actImplement:getIsPlowRotationAllowed() then
-							self.hlmPlowRotationMax = not plowSpec.rotationMax
-							actImplement:setRotationMax(self.hlmPlowRotationMax)
-							self.hlmPlowRotationMax = nil
-					    end
+		 			local plowSpec = actImplement.spec_plow
+		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and self.hlmPlowRotationMaxNew ~= nil then 
+						actImplement:setRotationMax(self.hlmPlowRotationMaxNew)
+						self.hlmPlowRotationMaxNew = nil
 					end
 					if wasLowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, index)
