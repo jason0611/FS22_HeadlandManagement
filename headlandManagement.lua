@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.4.4
+-- Version 0.0.4.5
 -- 
 -- GPS by VCA added
 --
@@ -328,6 +328,9 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 			local specRM = actImplement.spec_ridgeMarker
 			if raise then
 				self.hlmRidgeMarkerStatus = specRM.ridgeMarkerState
+				if self.hlmRidgeMarkerStatus ~= 0 then
+					actImplement:setRidgeMarkerState(0)
+				end
 			else
 				if self.hlmRidgeMarkerStatus == 1 then 
 					self.hlmRidgeMarkerStatus = 2 
