@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.4.6
+-- Version 0.0.4.7
 -- 
 -- Refactoring
 --
@@ -193,8 +193,8 @@ function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 end
 
 function headlandManagement:onUpdate(dt)
+	local spec = self.spec_headlandManagement
 	if self:getIsActive() and spec.IsActive and spec.ActStep<spec.MaxStep then
-		local spec = self.spec_headlandManagement
 		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then		
 			-- Activation
 			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
