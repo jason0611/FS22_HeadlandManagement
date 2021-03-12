@@ -3,7 +3,7 @@
 
    <author>Jason06</author>
    	
-	<version>0.0.4.5</version>
+	<version>0.0.4.6</version>
 
     <title>
 		<en>Headland Management</en>
@@ -19,7 +19,7 @@
 		</de>
  	</description>	
     <multiplayer supported="true"/>
-	<iconFilename>headlandmanagement.dds</iconFilename>
+	<iconFilename>icon.dds</iconFilename>
 	
 	<extraSourceFiles>
         <sourceFile filename="headlandManagementRegister.lua" />
