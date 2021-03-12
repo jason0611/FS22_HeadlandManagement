@@ -2,17 +2,18 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.0.4.7
+-- Version 0.1.0.0
 -- 
--- Refactoring
+-- Deactivation of PTO an DiffLocks (VCA only)
 --
 
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
 
 headlandManagement.REDUCESPEED = 1
-headlandManagement.RAISEIMPLEMENT = 2
-headlandManagement.STOPGPS = 3
+headlandManagement.DIFFLOCK = 2
+headlandManagement.RAISEIMPLEMENT = 3
+headlandManagement.STOPGPS = 4
 
 headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
@@ -41,7 +42,7 @@ function headlandManagement:onLoad(savegame)
 	spec.TurnSpeed = 5
 
 	spec.ActStep = 0
-	spec.MaxStep = 4
+	spec.MaxStep = 5
 	
 	spec.IsActive = false
 	spec.Action = {}
@@ -52,6 +53,8 @@ function headlandManagement:onLoad(savegame)
 	
 	spec.UseRaiseImplement = true
 	spec.ImplementStatusTable = {}
+	spec.ImplementPTOTable = {}
+	spec.UseStopPTO = true
 	spec.UseTurnPlow = true
 	spec.PlowRotationMax = nil
 	
@@ -65,6 +68,10 @@ function headlandManagement:onLoad(savegame)
 	spec.ModVCAFound = false
 	spec.UseVCA = true
 	spec.VCAStatus = false
+	
+	spec.UseDiffLock = true
+	spec.DiffStateF = false
+	spec.DiffStateB = false
 	
 end
 
@@ -102,6 +109,7 @@ function headlandManagement:onPostLoad(savegame)
 	
 	-- Set management actions
 	spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
+	spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
 	spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
 	spec.Action[headlandManagement.STOPGPS] = (spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering) or (spec.ModVCAFound and spec.UseVCA)
 	
@@ -198,11 +206,13 @@ function headlandManagement:onUpdate(dt)
 		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then		
 			-- Activation
 			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
-			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow); end
+			if spec.ActStep == headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, true); end
+			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow, spec.UseStopPTO); end
 			if spec.ActStep == headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, true); end
 			-- Deactivation
 			if spec.ActStep == -headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, false); end
-			if spec.ActStep == -headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, spec.UseTurnPlow); end
+			if spec.ActStep == -headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, spec.UseTurnPlow, spec.UseStopPTO); end
+			if spec.ActStep == -headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, false); end
 			if spec.ActStep == -headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, false); end		
 		end
 		spec.ActStep = spec.ActStep + 1
@@ -238,7 +248,7 @@ function headlandManagement:reduceSpeed(self, enable)
 	end
 end
 
-function headlandManagement:raiseImplements(self, raise, turnPlow)
+function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO)
 	local spec = self.spec_headlandManagement
     local jointSpec = self.spec_attacherJoints
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
@@ -269,6 +279,11 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    end
+				    if stopPTO then
+				    	local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive() and actImplement.deactivate ~= nil
+				    	spec.ImplementPTOTable[index] = active
+				    	if active then actImplement:deactivate(); end
+				    end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
 				        if actImplement:getIsPlowRotationAllowed() then
@@ -285,6 +300,10 @@ function headlandManagement:raiseImplements(self, raise, turnPlow)
 						actImplement:setRotationMax(spec.PlowRotationMaxNew)
 						spec.PlowRotationMaxNew = nil
 					end
+					if stopPTO then
+				    	local active = spec.ImplementPTOTable[index]
+				    	if active and actImplement.setIsTurnedOn ~= nil then actImplement:setIsTurnedOn(true); end -- actImplement:activate(); end
+				    end
 					if wasLowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, index)
 		 				lowered = actImplement:getIsLowered()
@@ -359,5 +378,22 @@ function headlandManagement:stopGPS(self, enable)
 	end
 	if spec.ModVCAFound and spec.VCAStatus and not enable then
 		self:vcaSetState( "vcaSnapIsOn", true )
+	end
+end
+
+function headlandManagement:disableDiffLock(self, disable)
+	local spec = self.spec_headlandManagement
+	if not spec.ModVCAFound then 
+		return
+	end
+	
+	if disable then
+		spec.DiffStateF = self.vcaDiffLockFront
+		spec.DiffStateB = self.vcaDiffLockBack
+		if spec.DiffStateF then self:vcaSetState("vcaDiffLockFront", false); end
+		if spec.DiffStateB then self:vcaSetState("vcaDiffLockBack", false); end
+	else
+		self:vcaSetState("vcaDiffLockFront", spec.DiffStateF)
+		self:vcaSetState("vcaDiffLockBack", spec.DiffStateB)
 	end
 end
