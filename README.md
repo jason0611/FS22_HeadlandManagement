@@ -1,5 +1,5 @@
-# FS19_HeadlandManagement 0.1.0.0
-Vorgewendemanagement für Schlepper und Ernter
+# FS19_HeadlandManagement
+Vorgewende-Management für Schlepper und Ernter
 
 
 Bereits umgesetzt:
