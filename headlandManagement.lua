@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.1.0.0
+-- Version 0.1.1.1
 -- 
--- Deactivation of PTO an DiffLocks (VCA only)
+-- Console-Commands
 --
 
 headlandManagement = {}
@@ -16,6 +16,57 @@ headlandManagement.RAISEIMPLEMENT = 3
 headlandManagement.STOPGPS = 4
 
 headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
+
+addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
+function headlandManagement:toggleAction(hlmAction)
+	
+	local vehicle = g_currentMission.controlledVehicle
+	
+	if hlmAction == nil then
+		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PTO|Ridgemarker|GPS>"
+	end
+	
+	local spec = vehicle.spec_headlandManagement
+	if spec == nil then	
+		return "No Headland Management installed"
+	end
+	
+	if hlmAction == "Speed" then 
+		spec.UseSpeedControl = not spec.UseSpeedControl
+		return "Speedcontrol set to "..tostring(spec.UseSpeedControl)
+	end
+	
+	if hlmAction == "Diffs" then
+		spec.UseDiffLock = not spec.UseDiffLock and spec.ModVCAFound
+		return "DiffLock set to "..tostring(spec.UseDiffLock)
+	end
+	
+	if hlmAction == "Raise" then
+		spec.UseRaiseImplement = not spec.UseRaiseImplement
+		return "RaiseImplement set to "..tostring(spec.UseRaiseImplement)
+	end
+	
+	if hlmAction == "Plow" then
+		spec.UseTurnPlow = not spec.UseTurnPlow
+		return "TurnPlow set to "..tostring(spec.UseTurnPlow)
+	end
+	
+	if hlmAction == "PTO" then
+		spec.UseStopPTO = not spec.UseStopPTO
+		return "PTO set to "..tostring(spec.UseStopPTO)
+	end
+	
+	if hlmAction == "Ridgemarker" then
+		spec.UseRidgeMarker = not spec.UseRidgeMarker
+		return "RidgeMarker set to "..tostring(spec.UseRidgeMarker)
+	end
+	
+	if hlmAction == "GPS" then
+		spec.UseGPS = not spec.UseGPS and (spec.ModGuidanceSteeringFound or spec.ModVCAFound)
+		return "GPS is set to "..tostring(spec.UseGPS)
+	end
+end	
+
 
 function headlandManagement.prerequisitesPresent(specializations)
   return true
@@ -48,8 +99,9 @@ function headlandManagement:onLoad(savegame)
 	spec.Action = {}
 	spec.Action[0] =false
 	
-	spec.ModSpeedControlFound = false
 	spec.UseSpeedControl = true
+	spec.ModSpeedControlFound = false
+	spec.UseModSpeedControl = true
 	
 	spec.UseRaiseImplement = true
 	spec.ImplementStatusTable = {}
@@ -61,10 +113,10 @@ function headlandManagement:onLoad(savegame)
 	spec.UseRidgeMarker = true
 	spec.RidgeMarkerStatus = 0
 	
+	spec.UseGPS = true
 	spec.ModGuidanceSteeringFound = false
 	spec.UseGuidanceSteering = true	
 	spec.GSStatus = false
-	
 	spec.ModVCAFound = false
 	spec.UseVCA = true
 	spec.VCAStatus = false
@@ -72,7 +124,6 @@ function headlandManagement:onLoad(savegame)
 	spec.UseDiffLock = true
 	spec.DiffStateF = false
 	spec.DiffStateB = false
-	
 end
 
 function headlandManagement:onPostLoad(savegame)
@@ -204,6 +255,13 @@ function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
 	if self:getIsActive() and spec.IsActive and spec.ActStep<spec.MaxStep then
 		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then		
+
+			-- Set management actions
+			spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
+			spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
+			spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
+			spec.Action[headlandManagement.STOPGPS] = (spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering) or (spec.ModVCAFound and spec.UseVCA)	
+			
 			-- Activation
 			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
 			if spec.ActStep == headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, true); end
