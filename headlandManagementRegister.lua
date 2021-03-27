@@ -15,6 +15,7 @@ if g_specializationManager:getSpecializationByName("headlandManagement") == nil 
     
     if
 			typeName ~= "woodTruck"
+		and	typeName ~= "baseDrivable"
 		and	typeName ~= "FBM19_UnimogU1X00.unimogU1600"
 		and	typeName ~= "drivableMixerWagon"
 		and	typeName ~= "teleHandler"
