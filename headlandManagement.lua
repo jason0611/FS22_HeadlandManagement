@@ -210,7 +210,7 @@ function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.IsActive = streamReadBool(streamId)
 			spec.UseSpeedControl = streamReadBool(streamId)
 			spec.UseRaiseImplement = streamReadBool(streamId)
-			spec.UseStopPTO = streamReadool(streamId)
+			spec.UseStopPTO = streamReadBool(streamId)
 			spec.UseGuidanceSteering = streamReadBool(streamId)
 			spec.UseTurnPlow = streamReadBool(streamId)
 		end;
