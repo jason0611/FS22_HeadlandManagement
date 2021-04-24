@@ -7,6 +7,8 @@
 -- Console-Commands
 --
 
+source(g_currentModDirectory.."tools/gmsDebug.lua")
+
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
 
