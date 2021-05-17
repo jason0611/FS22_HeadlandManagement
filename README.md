@@ -17,5 +17,6 @@ Bereits umgesetzt:
 Noch in Planung:
 - GUI zur Konfigurion
 - Eingeblendetes HUD-Symbol bei aktivem Vorgewendemanagement
+- Warnton bei aktiviertem Vorgewendemanagement
 - Ggf. Realisierung des Vorgewendemanagements als Konfiguration
 
