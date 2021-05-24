@@ -2,12 +2,14 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.1.1.2
+-- Version 0.1.2.0
 -- 
--- Console-Commands
+-- Beep if active
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
+GMSDebug:init(g_currentModName, true)
+GMSDebug:enableConsoleCommands(true)
 
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
@@ -19,13 +21,16 @@ headlandManagement.STOPGPS = 4
 
 headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
+headlandManagement.BEEPSOUND = createSample("HLMBEEP")
+loadSample(headlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
+
 addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
 function headlandManagement:toggleAction(hlmAction)
 	
 	local vehicle = g_currentMission.controlledVehicle
 	
 	if hlmAction == nil then
-		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PTO|Ridgemarker|GPS>"
+		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PTO|Ridgemarker|GPS|Beep>"
 	end
 	
 	local spec = vehicle.spec_headlandManagement
@@ -67,6 +72,11 @@ function headlandManagement:toggleAction(hlmAction)
 		spec.UseGPS = not spec.UseGPS and (spec.ModGuidanceSteeringFound or spec.ModVCAFound)
 		return "GPS is set to "..tostring(spec.UseGPS)
 	end
+	
+	if hlmAction == "Beep" then
+		spec.Beep = not spec.Beep
+		return "Beep is set to "..tostring(spec.Beep)
+	end
 end	
 
 
@@ -90,6 +100,9 @@ end
 function headlandManagement:onLoad(savegame)
 	local spec = self.spec_headlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
+	
+	spec.timer = 0
+	spec.Beep = true
 	
 	spec.NormSpeed = 20
 	spec.TurnSpeed = 5
@@ -150,6 +163,7 @@ function headlandManagement:onPostLoad(savegame)
 		local xmlFile = savegame.xmlFile
 		local key = savegame.key .. ".headlandManagement"
 	
+		spec.Beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.Beep)
 		spec.TurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.TurnSpeed)
 		spec.IsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.IsActive)
 		spec.UseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.UseSpeedControl)
@@ -171,6 +185,7 @@ end
 
 function headlandManagement:saveToXMLFile(xmlFile, key)
 	local spec = self.spec_headlandManagement
+	setXMLBool(xmlFile, key.."#beep", spec.Beep)
 	setXMLFloat(xmlFile, key.."#turnSpeed", spec.TurnSpeed)
 	setXMLBool(xmlFile, key.."#isActive", spec.IsActive)
 	setXMLBool(xmlFile, key.."#useSpeedControl", spec.UseSpeedControl)
@@ -183,6 +198,7 @@ end
 
 function headlandManagement:onReadStream(streamId, connection)
 	local spec = self.spec_headlandManagement
+	spec.Beep = streamReadBool(streamId)
 	spec.TurnSpeed = streamReadFloat32(streamId)
 	spec.IsActive = streamReadBool(streamId)
 	spec.UseSpeedControl = streamReadBool(streamId)
@@ -194,6 +210,7 @@ end
 
 function headlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_headlandManagement
+	streamWriteBool(stramId, spec.Beep)
 	streamWriteFloat32(streamId, spec.TurnSpeed)
 	streamWriteBool(streamId, spec.IsActive)
 	streamWriteBool(streamId, spec.UseSpeedControl)
@@ -207,6 +224,7 @@ function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 	if not connection:getIsServer() then
 		local spec = self.spec_headlandManagement
 		if streamReadBool(streamId) then
+			spec.Beep = streamReadBool(streamId)
 			spec.TurnSpeed = streamReadFloat32(streamId)
 			spec.ActStep = streamReadInt8(streamId)
 			spec.IsActive = streamReadBool(streamId)
@@ -223,6 +241,7 @@ function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
 		local spec = self.spec_headlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
+			streamWriteBool(streamId, spec.Bool)
 			streamWriteFloat32(streamId, spec.TurnSpeed)
 			streamWriteInt8(streamId, spec.ActStep)
 			streamWriteBool(streamId, spec.IsActive)
@@ -261,9 +280,17 @@ end
 
 function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
+	if self:getIsActive() and spec.IsActive and not headlandManagement.isDedi and spec.Beep then
+		spec.timer = spec.timer + dt
+		if spec.timer > 2000 then 
+			playSample(headlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
+			spec.timer = 0
+		end	
+	else
+		spec.timer = 0
+	end
 	if self:getIsActive() and spec.IsActive and spec.ActStep<spec.MaxStep then
-		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then		
-
+		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then
 			-- Set management actions
 			spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
 			spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock

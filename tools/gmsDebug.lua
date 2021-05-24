@@ -1,6 +1,8 @@
 --
 -- Glowins Modschmiede: Debug-Tool
--- V0.9.3
+-- Author: Jason06 / Glowins Mod-Schmiede
+-- V1.1.0
+--
 
 GMSDebug = {}
 GMSDebug.modName = "Unknown Mod"
@@ -21,7 +23,7 @@ end
 
 function GMSDebug:print(text)
 	if not GMSDebug.state then return; end
-	print(GMSDebug.modName.." :: "..text)
+	print(GMSDebug.modName.." :: "..tostring(text))
 end
 
 function GMSDebug:print_r(table)
@@ -29,6 +31,13 @@ function GMSDebug:print_r(table)
 	GMSDebug:print("BEGIN OF "..tostring(table).." =================")
 	print_r(table)
 	GMSDebug:print("END OF "..tostring(table).." =================")
+end
+
+function GMSDebug:render(text, pos)
+	if not GMSDebug.state then return; end
+	if pos == nil then pos = 0; end
+	setTextAlignment(RenderText.ALIGN_LEFT)
+	renderText(0, 0.95 - pos * 0.05, 0.03, "GMSDebug: "..text)
 end
 
 function GMSDebug:toggleDebug()
@@ -53,3 +62,6 @@ function dbgprint_r(table)
 	GMSDebug:print_r(table)
 end
 
+function dbgrender(text, pos)
+	GMSDebug:render(tostring(text), pos)
+end
