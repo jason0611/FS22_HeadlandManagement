@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.1.2.0
+-- Version 0.1.2.1
 -- 
 -- Beep if active
 --
@@ -241,7 +241,7 @@ function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
 		local spec = self.spec_headlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
-			streamWriteBool(streamId, spec.Bool)
+			streamWriteBool(streamId, spec.Beep)
 			streamWriteFloat32(streamId, spec.TurnSpeed)
 			streamWriteInt8(streamId, spec.ActStep)
 			streamWriteBool(streamId, spec.IsActive)
