@@ -210,7 +210,7 @@ end
 
 function headlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_headlandManagement
-	streamWriteBool(stramId, spec.Beep)
+	streamWriteBool(streamId, spec.Beep)
 	streamWriteFloat32(streamId, spec.TurnSpeed)
 	streamWriteBool(streamId, spec.IsActive)
 	streamWriteBool(streamId, spec.UseSpeedControl)
