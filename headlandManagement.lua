@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.0.0
+-- Version 0.2.1.1
 -- 
 -- Symbol on GUI
 --
@@ -324,12 +324,13 @@ function headlandManagement:onDraw(dt)
 	if self:getIsActive() and spec.IsActive then 
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
 	 
-		local scale = g_gameSettings:getValue("uiScale")
-    	local x = 1 - 0.064 * scale - (0.04 * (scale - 0.5))
-    	local y = 0.145 * scale - (0.08 * (scale - 0.5))
-    	local w = 0.01 * scale
-    	local h = w * g_screenAspectRatio
-
+		local scale = g_gameSettings.uiScale
+		
+		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.fuelGaugeRadiusX * 0.70
+		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY
+		local w = 0.015 * scale
+		local h = w * g_screenAspectRatio
+		
 		renderOverlay(headlandManagement.guiIcon, x, y, w, h)
 	end
 end
