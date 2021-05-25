@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.1.0
+-- V1.1.1
 --
 
 GMSDebug = {}
@@ -41,7 +41,7 @@ function GMSDebug:render(text, pos)
 end
 
 function GMSDebug:toggleDebug()
-	GMSDebug.state = not GMSDebug.modState
+	GMSDebug.state = not GMSDebug.state
 	print("GMSDebug: New state is "..tostring(GMSDebug.state))
 end
 
