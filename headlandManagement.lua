@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.1.2.1
+-- Version 0.2.0.0
 -- 
--- Beep if active
+-- Symbol on GUI
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -23,6 +23,8 @@ headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 headlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(headlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
+
+headlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."hlm_gui.dds")
 
 addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
 function headlandManagement:toggleAction(hlmAction)
@@ -318,8 +320,17 @@ end
 
 function headlandManagement:onDraw(dt)
 	local spec = self.spec_headlandManagement
-	if spec.IsActive then 
+
+	if self:getIsActive() and spec.IsActive then 
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
+	 
+		local scale = g_gameSettings:getValue("uiScale")
+    	local x = 1 - 0.064 * scale - (0.04 * (scale - 0.5))
+    	local y = 0.145 * scale - (0.08 * (scale - 0.5))
+    	local w = 0.01 * scale
+    	local h = w * g_screenAspectRatio
+
+		renderOverlay(headlandManagement.guiIcon, x, y, w, h)
 	end
 end
 	
