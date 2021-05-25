@@ -24,7 +24,7 @@ headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 headlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(headlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
-headlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."hlm_gui.dds")
+headlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 
 addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
 function headlandManagement:toggleAction(hlmAction)
