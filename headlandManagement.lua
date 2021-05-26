@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.1.2
+-- Version 0.2.1.3
 -- 
 -- Symbol on GUI
 --
@@ -270,6 +270,8 @@ end
 
 function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
+	dbgprint("TOGGLESTATE : spec:")
+	dbgprint_r(spec)
 	-- anschalten nur wenn inaktiv
 	if not spec.IsActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.IsActive = true
@@ -342,16 +344,20 @@ function headlandManagement:reduceSpeed(self, enable)
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
 		if spec.UseSpeedControl and spec.ModSpeedControlFound then
+			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed), true, false, false)
 		else
 			spec.NormSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.TurnSpeed)
+			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.TurnSpeed))
 		end
 	else
 		if spec.UseSpeedControl and spec.ModSpeedControlFound then
+			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed), true, false, false)
 		else
 			self:setCruiseControlMaxSpeed(spec.NormSpeed)
+			dbgprint("redceSpeed : Set cruise control back to "..tostring(spec.NormSpeed))
 		end
 	end
 end
@@ -359,7 +365,7 @@ end
 function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO)
 	local spec = self.spec_headlandManagement
     local jointSpec = self.spec_attacherJoints
-    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnplow).." / stopPTO: "..tostring(stopPTO))
+    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / stopPTO: "..tostring(stopPTO))
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
