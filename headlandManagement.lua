@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.1.1
+-- Version 0.2.1.2
 -- 
 -- Symbol on GUI
 --
@@ -285,6 +285,7 @@ function headlandManagement:onUpdate(dt)
 	if self:getIsActive() and spec.IsActive and not headlandManagement.isDedi and spec.Beep then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
+			dbgprint("onUpdate : Beep")
 			playSample(headlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
 			spec.timer = 0
 		end	
@@ -293,6 +294,7 @@ function headlandManagement:onUpdate(dt)
 	end
 	if self:getIsActive() and spec.IsActive and spec.ActStep<spec.MaxStep then
 		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then
+			dbgprint("onUpdate : ActStep: "..tostring(spec.ActStep))
 			-- Set management actions
 			spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
 			spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
@@ -337,6 +339,7 @@ end
 	
 function headlandManagement:reduceSpeed(self, enable)	
 	local spec = self.spec_headlandManagement
+	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
 		if spec.UseSpeedControl and spec.ModSpeedControlFound then
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed), true, false, false)
@@ -356,6 +359,7 @@ end
 function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO)
 	local spec = self.spec_headlandManagement
     local jointSpec = self.spec_attacherJoints
+    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnplow).." / stopPTO: "..tostring(stopPTO))
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
@@ -447,16 +451,18 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO)
 				end
 				actImplement:setRidgeMarkerState(spec.RidgeMarkerStatus)
 			end
+			dbgprint("ridgeMarker: "..tostring(specRM.ridgeMarkerState))
 		end
 	end
 end
 
 function headlandManagement:stopGPS(self, enable)
 	local spec = self.spec_headlandManagement
-	
+	dbgprint("stopGPS : "..tostring(enable))
 -- Part 1: Guidance Steering	
 	if spec.ModGuidanceSteeringFound then
 		local gsSpec = self.spec_globalPositioningSystem
+		dbgprint("stopGPS : Guidance Steering")
 		if self.onSteeringStateChanged == nil then return; end
 		if enable then
 			local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
@@ -479,9 +485,13 @@ function headlandManagement:stopGPS(self, enable)
 -- Part 2: Vehicle Control Addon (VCA)
 	if spec.ModVCAFound and enable then
 		spec.VCAStatus = self.vcaSnapIsOn
-		if spec.VCAStatus then self:vcaSetState( "vcaSnapIsOn", false ) end
+		if spec.VCAStatus then 
+			dbgprint("stopGPS : VCA-GPS off")
+			self:vcaSetState( "vcaSnapIsOn", false ) 
+		end
 	end
 	if spec.ModVCAFound and spec.VCAStatus and not enable then
+		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
 	end
 end
@@ -495,9 +505,16 @@ function headlandManagement:disableDiffLock(self, disable)
 	if disable then
 		spec.DiffStateF = self.vcaDiffLockFront
 		spec.DiffStateB = self.vcaDiffLockBack
-		if spec.DiffStateF then self:vcaSetState("vcaDiffLockFront", false); end
-		if spec.DiffStateB then self:vcaSetState("vcaDiffLockBack", false); end
+		if spec.DiffStateF then 
+			dbgprint("disableDiffLock : DiffLockF off")
+			self:vcaSetState("vcaDiffLockFront", false)
+		end
+		if spec.DiffStateB then 
+			dbgprint("disableDiffLock : DiffLockB off")
+			self:vcaSetState("vcaDiffLockBack", false)
+		end
 	else
+		dbgprint("disableDiffLock : DiffLock reset")
 		self:vcaSetState("vcaDiffLockFront", spec.DiffStateF)
 		self:vcaSetState("vcaDiffLockBack", spec.DiffStateB)
 	end
