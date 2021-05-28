@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.1.1
+-- V1.2.0.0
 --
 
 GMSDebug = {}
@@ -14,11 +14,11 @@ function GMSDebug:init(modName, forceDbg)
 	GMSDebug.state = (forceDbg == true)
 end
 
-function GMSDebug:enableConsoleCommands(doit)
-	if not doit then return; end
-	addConsoleCommand("gmsDebug", "Glowins Mod Smithery: Toggle Debug settings", "toggleDebug", GMSDebug)
-	addConsoleCommand("gmsPrint", "Glowins Mod Smithery: Debug printing", "consolePrint", GMSDebug)
-	GMSDebug:print("Debug Console Commands added")
+function GMSDebug:enableConsoleCommands(command)
+	if command==nil then return; end
+	addConsoleCommand(command, "Glowins Mod Smithery: Toggle Debug settings", "toggleDebug", GMSDebug)
+	--addConsoleCommand("gmsPrint", "Glowins Mod Smithery: Debug printing", "consolePrint", GMSDebug)
+	GMSDebug:print("Debug Console Commands added: "..command)
 end
 
 function GMSDebug:print(text)
