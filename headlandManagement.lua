@@ -2,14 +2,14 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.1.3
+-- Version 0.2.1.4
 -- 
 -- Symbol on GUI
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
 GMSDebug:init(g_currentModName, true)
-GMSDebug:enableConsoleCommands(true)
+GMSDebug:enableConsoleCommands("hlmDebug")
 
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
