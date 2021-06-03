@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.1.4
+-- Version 0.2.2.0
 -- 
 -- Symbol on GUI
 --
@@ -10,6 +10,9 @@
 source(g_currentModDirectory.."tools/gmsDebug.lua")
 GMSDebug:init(g_currentModName, true)
 GMSDebug:enableConsoleCommands("hlmDebug")
+
+source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
+g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
@@ -264,6 +267,7 @@ function headlandManagement:onRegisterActionEvents(isActiveForInput)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHON', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHOFF', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SHOWGUI', self, headlandManagement.SHOWGUI, false, true, false, true, nil)
 		end		
 	end
 end
@@ -280,6 +284,15 @@ function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 		spec.ActStep = -spec.ActStep
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
+end
+
+function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
+	local spec = self.spec_headlandManagement
+	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
+
+	--hlmGui.target:setCallback(LicensePlates.setData, self)
+	local vehicleName = g_currentMission.controlledVehicle:getName()
+	hlmGui.target:setData(vehicleName)
 end
 
 function headlandManagement:onUpdate(dt)

@@ -3,7 +3,7 @@
 
    <author>Jason06</author>
    	
-	<version>0.2.1.4</version>
+	<version>0.2.2.0</version>
 
     <title>
 		<en>Headland Management</en>
@@ -31,11 +31,15 @@
 		<action name="HLM_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_SHOWGUI" categorie="VEHICLE" ignoreComboMask="false" />
 	</actions>
 
 	<inputBinding>	
 		<actionBinding action="HLM_TOGGLESTATE">
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_x" neutralInput="0" index="1" />
+		</actionBinding>
+		<actionBinding action="HLM_SHOWGUI">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_lctrl KEY_x" neutralInput="0" index="1" />
 		</actionBinding>
 	</inputBinding>
 </modDesc>

@@ -4,7 +4,9 @@
     	<text name="input_HLM_TOGGLESTATE" text="Vorgewende-Management: Start / Stop"/>	
     	<text name="input_HLM_SWITCHON" text="Vorgewende-Management: Start" />
     	<text name="input_HLM_SWITCHOFF" text="Vorgewende-Management: Stop" />	
+    	<text name="input_HLM_SHOWGUI" text="Vorgewende-Management: Konfiguration" />
 		<text name="text_HLM_isActive" text="Vorgewende-Management aktiviert"/>
-		<text name="input_HLM_TEST" text="Vorgewende-Management: Test auslösen" />
+		<text name="gui_title" text="Vorgewende-Management: Konfiguration für "/>
+		
 	</texts>
 </l10n>
