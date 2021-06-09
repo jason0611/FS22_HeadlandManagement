@@ -11,8 +11,8 @@
 
 		<!-- AlertMode -->
 
-		<GuiElement type="checkedOption" profile="multiTextOptionSilo" id="alarmSetting" position="0px 0px">
-			<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
+		<GuiElement type="button" profile="multiTextOptionSilo" id="alarmSetting" position="0px -10px">
+			<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle" position="-20px -20px"/>
 			<GuiElement type="text" profile="multiTextOptionText"/>
 			<GuiElement type="button" profile="multiTextOptionLeft"/>
 			<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -34,7 +34,7 @@
 			<GuiElement type="text" profile="multiTextOptionTitle" id="symbolColorTitleElement"/>
 		</GuiElement>
 
-		<!-- right page -->
+		< -- right page -->
 
 		<GuiElement type="multiTextOption" profile="multiTextOptionSilo" id="countryCodeElement" position="216px -42px">
 			<GuiElement type="button" profile="multiTextOptionLeft"/>
@@ -63,12 +63,12 @@
 			<GuiElement type="text" profile="multiTextOptionTitle" id="backgroundColorTitleElement"/>
 		</GuiElement>
 
-		<!-- footer -->
+		< -- footer -->
 
 		<GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">
 			<GuiElement type="button" profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>
 			<GuiElement type="button" profile="buttonBack" id="noButton" text="$l10n_button_back" onClick="onClickBack"/>
 		</GuiElement>
-	-->
+-->
 	</GuiElement>
 </GUI>

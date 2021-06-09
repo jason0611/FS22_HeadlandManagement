@@ -19,7 +19,7 @@ HeadlandManagementGui.CONTROLS = {
 	"sectionAlarm",
 	"alarmTitle",
 	"alarmSetting",
-	
+--[[	
 	"sectionSpeedControl",
 	"speedControlOnOffTitle",
 	"speedControlOnOffSetting",
@@ -55,6 +55,7 @@ HeadlandManagementGui.CONTROLS = {
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
 	"diffControlOnOffSetting",
+--]]
 }
 
 function HeadlandManagementGui:new()
@@ -65,18 +66,19 @@ end
 
 -- set current values
 function HeadlandManagementGui:setData(vehicleName)
+
 	self.guiTitle:setText(g_i18n:getText("gui_title")..vehicleName)
 
-	--![[
+
 	--self.sectionAlarm:setText("Hörbarer Alarm")
 	self.alarmTitle:setText("Alarmeinstellung")
 	self.alarmSetting:setTexts({
 		g_i18n:getText("Ja"),
-		g_i18n:getText("Nein")
+		g_i18n:getText("Nein"),
+		"Vielleicht"
 	})
 	--dbgprint(self.alarmSetting:setState())
 	--self.visibilityElement:setState(isVisible and 2 or 1, true)
-
 --[[
 	self.textTitleElement1:setText(g_i18n:getText("licensePlatesTextTitle1"))
 	self.textTitleElement2:setText(g_i18n:getText("licensePlatesTextTitle2"))
