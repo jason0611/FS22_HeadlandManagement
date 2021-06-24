@@ -8,8 +8,8 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true)
-GMSDebug:enableConsoleCommands("hlmDebug")
+GMSDebug:init(g_currentModName)
+GMSDebug:enableConsoleCommands()
 
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
