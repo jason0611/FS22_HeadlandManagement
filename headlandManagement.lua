@@ -522,7 +522,10 @@ function headlandManagement:stopGPS(self, enable)
 		spec.VCAStatus = self.vcaSnapIsOn
 		if spec.VCAStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
-			self:vcaSetState( "vcaSnapIsOn", false ) 
+			self:vcaSetState( "vcaLastSnapAngle", 10 )
+			self:vcaSetState( "vcaLastSnapPosX", 0 )
+			self:vcaSetState( "vcaLastSnapPosZ", 0 )
+			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
 	if spec.ModVCAFound and spec.VCAStatus and not enable then
