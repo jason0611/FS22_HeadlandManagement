@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.1.5
+-- Version 0.2.1.6
 -- 
--- Turn plow full or turn plow half configurable
+-- VCA-GPS korrigiert
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -523,15 +523,12 @@ function headlandManagement:stopGPS(self, enable)
 		if spec.VCAStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
 			self:vcaSetState( "vcaLastSnapAngle", 10 )
-			self:vcaSetState( "vcaLastSnapPosX", 0 )
-			self:vcaSetState( "vcaLastSnapPosZ", 0 )
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
 	if spec.ModVCAFound and spec.VCAStatus and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
-		self:vcaSetSnapFactor()
 	end
 end
 
