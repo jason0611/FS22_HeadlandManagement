@@ -8,7 +8,8 @@
 --
 
 HeadlandManagementGui = {}
-local HeadlandManagementGui_mt = Class(HeadlandManagementGui, YesNoDialog)
+--local HeadlandManagementGui_mt = Class(HeadlandManagementGui, YesNoDialog)
+local HeadlandManagementGui_mt = Class(HeadlandManagementGui, ScreenElement)
 
 dbgprint("HeadlandManagementGui : initializing")
 
@@ -59,7 +60,8 @@ HeadlandManagementGui.CONTROLS = {
 }
 
 function HeadlandManagementGui:new()
-	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
+	--local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
+	local gui = ScreenElement:new (nil, HeadlandManagementGui_mt)
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
 	return gui
 end
