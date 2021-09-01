@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.2.0
+-- Version 0.3.0.1
 -- 
--- Symbol on GUI
+-- GUI implementation started
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -290,9 +290,38 @@ function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 
-	--hlmGui.target:setCallback(LicensePlates.setData, self)
-	local vehicleName = g_currentMission.controlledVehicle:getName()
-	hlmGui.target:setData(vehicleName)
+	hlmGui.target:setCallback(headlandManagement.guiCallback, self)
+	hlmGui.setData(
+		spec.UseSpeedControl,
+		spec.UseModSpeedControl,
+		spec.NormSpeed,
+		spec.TurnSpeed,
+		spec.UseRaiseImplement,
+		spec.UseStopPTO,
+		spec.UseTurnPlow,
+		spec.UseRidgeMarker,
+		spec.UseGPS,
+		spec.UseGuidanceSteering,
+		spec.UseVCA,
+		spec.UseDiffLock
+	)
+end
+
+function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock)
+	local spec = self.spec_headlandManagement
+	
+	spec.UseSpeedControl = useSpeedControl
+	spec.UseModSpeedControl = useModSpeedControl
+	spec.NormSpeed = normSpeed
+	spec.TurnSpeed = turnSpeed
+	spec.UseRaiseImplement = useRaiseImplement
+	spec.UseStopPTO = useStopPTO
+	spec.UseTurnPlow = useTurnPlow
+	spec.UseRidgeMarker = useRidgeMarker
+	spec.UseGPS = useGPS
+	spec.UseGuidanceSteering = useGuidanceSteering
+	spec.UseVCA = useVCA
+	spec.UseDiffLock = useDiffLock
 end
 
 function headlandManagement:onUpdate(dt)

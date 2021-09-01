@@ -2,46 +2,39 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.2.0
+-- Version 0.3.0.1
 -- 
 -- Headlandmanagement GUI for configuration
 --
 
 HeadlandManagementGui = {}
---local HeadlandManagementGui_mt = Class(HeadlandManagementGui, YesNoDialog)
-local HeadlandManagementGui_mt = Class(HeadlandManagementGui, ScreenElement)
+local HeadlandManagementGui_mt = Class(HeadlandManagementGui, YesNoDialog)
 
 dbgprint("HeadlandManagementGui : initializing")
 
 -- reference to xml
 HeadlandManagementGui.CONTROLS = {
 	"guiTitle",
-	
 	"sectionAlarm",
 	"alarmTitle",
 	"alarmSetting",
---[[	
 	"sectionSpeedControl",
 	"speedControlOnOffTitle",
 	"speedControlOnOffSetting",
-	"speedControlUseModTitle",
-	"speedControlUseModSetting",
+	"speedControlUseSCModTitle",
+	"speedControlUseSCModSetting",
 	"speedControlNormSpeedTitle",
 	"speedControlNormSpeedSetting",
 	"speedControlTurnSpeedTitle",
 	"speedControlTurnSpeedSetting",
-	"sectionImplementControl",
 	
-	"implementControlOnOffTitle",
-	"implementControlOnOffSetting";
+	"sectionImplementControl",
 	"raiseTitle",
 	"raiseSetting",
 	"stopPtoTitle",
 	"stopPtoSetting",
 	"turnPlowTitle",
 	"turnPlowSetting",
-	"tuenPlowStepTitle",
-	"turnPlowStepSetting",
 	"ridgeMarkerTitle",
 	"ridgeMarkerSetting",
 	
@@ -56,31 +49,29 @@ HeadlandManagementGui.CONTROLS = {
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
 	"diffControlOnOffSetting",
---]]
 }
 
 function HeadlandManagementGui:new()
-	--local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
-	local gui = ScreenElement:new (nil, HeadlandManagementGui_mt)
+	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
+	
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
+	
 	return gui
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName)
-
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+	-- Titel
 	self.guiTitle:setText(g_i18n:getText("gui_title")..vehicleName)
 
-
-	--self.sectionAlarm:setText("Hörbarer Alarm")
-	self.alarmTitle:setText("Alarmeinstellung")
+	-- Hörbarer Alarm
+	self.sectionAlarm:setText("Akkustischer Hinweis")
+	self.alarmTitle:setText("Alarm")
 	self.alarmSetting:setTexts({
-		g_i18n:getText("Ja"),
-		g_i18n:getText("Nein"),
-		"Vielleicht"
+		g_i18n:getText("Ein"),
+		g_i18n:getText("Aus"),
 	})
-	--dbgprint(self.alarmSetting:setState())
-	--self.visibilityElement:setState(isVisible and 2 or 1, true)
+	self.alarmSetting:setState(beep and 1 or 2, true)
 --[[
 	self.textTitleElement1:setText(g_i18n:getText("licensePlatesTextTitle1"))
 	self.textTitleElement2:setText(g_i18n:getText("licensePlatesTextTitle2"))
@@ -132,6 +123,19 @@ end
 
 -- close gui and send new values to callback
 function HeadlandManagementGui:onClickOk()
+	local UseSpeedControl
+	local UseModSpeedControl
+	local NormSpeed
+	local TurnSpeed
+	local UseRaiseImplement
+	local UseStopPTO
+	local UseTurnPlow
+	local UseRidgeMarker
+	local UseGPS
+	local UseGuidanceSteering
+	local UseVCA
+	local UseDiffLock
+	local beep = self.alarmSetting:getIsChecked()
 	--[[
 	local isVisible = self.visibilityElement:getIsChecked()
 	local text = self.textElement:getText()
@@ -141,7 +145,7 @@ function HeadlandManagementGui:onClickOk()
 	local useFormat46 = self.smallPlateFormatElement:getIsChecked()
 	--]]
 	self:close()
-	self.callbackFunc(self.target, isVisible, text, symbolColor, backgroundColor, countryCode, useFormat46)
+	self.callbackFunc(useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 end
 
 -- just close gui
