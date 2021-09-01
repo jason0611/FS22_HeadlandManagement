@@ -289,9 +289,10 @@ end
 function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
-
+	
 	hlmGui.target:setCallback(headlandManagement.guiCallback, self)
-	hlmGui.setData(
+	hlmGui.target:setData(
+		self:getFullName(),
 		spec.UseSpeedControl,
 		spec.UseModSpeedControl,
 		spec.NormSpeed,
@@ -303,13 +304,13 @@ function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.UseGPS,
 		spec.UseGuidanceSteering,
 		spec.UseVCA,
-		spec.UseDiffLock
+		spec.UseDiffLock,
+		spec.Beep
 	)
 end
 
-function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock)
+function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 	local spec = self.spec_headlandManagement
-	
 	spec.UseSpeedControl = useSpeedControl
 	spec.UseModSpeedControl = useModSpeedControl
 	spec.NormSpeed = normSpeed
@@ -322,6 +323,7 @@ function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, nor
 	spec.UseGuidanceSteering = useGuidanceSteering
 	spec.UseVCA = useVCA
 	spec.UseDiffLock = useDiffLock
+	spec.Beep = beep
 end
 
 function headlandManagement:onUpdate(dt)

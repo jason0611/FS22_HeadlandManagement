@@ -53,25 +53,54 @@ HeadlandManagementGui.CONTROLS = {
 
 function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
-	
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
-	
 	return gui
 end
 
 -- set current values
 function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 	-- Titel
-	self.guiTitle:setText(g_i18n:getText("gui_title")..vehicleName)
+	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
 
 	-- Hörbarer Alarm
-	self.sectionAlarm:setText("Akkustischer Hinweis")
-	self.alarmTitle:setText("Alarm")
+	--self.sectionAlarm:setText("Akustischer Hinweis")
+	self.alarmTitle:setText("Hinweiston")
 	self.alarmSetting:setTexts({
-		g_i18n:getText("Ein"),
-		g_i18n:getText("Aus"),
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
 	})
-	self.alarmSetting:setState(beep and 1 or 2, true)
+	self.alarmSetting:setState(beep and 1 or 2)
+
+	-- SpeedControl
+	self.speedControlOnOffTitle:setText("SpeedControl nutzen")
+	self.speedControlOnOffSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.speedControlOnOffSetting:setState(useSpeedControl and 1 or 2)
+	
+	self.speedControlUseSCModTitle:setText("Mod SpeedControl nutzen")
+	self.speedControlUseSCModSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.speedControlUseSCModSetting:setState(useModSpeedControl and 1 or 2)
+	
+	self.speedControlNormSpeedTitle:setText("Geschwindigkeit normal")
+	self.speedControlNormSpeedSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.speedControlNormSpeedSetting:setState(normSpeed and 1 or 2)
+	
+	self.speedControlTurnSpeedTitle:setText("Geschwindigkeit reduziert")
+	self.speedControlTurnSpeedSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.speedControlTurnSpeedSetting:setState(turnSpeed and 1 or 2)
+	
+
 --[[
 	self.textTitleElement1:setText(g_i18n:getText("licensePlatesTextTitle1"))
 	self.textTitleElement2:setText(g_i18n:getText("licensePlatesTextTitle2"))
@@ -135,7 +164,8 @@ function HeadlandManagementGui:onClickOk()
 	local UseGuidanceSteering
 	local UseVCA
 	local UseDiffLock
-	local beep = self.alarmSetting:getIsChecked()
+	local beep = self.alarmSetting:getState() == 1
+	--local beep = self:getIsChecked()
 	--[[
 	local isVisible = self.visibilityElement:getIsChecked()
 	local text = self.textElement:getText()
@@ -145,7 +175,7 @@ function HeadlandManagementGui:onClickOk()
 	local useFormat46 = self.smallPlateFormatElement:getIsChecked()
 	--]]
 	self:close()
-	self.callbackFunc(useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 end
 
 -- just close gui
