@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.3.0.2
+-- Version 0.3.0.3
 -- 
 -- GUI implementation started
 --
@@ -35,7 +35,7 @@ function headlandManagement:toggleAction(hlmAction)
 	local vehicle = g_currentMission.controlledVehicle
 	
 	if hlmAction == nil then
-		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PTO|Ridgemarker|GPS|Beep>"
+		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PTO|Ridgemarker|GPS|Beep|Status>"
 	end
 	
 	local spec = vehicle.spec_headlandManagement
@@ -86,6 +86,11 @@ function headlandManagement:toggleAction(hlmAction)
 	if hlmAction == "Beep" then
 		spec.Beep = not spec.Beep
 		return "Beep is set to "..tostring(spec.Beep)
+	end
+	
+	if hlmAction == "Status" then
+		print_r(spec)
+		return "done"
 	end
 end	
 

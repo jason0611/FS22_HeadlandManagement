@@ -81,7 +81,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		self.speedControlTurnSpeedTitle:setText("Geschwindigkeit im Vorgewende")
 		local speedTable = {}
 		for n=1,40 do
-			speedTable[n] = tostring(string.format("%", n))
+			speedTable[n] = tostring(n)
 		end
 		self.speedControlTurnSpeedSetting:setTexts(speedTable)
 		self.speedControlTurnSpeedSetting:setState(turnSpeed or 5)
@@ -118,7 +118,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.turnPlowSetting:setTexts({
 		g_i18n:getText("hlmgui_plowFull"),
 		g_i18n:getText("hlmgui_plowCenter"),
-		g_il8n:getText("hlmgui_plowOff")
+		g_i18n:getText("hlmgui_plowOff")
 	})
 	local plowState
 	if useTurnPlow and not useCenterPlow then plowState = 1; end
@@ -179,7 +179,7 @@ function HeadlandManagementGui:onClickOk()
 	local UseSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	local UseModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
 	local TurnSpeed = self.speedControlTurnSpeedSetting:getState() == 1
-	local UseRaiseImplement = self.raiseSetting:getSTate() == 1
+	local UseRaiseImplement = self.raiseSetting:getState() == 1
 	local UseStopPTO = self.stopPtoSetting:getState() == 1
 	local plowState = self.turnPlowSetting:getState()
 	local useTurnPlow = (plowState < 3)
