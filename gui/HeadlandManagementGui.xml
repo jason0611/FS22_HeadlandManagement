@@ -10,16 +10,8 @@
 			<GuiElement type="text" profile="dialogHeaderText" textAutoSize="true" id="guiTitle"/>
 		</GuiElement>
 
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" flowMargin="10px 10px 10px 10px" alignmentY="top" flowDirection="vertical" numFlows="4" fitFlowToElements="true" position="10px -100px" size="1420px 880px">
-			<!-- AlertMode -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="alarmSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
-			</GuiElement>
-			<!-- SpeedControl -->
+		<!-- SpeedControl -->
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" flowMargin="10px 10px 10px 10px" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="10px -100px" size="1420px 880px">
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="speedControlOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -34,13 +26,6 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlUseSCModTitle"/>
 			</GuiElement>	
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="speedControlNormSpeedSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlNormSpeedTitle"/>
-			</GuiElement>	
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="speedControlTurnSpeedSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -49,52 +34,87 @@
 				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlTurnSpeedTitle"/>
 			</GuiElement>	
 		</GuiElement>
-
-<!--
-		<GuiElement type="text" profile="multiTextOptionTitle" id="textTitleElement1" position="32px -128px"/>
-		<GuiElement type="text" profile="multiTextOptionTitle" id="textTitleElement2" position="32px -148px"/>
-		<GuiElement type="text" profile="multiTextOptionTitle" id="textTitleElement3" position="32px -168px"/>
-
-		<GuiElement type="textInput" profile="chatTextInput" id="textElement" position="-216px -190px" size="408px 48px" screenAlign="topCenter" positionOrigin="topCenter" onTextChanged="onTextChanged"/>
-
-		<GuiElement type="multiTextOption" profile="multiTextOptionSilo" id="symbolColorElement" position="-216px -280px">
-			<GuiElement type="button" profile="multiTextOptionLeft"/>
-			<GuiElement type="button" profile="multiTextOptionRight"/>
-			<GuiElement type="text" profile="multiTextOptionText"/>
-			<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-			<GuiElement type="text" profile="multiTextOptionTitle" id="symbolColorTitleElement"/>
-		</GuiElement>
-
-		<GuiElement type="multiTextOption" profile="multiTextOptionSilo" id="countryCodeElement" position="216px -42px">
-			<GuiElement type="button" profile="multiTextOptionLeft"/>
-			<GuiElement type="button" profile="multiTextOptionRight"/>
-			<GuiElement type="text" profile="multiTextOptionText"/>
-			<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-			<GuiElement type="text" profile="multiTextOptionTitle" id="countryCodeTitleElement"/>
-		</GuiElement>
-
-		<GuiElement type="text" profile="multiTextOptionTitle" id="smallPlateFormatTitleElement1" position="464px -128px"/>
-		<GuiElement type="text" profile="multiTextOptionTitle" id="smallPlateFormatTitleElement2" position="464px -148px"/>
-		<GuiElement type="text" profile="multiTextOptionTitle" id="smallPlateFormatTitleElement3" position="464px -168px"/>
-
-		<GuiElement type="checkedOption" profile="multiTextOptionSilo" id="smallPlateFormatElement" position="216px -190px">
-			<GuiElement type="button" profile="multiTextOptionLeft"/>
-			<GuiElement type="button" profile="multiTextOptionRight"/>
-			<GuiElement type="text" profile="multiTextOptionText"/>
-			<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-		</GuiElement>
-
-		<GuiElement type="multiTextOption" profile="multiTextOptionSilo" id="backgroundColorElement" position="216px -280px">
-			<GuiElement type="button" profile="multiTextOptionLeft"/>
-			<GuiElement type="button" profile="multiTextOptionRight"/>
-			<GuiElement type="text" profile="multiTextOptionText"/>
-			<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-			<GuiElement type="text" profile="multiTextOptionTitle" id="backgroundColorTitleElement"/>
-		</GuiElement>
--->
 		
-		<!-- footer -->
+		<!-- AlertMode -->
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" flowMargin="10px 10px 10px 10px" alignmentY="bottom" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="10px -100px" size="1420px 880px">
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="alarmSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
+			</GuiElement>
+		</GuiElement>
 
+		<!-- ImplementControl -->
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" flowMargin="10px 10px 10px 10px" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="10px -100px" size="1420px 880px">
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="raiseSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="raiseTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="stopPtoSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="stopPtoTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="turnPlowSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="turnPlowTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="ridgeMarkerSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="ridgeMarkerTitle"/>
+			</GuiElement>
+		</GuiElement>
+		
+		<!-- GPS control -->
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="right" flowMargin="10px 10px 10px 10px" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="10px -100px" size="1420px 880px">
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="gpsOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsOnOffTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="gpsUseGSSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsUseGSTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="gpsUseVCASetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsUseVCATitle"/>
+			</GuiElement>	
+		</GuiElement>
+		
+		<!-- Diff control -->
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="right" flowMargin="10px 10px 10px 10px" alignmentY="bottom" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="10px -100px" size="1420px 880px">
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 20px 10px 20px" id="diffControlOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="diffControlOnOffTitle"/>
+			</GuiElement>
+		</GuiElement>
+	
+		<!-- footer -->
 		<GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">
 			<GuiElement type="button" profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>
 			<GuiElement type="button" profile="buttonBack" id="noButton" text="$l10n_button_back" onClick="onClickBack"/>

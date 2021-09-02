@@ -15,19 +15,19 @@ dbgprint("HeadlandManagementGui : initializing")
 -- reference to xml
 HeadlandManagementGui.CONTROLS = {
 	"guiTitle",
-	"sectionAlarm",
-	"alarmTitle",
-	"alarmSetting",
+	
 	"sectionSpeedControl",
 	"speedControlOnOffTitle",
 	"speedControlOnOffSetting",
 	"speedControlUseSCModTitle",
 	"speedControlUseSCModSetting",
-	"speedControlNormSpeedTitle",
-	"speedControlNormSpeedSetting",
 	"speedControlTurnSpeedTitle",
 	"speedControlTurnSpeedSetting",
-	
+
+	"sectionAlarm",
+	"alarmTitle",
+	"alarmSetting",
+		
 	"sectionImplementControl",
 	"raiseTitle",
 	"raiseSetting",
@@ -58,18 +58,9 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 	-- Titel
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
-
-	-- Hörbarer Alarm
-	--self.sectionAlarm:setText("Akustischer Hinweis")
-	self.alarmTitle:setText("Hinweiston")
-	self.alarmSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
-	})
-	self.alarmSetting:setState(beep and 1 or 2)
 
 	-- SpeedControl
 	self.speedControlOnOffTitle:setText("SpeedControl nutzen")
@@ -86,58 +77,91 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})
 	self.speedControlUseSCModSetting:setState(useModSpeedControl and 1 or 2)
 	
-	self.speedControlNormSpeedTitle:setText("Geschwindigkeit normal")
-	self.speedControlNormSpeedSetting:setTexts({
+	if not useModSpeedControl then
+		self.speedControlTurnSpeedTitle:setText("Geschwindigkeit im Vorgewende")
+		local speedTable = {}
+		for n=1,40 do
+			speedTable[n] = tostring(string.format("%", n))
+		end
+		self.speedControlTurnSpeedSetting:setTexts(speedTable)
+		self.speedControlTurnSpeedSetting:setState(turnSpeed or 5)
+	else	
+		self.speedControlTurnSpeedTitle:setText("Tempomatstufe im Vorgewende")
+		self.speedControlTurnSpeedSetting:setTexts({"1","2","3"})
+		self.speedControlTurnSpeedSetting:setState(turnSpeed or 1)
+	end
+
+	-- AlertMode
+	self.alarmTitle:setText("Akustischer Hinweis")
+	self.alarmSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
 	})
-	self.speedControlNormSpeedSetting:setState(normSpeed and 1 or 2)
+	self.alarmSetting:setState(beep and 1 or 2)
 	
-	self.speedControlTurnSpeedTitle:setText("Geschwindigkeit reduziert")
-	self.speedControlTurnSpeedSetting:setTexts({
+	-- Implement control
+	self.raiseTitle:setText("Anbaugeräte ausheben")
+	self.raiseSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
 	})
-	self.speedControlTurnSpeedSetting:setState(turnSpeed and 1 or 2)
+	self.raiseSetting:setState(useRaiseImplement and 1 or 2)
 	
-
---[[
-	self.textTitleElement1:setText(g_i18n:getText("licensePlatesTextTitle1"))
-	self.textTitleElement2:setText(g_i18n:getText("licensePlatesTextTitle2"))
-	self.textTitleElement3:setText(g_i18n:getText("licensePlatesTextTitle3"))
-	self.textElement:setText(text)
-
-	self.symbolColorTitleElement:setText(g_i18n:getText("licensePlatesSymbolColorTitle"))
-	self.symbolColorElement:setTexts({
-		g_i18n:getText("licensePlatesSymbolColorBlack"),
-		g_i18n:getText("licensePlatesSymbolColorGreen"),
-		g_i18n:getText("licensePlatesSymbolColorRed")
+	self.stopPtoTitle:setText("Zapfwelle anhalten")
+	self.stopPtoSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
 	})
-	self.symbolColorElement:setState(symbolColor)
-
-	self.backgroundColorTitleElement:setText(g_i18n:getText("licensePlatesBackgroundColorTitle"))
-	self.backgroundColorElement:setTexts({
-		g_i18n:getText("licensePlatesBackgroundColorWhite"),
-		g_i18n:getText("licensePlatesBackgroundColorYellow"),
-		g_i18n:getText("licensePlatesBackgroundColorRed"),
-		g_i18n:getText("licensePlatesBackgroundColorGreen")
+	self.stopPtoSetting:setState(useStopPTO and 1 or 2)
+	
+	self.turnPlowTitle:setText("Pflug drehen")
+	self.turnPlowSetting:setTexts({
+		g_i18n:getText("hlmgui_plowFull"),
+		g_i18n:getText("hlmgui_plowCenter"),
+		g_il8n:getText("hlmgui_plowOff")
 	})
-	self.backgroundColorElement:setState(backgroundColor)
-
-	self.countryCodeTitleElement:setText(g_i18n:getText("licensePlatesCountryCodeTitle"))
-	-- works because gui uses only number as index
-	self.countryCodeElement:setTexts(LicensePlates.COUNTRY_CODES)
-	self.countryCodeElement:setState(countryCode)
-
-	self.smallPlateFormatTitleElement1:setText(g_i18n:getText("licensePlatesSmallPlateFormatTitle1"))
-	self.smallPlateFormatTitleElement2:setText(g_i18n:getText("licensePlatesSmallPlateFormatTitle2"))
-	self.smallPlateFormatTitleElement3:setText(g_i18n:getText("licensePlatesSmallPlateFormatTitle3"))
-	self.smallPlateFormatElement:setTexts({
-		"5-5",
-		"4-6"
+	local plowState
+	if useTurnPlow and not useCenterPlow then plowState = 1; end
+	if useTurnPlow and useCenterPlow then plowState = 2; end
+	if not useTurnPlow then plowState = 3; end
+	self.turnPlowSetting:setState(plowState)
+	
+	self.ridgeMarkerTitle:setText("Spurreißer umschalten")
+	self.ridgeMarkerSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
 	})
-	self.smallPlateFormatElement:setState(useFormat46 and 2 or 1, true)
-	--]]
+	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
+	
+	-- GPS control
+	self.gpsOnOffTitle:setText("GPS-Spurführung pausieren")
+	self.gpsOnOffSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
+		
+	self.gpsUseGSTitle:setText("Guidance Steering ansteuern")
+	self.gpsUseGSSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.gpsUseGSSetting:setState(useGuidanceSteering and 1 or 2)
+	
+	self.gpsUseVCATitle:setText("VCA ansteuern")
+	self.gpsUseVCASetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.gpsUseVCASetting:setState(useVCA and 1 or 2)
+
+	-- Diff control
+	self.diffControlOnOffTitle:setText("Differentialsperren lösen")
+	self.diffControlOnOffSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
 end
 
 -- trim text if necessary
@@ -152,30 +176,23 @@ end
 
 -- close gui and send new values to callback
 function HeadlandManagementGui:onClickOk()
-	local UseSpeedControl
-	local UseModSpeedControl
-	local NormSpeed
-	local TurnSpeed
-	local UseRaiseImplement
-	local UseStopPTO
-	local UseTurnPlow
-	local UseRidgeMarker
-	local UseGPS
-	local UseGuidanceSteering
-	local UseVCA
-	local UseDiffLock
+	local UseSpeedControl = self.speedControlOnOffSetting:getState() == 1
+	local UseModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
+	local TurnSpeed = self.speedControlTurnSpeedSetting:getState() == 1
+	local UseRaiseImplement = self.raiseSetting:getSTate() == 1
+	local UseStopPTO = self.stopPtoSetting:getState() == 1
+	local plowState = self.turnPlowSetting:getState()
+	local useTurnPlow = (plowState < 3)
+	local useCenterPlow = (plowState == 2)
+	local UseRidgeMarker = self.ridgeMarkerSetting:getState() == 1
+	local UseGPS = self.gpsOnOffSetting:getState() == 1
+	local UseGuidanceSteering = self.gpsUseGSSetting:getState() == 1
+	local UseVCA = self.gpsUseVCASetting:getState() == 1
+	local UseDiffLock = self.diffControlOnOffSetting:getState() == 1
 	local beep = self.alarmSetting:getState() == 1
-	--local beep = self:getIsChecked()
-	--[[
-	local isVisible = self.visibilityElement:getIsChecked()
-	local text = self.textElement:getText()
-	local symbolColor = self.symbolColorElement:getState()
-	local backgroundColor = self.backgroundColorElement:getState()
-	local countryCode = self.countryCodeElement:getState()
-	local useFormat46 = self.smallPlateFormatElement:getIsChecked()
-	--]]
+	
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, normSpeed, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 end
 
 -- just close gui
