@@ -9,5 +9,8 @@
 		<text name="hlmgui_title" text="Vorgewende-Management: Konfiguration für "/>
 		<text name="hlmgui_on" text="An"/>
 		<text name="hlmgui_off" text="Aus"/>
+		<text name="hlmgui_plowFull" text="sofort drehen"/>
+		<text name="hlmgui_plowCenter" text="in zwei Schritten drehen"/>
+		<text name="hlmgui_plowOff" text="nicht drehen"/>
 	</texts>
 </l10n>

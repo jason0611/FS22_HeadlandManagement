@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.3.0.1
+-- Version 0.4.0.0
 -- 
 -- Headlandmanagement GUI for configuration
 --
@@ -21,8 +21,10 @@ HeadlandManagementGui.CONTROLS = {
 	"speedControlOnOffSetting",
 	"speedControlUseSCModTitle",
 	"speedControlUseSCModSetting",
-	"speedControlTurnSpeedTitle",
-	"speedControlTurnSpeedSetting",
+	"speedControlTurnSpeedTitle1",
+	"speedControlTurnSpeedSetting1",
+	"speedControlTurnSpeedTitle2",
+	"speedControlTurnSpeedSetting2",
 
 	"sectionAlarm",
 	"alarmTitle",
@@ -58,7 +60,12 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+	
+	self.modSpeedControlFound = modSpeedControlFound
+	self.modGuidanceSteeringFound = modGuidanceSteeringFound
+	self.modVCAFound = modVCAFound
+	
 	-- Titel
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
 
@@ -75,21 +82,22 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
 	})
-	self.speedControlUseSCModSetting:setState(useModSpeedControl and 1 or 2)
+	self.speedControlUseSCModSetting:setState(useModSpeedControl and modSpeedControlFound and 1 or 2)
+	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not modSpeedControlFound)
 	
-	if not useModSpeedControl then
-		self.speedControlTurnSpeedTitle:setText("Geschwindigkeit im Vorgewende")
-		local speedTable = {}
-		for n=1,40 do
-			speedTable[n] = tostring(n)
-		end
-		self.speedControlTurnSpeedSetting:setTexts(speedTable)
-		self.speedControlTurnSpeedSetting:setState(turnSpeed or 5)
-	else	
-		self.speedControlTurnSpeedTitle:setText("Tempomatstufe im Vorgewende")
-		self.speedControlTurnSpeedSetting:setTexts({"1","2","3"})
-		self.speedControlTurnSpeedSetting:setState(turnSpeed or 1)
+	self.speedControlTurnSpeedTitle1:setText("Geschwindigkeit im Vorgewende")
+	local speedTable = {}
+	for n=1,40 do
+		speedTable[n] = tostring(n)
 	end
+	self.speedControlTurnSpeedSetting1:setTexts(speedTable)
+	self.speedControlTurnSpeedSetting1:setState(turnSpeed or 5)
+	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
+	
+	self.speedControlTurnSpeedTitle2:setText("Tempomatstufe im Vorgewende")
+	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
+	self.speedControlTurnSpeedSetting2:setState(turnSpeed or 1)
+	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not modSpeedControlFound or not useSpeedControl)
 
 	-- AlertMode
 	self.alarmTitle:setText("Akustischer Hinweis")
@@ -140,6 +148,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
+	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
 		
 	self.gpsUseGSTitle:setText("Guidance Steering ansteuern")
 	self.gpsUseGSSetting:setTexts({
@@ -147,6 +156,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.gpsUseGSSetting:setState(useGuidanceSteering and 1 or 2)
+	self.gpsUseGSSetting:setDisabled(not modGuidanceSteeringFound)
 	
 	self.gpsUseVCATitle:setText("VCA ansteuern")
 	self.gpsUseVCASetting:setTexts({
@@ -154,6 +164,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.gpsUseVCASetting:setState(useVCA and 1 or 2)
+	self.gpsUseVCASetting:setDisabled(not modVCAFound)
 
 	-- Diff control
 	self.diffControlOnOffTitle:setText("Differentialsperren lösen")
@@ -162,35 +173,46 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
+	self.diffControlOnOffSetting:setDisabled(not modVCAFound)
 end
 
--- trim text if necessary
-function HeadlandManagementGui:onTextChanged()
-	local text = self.textElement:getText()
-
-	-- trim if too long
-	if #text > 10 then
-		self.textElement:setText(text:sub(1,10))
-	end
+-- check logical dependencies
+function HeadlandManagementGui:logicalCheck()
+	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
+	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
+	local useGPS = self.gpsOnOffSetting:getState() == 1
+	
+	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound)
+	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
+	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.modSpeedControlFound or not useSpeedControl)
+	
+	local useGPS = self.gpsOnOffSetting:getState() == 1
+	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
+	self.gpsUseGSSetting:setDisabled(not self.modGuidanceSteeringFound or not useGPS)
+	self.gpsUseVCASetting:setDisabled(not self.modVCAFound or not useGPS)
 end
 
 -- close gui and send new values to callback
 function HeadlandManagementGui:onClickOk()
-	local UseSpeedControl = self.speedControlOnOffSetting:getState() == 1
-	local UseModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
-	local TurnSpeed = self.speedControlTurnSpeedSetting:getState() == 1
-	local UseRaiseImplement = self.raiseSetting:getState() == 1
-	local UseStopPTO = self.stopPtoSetting:getState() == 1
+	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
+	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
+	if useModSpeedControl then
+		turnSpeed = self.speedControlTurnSpeedSetting2:getState()
+	else 
+		turnSpeed = self.speedControlTurnSpeedSetting1:getState()
+	end
+	local useRaiseImplement = self.raiseSetting:getState() == 1
+	local useStopPTO = self.stopPtoSetting:getState() == 1
 	local plowState = self.turnPlowSetting:getState()
 	local useTurnPlow = (plowState < 3)
 	local useCenterPlow = (plowState == 2)
-	local UseRidgeMarker = self.ridgeMarkerSetting:getState() == 1
-	local UseGPS = self.gpsOnOffSetting:getState() == 1
-	local UseGuidanceSteering = self.gpsUseGSSetting:getState() == 1
-	local UseVCA = self.gpsUseVCASetting:getState() == 1
-	local UseDiffLock = self.diffControlOnOffSetting:getState() == 1
+	local useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
+	local useGPS = self.gpsOnOffSetting:getState() == 1
+	local useGuidanceSteering = self.gpsUseGSSetting:getState() == 1
+	local useVCA = self.gpsUseVCASetting:getState() == 1
+	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	local beep = self.alarmSetting:getState() == 1
-	
+
 	self:close()
 	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
 end

@@ -2,9 +2,9 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.3.0.3
+-- Version 0.4.0.0
 -- 
--- GUI implementation started
+-- GUI implemented
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -28,6 +28,8 @@ headlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(headlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
 headlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
+
+-- Console Commands
 
 addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
 function headlandManagement:toggleAction(hlmAction)
@@ -93,6 +95,8 @@ function headlandManagement:toggleAction(hlmAction)
 		return "done"
 	end
 end	
+
+-- Standards / Basics
 
 function headlandManagement.prerequisitesPresent(specializations)
   return true
@@ -274,6 +278,8 @@ function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 		end
 	end
 end
+
+-- inputBindings / inputActions
 	
 function headlandManagement:onRegisterActionEvents(isActiveForInput)
 	if self.isClient then
@@ -302,6 +308,8 @@ function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
+-- GUI
+
 function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_headlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
@@ -321,7 +329,10 @@ function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.UseGuidanceSteering,
 		spec.UseVCA,
 		spec.UseDiffLock,
-		spec.Beep
+		spec.Beep,
+		spec.ModSpeedControlFound,
+		spec.ModGuidanceSteeringFound,
+		spec.ModVCAFound
 	)
 end
 
@@ -341,6 +352,8 @@ function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, tur
 	spec.UseDiffLock = useDiffLock
 	spec.Beep = beep
 end
+
+-- Main part
 
 function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
@@ -403,7 +416,7 @@ function headlandManagement:reduceSpeed(self, enable)
 	local spec = self.spec_headlandManagement
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
-		if spec.UseSpeedControl and spec.ModSpeedControlFound then
+		if spec.UseSpeedControl and spec.ModSpeedControlFound and spec.UseModSpeedControl then
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed), true, false, false)
 		else
@@ -412,7 +425,7 @@ function headlandManagement:reduceSpeed(self, enable)
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.TurnSpeed))
 		end
 	else
-		if spec.UseSpeedControl and spec.ModSpeedControlFound then
+		if spec.UseSpeedControl and spec.ModSpeedControlFound and spec.UseModSpeedControl then
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed), true, false, false)
 		else
