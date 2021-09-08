@@ -100,7 +100,7 @@
 				<GuiElement type="text" textSize="25px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsSettingTitle"/>
-			</GuiElement>	
+			</GuiElement>		
 		</GuiElement>
 		
 		<!-- Diff control -->

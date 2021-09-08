@@ -44,8 +44,8 @@ HeadlandManagementGui.CONTROLS = {
 	"sectionGPSControl",
 	"gpsOnOffTitle",
 	"gpsOnOffSetting",
-	"gpsUseGSTitle",
-	"gpsUseGSSetting",
+	"gpsSettingTitle",
+	"gpsSetting",
 	"gpsUseVCATitle",
 	"gpsUseVCASetting",
 	
@@ -151,22 +151,20 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
 	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
 		
-	self.gpsUseGSTitle:setText("Guidance Steering ansteuern")
-	self.gpsUseGSSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+	self.gpsSettingTitle:setText("GPS Version")
+	self.gpsSetting:setTexts({
+		g_i18n:getText("hlmgui_gps_auto"),
+		g_i18n:getText("hlmgui_gps_gs"),
+		g_i18n:getText("hlmgui_gps_vca")
 	})
-	self.gpsUseGSSetting:setState(useGuidanceSteering and 1 or 2)
-	self.gpsUseGSSetting:setDisabled(not modGuidanceSteeringFound)
 	
-	self.gpsUseVCATitle:setText("VCA ansteuern")
-	self.gpsUseVCASetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
-	})
-	self.gpsUseVCASetting:setState(useVCA and 1 or 2)
-	self.gpsUseVCASetting:setDisabled(not modVCAFound)
+	local gpsSetting = 1
+	if useGuidanceSteering and modGuidanceSteeringFound then gpsSetting = 2; end
+	if useVCA and modVCAFound then gpsSetting = 3; end
 
+	self.gpsSetting:setState(gpsSetting)
+	self.gpsSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
+	
 	-- Diff control
 	self.diffControlOnOffTitle:setText("Differentialsperren lösen")
 	self.diffControlOnOffSetting:setTexts({
@@ -180,18 +178,22 @@ end
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
-	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
-	local useRaiseImplement = self.raiseSetting:setState() == 1
-	local useGPS = self.gpsOnOffSetting:getState() == 1
-		
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound)
+	
+	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
 	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.modSpeedControlFound or not useSpeedControl)
 	
+	local useRaiseImplement = self.raiseSetting:setState() == 1	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
-	
+
+	local useGPS = self.gpsOnOffSetting:getState() == 1
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
-	self.gpsUseGSSetting:setDisabled(not self.modGuidanceSteeringFound or not useGPS)
+
+	local gpsSetting = self.gpsSetting:getState()
+	if gpsSetting == 2 and not self.modGuidanceSteeringFound then gpsSetting = 3; end
+	if gpsSetting == 3 and not self.modVCAFound then gpsSetting = 1; end
+	self.gpsSetting:setState(gpsSetting)
 	self.gpsUseVCASetting:setDisabled(not self.modVCAFound or not useGPS)
 end
 
@@ -211,8 +213,10 @@ function HeadlandManagementGui:onClickOk()
 	local useCenterPlow = (plowState == 2)
 	local useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
 	local useGPS = self.gpsOnOffSetting:getState() == 1
-	local useGuidanceSteering = self.gpsUseGSSetting:getState() == 1
-	local useVCA = self.gpsUseVCASetting:getState() == 1
+	local gpsSetting = self.gpsSetting:getState()
+	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
+	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
+	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	local beep = self.alarmSetting:getState() == 1
 
