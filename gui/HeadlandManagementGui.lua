@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.4.0.1
+-- Version 0.4.0.2
 -- 
 -- Headlandmanagement GUI for configuration
 -- Logical dependencies added
@@ -46,8 +46,6 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsOnOffSetting",
 	"gpsSettingTitle",
 	"gpsSetting",
-	"gpsUseVCATitle",
-	"gpsUseVCASetting",
 	
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
