@@ -2,9 +2,10 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.4.0.0
+-- Version 0.4.0.1
 -- 
 -- Headlandmanagement GUI for configuration
+-- Logical dependencies added
 --
 
 HeadlandManagementGui = {}
@@ -180,13 +181,15 @@ end
 function HeadlandManagementGui:logicalCheck()
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
+	local useRaiseImplement = self.raiseSetting:setState() == 1
 	local useGPS = self.gpsOnOffSetting:getState() == 1
-	
+		
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound)
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
 	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.modSpeedControlFound or not useSpeedControl)
 	
-	local useGPS = self.gpsOnOffSetting:getState() == 1
+	self.turnPlowSetting:setDisabled(not useRaiseImplement)
+	
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
 	self.gpsUseGSSetting:setDisabled(not self.modGuidanceSteeringFound or not useGPS)
 	self.gpsUseVCASetting:setDisabled(not self.modVCAFound or not useGPS)
