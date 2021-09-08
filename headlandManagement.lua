@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.4.0.1
+-- Version 0.4.0.2
 -- 
 -- Missing switches implemented
 --
@@ -562,16 +562,32 @@ end
 function headlandManagement:stopGPS(self, enable)
 	local spec = self.spec_headlandManagement
 	if not spec.UseGPS then return; end;
-	
 	dbgprint("stopGPS : "..tostring(enable))
--- Part 1: Guidance Steering	
-	if spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering then
+
+-- Part 1: Detect used mod
+	local gpsSetting = 1 -- auto mode
+	if spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering then gpsSetting = 2; end -- GS mode
+	if spec.ModVCAFound and spec.UseVCA then gpsSetting = 3; end -- VCA mode
+	
+	if gpsSetting == 1 and spec.ModGuidanceSteeringFound then
+		local gsSpec = self.spec_globalPositioningSystem
+		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
+		if gpsEnabled then gpsSetting = 2; end
+	end
+		
+	if gpsSetting == 1 and spec.ModVCAFound then
+		local vcaStatus = self.vcaSnapIsOn
+		if vcaStatus then gpsSetting = 3; end
+	end
+
+-- Part 2: Guidance Steering	
+	if spec.ModGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and gpsSetting ~= 3 then
 		local gsSpec = self.spec_globalPositioningSystem
 		dbgprint("stopGPS : Guidance Steering")
-		if self.onSteeringStateChanged == nil then return; end
 		if enable then
 			local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
+				gpsSetting = 2
 				spec.GSStatus = true
 				gsSpec.lastInputValues.guidanceSteeringIsActive = false
 				self:onSteeringStateChanged(false)
@@ -581,14 +597,15 @@ function headlandManagement:stopGPS(self, enable)
 		else
 			local gpsEnabled = spec.GSStatus	
 			if gpsEnabled then
+				gpsSetting = 2
 				gsSpec.lastInputValues.guidanceSteeringIsActive = true
 				self:onSteeringStateChanged(true)
 			end
 		end
 	end
 	
--- Part 2: Vehicle Control Addon (VCA)
-	if spec.ModVCAFound and spec.UseVCA and enable then
+-- Part 3: Vehicle Control Addon (VCA)
+	if spec.ModVCAFound and spec.UseVCA and gpsSetting ~= 2 and enable then
 		spec.VCAStatus = self.vcaSnapIsOn
 		if spec.VCAStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
@@ -596,7 +613,7 @@ function headlandManagement:stopGPS(self, enable)
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
-	if spec.ModVCAFound and spec.UseVCA and spec.VCAStatus and not enable then
+	if spec.ModVCAFound and spec.UseVCA and spec.VCAStatus and gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
 	end
