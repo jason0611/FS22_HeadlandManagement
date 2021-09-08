@@ -9,14 +9,14 @@ Bereits umgesetzt:
 	- Unterstützung von GS
 	- Unterstützung von VCA
 - Geräte ausheben und wieder absenken
-- Pflug drehen
+- Pflug drehen, wahlweise über vorherige Zentrierung
 - Spurreisser ausheben und wechseln
 - Zapfwelle(n) abschalten und wieder anschalten
 - Differentialsperren lösen und wieder setzen (VCA)
-
-Noch in Planung:
 - GUI zur Konfigurion
 - Eingeblendetes HUD-Symbol bei aktivem Vorgewendemanagement
 - Warnton bei aktiviertem Vorgewendemanagement
-- Ggf. Realisierung des Vorgewendemanagements als Konfiguration
+
+Noch in Planung:
+- Realisierung des Vorgewendemanagements als Konfiguration
 
