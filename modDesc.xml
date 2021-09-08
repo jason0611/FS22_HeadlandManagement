@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 
-   <author>Jason06</author>
+  <author>Jason06</author>
    	
-	<version>0.2.1.6</version>
+	<version>0.4.0.0</version>
 
-    <title>
+  <title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
     </title>
@@ -31,11 +31,15 @@
 		<action name="HLM_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_SHOWGUI" categorie="VEHICLE" ignoreComboMask="false" />
 	</actions>
 
 	<inputBinding>	
 		<actionBinding action="HLM_TOGGLESTATE">
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_x" neutralInput="0" index="1" />
+		</actionBinding>
+		<actionBinding action="HLM_SHOWGUI">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_lctrl KEY_x" neutralInput="0" index="1" />
 		</actionBinding>
 	</inputBinding>
 </modDesc>

@@ -2,14 +2,18 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.2.1.6
+
+-- Version 0.4.0.0
 -- 
--- VCA-GPS korrigiert
+-- GUI implemented
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
 GMSDebug:init(g_currentModName, true)
 GMSDebug:enableConsoleCommands("hlmDebug")
+
+source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
+g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
 headlandManagement = {}
 headlandManagement.MOD_NAME = g_currentModName
@@ -26,13 +30,15 @@ loadSample(headlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg"
 
 headlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 
+-- Console Commands
+
 addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
 function headlandManagement:toggleAction(hlmAction)
 	
 	local vehicle = g_currentMission.controlledVehicle
 	
 	if hlmAction == nil then
-		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PlowHalf|PTO|Ridgemarker|GPS|Beep>"
+		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|Beep>"
 	end
 	
 	local spec = vehicle.spec_headlandManagement
@@ -60,9 +66,10 @@ function headlandManagement:toggleAction(hlmAction)
 		return "TurnPlow set to "..tostring(spec.UseTurnPlow)
 	end
 	
-	if hlmAction == "PlowHalf" then
-		spec.TurnPlowHalf = not spec.TurnPlowHalf
-		return "TurnPlowHalf set to "..tostring(spec.TurnPlowHalf)
+	if hlmAction == "PlowCenter" then
+		spec.UseCenterPlow = not spec.UseCenterPlow
+		return "CenterPlow set to "..tostring(spec.UseCenterPlow)
+
 	end
 	
 	if hlmAction == "PTO" then
@@ -84,8 +91,14 @@ function headlandManagement:toggleAction(hlmAction)
 		spec.Beep = not spec.Beep
 		return "Beep is set to "..tostring(spec.Beep)
 	end
+	
+	if hlmAction == "Status" then
+		print_r(spec)
+		return "done"
+	end
 end	
 
+-- Standards / Basics
 
 function headlandManagement.prerequisitesPresent(specializations)
   return true
@@ -130,7 +143,7 @@ function headlandManagement:onLoad(savegame)
 	spec.ImplementPTOTable = {}
 	spec.UseStopPTO = true
 	spec.UseTurnPlow = true
-	spec.TurnPlowHalf = true
+	spec.UseCenterPlow = true
 	spec.PlowRotationMax = nil
 	
 	spec.UseRidgeMarker = true
@@ -179,7 +192,7 @@ function headlandManagement:onPostLoad(savegame)
 		spec.UseStopPTO = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTO"), spec.UseStopPTO)
 		spec.UseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.UseGuidanceSteering)
 		spec.UseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.UseTurnPlow)
-		spec.TurnPlowHalf = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlowHalf"), spec.TurnPlowHalf)
+		spec.UseCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.UseCenterPlow)
 		spec.UseRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.UseRidgeMarker)
 		print("HeadlandManagement: Loaded data for "..self:getName())
 	end
@@ -202,7 +215,7 @@ function headlandManagement:saveToXMLFile(xmlFile, key)
 	setXMLBool(xmlFile, key.."#useStopPTO", spec.UseStopPTO)
 	setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.UseGuidanceSteering)
 	setXMLBool(xmlFile, key.."#turnPlow", spec.UseTurnPlow)
-	setXMLBool(xmlFile, key.."#turnPlowHalf", spec.TurnPlowHalf)
+	setXMLBool(xmlFile, key.."#centerPlow", spec.UseCenterPlow)
 	setXMLBool(xmlFile, key.."#switchRidge", spec.UseRidgeMarker)
 end
 
@@ -216,7 +229,8 @@ function headlandManagement:onReadStream(streamId, connection)
 	spec.UseStopPTO = streamReadBool(streamId)
 	spec.UseGuidanceSteering = streamReadBool(streamId)
 	spec.UseTurnPlow = streamReadBool(streamId)
-	spec.TurnPlowHalf = streamReadBool(streamId)
+	spec.UseCenterPlow = streamReadBool(streamId)
+  spec.UseRidgeMarker = streamReadBool(streamId)
 end
 
 function headlandManagement:onWriteStream(streamId, connection)
@@ -229,7 +243,8 @@ function headlandManagement:onWriteStream(streamId, connection)
 	streamWriteBool(streamId, spec.UseStopPTO)
 	streamWriteBool(streamId, spec.UseGuidanceSteering)
 	streamWriteBool(streamId, spec.UseTurnPlow)
-	streamWriteBool(streamId, spec.TurnPlowHalf)
+	streamWriteBool(streamId, spec.UseCenterPlow)
+  streamWriteBool(streamId, spec.UseRidgeMarker)
 end
 	
 function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
@@ -245,7 +260,8 @@ function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.UseStopPTO = streamReadBool(streamId)
 			spec.UseGuidanceSteering = streamReadBool(streamId)
 			spec.UseTurnPlow = streamReadBool(streamId)
-			spec.TurnPlowHalf = streamReadBool(streamId)
+			spec.UseCenterPlow = streamReadBool(streamId)
+      spec.UseRidgeMarker = streamReadBool(streamId)
 		end;
 	end
 end
@@ -263,10 +279,13 @@ function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.UseStopPTO)
 			streamWriteBool(streamId, spec.UseGuidanceSteering)
 			streamWriteBool(streamId, spec.UseTurnPlow)
-			streamWriteBool(streamId, spec.TurnPlowHalf)
+			streamWriteBool(streamId, spec.UseCenterPlow)
+      streamWriteBool(streamId, spec.UseRidgeMarker)
 		end
 	end
 end
+
+-- inputBindings / inputActions
 	
 function headlandManagement:onRegisterActionEvents(isActiveForInput)
 	if self.isClient then
@@ -276,6 +295,7 @@ function headlandManagement:onRegisterActionEvents(isActiveForInput)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHON', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHOFF', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SHOWGUI', self, headlandManagement.SHOWGUI, false, true, false, true, nil)
 		end		
 	end
 end
@@ -293,6 +313,53 @@ function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
+
+-- GUI
+
+function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
+	local spec = self.spec_headlandManagement
+	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
+	
+	hlmGui.target:setCallback(headlandManagement.guiCallback, self)
+	hlmGui.target:setData(
+		self:getFullName(),
+		spec.UseSpeedControl,
+		spec.UseModSpeedControl,
+		spec.TurnSpeed,
+		spec.UseRaiseImplement,
+		spec.UseStopPTO,
+		spec.UseTurnPlow,
+		spec.UseCenterPlow,
+		spec.UseRidgeMarker,
+		spec.UseGPS,
+		spec.UseGuidanceSteering,
+		spec.UseVCA,
+		spec.UseDiffLock,
+		spec.Beep,
+		spec.ModSpeedControlFound,
+		spec.ModGuidanceSteeringFound,
+		spec.ModVCAFound
+	)
+end
+
+function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+	local spec = self.spec_headlandManagement
+	spec.UseSpeedControl = useSpeedControl
+	spec.UseModSpeedControl = useModSpeedControl
+	spec.TurnSpeed = turnSpeed
+	spec.UseRaiseImplement = useRaiseImplement
+	spec.UseStopPTO = useStopPTO
+	spec.UseTurnPlow = useTurnPlow
+	spec.UseCenterPlow = useCenterPlow
+	spec.UseRidgeMarker = useRidgeMarker
+	spec.UseGPS = useGPS
+	spec.UseGuidanceSteering = useGuidanceSteering
+	spec.UseVCA = useVCA
+	spec.UseDiffLock = useDiffLock
+	spec.Beep = beep
+end
+
+-- Main part
 
 function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
@@ -318,7 +385,7 @@ function headlandManagement:onUpdate(dt)
 			-- Activation
 			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
 			if spec.ActStep == headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, true); end
-			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow, spec.UseStopPTO); end
+			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow, spec.UseStopPTO, spec.UseCenterPlow); end
 			if spec.ActStep == headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, true); end
 			-- Deactivation
 			if spec.ActStep == -headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, false); end
@@ -355,7 +422,7 @@ function headlandManagement:reduceSpeed(self, enable)
 	local spec = self.spec_headlandManagement
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
-		if spec.UseSpeedControl and spec.ModSpeedControlFound then
+		if spec.UseSpeedControl and spec.ModSpeedControlFound and spec.UseModSpeedControl then
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed), true, false, false)
 		else
@@ -364,7 +431,7 @@ function headlandManagement:reduceSpeed(self, enable)
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.TurnSpeed))
 		end
 	else
-		if spec.UseSpeedControl and spec.ModSpeedControlFound then
+		if spec.UseSpeedControl and spec.ModSpeedControlFound and spec.UseModSpeedControl then
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed), true, false, false)
 		else
@@ -374,7 +441,7 @@ function headlandManagement:reduceSpeed(self, enable)
 	end
 end
 
-function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO)
+function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, centerPlow)
 	local spec = self.spec_headlandManagement
     local jointSpec = self.spec_attacherJoints
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / stopPTO: "..tostring(stopPTO))
@@ -421,13 +488,12 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO)
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
 				        if actImplement:getIsPlowRotationAllowed() then
 							spec.PlowRotationMaxNew = not plowSpec.rotationMax
-							if spec.TurnPlowHalf then 
+							if centerPlow then 
 								actImplement:setRotationCenter()
-								dbgprint("raiseImplements : plow is centered")
+                dbgprint("raiseImplements : plow is centered")
 							else
 								actImplement:setRotationMax(spec.PlowRotationMaxNew)
-								spec.PlowRotationMaxNew = nil
-								dbgprint("raiseImplements : plow is turned")
+                dbgprint("raiseImplements : plow is turned")
 							end
 				        end
 		 			end
