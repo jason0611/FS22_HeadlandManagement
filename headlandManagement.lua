@@ -2,6 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
+
 -- Version 0.4.0.0
 -- 
 -- GUI implemented
@@ -37,7 +38,7 @@ function headlandManagement:toggleAction(hlmAction)
 	local vehicle = g_currentMission.controlledVehicle
 	
 	if hlmAction == nil then
-		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PTO|Ridgemarker|GPS|Beep|Status>"
+		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|Beep>"
 	end
 	
 	local spec = vehicle.spec_headlandManagement
@@ -68,6 +69,7 @@ function headlandManagement:toggleAction(hlmAction)
 	if hlmAction == "PlowCenter" then
 		spec.UseCenterPlow = not spec.UseCenterPlow
 		return "CenterPlow set to "..tostring(spec.UseCenterPlow)
+
 	end
 	
 	if hlmAction == "PTO" then
@@ -228,6 +230,7 @@ function headlandManagement:onReadStream(streamId, connection)
 	spec.UseGuidanceSteering = streamReadBool(streamId)
 	spec.UseTurnPlow = streamReadBool(streamId)
 	spec.UseCenterPlow = streamReadBool(streamId)
+  spec.UseRidgeMarker = streamReadBool(streamId)
 end
 
 function headlandManagement:onWriteStream(streamId, connection)
@@ -241,6 +244,7 @@ function headlandManagement:onWriteStream(streamId, connection)
 	streamWriteBool(streamId, spec.UseGuidanceSteering)
 	streamWriteBool(streamId, spec.UseTurnPlow)
 	streamWriteBool(streamId, spec.UseCenterPlow)
+  streamWriteBool(streamId, spec.UseRidgeMarker)
 end
 	
 function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
@@ -257,6 +261,7 @@ function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.UseGuidanceSteering = streamReadBool(streamId)
 			spec.UseTurnPlow = streamReadBool(streamId)
 			spec.UseCenterPlow = streamReadBool(streamId)
+      spec.UseRidgeMarker = streamReadBool(streamId)
 		end;
 	end
 end
@@ -275,6 +280,7 @@ function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.UseGuidanceSteering)
 			streamWriteBool(streamId, spec.UseTurnPlow)
 			streamWriteBool(streamId, spec.UseCenterPlow)
+      streamWriteBool(streamId, spec.UseRidgeMarker)
 		end
 	end
 end
@@ -442,6 +448,7 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
+    	dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 		-- raise or lower implement and turn plow
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
@@ -452,25 +459,30 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 					if lowered and actImplement.setLoweredAll ~= nil then 
 						actImplement:setLoweredAll(false, index)
 						lowered = actImplement:getIsLowered()
+						dbgprint("raiseImplements : implement is raised by setLoweredAll: "..tostring(not lowered))
 		 			end
 		 			if lowered and actImplement.setLowered ~= nil then
 		 				actImplement:setLowered(false)
 		 				lowered = actImplement:getIsLowered()
+		 				dbgprint("raiseImplements : implement is raised by setLowered: "..tostring(not lowered))
 		 			end
 		 			if lowered and self.setJointMoveDown ~= nil then
 		 				self:setJointMoveDown(index, false)
 		 				lowered = actImplement:getIsLowered()
+		 				dbgprint("raiseImplements : implement is raised by setJointMoveDown: "..tostring(not lowered))
 		 			end
 		 			if lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
 		 				local implSpec = actImplement.spec_attacherJointControl
 		 				implSpec.heightTargetAlpha = implSpec.jointDesc.upperAlpha
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
+				    	dbgprint("raiseImplements : implement is raised by heightTargetAlpha: "..tostring(not lowered))
 				    end
 				    if stopPTO then
 				    	local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive() and actImplement.deactivate ~= nil
 				    	spec.ImplementPTOTable[index] = active
 				    	if active then actImplement:deactivate(); end
+				    	dbgprint("raiseImplements : implement PTO stopped")
 				    end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
@@ -478,8 +490,10 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 							spec.PlowRotationMaxNew = not plowSpec.rotationMax
 							if centerPlow then 
 								actImplement:setRotationCenter()
+                dbgprint("raiseImplements : plow is centered")
 							else
 								actImplement:setRotationMax(spec.PlowRotationMaxNew)
+                dbgprint("raiseImplements : plow is turned")
 							end
 				        end
 		 			end
@@ -490,30 +504,35 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.PlowRotationMaxNew ~= nil then 
 						actImplement:setRotationMax(spec.PlowRotationMaxNew)
 						spec.PlowRotationMaxNew = nil
+						dbgprint("raiseImplements : plow is turned")
 					end
 					if stopPTO then
 				    	local active = spec.ImplementPTOTable[index]
 				    	if active and actImplement.setIsTurnedOn ~= nil then actImplement:setIsTurnedOn(true); end -- actImplement:activate(); end
+				    	dbgprint("raiseImplements : implement PTO started")
 				    end
 					if wasLowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, index)
 		 				lowered = actImplement:getIsLowered()
+		 				dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
 		 			end
 		 			if wasLowered and not lowered and actImplement.setLowered ~= nil then
 		 				actImplement:setLowered(true)
 		 				lowered = actImplement:getIsLowered()
+		 				dbgprint("raiseImplements : implement is lowered by setLowered: "..tostring(lowered))
 		 			end
 		 			if wasLowered and not lowered and self.setJointMoveDown ~= nil then
 		 				self:setJointMoveDown(index, true)
 		 				lowered = actImplement:getIsLowered()
+		 				dbgprint("raiseImplements : implement is lowered by setJointMoveDown: "..tostring(lowered))
 		 			end
 		 			if wasLowered and not lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
 		 				local implSpec = actImplement.spec_attacherJointControl
 		 				implSpec.heightTargetAlpha = implSpec.jointDesc.lowerAlpha
 				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
+				    	dbgprint("raiseImplements : implement is lowered by heightTargetAlpha: "..tostring(lowered))
 				    end
-			
 		 		end	
 		 	end
 		end
@@ -569,7 +588,8 @@ function headlandManagement:stopGPS(self, enable)
 		spec.VCAStatus = self.vcaSnapIsOn
 		if spec.VCAStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
-			self:vcaSetState( "vcaSnapIsOn", false ) 
+			self:vcaSetState( "vcaLastSnapAngle", 10 )
+			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
 	if spec.ModVCAFound and spec.VCAStatus and not enable then

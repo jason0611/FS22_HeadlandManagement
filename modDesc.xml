@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 
-   <author>Jason06</author>
+  <author>Jason06</author>
    	
 	<version>0.4.0.0</version>
 
-    <title>
+  <title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
     </title>
