@@ -12,5 +12,8 @@
 		<text name="hlmgui_plowFull" text="sofort drehen"/>
 		<text name="hlmgui_plowCenter" text="in zwei Schritten drehen"/>
 		<text name="hlmgui_plowOff" text="nicht drehen"/>
+		<text name="hlmgui_gps_auto" text="automatisch"/>
+		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
+		<text name="hlmgui_gps_vca" text="nur VCA"/>
 	</texts>
 </l10n>

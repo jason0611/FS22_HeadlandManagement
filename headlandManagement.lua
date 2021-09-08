@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.4.0.2
+-- Version 0.4.2.0
 -- 
 -- Missing switches implemented
 --
@@ -151,10 +151,10 @@ function headlandManagement:onLoad(savegame)
 	
 	spec.UseGPS = true
 	spec.ModGuidanceSteeringFound = false
-	spec.UseGuidanceSteering = true	
+	spec.UseGuidanceSteering = false	
 	spec.GSStatus = false
 	spec.ModVCAFound = false
-	spec.UseVCA = true
+	spec.UseVCA = false
 	spec.VCAStatus = false
 	
 	spec.UseDiffLock = true
@@ -188,12 +188,16 @@ function headlandManagement:onPostLoad(savegame)
 		spec.TurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.TurnSpeed)
 		spec.IsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.IsActive)
 		spec.UseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.UseSpeedControl)
+		spec.UseModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.UseModSpeedControl)
 		spec.UseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), spec.UseRaiseImplement)
 		spec.UseStopPTO = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTO"), spec.UseStopPTO)
-		spec.UseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.UseGuidanceSteering)
 		spec.UseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.UseTurnPlow)
 		spec.UseCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.UseCenterPlow)
 		spec.UseRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.UseRidgeMarker)
+		spec.UseGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.UseGPS)
+		spec.UseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.UseGuidanceSteering)
+		spec.UseVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.UseVCA)
+		spec.UseDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.UseDiffLock)
 		print("HeadlandManagement: Loaded data for "..self:getName())
 	end
 	
@@ -211,12 +215,16 @@ function headlandManagement:saveToXMLFile(xmlFile, key)
 	setXMLFloat(xmlFile, key.."#turnSpeed", spec.TurnSpeed)
 	setXMLBool(xmlFile, key.."#isActive", spec.IsActive)
 	setXMLBool(xmlFile, key.."#useSpeedControl", spec.UseSpeedControl)
+	setXMLBool(xmlFile, key.."#useModSpeedControl", spec.UseModSpeedControl)
 	setXMLBool(xmlFile, key.."#useRaiseImplement", spec.UseRaiseImplement)
 	setXMLBool(xmlFile, key.."#useStopPTO", spec.UseStopPTO)
-	setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.UseGuidanceSteering)
 	setXMLBool(xmlFile, key.."#turnPlow", spec.UseTurnPlow)
 	setXMLBool(xmlFile, key.."#centerPlow", spec.UseCenterPlow)
 	setXMLBool(xmlFile, key.."#switchRidge", spec.UseRidgeMarker)
+	setXMLBool(xmlFile, key.."#useGPS", spec.UseGPS)
+	setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.UseGuidanceSteering)
+	setXMLBool(xmlFile, key.."#useVCA", spec.UseVCA)
+	setXMLBool(xmlFile, key.."#useDiffLock", spec.UseDiffLock)
 end
 
 function headlandManagement:onReadStream(streamId, connection)
@@ -225,12 +233,16 @@ function headlandManagement:onReadStream(streamId, connection)
 	spec.TurnSpeed = streamReadFloat32(streamId)
 	spec.IsActive = streamReadBool(streamId)
 	spec.UseSpeedControl = streamReadBool(streamId)
+	spec.UseModSpeedControl = streamReadBool(streamId)
 	spec.UseRaiseImplement = streamReadBool(streamId)
 	spec.UseStopPTO = streamReadBool(streamId)
-	spec.UseGuidanceSteering = streamReadBool(streamId)
 	spec.UseTurnPlow = streamReadBool(streamId)
 	spec.UseCenterPlow = streamReadBool(streamId)
-  spec.UseRidgeMarker = streamReadBool(streamId)
+  	spec.UseRidgeMarker = streamReadBool(streamId)
+  	spec.UseGPS = streamReadBool(streamId)
+  	spec.UseGuidanceSteering = streamReadBool(streamId)
+  	spec.UseVCA = streamReadBool(streamId)
+  	spec.UseDiffLock = streamReadBool(streamId)
 end
 
 function headlandManagement:onWriteStream(streamId, connection)
@@ -239,12 +251,16 @@ function headlandManagement:onWriteStream(streamId, connection)
 	streamWriteFloat32(streamId, spec.TurnSpeed)
 	streamWriteBool(streamId, spec.IsActive)
 	streamWriteBool(streamId, spec.UseSpeedControl)
+	streamWriteBool(streamId, spec.UseModSpeedControl)
 	streamWriteBool(streamId, spec.UseRaiseImplement)
 	streamWriteBool(streamId, spec.UseStopPTO)
-	streamWriteBool(streamId, spec.UseGuidanceSteering)
 	streamWriteBool(streamId, spec.UseTurnPlow)
 	streamWriteBool(streamId, spec.UseCenterPlow)
-  streamWriteBool(streamId, spec.UseRidgeMarker)
+  	streamWriteBool(streamId, spec.UseRidgeMarker)
+  	streamWriteBool(streamId, spec.UseGPS)
+  	streamWriteBool(streamId, spec.UseGuidanceSteering)
+  	streamWriteBool(streamId, spec.UseVCA)
+  	streamWriteBool(streamId, spec.UseDiffLock)
 end
 	
 function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
@@ -253,15 +269,18 @@ function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 		if streamReadBool(streamId) then
 			spec.Beep = streamReadBool(streamId)
 			spec.TurnSpeed = streamReadFloat32(streamId)
-			spec.ActStep = streamReadInt8(streamId)
 			spec.IsActive = streamReadBool(streamId)
 			spec.UseSpeedControl = streamReadBool(streamId)
+			spec.UseModSpeedControl = streamReadBool(streamId)
 			spec.UseRaiseImplement = streamReadBool(streamId)
 			spec.UseStopPTO = streamReadBool(streamId)
-			spec.UseGuidanceSteering = streamReadBool(streamId)
 			spec.UseTurnPlow = streamReadBool(streamId)
 			spec.UseCenterPlow = streamReadBool(streamId)
-      spec.UseRidgeMarker = streamReadBool(streamId)
+			spec.UseRidgeMarker = streamReadBool(streamId)
+			spec.UseGPS = streamReadBool(streamId)
+			spec.UseGuidanceSteering = streamReadBool(streamId)
+			spec.UseVCA = streamReadBool(streamId)
+			spec.UseDiffLock = streamReadBool(streamId)
 		end;
 	end
 end
@@ -272,15 +291,18 @@ function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
 			streamWriteBool(streamId, spec.Beep)
 			streamWriteFloat32(streamId, spec.TurnSpeed)
-			streamWriteInt8(streamId, spec.ActStep)
 			streamWriteBool(streamId, spec.IsActive)
 			streamWriteBool(streamId, spec.UseSpeedControl)
+			streamWriteBool(streamId, spec.UseModSpeedControl)
 			streamWriteBool(streamId, spec.UseRaiseImplement)
 			streamWriteBool(streamId, spec.UseStopPTO)
-			streamWriteBool(streamId, spec.UseGuidanceSteering)
 			streamWriteBool(streamId, spec.UseTurnPlow)
 			streamWriteBool(streamId, spec.UseCenterPlow)
-      streamWriteBool(streamId, spec.UseRidgeMarker)
+			streamWriteBool(streamId, spec.UseRidgeMarker)
+			streamWriteBool(streamId, spec.UseGPS)
+			streamWriteBool(streamId, spec.UseGuidanceSteering)
+			streamWriteBool(streamId, spec.UseVCA)
+			streamWriteBool(streamId, spec.UseDiffLock)
 		end
 	end
 end
@@ -357,6 +379,7 @@ function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, tur
 	spec.UseVCA = useVCA
 	spec.UseDiffLock = useDiffLock
 	spec.Beep = beep
+	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 -- Main part
@@ -380,7 +403,7 @@ function headlandManagement:onUpdate(dt)
 			spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
 			spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
 			spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
-			spec.Action[headlandManagement.STOPGPS] = (spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering) or (spec.ModVCAFound and spec.UseVCA)	
+			spec.Action[headlandManagement.STOPGPS] = spec.ModGuidanceSteeringFound or spec.ModVCAFound	
 			
 			-- Activation
 			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
@@ -561,7 +584,10 @@ end
 
 function headlandManagement:stopGPS(self, enable)
 	local spec = self.spec_headlandManagement
-	if not spec.UseGPS then return; end;
+	if not spec.UseGPS then 
+		dbgprint("stopGPS : skipped")
+		return; 
+	end;
 	dbgprint("stopGPS : "..tostring(enable))
 
 -- Part 1: Detect used mod
@@ -572,19 +598,27 @@ function headlandManagement:stopGPS(self, enable)
 	if gpsSetting == 1 and spec.ModGuidanceSteeringFound then
 		local gsSpec = self.spec_globalPositioningSystem
 		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
-		if gpsEnabled then gpsSetting = 2; end
+		if gpsEnabled then 
+			gpsSetting = 2 
+			dbgprint("stopGPS : GS is active")
+		end
 	end
 		
 	if gpsSetting == 1 and spec.ModVCAFound then
 		local vcaStatus = self.vcaSnapIsOn
-		if vcaStatus then gpsSetting = 3; end
+		if vcaStatus then 
+			gpsSetting = 3 
+			dbgprint("stopGPS : VCA is active")
+		end
 	end
+	
+	dbgprint("stopGPS : gpsSetting: "..tostring(gpsSetting))
 
 -- Part 2: Guidance Steering	
 	if spec.ModGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and gpsSetting ~= 3 then
 		local gsSpec = self.spec_globalPositioningSystem
-		dbgprint("stopGPS : Guidance Steering")
 		if enable then
+			dbgprint("stopGPS : Guidance Steering off")
 			local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
 				gpsSetting = 2
@@ -597,6 +631,7 @@ function headlandManagement:stopGPS(self, enable)
 		else
 			local gpsEnabled = spec.GSStatus	
 			if gpsEnabled then
+				dbgprint("stopGPS : Guidance Steering on")
 				gpsSetting = 2
 				gsSpec.lastInputValues.guidanceSteeringIsActive = true
 				self:onSteeringStateChanged(true)
@@ -605,7 +640,7 @@ function headlandManagement:stopGPS(self, enable)
 	end
 	
 -- Part 3: Vehicle Control Addon (VCA)
-	if spec.ModVCAFound and spec.UseVCA and gpsSetting ~= 2 and enable then
+	if spec.ModVCAFound and gpsSetting ~= 2 and enable then
 		spec.VCAStatus = self.vcaSnapIsOn
 		if spec.VCAStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
@@ -613,7 +648,7 @@ function headlandManagement:stopGPS(self, enable)
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
-	if spec.ModVCAFound and spec.UseVCA and spec.VCAStatus and gpsSetting ~= 2 and not enable then
+	if spec.ModVCAFound and spec.VCAStatus and gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
 	end

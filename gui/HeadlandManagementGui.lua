@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.4.0.2
+-- Version 0.4.2.0
 -- 
 -- Headlandmanagement GUI for configuration
 -- Logical dependencies added
@@ -114,14 +114,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})
 	self.raiseSetting:setState(useRaiseImplement and 1 or 2)
 	
-	self.stopPtoTitle:setText("Zapfwelle anhalten")
-	self.stopPtoSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
-	})
-	self.stopPtoSetting:setState(useStopPTO and 1 or 2)
-	
-	self.turnPlowTitle:setText("Pflug drehen")
+	self.turnPlowTitle:setText("Pflug dabei drehen")
 	self.turnPlowSetting:setTexts({
 		g_i18n:getText("hlmgui_plowFull"),
 		g_i18n:getText("hlmgui_plowCenter"),
@@ -132,7 +125,15 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	if useTurnPlow and useCenterPlow then plowState = 2; end
 	if not useTurnPlow then plowState = 3; end
 	self.turnPlowSetting:setState(plowState)
-	
+	self.turnPlowSetting:setDisabled(not useRaiseImplement)
+
+	self.stopPtoTitle:setText("Zapfwelle anhalten")
+	self.stopPtoSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.stopPtoSetting:setState(useStopPTO and 1 or 2)
+		
 	self.ridgeMarkerTitle:setText("Spurreißer umschalten")
 	self.ridgeMarkerSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
@@ -161,7 +162,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	if useVCA and modVCAFound then gpsSetting = 3; end
 
 	self.gpsSetting:setState(gpsSetting)
-	self.gpsSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
+	self.gpsSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound or not useGPS)
 	
 	-- Diff control
 	self.diffControlOnOffTitle:setText("Differentialsperren lösen")
@@ -182,17 +183,17 @@ function HeadlandManagementGui:logicalCheck()
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
 	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.modSpeedControlFound or not useSpeedControl)
 	
-	local useRaiseImplement = self.raiseSetting:setState() == 1	
+	local useRaiseImplement = self.raiseSetting:getState() == 1	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
+	self.gpsSetting:setDisabled(not useGPS)
 
 	local gpsSetting = self.gpsSetting:getState()
 	if gpsSetting == 2 and not self.modGuidanceSteeringFound then gpsSetting = 3; end
 	if gpsSetting == 3 and not self.modVCAFound then gpsSetting = 1; end
 	self.gpsSetting:setState(gpsSetting)
-	self.gpsUseVCASetting:setDisabled(not self.modVCAFound or not useGPS)
 end
 
 -- close gui and send new values to callback
