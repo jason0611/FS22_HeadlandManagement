@@ -213,8 +213,10 @@ function HeadlandManagementGui:onClickOk()
 	local useCenterPlow = (plowState == 2)
 	local useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
 	local useGPS = self.gpsOnOffSetting:getState() == 1
-	local useGuidanceSteering = self.gpsUseGSSetting:getState() == 1
-	local useVCA = self.gpsUseVCASetting:getState() == 1
+	local gpsSetting = self.gpsSetting:getState()
+	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
+	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
+	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	local beep = self.alarmSetting:getState() == 1
 
