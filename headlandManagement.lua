@@ -3,9 +3,9 @@
 --
 -- Martin Eller
 
--- Version 0.4.0.0
+-- Version 0.4.0.1
 -- 
--- GUI implemented
+-- Missing switches implemented
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -420,9 +420,11 @@ end
 	
 function headlandManagement:reduceSpeed(self, enable)	
 	local spec = self.spec_headlandManagement
+	if not spec.UseSpeedControl then return; end;
+	
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
-		if spec.UseSpeedControl and spec.ModSpeedControlFound and spec.UseModSpeedControl then
+		if spec.ModSpeedControlFound and spec.UseModSpeedControl then
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed), true, false, false)
 		else
@@ -431,7 +433,7 @@ function headlandManagement:reduceSpeed(self, enable)
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.TurnSpeed))
 		end
 	else
-		if spec.UseSpeedControl and spec.ModSpeedControlFound and spec.UseModSpeedControl then
+		if spec.ModSpeedControlFound and spec.UseModSpeedControl then
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed), true, false, false)
 		else
@@ -450,7 +452,7 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
     	local actImplement = attachedImplement.object
     	dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 		-- raise or lower implement and turn plow
-		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
+		if spec.UseRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
 					local lowered = actImplement:getIsLowered()
@@ -537,7 +539,7 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 		 	end
 		end
 		-- switch ridge marker
-		if actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
+		if spec.UseRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 			local specRM = actImplement.spec_ridgeMarker
 			if raise then
 				spec.RidgeMarkerStatus = specRM.ridgeMarkerState
@@ -559,9 +561,11 @@ end
 
 function headlandManagement:stopGPS(self, enable)
 	local spec = self.spec_headlandManagement
+	if not spec.UseGPS then return; end;
+	
 	dbgprint("stopGPS : "..tostring(enable))
 -- Part 1: Guidance Steering	
-	if spec.ModGuidanceSteeringFound then
+	if spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering then
 		local gsSpec = self.spec_globalPositioningSystem
 		dbgprint("stopGPS : Guidance Steering")
 		if self.onSteeringStateChanged == nil then return; end
@@ -584,7 +588,7 @@ function headlandManagement:stopGPS(self, enable)
 	end
 	
 -- Part 2: Vehicle Control Addon (VCA)
-	if spec.ModVCAFound and enable then
+	if spec.ModVCAFound and spec.UseVCA and enable then
 		spec.VCAStatus = self.vcaSnapIsOn
 		if spec.VCAStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
@@ -592,7 +596,7 @@ function headlandManagement:stopGPS(self, enable)
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
-	if spec.ModVCAFound and spec.VCAStatus and not enable then
+	if spec.ModVCAFound and spec.UseVCA and spec.VCAStatus and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
 	end
@@ -600,7 +604,7 @@ end
 
 function headlandManagement:disableDiffLock(self, disable)
 	local spec = self.spec_headlandManagement
-	if not spec.ModVCAFound then 
+	if not spec.ModVCAFound or not spec.UseDiffLock then 
 		return
 	end
 	
