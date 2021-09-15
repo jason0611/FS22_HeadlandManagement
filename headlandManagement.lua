@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.4.2.0
+-- Version 0.5.0.0
 -- 
 -- Missing switches implemented
 --
@@ -121,6 +121,8 @@ function headlandManagement:onLoad(savegame)
 	local spec = self.spec_headlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
+	spec.exists = false
+	
 	spec.timer = 0
 	spec.Beep = true
 	
@@ -166,6 +168,10 @@ function headlandManagement:onPostLoad(savegame)
 	local spec = self.spec_headlandManagement
 	if spec == nil then return end
 	
+	spec.exists = self.configurations["headlandManagement"] == 2
+	
+	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
+	
 	-- Check if Mod SpeedControl exists
 	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
 		spec.ModSpeedControlFound = true 
@@ -180,7 +186,7 @@ function headlandManagement:onPostLoad(savegame)
 	-- Check if Mod VCA exists
 	spec.ModVCAFound = self.vcaSetState ~= nil
 
-	if savegame ~= nil then	
+	if savegame ~= nil and spec.exists then	
 		local xmlFile = savegame.xmlFile
 		local key = savegame.key .. ".headlandManagement"
 	
@@ -198,7 +204,7 @@ function headlandManagement:onPostLoad(savegame)
 		spec.UseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.UseGuidanceSteering)
 		spec.UseVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.UseVCA)
 		spec.UseDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.UseDiffLock)
-		print("HeadlandManagement: Loaded data for "..self:getName())
+		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
 	-- Set management actions
@@ -211,20 +217,22 @@ end
 
 function headlandManagement:saveToXMLFile(xmlFile, key)
 	local spec = self.spec_headlandManagement
-	setXMLBool(xmlFile, key.."#beep", spec.Beep)
-	setXMLFloat(xmlFile, key.."#turnSpeed", spec.TurnSpeed)
-	setXMLBool(xmlFile, key.."#isActive", spec.IsActive)
-	setXMLBool(xmlFile, key.."#useSpeedControl", spec.UseSpeedControl)
-	setXMLBool(xmlFile, key.."#useModSpeedControl", spec.UseModSpeedControl)
-	setXMLBool(xmlFile, key.."#useRaiseImplement", spec.UseRaiseImplement)
-	setXMLBool(xmlFile, key.."#useStopPTO", spec.UseStopPTO)
-	setXMLBool(xmlFile, key.."#turnPlow", spec.UseTurnPlow)
-	setXMLBool(xmlFile, key.."#centerPlow", spec.UseCenterPlow)
-	setXMLBool(xmlFile, key.."#switchRidge", spec.UseRidgeMarker)
-	setXMLBool(xmlFile, key.."#useGPS", spec.UseGPS)
-	setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.UseGuidanceSteering)
-	setXMLBool(xmlFile, key.."#useVCA", spec.UseVCA)
-	setXMLBool(xmlFile, key.."#useDiffLock", spec.UseDiffLock)
+	if spec.exists then
+		setXMLBool(xmlFile, key.."#beep", spec.Beep)
+		setXMLFloat(xmlFile, key.."#turnSpeed", spec.TurnSpeed)
+		setXMLBool(xmlFile, key.."#isActive", spec.IsActive)
+		setXMLBool(xmlFile, key.."#useSpeedControl", spec.UseSpeedControl)
+		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.UseModSpeedControl)
+		setXMLBool(xmlFile, key.."#useRaiseImplement", spec.UseRaiseImplement)
+		setXMLBool(xmlFile, key.."#useStopPTO", spec.UseStopPTO)
+		setXMLBool(xmlFile, key.."#turnPlow", spec.UseTurnPlow)
+		setXMLBool(xmlFile, key.."#centerPlow", spec.UseCenterPlow)
+		setXMLBool(xmlFile, key.."#switchRidge", spec.UseRidgeMarker)
+		setXMLBool(xmlFile, key.."#useGPS", spec.UseGPS)
+		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.UseGuidanceSteering)
+		setXMLBool(xmlFile, key.."#useVCA", spec.UseVCA)
+		setXMLBool(xmlFile, key.."#useDiffLock", spec.UseDiffLock)
+	end
 end
 
 function headlandManagement:onReadStream(streamId, connection)
@@ -311,8 +319,9 @@ end
 	
 function headlandManagement:onRegisterActionEvents(isActiveForInput)
 	if self.isClient then
+		local spec = self.spec_headlandManagement
 		headlandManagement.actionEvents = {} 
-		if self:getIsActiveForInput(true) then 
+		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
 			local actionEventId;
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHON', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
@@ -386,7 +395,8 @@ end
 
 function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
-	if self:getIsActive() and spec.IsActive and not headlandManagement.isDedi and spec.Beep then
+	
+	if self:getIsActive() and spec.IsActive and spec.exists and not headlandManagement.isDedi and spec.Beep then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
 			dbgprint("onUpdate : Beep")
@@ -396,7 +406,8 @@ function headlandManagement:onUpdate(dt)
 	else
 		spec.timer = 0
 	end
-	if self:getIsActive() and spec.IsActive and spec.ActStep<spec.MaxStep then
+	
+	if self:getIsActive() and spec.IsActive and spec.exists and spec.ActStep<spec.MaxStep then
 		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then
 			dbgprint("onUpdate : ActStep: "..tostring(spec.ActStep))
 			-- Set management actions
@@ -427,7 +438,7 @@ end
 function headlandManagement:onDraw(dt)
 	local spec = self.spec_headlandManagement
 
-	if self:getIsActive() and spec.IsActive then 
+	if self:getIsActive() and spec.IsActive and spec.exists then 
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
 	 
 		local scale = g_gameSettings.uiScale
