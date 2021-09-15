@@ -36,8 +36,8 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 
 	then
 		configurations["headlandManagement"] = {
-        	{name = "Nicht vorhanden", index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = "Kein Vorgewendemanagement"},
-        	{name = "Vorhanden", index = 2, isDefault = false, price = 25000, dailyUpkeep = 0, desc = "Vorgewendemanagement eingebaut"}
+        	{name = "Nein", index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = "Kein Vorgewendemanagement"},
+        	{name = "Ja", index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = "Vorgewendemanagement eingebaut"}
     	}
 	end
 	
