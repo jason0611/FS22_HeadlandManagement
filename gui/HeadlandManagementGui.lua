@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.5.1.1
+-- Version 0.5.1.2
 -- 
 -- Headlandmanagement GUI for configuration
 -- Logical dependencies added
@@ -91,12 +91,12 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	end
 	self.speedControlTurnSpeedSetting1:setTexts(speedTable)
 	self.speedControlTurnSpeedSetting1:setState(turnSpeed or 5)
-	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not modSpeedControlFound or not useSpeedControl)
+	self.speedControlTurnSpeedSetting1:setDisabled(not useModSpeedControl or not modSpeedControlFound or not useSpeedControl)
 	
 	self.speedControlTurnSpeedTitle2:setText(g_i18n:getText("hlmgui_speedControlModSetting"))
 	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
 	self.speedControlTurnSpeedSetting2:setState(turnSpeed or 1)
-	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl and modSpeedControlFound or not useSpeedControl)
+	self.speedControlTurnSpeedSetting2:setDisabled(useModSpeedControl and modSpeedControlFound or not useSpeedControl)
 
 	-- AlertMode
 	self.alarmTitle:setText(g_i18n:getText("hlmgui_beep"))
