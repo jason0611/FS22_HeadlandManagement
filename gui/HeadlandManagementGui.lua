@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.4.2.0
+-- Version 0.5.1.0
 -- 
 -- Headlandmanagement GUI for configuration
 -- Logical dependencies added
@@ -69,14 +69,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
 
 	-- SpeedControl
-	self.speedControlOnOffTitle:setText("SpeedControl nutzen")
+	self.speedControlOnOffTitle:setText(g_i18n:getText("hlmgui_speedControl"))
 	self.speedControlOnOffSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.speedControlOnOffSetting:setState(useSpeedControl and 1 or 2)
 	
-	self.speedControlUseSCModTitle:setText("Mod SpeedControl nutzen")
+	self.speedControlUseSCModTitle:setText(g_i18n:getText("hlmgui_speedControlMod"))
 	self.speedControlUseSCModSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
@@ -84,7 +84,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.speedControlUseSCModSetting:setState(useModSpeedControl and modSpeedControlFound and 1 or 2)
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not modSpeedControlFound)
 	
-	self.speedControlTurnSpeedTitle1:setText("Geschwindigkeit im Vorgewende")
+	self.speedControlTurnSpeedTitle1:setText(g_i18n:getText("hlmgui_speedSetting"))
 	local speedTable = {}
 	for n=1,40 do
 		speedTable[n] = tostring(n)
@@ -93,13 +93,13 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.speedControlTurnSpeedSetting1:setState(turnSpeed or 5)
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
 	
-	self.speedControlTurnSpeedTitle2:setText("Tempomatstufe im Vorgewende")
+	self.speedControlTurnSpeedTitle2:setText(g_i18n:getText("hlmgui_speedControlModSetting"))
 	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
 	self.speedControlTurnSpeedSetting2:setState(turnSpeed or 1)
 	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not modSpeedControlFound or not useSpeedControl)
 
 	-- AlertMode
-	self.alarmTitle:setText("Akustischer Hinweis")
+	self.alarmTitle:setText(g_i18n:getText("hlmgui_beep"))
 	self.alarmSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
@@ -107,14 +107,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.alarmSetting:setState(beep and 1 or 2)
 	
 	-- Implement control
-	self.raiseTitle:setText("Anbaugeräte ausheben")
+	self.raiseTitle:setText(g_i18n:getText("hlmgui_raise"))
 	self.raiseSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.raiseSetting:setState(useRaiseImplement and 1 or 2)
 	
-	self.turnPlowTitle:setText("Pflug dabei drehen")
+	self.turnPlowTitle:setText(g_i18n:getText("hlmgui_plow"))
 	self.turnPlowSetting:setTexts({
 		g_i18n:getText("hlmgui_plowFull"),
 		g_i18n:getText("hlmgui_plowCenter"),
@@ -127,14 +127,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.turnPlowSetting:setState(plowState)
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
 
-	self.stopPtoTitle:setText("Zapfwelle anhalten")
+	self.stopPtoTitle:setText(g_i18n:getText("hlmgui_pto"))
 	self.stopPtoSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
 	})
 	self.stopPtoSetting:setState(useStopPTO and 1 or 2)
 		
-	self.ridgeMarkerTitle:setText("Spurreißer umschalten")
+	self.ridgeMarkerTitle:setText(g_i18n:getText("hlmgui_ridgeMarker"))
 	self.ridgeMarkerSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
@@ -142,7 +142,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
 	
 	-- GPS control
-	self.gpsOnOffTitle:setText("GPS-Spurführung pausieren")
+	self.gpsOnOffTitle:setText(g_i18n:getText("hlmgui_gpsSetting"))
 	self.gpsOnOffSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),
@@ -150,7 +150,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
 	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
 		
-	self.gpsSettingTitle:setText("GPS Version")
+	self.gpsSettingTitle:setText(g_i18n:getText("hlmgui_gpsType"))
 	self.gpsSetting:setTexts({
 		g_i18n:getText("hlmgui_gps_auto"),
 		g_i18n:getText("hlmgui_gps_gs"),
@@ -165,7 +165,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.gpsSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound or not useGPS)
 	
 	-- Diff control
-	self.diffControlOnOffTitle:setText("Differentialsperren lösen")
+	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
 	self.diffControlOnOffSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
 		g_i18n:getText("hlmgui_off"),

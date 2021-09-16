@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.5.0.0
+-- Version 0.5.1.0
 -- 
 -- Missing switches implemented
 --
@@ -472,7 +472,7 @@ function headlandManagement:reduceSpeed(self, enable)
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed), true, false, false)
 		else
 			self:setCruiseControlMaxSpeed(spec.NormSpeed)
-			dbgprint("redceSpeed : Set cruise control back to "..tostring(spec.NormSpeed))
+			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.NormSpeed))
 		end
 	end
 end

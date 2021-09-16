@@ -10,11 +10,23 @@
 		<text name="hlmgui_title" text="Vorgewende-Management: Konfiguration für "/>
 		<text name="hlmgui_on" text="An"/>
 		<text name="hlmgui_off" text="Aus"/>
+		<text name="hlmgui_speedControl" text="Tempomat anpassen"/>
+		<text name="hlmgui_speedControlMod" text="Nutze Mod SpeedControl"/>
+		<text name="hlmgui_speedSetting" text="Arbeitsgeschwindigkeit im Vorgewende"/>
+		<text name="hlmgui_speedControlModSetting" text="Tempomatstufe im Vorgewende"/>
+		<text name="hlmgui_beep" text="Warnton bei aktiviertem Management"/>
+		<text name="hlmgui_raise" text="Anbaugeräte ausheben"/>
+		<text name="hlmgui_plow" text="Pflug drehen"/>
 		<text name="hlmgui_plowFull" text="sofort drehen"/>
 		<text name="hlmgui_plowCenter" text="in zwei Schritten drehen"/>
 		<text name="hlmgui_plowOff" text="nicht drehen"/>
+		<text name="hlmgui_pto" text="Zapfwelle abschalten"/>
+		<text name="hlmgui_ridgeMarker" text="Spurreißer wechseln"/>
+		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>
+		<text name="hlmgui_gpsType" text="Genutzte GPS-Variante"/>
 		<text name="hlmgui_gps_auto" text="automatisch"/>
 		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
+		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
 	</texts>
 </l10n>
