@@ -1,5 +1,5 @@
 # FS19_HeadlandManagement
-Vorgewende-Management für Schlepper, Feldsprintzen und Erntemaschinen
+Vorgewende-Management für Schlepper, Feldspritzen und Erntemaschinen
 
 
 Bereits umgesetzt:
