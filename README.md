@@ -16,7 +16,12 @@ Bereits umgesetzt:
 - GUI zur Konfigurion
 - Eingeblendetes HUD-Symbol bei aktivem Vorgewendemanagement
 - Warnton bei aktiviertem Vorgewendemanagement
-
-Noch in Planung:
 - Realisierung des Vorgewendemanagements als Konfiguration
 
+Todo:
+- Internationalisierung
+- moddesc.xml
+- Screenshots
+
+Noch in Planung:
+- Zeitsteuerung?
