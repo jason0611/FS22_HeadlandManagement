@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.5.1.0
+-- Version 0.5.1.1
 -- 
 -- Missing switches implemented
 --
