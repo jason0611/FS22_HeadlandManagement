@@ -1,5 +1,5 @@
 # FS19_HeadlandManagement
-Vorgewende-Management für Schlepper und Ernter
+Vorgewende-Management für Schlepper, Feldspritzen und Erntemaschinen
 
 
 Bereits umgesetzt:
@@ -16,7 +16,12 @@ Bereits umgesetzt:
 - GUI zur Konfigurion
 - Eingeblendetes HUD-Symbol bei aktivem Vorgewendemanagement
 - Warnton bei aktiviertem Vorgewendemanagement
-
-Noch in Planung:
 - Realisierung des Vorgewendemanagements als Konfiguration
 
+Todo:
+- Internationalisierung
+- moddesc.xml
+- Screenshots
+
+Noch in Planung:
+- Zeitsteuerung?
