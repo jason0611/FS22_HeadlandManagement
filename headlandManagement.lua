@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.5.1.3
+-- Version 0.5.2.0
 -- 
 -- Missing switches implemented
 --
@@ -21,7 +21,8 @@ headlandManagement.MOD_NAME = g_currentModName
 headlandManagement.REDUCESPEED = 1
 headlandManagement.DIFFLOCK = 2
 headlandManagement.RAISEIMPLEMENT = 3
-headlandManagement.STOPGPS = 4
+headlandManagement.STOPPTO = 4
+headlandManagement.STOPGPS = 5
 
 headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
@@ -130,7 +131,7 @@ function headlandManagement:onLoad(savegame)
 	spec.TurnSpeed = 5
 
 	spec.ActStep = 0
-	spec.MaxStep = 5
+	spec.MaxStep = 6
 	
 	spec.IsActive = false
 	spec.Action = {}
@@ -414,16 +415,19 @@ function headlandManagement:onUpdate(dt)
 			spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
 			spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
 			spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
+			spec.Action[headlandManagement.STOPPTO] = spec.UseStopPTO
 			spec.Action[headlandManagement.STOPGPS] = spec.ModGuidanceSteeringFound or spec.ModVCAFound	
 			
 			-- Activation
 			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
 			if spec.ActStep == headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, true); end
-			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow, spec.UseStopPTO, spec.UseCenterPlow); end
+			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow, spec.UseCenterPlow); end
+			if spec.ActStep == headlandManagement.STOPPTO and spec.Action[headlandManagement.STOPPTO] then headlandManagement:stopPTO(self, true); end
 			if spec.ActStep == headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, true); end
 			-- Deactivation
 			if spec.ActStep == -headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, false); end
-			if spec.ActStep == -headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, spec.UseTurnPlow, spec.UseStopPTO); end
+			if spec.ActStep == -headlandManagement.STOPPTO and spec.Action[headlandManagement.STOPPTO] then headlandManagement:stopPTO(self, false); end
+			if spec.ActStep == -headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, spec.UseTurnPlow); end
 			if spec.ActStep == -headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, false); end
 			if spec.ActStep == -headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, false); end		
 		end
@@ -477,10 +481,11 @@ function headlandManagement:reduceSpeed(self, enable)
 	end
 end
 
-function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, centerPlow)
+function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 	local spec = self.spec_headlandManagement
     local jointSpec = self.spec_attacherJoints
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / stopPTO: "..tostring(stopPTO))
+    
     for _,attachedImplement in pairs(jointSpec.attachedImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
@@ -490,6 +495,7 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
 					local lowered = actImplement:getIsLowered()
+					dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
 					local wasLowered = lowered
 					spec.ImplementStatusTable[index] = wasLowered
 					if lowered and actImplement.setLoweredAll ~= nil then 
@@ -514,22 +520,16 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 				    	lowered = actImplement:getIsLowered()
 				    	dbgprint("raiseImplements : implement is raised by heightTargetAlpha: "..tostring(not lowered))
 				    end
-				    if stopPTO then
-				    	local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive() and actImplement.deactivate ~= nil
-				    	spec.ImplementPTOTable[index] = active
-				    	if active then actImplement:deactivate(); end
-				    	dbgprint("raiseImplements : implement PTO stopped")
-				    end
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
 				        if actImplement:getIsPlowRotationAllowed() then
 							spec.PlowRotationMaxNew = not plowSpec.rotationMax
 							if centerPlow then 
 								actImplement:setRotationCenter()
-                dbgprint("raiseImplements : plow is centered")
+                				dbgprint("raiseImplements : plow is centered")
 							else
 								actImplement:setRotationMax(spec.PlowRotationMaxNew)
-                dbgprint("raiseImplements : plow is turned")
+                				dbgprint("raiseImplements : plow is turned")
 							end
 				        end
 		 			end
@@ -542,11 +542,6 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 						spec.PlowRotationMaxNew = nil
 						dbgprint("raiseImplements : plow is turned")
 					end
-					if stopPTO then
-				    	local active = spec.ImplementPTOTable[index]
-				    	if active and actImplement.setIsTurnedOn ~= nil then actImplement:setIsTurnedOn(true); end -- actImplement:activate(); end
-				    	dbgprint("raiseImplements : implement PTO started")
-				    end
 					if wasLowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, index)
 		 				lowered = actImplement:getIsLowered()
@@ -589,6 +584,42 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, stopPTO, cent
 				actImplement:setRidgeMarkerState(spec.RidgeMarkerStatus)
 			end
 			dbgprint("ridgeMarker: "..tostring(specRM.ridgeMarkerState))
+		end
+	end
+end
+
+function headlandManagement:stopPTO(self, stopPTO)
+	local spec = self.spec_headlandManagement
+    local jointSpec = self.spec_attacherJoints
+    dbgprint("stopPTO: "..tostring(stopPTO))
+    
+    for _,attachedImplement in pairs(jointSpec.attachedImplements) do
+    	local index = attachedImplement.jointDescIndex
+    	local actImplement = attachedImplement.object
+		if actImplement ~= nil then
+			dbgprint("stopPTO : actImplement: "..actImplement:getName())
+			if stopPTO then
+				local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
+				spec.ImplementPTOTable[index] = active
+				if active and actImplement.setIsTurnedOn ~= nil then 
+					actImplement:setIsTurnedOn(false)
+					dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
+				elseif active and actImplement.deactivate ~= nil then
+					actImplement:deactivate()
+					dbgprint("raiseImplements : implement PTO stopped by deactivate")
+				end
+				
+	 		else
+				local active = spec.ImplementPTOTable[index]
+				if active and actImplement.setIsTurnedOn ~= nil then 
+					actImplement:setIsTurnedOn(true) 
+					dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
+				elseif active and actImplement.activate ~= nil then
+					actImplement:activate()
+					dbgprint("raiseImplements : implement PTO stopped by activate")
+				end
+				dbgprint("raiseImplements : implement PTO started")
+			end
 		end
 	end
 end
