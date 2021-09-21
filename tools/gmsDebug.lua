@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.2.0.1
+-- V1.3.0.0
 --
 
 GMSDebug = {}
@@ -29,7 +29,7 @@ end
 function GMSDebug:print(text, prio)
 	if prio == nil then prio = 1; end
 	if not GMSDebug.state or prio > GMSDebug.level then return; end
-	print(GMSDebug.modName.." :: "..tostring(text).." (Prio "..tostring(prio)..")")
+	print(GMSDebug.modName.." :: Prio "..tostring(prio).." :: "..tostring(text))
 end
 
 function GMSDebug:print_r(table, prio)
