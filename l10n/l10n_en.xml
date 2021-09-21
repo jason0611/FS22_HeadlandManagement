@@ -1,10 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
-    <texts>
+	<texts>
     	<text name="input_HLM_TOGGLESTATE" text="Headlandmanagement: Start / Stop"/>	
     	<text name="input_HLM_SWITCHON" text="Headlandmanagement: Start" />
     	<text name="input_HLM_SWITCHOFF" text="Headlandmanagement: Stop" />	
-		<text name="text_HLM_isActive" text="Headlandmanagement: activated"/>
+    	<text name="input_HLM_SHOWGUI" text="Headlandmanagement: Settings" />
+		
+		<text name="text_HLM_isActive" text="Headlandmanagement active"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
+		<text name="text_HLM_installed" text="Headlandmanagement installed"/>
+		<text name="text_HLM_notInstalled" text="Headlandmanagement not installed"/>
+
+		<text name="hlmgui_title" text="Headlandmanagement: Settings for "/>
+		<text name="hlmgui_on" text="On"/>
+		<text name="hlmgui_off" text="Off"/>
+		<text name="hlmgui_speedControl" text="Speed-Control Settings"/>
+		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
+		<text name="hlmgui_speedSetting" text="Working speed in headlands"/>
+		<text name="hlmgui_speedControlModSetting" text="Speed-Control level in headlands"/>
+		<text name="hlmgui_beep" text="Audible alert while headlandmanagament is active"/>
+		<text name="hlmgui_raise" text="Lift implements"/>
+		<text name="hlmgui_plow" text="Turn plow"/>
+		<text name="hlmgui_plowFull" text="Full turn"/>
+		<text name="hlmgui_plowCenter" text="Turn in two steps"/>
+		<text name="hlmgui_plowOff" text="Don't turn"/>
+		<text name="hlmgui_pto" text="Stop PTO and hydraulical devices"/>
+		<text name="hlmgui_ridgeMarker" text="Change ridgemarker"/>
+		<text name="hlmgui_gpsSetting" text="Stop GPS steering"/>
+		<text name="hlmgui_gpsType" text="Used GPS-Mod"/>
+		<text name="hlmgui_gps_auto" text="detect automatically"/>
+		<text name="hlmgui_gps_gs" text="only Guidance Steering"/>
+		<text name="hlmgui_gps_vca" text="only VCA"/>
+		<text name="hlmgui_diffLock" text="Unlock differential"/>	
 	</texts>
 </l10n>
