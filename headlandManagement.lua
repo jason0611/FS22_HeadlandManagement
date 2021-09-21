@@ -139,7 +139,7 @@ function headlandManagement:onLoad(savegame)
 	
 	spec.UseSpeedControl = true
 	spec.ModSpeedControlFound = false
-	spec.UseModSpeedControl = true
+	spec.UseModSpeedControl = false
 	
 	spec.UseRaiseImplement = true
 	spec.ImplementStatusTable = {}
@@ -170,13 +170,12 @@ function headlandManagement:onPostLoad(savegame)
 	if spec == nil then return end
 	
 	spec.exists = self.configurations["headlandManagement"] == 2
-	
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	
 	-- Check if Mod SpeedControl exists
 	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
 		spec.ModSpeedControlFound = true 
-		spec.UseSpeedControl = true
+		spec.UseModSpeedControl = true
 		spec.TurnSpeed = 1 --SpeedControl Mode 1
 		spec.NormSpeed = 2 --SpeedControl Mode 2
 	end
@@ -212,8 +211,8 @@ function headlandManagement:onPostLoad(savegame)
 	spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
 	spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
 	spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
+	spec.Action[headlandManagement.STOPPTO] = spec.UseStopPTO
 	spec.Action[headlandManagement.STOPGPS] = (spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering) or (spec.ModVCAFound and spec.UseVCA)
-	
 end
 
 function headlandManagement:saveToXMLFile(xmlFile, key)
@@ -397,10 +396,9 @@ end
 function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
 	
-	if self:getIsActive() and spec.IsActive and spec.exists and not headlandManagement.isDedi and spec.Beep then
+	if not headlandManagement.isDedi and self:getIsActive() and spec.exists and spec.Beep and spec.isActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
-			dbgprint("onUpdate : Beep")
 			playSample(headlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
 			spec.timer = 0
 		end	
@@ -458,8 +456,6 @@ end
 	
 function headlandManagement:reduceSpeed(self, enable)	
 	local spec = self.spec_headlandManagement
-	if not spec.UseSpeedControl then return; end;
-	
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
 		if spec.ModSpeedControlFound and spec.UseModSpeedControl then
@@ -624,16 +620,12 @@ end
 
 function headlandManagement:stopGPS(self, enable)
 	local spec = self.spec_headlandManagement
-	if not spec.UseGPS then 
-		dbgprint("stopGPS : skipped")
-		return; 
-	end;
 	dbgprint("stopGPS : "..tostring(enable))
 
 -- Part 1: Detect used mod
 	local gpsSetting = 1 -- auto mode
-	if spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering then gpsSetting = 2; end -- GS mode
-	if spec.ModVCAFound and spec.UseVCA then gpsSetting = 3; end -- VCA mode
+	if spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering then gpsSetting = 2; end -- GS mode enforced
+	if spec.ModVCAFound and spec.UseVCA then gpsSetting = 3; end -- VCA mode enforced
 	
 	if gpsSetting == 1 and spec.ModGuidanceSteeringFound then
 		local gsSpec = self.spec_globalPositioningSystem
@@ -651,7 +643,6 @@ function headlandManagement:stopGPS(self, enable)
 			dbgprint("stopGPS : VCA is active")
 		end
 	end
-	
 	dbgprint("stopGPS : gpsSetting: "..tostring(gpsSetting))
 
 -- Part 2: Guidance Steering	
@@ -696,10 +687,6 @@ end
 
 function headlandManagement:disableDiffLock(self, disable)
 	local spec = self.spec_headlandManagement
-	if not spec.ModVCAFound or not spec.UseDiffLock then 
-		return
-	end
-	
 	if disable then
 		spec.DiffStateF = self.vcaDiffLockFront
 		spec.DiffStateB = self.vcaDiffLockBack
