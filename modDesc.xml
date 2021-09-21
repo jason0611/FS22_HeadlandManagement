@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
-
-  <author>Jason06</author>
-   	
-	<version>0.5.2.0</version>
-
-  <title>
+	<author>Jason06 / Glowins Modschmiede</author>
+	<version>0.5.2.1</version>
+	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
     </title>
-	
     <description>
 		<en>
 		<![CDATA[Headland Management]]>
@@ -20,20 +16,16 @@
  	</description>	
     <multiplayer supported="true"/>
 	<iconFilename>icon.dds</iconFilename>
-	
 	<extraSourceFiles>
-        <sourceFile filename="headlandManagementRegister.lua" />
+    	<sourceFile filename="headlandManagementRegister.lua" />
     </extraSourceFiles>
-	
 	<l10n filenamePrefix="l10n/l10n" />
-	
 	<actions>
 		<action name="HLM_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SHOWGUI" categorie="VEHICLE" ignoreComboMask="false" />
 	</actions>
-
 	<inputBinding>	
 		<actionBinding action="HLM_TOGGLESTATE">
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_x" neutralInput="0" index="1" />

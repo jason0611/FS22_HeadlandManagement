@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.5.2.0
+-- Version 0.5.2.1
 -- 
 -- Missing switches implemented
 --
@@ -483,15 +483,15 @@ end
 
 function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 	local spec = self.spec_headlandManagement
-    local jointSpec = self.spec_attacherJoints
-    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / stopPTO: "..tostring(stopPTO))
+    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
     
-    for _,attachedImplement in pairs(jointSpec.attachedImplements) do
-    	local index = attachedImplement.jointDescIndex
-    	local actImplement = attachedImplement.object
-    	dbgprint("raiseImplements : actImplement: "..actImplement:getName())
+	local allImplements = {}
+	self:getRootVehicle():getChildVehicles(allImplements)
+    
+	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
 		if spec.UseRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
+			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
 					local lowered = actImplement:getIsLowered()
@@ -590,36 +590,34 @@ end
 
 function headlandManagement:stopPTO(self, stopPTO)
 	local spec = self.spec_headlandManagement
-    local jointSpec = self.spec_attacherJoints
+    --local jointSpec = self.spec_attacherJoints
     dbgprint("stopPTO: "..tostring(stopPTO))
-    
-    for _,attachedImplement in pairs(jointSpec.attachedImplements) do
-    	local index = attachedImplement.jointDescIndex
-    	local actImplement = attachedImplement.object
-		if actImplement ~= nil then
-			dbgprint("stopPTO : actImplement: "..actImplement:getName())
-			if stopPTO then
-				local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
-				spec.ImplementPTOTable[index] = active
-				if active and actImplement.setIsTurnedOn ~= nil then 
-					actImplement:setIsTurnedOn(false)
-					dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
-				elseif active and actImplement.deactivate ~= nil then
-					actImplement:deactivate()
-					dbgprint("raiseImplements : implement PTO stopped by deactivate")
-				end
-				
-	 		else
-				local active = spec.ImplementPTOTable[index]
-				if active and actImplement.setIsTurnedOn ~= nil then 
-					actImplement:setIsTurnedOn(true) 
-					dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
-				elseif active and actImplement.activate ~= nil then
-					actImplement:activate()
-					dbgprint("raiseImplements : implement PTO stopped by activate")
-				end
-				dbgprint("raiseImplements : implement PTO started")
+	
+    local allImplements = {}
+	self:getRootVehicle():getChildVehicles(allImplements)
+	
+    for index,actImplement in pairs(allImplements) do
+		dbgprint("stopPTO : actImplement: "..actImplement:getName())
+		if stopPTO then
+			local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
+			spec.ImplementPTOTable[index] = active
+			if active and actImplement.setIsTurnedOn ~= nil then 
+				actImplement:setIsTurnedOn(false)
+				dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
+			elseif active and actImplement.deactivate ~= nil then
+				actImplement:deactivate()
+				dbgprint("raiseImplements : implement PTO stopped by deactivate")
 			end
+		else
+			local active = spec.ImplementPTOTable[index]
+			if active and actImplement.setIsTurnedOn ~= nil then 
+				actImplement:setIsTurnedOn(true) 
+				dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
+			elseif active and actImplement.activate ~= nil then
+				actImplement:activate()
+				dbgprint("raiseImplements : implement PTO stopped by activate")
+			end
+			dbgprint("raiseImplements : implement PTO started")
 		end
 	end
 end
