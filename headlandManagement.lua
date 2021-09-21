@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.5.2.0
+-- Version 0.5.2.1
 -- 
 -- Missing switches implemented
 --
@@ -483,10 +483,13 @@ end
 
 function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 	local spec = self.spec_headlandManagement
-    local jointSpec = self.spec_attacherJoints
+    --local jointSpec = self.spec_attacherJoints
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / stopPTO: "..tostring(stopPTO))
     
-    for _,attachedImplement in pairs(jointSpec.attachedImplements) do
+	local allImplements = {}
+	self:getRootVehicle():getChildVehicles(allImplements)
+    
+	for _,attachedImplement in pairs(allImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
     	dbgprint("raiseImplements : actImplement: "..actImplement:getName())
@@ -590,10 +593,13 @@ end
 
 function headlandManagement:stopPTO(self, stopPTO)
 	local spec = self.spec_headlandManagement
-    local jointSpec = self.spec_attacherJoints
+    --local jointSpec = self.spec_attacherJoints
     dbgprint("stopPTO: "..tostring(stopPTO))
-    
-    for _,attachedImplement in pairs(jointSpec.attachedImplements) do
+	
+    local allImplements = {}
+	self:getRootVehicle():getChildVehicles(allImplements)
+	
+    for _,attachedImplement in pairs(allImplements) do
     	local index = attachedImplement.jointDescIndex
     	local actImplement = attachedImplement.object
 		if actImplement ~= nil then
