@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.2.0.0
+-- V1.2.0.1
 --
 
 GMSDebug = {}
@@ -9,9 +9,14 @@ GMSDebug.modName = "Unknown Mod"
 GMSDebug.state = false
 GMSDebug.consoleCommands = false
 
-function GMSDebug:init(modName, forceDbg)
+function GMSDebug:init(modName, dbg, dbgLevel)
 	GMSDebug.modName = modName
-	GMSDebug.state = (forceDbg == true)
+	GMSDebug.state = (dbg == true)
+	if dbgLevel == nil then 
+		GMSDebug.level = 1
+	else	
+		GMSDebug.level = dbgLevel
+	end
 end
 
 function GMSDebug:enableConsoleCommands(command)
@@ -21,20 +26,23 @@ function GMSDebug:enableConsoleCommands(command)
 	GMSDebug:print("Debug Console Commands added: "..command)
 end
 
-function GMSDebug:print(text)
-	if not GMSDebug.state then return; end
-	print(GMSDebug.modName.." :: "..tostring(text))
+function GMSDebug:print(text, prio)
+	if prio == nil then prio = 1; end
+	if not GMSDebug.state or prio > GMSDebug.level then return; end
+	print(GMSDebug.modName.." :: "..tostring(text).." (Prio "..tostring(prio)..")")
 end
 
-function GMSDebug:print_r(table)
-	if not GMSDebug.state then return; end
-	GMSDebug:print("BEGIN OF "..tostring(table).." =================")
+function GMSDebug:print_r(table, prio)
+	if prio == nil then prio = 1; end
+	if not GMSDebug.state or prio > GMSDebug.level then return; end
+	GMSDebug:print("BEGIN OF "..tostring(table).." (Prio "..tostring(prio)..") =================")
 	print_r(table)
 	GMSDebug:print("END OF "..tostring(table).." =================")
 end
 
-function GMSDebug:render(text, pos)
-	if not GMSDebug.state then return; end
+function GMSDebug:render(text, pos, prio)
+	if prio == nil then prio = 1; end
+	if not GMSDebug.state or prio > GMSDebug.level then return; end
 	if pos == nil then pos = 0; end
 	setTextAlignment(RenderText.ALIGN_LEFT)
 	renderText(0, 0.95 - pos * 0.05, 0.03, "GMSDebug: "..text)
@@ -54,14 +62,14 @@ end
 
 --
 
-function dbgprint(text)
-	GMSDebug:print(text)
+function dbgprint(text, prio)
+	GMSDebug:print(text, prio)
 end
 
-function dbgprint_r(table)
-	GMSDebug:print_r(table)
+function dbgprint_r(table, prio)
+	GMSDebug:print_r(table, prio)
 end
 
-function dbgrender(text, pos)
-	GMSDebug:render(tostring(text), pos)
+function dbgrender(text, pos, prio)
+	GMSDebug:render(tostring(text), pos, prio)
 end
