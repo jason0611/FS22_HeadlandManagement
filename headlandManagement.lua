@@ -396,7 +396,7 @@ end
 function headlandManagement:onUpdate(dt)
 	local spec = self.spec_headlandManagement
 	
-	if not headlandManagement.isDedi and self:getIsActive() and spec.exists and spec.Beep and spec.isActive then
+	if not headlandManagement.isDedi and self:getIsActive() and spec.exists and spec.Beep and spec.IsActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
 			playSample(headlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
