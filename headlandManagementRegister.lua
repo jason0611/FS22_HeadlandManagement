@@ -2,7 +2,7 @@
 -- register
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 0.5.3.0
+-- Version 0.5.4.0
 --
 -- 
 --
