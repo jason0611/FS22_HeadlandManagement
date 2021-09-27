@@ -2,7 +2,7 @@
 -- register
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 0.5.4.0
+-- Version 0.6.0.1
 --
 -- 
 --
@@ -28,7 +28,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		and	configurations ~= nil
 
 	then
-		configurations["headlandManagement"] = {
+		configurations["HeadlandManagement"] = {
         	{name = "Nein", index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
         	{name = "Ja", index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
     	}
@@ -37,8 +37,8 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
     return configurations
 end
 
-if g_specializationManager:getSpecializationByName("headlandManagement") == nil then
-  	g_specializationManager:addSpecialization("headlandManagement", "headlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
+if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
+  	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
 end
 
 for typeName, typeEntry in pairs(g_vehicleTypeManager:getVehicleTypes()) do
@@ -55,13 +55,13 @@ for typeName, typeEntry in pairs(g_vehicleTypeManager:getVehicleTypes()) do
     	)
     
     then
-     	g_vehicleTypeManager:addSpecialization(typeName, "headlandManagement")
+     	g_vehicleTypeManager:addSpecialization(typeName, "HeadlandManagement")
 		dbgprint("registered for "..typeName)
     end
 end
 
-if g_configurationManager.configurations["headlandManagement"] == nil then
-	g_configurationManager:addConfigurationType("headlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+if g_configurationManager.configurations["HeadlandManagement"] == nil then
+	g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
 	StoreItemUtil.getConfigurationsFromXML = Utils.overwrittenFunction(StoreItemUtil.getConfigurationsFromXML, addHLMconfig)
 end
 

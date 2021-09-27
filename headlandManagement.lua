@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.5.4.0
+-- Version 0.6.0.1
 -- 
 -- Missing switches implemented
 --
@@ -15,82 +15,82 @@ GMSDebug:enableConsoleCommands("hlmDebug")
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
 g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
-headlandManagement = {}
-headlandManagement.MOD_NAME = g_currentModName
+HeadlandManagement = {}
+HeadlandManagement.MOD_NAME = g_currentModName
 
-headlandManagement.REDUCESPEED = 1
-headlandManagement.DIFFLOCK = 2
-headlandManagement.RAISEIMPLEMENT = 3
-headlandManagement.STOPPTO = 4
-headlandManagement.STOPGPS = 5
+HeadlandManagement.REDUCESPEED = 1
+HeadlandManagement.DIFFLOCK = 2
+HeadlandManagement.RAISEIMPLEMENT = 3
+HeadlandManagement.STOPPTO = 4
+HeadlandManagement.STOPGPS = 5
 
-headlandManagement.isDedi = g_dedicatedServerInfo ~= nil
+HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
-headlandManagement.BEEPSOUND = createSample("HLMBEEP")
-loadSample(headlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
+HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
+loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
-headlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
+HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 
 -- Console Commands
 
-addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", headlandManagement)
-function headlandManagement:toggleAction(hlmAction)
+addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", HeadlandManagement)
+function HeadlandManagement:toggleAction(hlmAction)
 	
 	local vehicle = g_currentMission.controlledVehicle
 	
 	if hlmAction == nil then
-		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|Beep>"
+		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|beep>"
 	end
 	
-	local spec = vehicle.spec_headlandManagement
+	local spec = vehicle.spec_HeadlandManagement
 	if spec == nil then	
 		return "No Headland Management installed"
 	end
 	
 	if hlmAction == "Speed" then 
-		spec.UseSpeedControl = not spec.UseSpeedControl
-		return "Speedcontrol set to "..tostring(spec.UseSpeedControl)
+		spec.useSpeedControl = not spec.useSpeedControl
+		return "Speedcontrol set to "..tostring(spec.useSpeedControl)
 	end
 	
 	if hlmAction == "Diffs" then
-		spec.UseDiffLock = not spec.UseDiffLock and spec.ModVCAFound
-		return "DiffLock set to "..tostring(spec.UseDiffLock)
+		spec.useDiffLock = not spec.useDiffLock and spec.modVCAFound
+		return "DiffLock set to "..tostring(spec.useDiffLock)
 	end
 	
 	if hlmAction == "Raise" then
-		spec.UseRaiseImplement = not spec.UseRaiseImplement
-		return "RaiseImplement set to "..tostring(spec.UseRaiseImplement)
+		spec.useRaiseImplement = not spec.useRaiseImplement
+		return "RaiseImplement set to "..tostring(spec.useRaiseImplement)
 	end
 	
 	if hlmAction == "Plow" then
-		spec.UseTurnPlow = not spec.UseTurnPlow
-		return "TurnPlow set to "..tostring(spec.UseTurnPlow)
+		spec.useTurnPlow = not spec.useTurnPlow
+		return "TurnPlow set to "..tostring(spec.useTurnPlow)
 	end
 	
 	if hlmAction == "PlowCenter" then
-		spec.UseCenterPlow = not spec.UseCenterPlow
-		return "CenterPlow set to "..tostring(spec.UseCenterPlow)
+		spec.useCenterPlow = not spec.useCenterPlow
+		return "CenterPlow set to "..tostring(spec.useCenterPlow)
 
 	end
 	
 	if hlmAction == "PTO" then
-		spec.UseStopPTO = not spec.UseStopPTO
-		return "PTO set to "..tostring(spec.UseStopPTO)
+		spec.useStopPTO = not spec.useStopPTO
+		return "PTO set to "..tostring(spec.useStopPTO)
 	end
 	
 	if hlmAction == "Ridgemarker" then
-		spec.UseRidgeMarker = not spec.UseRidgeMarker
-		return "RidgeMarker set to "..tostring(spec.UseRidgeMarker)
+		spec.useRidgeMarker = not spec.useRidgeMarker
+		return "RidgeMarker set to "..tostring(spec.useRidgeMarker)
 	end
 	
 	if hlmAction == "GPS" then
-		spec.UseGPS = not spec.UseGPS and (spec.ModGuidanceSteeringFound or spec.ModVCAFound)
-		return "GPS is set to "..tostring(spec.UseGPS)
+		spec.useGPS = not spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
+		return "GPS is set to "..tostring(spec.useGPS)
 	end
 	
-	if hlmAction == "Beep" then
-		spec.Beep = not spec.Beep
-		return "Beep is set to "..tostring(spec.Beep)
+	if hlmAction == "beep" then
+		spec.beep = not spec.beep
+		return "beep is set to "..tostring(spec.beep)
 	end
 	
 	if hlmAction == "Status" then
@@ -101,346 +101,346 @@ end
 
 -- Standards / Basics
 
-function headlandManagement.prerequisitesPresent(specializations)
+function HeadlandManagement.prerequisitesPresent(specializations)
   return true
 end
 
-function headlandManagement.registerEventListeners(vehicleType)
-	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onDraw", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onLoad", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", headlandManagement)
- 	SpecializationUtil.registerEventListener(vehicleType, "onReadStream", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", headlandManagement)
-	SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", headlandManagement)
+function HeadlandManagement.registerEventListeners(vehicleType)
+	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onDraw", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onLoad", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "saveToXMLFile", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", HeadlandManagement)
+ 	SpecializationUtil.registerEventListener(vehicleType, "onReadStream", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", HeadlandManagement)
 end
 
-function headlandManagement:onLoad(savegame)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:onLoad(savegame)
+	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
 	spec.exists = false
 	
 	spec.timer = 0
-	spec.Beep = true
+	spec.beep = true
 	
-	spec.NormSpeed = 20
-	spec.TurnSpeed = 5
+	spec.normSpeed = 20
+	spec.turnSpeed = 5
 
-	spec.ActStep = 0
-	spec.MaxStep = 6
+	spec.actStep = 0
+	spec.maxStep = 6
 	
-	spec.IsActive = false
-	spec.Action = {}
-	spec.Action[0] =false
+	spec.isActive = false
+	spec.action = {}
+	spec.action[0] =false
 	
-	spec.UseSpeedControl = true
-	spec.ModSpeedControlFound = false
-	spec.UseModSpeedControl = false
+	spec.useSpeedControl = true
+	spec.modSpeedControlFound = false
+	spec.useModSpeedControl = false
 	
-	spec.UseRaiseImplement = true
-	spec.ImplementStatusTable = {}
-	spec.ImplementPTOTable = {}
-	spec.UseStopPTO = true
-	spec.UseTurnPlow = true
-	spec.UseCenterPlow = true
-	spec.PlowRotationMax = nil
+	spec.useRaiseImplement = true
+	spec.implementStatusTable = {}
+	spec.implementPTOTable = {}
+	spec.useStopPTO = true
+	spec.useTurnPlow = true
+	spec.useCenterPlow = true
+	spec.plowRotationMaxNew = nil
 	
-	spec.UseRidgeMarker = true
-	spec.RidgeMarkerStatus = 0
+	spec.useRidgeMarker = true
+	spec.ridgeMarkerStatus = 0
 	
-	spec.UseGPS = true
-	spec.ModGuidanceSteeringFound = false
-	spec.UseGuidanceSteering = false	
+	spec.useGPS = true
+	spec.modGuidanceSteeringFound = false
+	spec.useGuidanceSteering = false	
 	spec.GSStatus = false
-	spec.ModVCAFound = false
-	spec.UseVCA = false
-	spec.VCAStatus = false
+	spec.modVCAFound = false
+	spec.useVCA = false
+	spec.vcaStatus = false
 	
-	spec.UseDiffLock = true
-	spec.DiffStateF = false
-	spec.DiffStateB = false
+	spec.useDiffLock = true
+	spec.diffStateF = false
+	spec.diffStateB = false
 end
 
-function headlandManagement:onPostLoad(savegame)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:onPostLoad(savegame)
+	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	spec.exists = self.configurations["headlandManagement"] == 2
+	spec.exists = self.configurations["HeadlandManagement"] == 2
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	
 	-- Check if Mod SpeedControl exists
 	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
-		spec.ModSpeedControlFound = true 
-		spec.UseModSpeedControl = true
-		spec.TurnSpeed = 1 --SpeedControl Mode 1
-		spec.NormSpeed = 2 --SpeedControl Mode 2
+		spec.modSpeedControlFound = true 
+		spec.useModSpeedControl = true
+		spec.turnSpeed = 1 --SpeedControl Mode 1
+		spec.normSpeed = 2 --SpeedControl Mode 2
 	end
 	
 	-- Check if Mod GuidanceSteering exists
-	spec.ModGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil
+	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil
 	
 	-- Check if Mod VCA exists
-	spec.ModVCAFound = self.vcaSetState ~= nil
+	spec.modVCAFound = self.vcaSetState ~= nil
 
 	if savegame ~= nil and spec.exists then	
 		local xmlFile = savegame.xmlFile
-		local key = savegame.key .. ".headlandManagement"
+		local key = savegame.key .. ".HeadlandManagement"
 	
-		spec.Beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.Beep)
-		spec.TurnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.TurnSpeed)
-		spec.IsActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.IsActive)
-		spec.UseSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.UseSpeedControl)
-		spec.UseModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.UseModSpeedControl)
-		spec.UseRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), spec.UseRaiseImplement)
-		spec.UseStopPTO = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTO"), spec.UseStopPTO)
-		spec.UseTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.UseTurnPlow)
-		spec.UseCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.UseCenterPlow)
-		spec.UseRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.UseRidgeMarker)
-		spec.UseGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.UseGPS)
-		spec.UseGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.UseGuidanceSteering)
-		spec.UseVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.UseVCA)
-		spec.UseDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.UseDiffLock)
+		spec.beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.beep)
+		spec.turnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.turnSpeed)
+		spec.isActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.isActive)
+		spec.useSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.useSpeedControl)
+		spec.useModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.useModSpeedControl)
+		spec.useRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), spec.useRaiseImplement)
+		spec.useStopPTO = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTO"), spec.useStopPTO)
+		spec.useTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.useTurnPlow)
+		spec.useCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.useCenterPlow)
+		spec.useRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.useRidgeMarker)
+		spec.useGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.useGPS)
+		spec.useGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.useGuidanceSteering)
+		spec.useVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.useVCA)
+		spec.useDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.useDiffLock)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
 	-- Set management actions
-	spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
-	spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
-	spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
-	spec.Action[headlandManagement.STOPPTO] = spec.UseStopPTO
-	spec.Action[headlandManagement.STOPGPS] = (spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering) or (spec.ModVCAFound and spec.UseVCA)
+	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
+	spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
+	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
+	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
+	spec.action[HeadlandManagement.STOPGPS] = (spec.modGuidanceSteeringFound and spec.useGuidanceSteering) or (spec.modVCAFound and spec.useVCA)
 end
 
-function headlandManagement:saveToXMLFile(xmlFile, key)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:saveToXMLFile(xmlFile, key)
+	local spec = self.spec_HeadlandManagement
 	if spec.exists then
-		setXMLBool(xmlFile, key.."#beep", spec.Beep)
-		setXMLFloat(xmlFile, key.."#turnSpeed", spec.TurnSpeed)
-		setXMLBool(xmlFile, key.."#isActive", spec.IsActive)
-		setXMLBool(xmlFile, key.."#useSpeedControl", spec.UseSpeedControl)
-		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.UseModSpeedControl)
-		setXMLBool(xmlFile, key.."#useRaiseImplement", spec.UseRaiseImplement)
-		setXMLBool(xmlFile, key.."#useStopPTO", spec.UseStopPTO)
-		setXMLBool(xmlFile, key.."#turnPlow", spec.UseTurnPlow)
-		setXMLBool(xmlFile, key.."#centerPlow", spec.UseCenterPlow)
-		setXMLBool(xmlFile, key.."#switchRidge", spec.UseRidgeMarker)
-		setXMLBool(xmlFile, key.."#useGPS", spec.UseGPS)
-		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.UseGuidanceSteering)
-		setXMLBool(xmlFile, key.."#useVCA", spec.UseVCA)
-		setXMLBool(xmlFile, key.."#useDiffLock", spec.UseDiffLock)
+		setXMLBool(xmlFile, key.."#beep", spec.beep)
+		setXMLFloat(xmlFile, key.."#turnSpeed", spec.turnSpeed)
+		setXMLBool(xmlFile, key.."#isActive", spec.isActive)
+		setXMLBool(xmlFile, key.."#useSpeedControl", spec.useSpeedControl)
+		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.useModSpeedControl)
+		setXMLBool(xmlFile, key.."#useRaiseImplement", spec.useRaiseImplement)
+		setXMLBool(xmlFile, key.."#useStopPTO", spec.useStopPTO)
+		setXMLBool(xmlFile, key.."#turnPlow", spec.useTurnPlow)
+		setXMLBool(xmlFile, key.."#centerPlow", spec.useCenterPlow)
+		setXMLBool(xmlFile, key.."#switchRidge", spec.useRidgeMarker)
+		setXMLBool(xmlFile, key.."#useGPS", spec.useGPS)
+		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.useGuidanceSteering)
+		setXMLBool(xmlFile, key.."#useVCA", spec.useVCA)
+		setXMLBool(xmlFile, key.."#useDiffLock", spec.useDiffLock)
 	end
 end
 
-function headlandManagement:onReadStream(streamId, connection)
-	local spec = self.spec_headlandManagement
-	spec.Beep = streamReadBool(streamId)
-	spec.TurnSpeed = streamReadFloat32(streamId)
-	spec.IsActive = streamReadBool(streamId)
-	spec.UseSpeedControl = streamReadBool(streamId)
-	spec.UseModSpeedControl = streamReadBool(streamId)
-	spec.UseRaiseImplement = streamReadBool(streamId)
-	spec.UseStopPTO = streamReadBool(streamId)
-	spec.UseTurnPlow = streamReadBool(streamId)
-	spec.UseCenterPlow = streamReadBool(streamId)
-  	spec.UseRidgeMarker = streamReadBool(streamId)
-  	spec.UseGPS = streamReadBool(streamId)
-  	spec.UseGuidanceSteering = streamReadBool(streamId)
-  	spec.UseVCA = streamReadBool(streamId)
-  	spec.UseDiffLock = streamReadBool(streamId)
+function HeadlandManagement:onReadStream(streamId, connection)
+	local spec = self.spec_HeadlandManagement
+	spec.beep = streamReadBool(streamId)
+	spec.turnSpeed = streamReadFloat32(streamId)
+	spec.isActive = streamReadBool(streamId)
+	spec.useSpeedControl = streamReadBool(streamId)
+	spec.useModSpeedControl = streamReadBool(streamId)
+	spec.useRaiseImplement = streamReadBool(streamId)
+	spec.useStopPTO = streamReadBool(streamId)
+	spec.useTurnPlow = streamReadBool(streamId)
+	spec.useCenterPlow = streamReadBool(streamId)
+  	spec.useRidgeMarker = streamReadBool(streamId)
+  	spec.useGPS = streamReadBool(streamId)
+  	spec.useGuidanceSteering = streamReadBool(streamId)
+  	spec.useVCA = streamReadBool(streamId)
+  	spec.useDiffLock = streamReadBool(streamId)
 end
 
-function headlandManagement:onWriteStream(streamId, connection)
-	local spec = self.spec_headlandManagement
-	streamWriteBool(streamId, spec.Beep)
-	streamWriteFloat32(streamId, spec.TurnSpeed)
-	streamWriteBool(streamId, spec.IsActive)
-	streamWriteBool(streamId, spec.UseSpeedControl)
-	streamWriteBool(streamId, spec.UseModSpeedControl)
-	streamWriteBool(streamId, spec.UseRaiseImplement)
-	streamWriteBool(streamId, spec.UseStopPTO)
-	streamWriteBool(streamId, spec.UseTurnPlow)
-	streamWriteBool(streamId, spec.UseCenterPlow)
-  	streamWriteBool(streamId, spec.UseRidgeMarker)
-  	streamWriteBool(streamId, spec.UseGPS)
-  	streamWriteBool(streamId, spec.UseGuidanceSteering)
-  	streamWriteBool(streamId, spec.UseVCA)
-  	streamWriteBool(streamId, spec.UseDiffLock)
+function HeadlandManagement:onWriteStream(streamId, connection)
+	local spec = self.spec_HeadlandManagement
+	streamWriteBool(streamId, spec.beep)
+	streamWriteFloat32(streamId, spec.turnSpeed)
+	streamWriteBool(streamId, spec.isActive)
+	streamWriteBool(streamId, spec.useSpeedControl)
+	streamWriteBool(streamId, spec.useModSpeedControl)
+	streamWriteBool(streamId, spec.useRaiseImplement)
+	streamWriteBool(streamId, spec.useStopPTO)
+	streamWriteBool(streamId, spec.useTurnPlow)
+	streamWriteBool(streamId, spec.useCenterPlow)
+  	streamWriteBool(streamId, spec.useRidgeMarker)
+  	streamWriteBool(streamId, spec.useGPS)
+  	streamWriteBool(streamId, spec.useGuidanceSteering)
+  	streamWriteBool(streamId, spec.useVCA)
+  	streamWriteBool(streamId, spec.useDiffLock)
 end
 	
-function headlandManagement:onReadUpdateStream(streamId, timestamp, connection)
+function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 	if not connection:getIsServer() then
-		local spec = self.spec_headlandManagement
+		local spec = self.spec_HeadlandManagement
 		if streamReadBool(streamId) then
-			spec.Beep = streamReadBool(streamId)
-			spec.TurnSpeed = streamReadFloat32(streamId)
-			spec.IsActive = streamReadBool(streamId)
-			spec.UseSpeedControl = streamReadBool(streamId)
-			spec.UseModSpeedControl = streamReadBool(streamId)
-			spec.UseRaiseImplement = streamReadBool(streamId)
-			spec.UseStopPTO = streamReadBool(streamId)
-			spec.UseTurnPlow = streamReadBool(streamId)
-			spec.UseCenterPlow = streamReadBool(streamId)
-			spec.UseRidgeMarker = streamReadBool(streamId)
-			spec.UseGPS = streamReadBool(streamId)
-			spec.UseGuidanceSteering = streamReadBool(streamId)
-			spec.UseVCA = streamReadBool(streamId)
-			spec.UseDiffLock = streamReadBool(streamId)
+			spec.beep = streamReadBool(streamId)
+			spec.turnSpeed = streamReadFloat32(streamId)
+			spec.isActive = streamReadBool(streamId)
+			spec.useSpeedControl = streamReadBool(streamId)
+			spec.useModSpeedControl = streamReadBool(streamId)
+			spec.useRaiseImplement = streamReadBool(streamId)
+			spec.useStopPTO = streamReadBool(streamId)
+			spec.useTurnPlow = streamReadBool(streamId)
+			spec.useCenterPlow = streamReadBool(streamId)
+			spec.useRidgeMarker = streamReadBool(streamId)
+			spec.useGPS = streamReadBool(streamId)
+			spec.useGuidanceSteering = streamReadBool(streamId)
+			spec.useVCA = streamReadBool(streamId)
+			spec.useDiffLock = streamReadBool(streamId)
 		end;
 	end
 end
 
-function headlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
+function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
-		local spec = self.spec_headlandManagement
+		local spec = self.spec_HeadlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
-			streamWriteBool(streamId, spec.Beep)
-			streamWriteFloat32(streamId, spec.TurnSpeed)
-			streamWriteBool(streamId, spec.IsActive)
-			streamWriteBool(streamId, spec.UseSpeedControl)
-			streamWriteBool(streamId, spec.UseModSpeedControl)
-			streamWriteBool(streamId, spec.UseRaiseImplement)
-			streamWriteBool(streamId, spec.UseStopPTO)
-			streamWriteBool(streamId, spec.UseTurnPlow)
-			streamWriteBool(streamId, spec.UseCenterPlow)
-			streamWriteBool(streamId, spec.UseRidgeMarker)
-			streamWriteBool(streamId, spec.UseGPS)
-			streamWriteBool(streamId, spec.UseGuidanceSteering)
-			streamWriteBool(streamId, spec.UseVCA)
-			streamWriteBool(streamId, spec.UseDiffLock)
+			streamWriteBool(streamId, spec.beep)
+			streamWriteFloat32(streamId, spec.turnSpeed)
+			streamWriteBool(streamId, spec.isActive)
+			streamWriteBool(streamId, spec.useSpeedControl)
+			streamWriteBool(streamId, spec.useModSpeedControl)
+			streamWriteBool(streamId, spec.useRaiseImplement)
+			streamWriteBool(streamId, spec.useStopPTO)
+			streamWriteBool(streamId, spec.useTurnPlow)
+			streamWriteBool(streamId, spec.useCenterPlow)
+			streamWriteBool(streamId, spec.useRidgeMarker)
+			streamWriteBool(streamId, spec.useGPS)
+			streamWriteBool(streamId, spec.useGuidanceSteering)
+			streamWriteBool(streamId, spec.useVCA)
+			streamWriteBool(streamId, spec.useDiffLock)
 		end
 	end
 end
 
 -- inputBindings / inputActions
 	
-function headlandManagement:onRegisterActionEvents(isActiveForInput)
+function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 	if self.isClient then
-		local spec = self.spec_headlandManagement
-		headlandManagement.actionEvents = {} 
+		local spec = self.spec_HeadlandManagement
+		HeadlandManagement.actionEvents = {} 
 		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
 			local actionEventId;
-			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHON', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SWITCHOFF', self, headlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			_, actionEventId = self:addActionEvent(headlandManagement.actionEvents, 'HLM_SHOWGUI', self, headlandManagement.SHOWGUI, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
 		end		
 	end
 end
 
-function headlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
+	local spec = self.spec_HeadlandManagement
 	dbgprint("TOGGLESTATE : spec:")
 	dbgprint_r(spec)
 	-- anschalten nur wenn inaktiv
-	if not spec.IsActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
-		spec.IsActive = true
+	if not spec.isActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
+		spec.isActive = true
 	-- abschalten nur wenn aktiv
-	elseif spec.IsActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.ActStep == spec.MaxStep then
-		spec.ActStep = -spec.ActStep
+	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == spec.maxStep then
+		spec.actStep = -spec.actStep
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 -- GUI
 
-function headlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
+	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	
-	hlmGui.target:setCallback(headlandManagement.guiCallback, self)
+	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	hlmGui.target:setData(
 		self:getFullName(),
-		spec.UseSpeedControl,
-		spec.UseModSpeedControl,
-		spec.TurnSpeed,
-		spec.UseRaiseImplement,
-		spec.UseStopPTO,
-		spec.UseTurnPlow,
-		spec.UseCenterPlow,
-		spec.UseRidgeMarker,
-		spec.UseGPS,
-		spec.UseGuidanceSteering,
-		spec.UseVCA,
-		spec.UseDiffLock,
-		spec.Beep,
-		spec.ModSpeedControlFound,
-		spec.ModGuidanceSteeringFound,
-		spec.ModVCAFound
+		spec.useSpeedControl,
+		spec.useModSpeedControl,
+		spec.turnSpeed,
+		spec.useRaiseImplement,
+		spec.useStopPTO,
+		spec.useTurnPlow,
+		spec.useCenterPlow,
+		spec.useRidgeMarker,
+		spec.useGPS,
+		spec.useGuidanceSteering,
+		spec.useVCA,
+		spec.useDiffLock,
+		spec.beep,
+		spec.modSpeedControlFound,
+		spec.modGuidanceSteeringFound,
+		spec.modVCAFound
 	)
 end
 
-function headlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
-	local spec = self.spec_headlandManagement
-	spec.UseSpeedControl = useSpeedControl
-	spec.UseModSpeedControl = useModSpeedControl
-	spec.TurnSpeed = turnSpeed
-	spec.UseRaiseImplement = useRaiseImplement
-	spec.UseStopPTO = useStopPTO
-	spec.UseTurnPlow = useTurnPlow
-	spec.UseCenterPlow = useCenterPlow
-	spec.UseRidgeMarker = useRidgeMarker
-	spec.UseGPS = useGPS
-	spec.UseGuidanceSteering = useGuidanceSteering
-	spec.UseVCA = useVCA
-	spec.UseDiffLock = useDiffLock
-	spec.Beep = beep
+function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+	local spec = self.spec_HeadlandManagement
+	spec.useSpeedControl = useSpeedControl
+	spec.useModSpeedControl = useModSpeedControl
+	spec.turnSpeed = turnSpeed
+	spec.useRaiseImplement = useRaiseImplement
+	spec.useStopPTO = useStopPTO
+	spec.useTurnPlow = useTurnPlow
+	spec.useCenterPlow = useCenterPlow
+	spec.useRidgeMarker = useRidgeMarker
+	spec.useGPS = useGPS
+	spec.useGuidanceSteering = useGuidanceSteering
+	spec.useVCA = useVCA
+	spec.useDiffLock = useDiffLock
+	spec.beep = beep
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 -- Main part
 
-function headlandManagement:onUpdate(dt)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:onUpdate(dt)
+	local spec = self.spec_HeadlandManagement
 	
-	if not headlandManagement.isDedi and self:getIsActive() and spec.exists and spec.Beep and spec.IsActive then
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and spec.beep and spec.isActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
-			playSample(headlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
+			playSample(HeadlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
 			spec.timer = 0
 		end	
 	else
 		spec.timer = 0
 	end
 	
-	if self:getIsActive() and spec.IsActive and spec.exists and spec.ActStep<spec.MaxStep then
-		if spec.Action[math.abs(spec.ActStep)] and not headlandManagement.isDedi then
-			dbgprint("onUpdate : ActStep: "..tostring(spec.ActStep))
+	if self:getIsActive() and spec.isActive and spec.exists and spec.actStep<spec.maxStep then
+		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
+			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
 			-- Set management actions
-			spec.Action[headlandManagement.REDUCESPEED] = spec.UseSpeedControl
-			spec.Action[headlandManagement.DIFFLOCK] = spec.ModVCAFound and spec.UseDiffLock
-			spec.Action[headlandManagement.RAISEIMPLEMENT] = spec.UseRaiseImplement
-			spec.Action[headlandManagement.STOPPTO] = spec.UseStopPTO
-			spec.Action[headlandManagement.STOPGPS] = spec.ModGuidanceSteeringFound or spec.ModVCAFound	
+			spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
+			spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
+			spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
+			spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
+			spec.action[HeadlandManagement.STOPGPS] = spec.modGuidanceSteeringFound or spec.modVCAFound	
 			
 			-- Activation
-			if spec.ActStep == headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, true); end
-			if spec.ActStep == headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, true); end
-			if spec.ActStep == headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, true, spec.UseTurnPlow, spec.UseCenterPlow); end
-			if spec.ActStep == headlandManagement.STOPPTO and spec.Action[headlandManagement.STOPPTO] then headlandManagement:stopPTO(self, true); end
-			if spec.ActStep == headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, true); end
+			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, true); end
+			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(self, true); end
+			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement:raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow); end
+			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(self, true); end
+			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement:stopGPS(self, true); end
 			-- Deactivation
-			if spec.ActStep == -headlandManagement.STOPGPS and spec.Action[headlandManagement.STOPGPS] then headlandManagement:stopGPS(self, false); end
-			if spec.ActStep == -headlandManagement.STOPPTO and spec.Action[headlandManagement.STOPPTO] then headlandManagement:stopPTO(self, false); end
-			if spec.ActStep == -headlandManagement.RAISEIMPLEMENT and spec.Action[headlandManagement.RAISEIMPLEMENT] then headlandManagement:raiseImplements(self, false, spec.UseTurnPlow); end
-			if spec.ActStep == -headlandManagement.DIFFLOCK and spec.Action[headlandManagement.DIFFLOCK] then headlandManagement:disableDiffLock(self, false); end
-			if spec.ActStep == -headlandManagement.REDUCESPEED and spec.Action[headlandManagement.REDUCESPEED] then headlandManagement:reduceSpeed(self, false); end		
+			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement:stopGPS(self, false); end
+			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(self, false); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement:raiseImplements(self, false, spec.useTurnPlow); end
+			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(self, false); end
+			if spec.actStep == -HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, false); end		
 		end
-		spec.ActStep = spec.ActStep + 1
-		if spec.ActStep == 0 then 
-			spec.IsActive = false
+		spec.actStep = spec.actStep + 1
+		if spec.actStep == 0 then 
+			spec.isActive = false
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
 	end
 end
 
-function headlandManagement:onDraw(dt)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:onDraw(dt)
+	local spec = self.spec_HeadlandManagement
 
-	if self:getIsActive() and spec.IsActive and spec.exists then 
+	if self:getIsActive() and spec.isActive and spec.exists then 
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
 	 
 		local scale = g_gameSettings.uiScale
@@ -450,35 +450,36 @@ function headlandManagement:onDraw(dt)
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
 		
-		renderOverlay(headlandManagement.guiIcon, x, y, w, h)
+		renderOverlay(HeadlandManagement.guiIcon, x, y, w, h)
 	end
 end
 	
-function headlandManagement:reduceSpeed(self, enable)	
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:reduceSpeed(self, enable)	
+	local spec = self.spec_HeadlandManagement
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
-		if spec.ModSpeedControlFound and spec.UseModSpeedControl then
-			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed))
-			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.TurnSpeed), true, false, false)
+		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			spec.normSpeed = self.speedControl.currentKey or 2
+			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
+			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
 		else
-			spec.NormSpeed = self:getCruiseControlSpeed()
-			self:setCruiseControlMaxSpeed(spec.TurnSpeed)
-			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.TurnSpeed))
+			spec.normSpeed = self:getCruiseControlSpeed()
+			self:setCruiseControlMaxSpeed(spec.turnSpeed)
+			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
 		end
 	else
-		if spec.ModSpeedControlFound and spec.UseModSpeedControl then
-			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed))
-			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.NormSpeed), true, false, false)
+		if spec.modSpeedControlFound and spec.useModSpeedControl then
+			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
+			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 		else
-			self:setCruiseControlMaxSpeed(spec.NormSpeed)
-			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.NormSpeed))
+			self:setCruiseControlMaxSpeed(spec.normSpeed)
+			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
 		end
 	end
 end
 
-function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
+	local spec = self.spec_HeadlandManagement
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
     
 	local allImplements = {}
@@ -486,14 +487,14 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
     
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
-		if spec.UseRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
+		if spec.useRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				if raise then
 					local lowered = actImplement:getIsLowered()
 					dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
 					local wasLowered = lowered
-					spec.ImplementStatusTable[index] = wasLowered
+					spec.implementStatusTable[index] = wasLowered
 					if lowered and actImplement.setLoweredAll ~= nil then 
 						actImplement:setLoweredAll(false, index)
 						lowered = actImplement:getIsLowered()
@@ -519,23 +520,23 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
 				        if actImplement:getIsPlowRotationAllowed() then
-							spec.PlowRotationMaxNew = not plowSpec.rotationMax
+							spec.plowRotationMaxNew = not plowSpec.rotationMax
 							if centerPlow then 
 								actImplement:setRotationCenter()
                 				dbgprint("raiseImplements : plow is centered")
 							else
-								actImplement:setRotationMax(spec.PlowRotationMaxNew)
+								actImplement:setRotationMax(spec.plowRotationMaxNew)
                 				dbgprint("raiseImplements : plow is turned")
 							end
 				        end
 		 			end
 		 		else
-		 			local wasLowered = spec.ImplementStatusTable[index]
+		 			local wasLowered = spec.implementStatusTable[index]
 		 			local lowered
 		 			local plowSpec = actImplement.spec_plow
-		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.PlowRotationMaxNew ~= nil then 
-						actImplement:setRotationMax(spec.PlowRotationMaxNew)
-						spec.PlowRotationMaxNew = nil
+		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.plowRotationMaxNew ~= nil then 
+						actImplement:setRotationMax(spec.plowRotationMaxNew)
+						spec.plowRotationMaxNew = nil
 						dbgprint("raiseImplements : plow is turned")
 					end
 					if wasLowered and actImplement.setLoweredAll ~= nil then
@@ -564,28 +565,28 @@ function headlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 	end
 		end
 		-- switch ridge marker
-		if spec.UseRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
+		if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 			local specRM = actImplement.spec_ridgeMarker
 			if raise then
-				spec.RidgeMarkerStatus = specRM.ridgeMarkerState
-				if spec.RidgeMarkerStatus ~= 0 then
+				spec.ridgeMarkerStatus = specRM.ridgeMarkerState
+				if spec.ridgeMarkerStatus ~= 0 then
 					actImplement:setRidgeMarkerState(0)
 				end
 			else
-				if spec.RidgeMarkerStatus == 1 then 
-					spec.RidgeMarkerStatus = 2 
-				elseif spec.RidgeMarkerStatus == 2 then
-		  			spec.RidgeMarkerStatus = 1
+				if spec.ridgeMarkerStatus == 1 then 
+					spec.ridgeMarkerStatus = 2 
+				elseif spec.ridgeMarkerStatus == 2 then
+		  			spec.ridgeMarkerStatus = 1
 				end
-				actImplement:setRidgeMarkerState(spec.RidgeMarkerStatus)
+				actImplement:setRidgeMarkerState(spec.ridgeMarkerStatus)
 			end
 			dbgprint("ridgeMarker: "..tostring(specRM.ridgeMarkerState))
 		end
 	end
 end
 
-function headlandManagement:stopPTO(self, stopPTO)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:stopPTO(self, stopPTO)
+	local spec = self.spec_HeadlandManagement
     --local jointSpec = self.spec_attacherJoints
     dbgprint("stopPTO: "..tostring(stopPTO))
 	
@@ -596,7 +597,7 @@ function headlandManagement:stopPTO(self, stopPTO)
 		dbgprint("stopPTO : actImplement: "..actImplement:getName())
 		if stopPTO then
 			local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
-			spec.ImplementPTOTable[index] = active
+			spec.implementPTOTable[index] = active
 			if active and actImplement.setIsTurnedOn ~= nil then 
 				actImplement:setIsTurnedOn(false)
 				dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
@@ -605,7 +606,7 @@ function headlandManagement:stopPTO(self, stopPTO)
 				dbgprint("raiseImplements : implement PTO stopped by deactivate")
 			end
 		else
-			local active = spec.ImplementPTOTable[index]
+			local active = spec.implementPTOTable[index]
 			if active and actImplement.setIsTurnedOn ~= nil then 
 				actImplement:setIsTurnedOn(true) 
 				dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
@@ -618,16 +619,16 @@ function headlandManagement:stopPTO(self, stopPTO)
 	end
 end
 
-function headlandManagement:stopGPS(self, enable)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:stopGPS(self, enable)
+	local spec = self.spec_HeadlandManagement
 	dbgprint("stopGPS : "..tostring(enable))
 
 -- Part 1: Detect used mod
 	local gpsSetting = 1 -- auto mode
-	if spec.ModGuidanceSteeringFound and spec.UseGuidanceSteering then gpsSetting = 2; end -- GS mode enforced
-	if spec.ModVCAFound and spec.UseVCA then gpsSetting = 3; end -- VCA mode enforced
+	if spec.modGuidanceSteeringFound and spec.useGuidanceSteering then gpsSetting = 2; end -- GS mode enforced
+	if spec.modVCAFound and spec.useVCA then gpsSetting = 3; end -- VCA mode enforced
 	
-	if gpsSetting == 1 and spec.ModGuidanceSteeringFound then
+	if gpsSetting == 1 and spec.modGuidanceSteeringFound then
 		local gsSpec = self.spec_globalPositioningSystem
 		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
 		if gpsEnabled then 
@@ -636,7 +637,7 @@ function headlandManagement:stopGPS(self, enable)
 		end
 	end
 		
-	if gpsSetting == 1 and spec.ModVCAFound then
+	if gpsSetting == 1 and spec.modVCAFound then
 		local vcaStatus = self.vcaSnapIsOn
 		if vcaStatus then 
 			gpsSetting = 3 
@@ -646,7 +647,7 @@ function headlandManagement:stopGPS(self, enable)
 	dbgprint("stopGPS : gpsSetting: "..tostring(gpsSetting))
 
 -- Part 2: Guidance Steering	
-	if spec.ModGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and gpsSetting ~= 3 then
+	if spec.modGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and gpsSetting ~= 3 then
 		local gsSpec = self.spec_globalPositioningSystem
 		if enable then
 			dbgprint("stopGPS : Guidance Steering off")
@@ -671,36 +672,36 @@ function headlandManagement:stopGPS(self, enable)
 	end
 	
 -- Part 3: Vehicle Control Addon (VCA)
-	if spec.ModVCAFound and gpsSetting ~= 2 and enable then
-		spec.VCAStatus = self.vcaSnapIsOn
-		if spec.VCAStatus then 
+	if spec.modVCAFound and gpsSetting ~= 2 and enable then
+		spec.vcaStatus = self.vcaSnapIsOn
+		if spec.vcaStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
 			self:vcaSetState( "vcaLastSnapAngle", 10 )
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
-	if spec.ModVCAFound and spec.VCAStatus and gpsSetting ~= 2 and not enable then
+	if spec.modVCAFound and spec.vcaStatus and gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
 	end
 end
 
-function headlandManagement:disableDiffLock(self, disable)
-	local spec = self.spec_headlandManagement
+function HeadlandManagement:disableDiffLock(self, disable)
+	local spec = self.spec_HeadlandManagement
 	if disable then
-		spec.DiffStateF = self.vcaDiffLockFront
-		spec.DiffStateB = self.vcaDiffLockBack
-		if spec.DiffStateF then 
+		spec.diffStateF = self.vcaDiffLockFront
+		spec.diffStateB = self.vcaDiffLockBack
+		if spec.diffStateF then 
 			dbgprint("disableDiffLock : DiffLockF off")
 			self:vcaSetState("vcaDiffLockFront", false)
 		end
-		if spec.DiffStateB then 
+		if spec.diffStateB then 
 			dbgprint("disableDiffLock : DiffLockB off")
 			self:vcaSetState("vcaDiffLockBack", false)
 		end
 	else
 		dbgprint("disableDiffLock : DiffLock reset")
-		self:vcaSetState("vcaDiffLockFront", spec.DiffStateF)
-		self:vcaSetState("vcaDiffLockBack", spec.DiffStateB)
+		self:vcaSetState("vcaDiffLockFront", spec.diffStateF)
+		self:vcaSetState("vcaDiffLockBack", spec.diffStateB)
 	end
 end
