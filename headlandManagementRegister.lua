@@ -2,7 +2,7 @@
 -- register
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 0.6.0.0
+-- Version 0.6.0.1
 --
 -- 
 --
@@ -28,7 +28,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		and	configurations ~= nil
 
 	then
-		configurations["headlandManagement"] = {
+		configurations["HeadlandManagement"] = {
         	{name = "Nein", index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
         	{name = "Ja", index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
     	}

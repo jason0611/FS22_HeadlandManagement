@@ -3,7 +3,7 @@
 --
 -- Martin Eller
 
--- Version 0.6.0.0
+-- Version 0.6.0.1
 -- 
 -- Missing switches implemented
 --
@@ -458,7 +458,8 @@ function HeadlandManagement:reduceSpeed(self, enable)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
-		if spec.modSpeedControlFound and spec.useModSpeedControl then
+		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			spec.normSpeed = self.speedControl.currentKey or 2
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
 			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
 		else
