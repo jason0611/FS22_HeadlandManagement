@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Martin Eller
--- Version 0.6.0.1
+-- Version 0.6.0.6
 -- 
 -- Headlandmanagement GUI for configuration
 -- Logical dependencies added
@@ -59,7 +59,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
@@ -163,7 +163,6 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_gps_vca")
 	})
 	
-	local gpsSetting = 1
 	if useGuidanceSteering and modGuidanceSteeringFound then gpsSetting = 2; end
 	if useVCA and modVCAFound then gpsSetting = 3; end
 
@@ -232,7 +231,7 @@ function HeadlandManagementGui:onClickOk()
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useVCA, useDiffLock, beep)
 end
 
 -- just close gui

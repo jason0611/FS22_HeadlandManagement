@@ -3,13 +3,13 @@
 --
 -- Martin Eller
 
--- Version 0.6.0.1
+-- Version 0.6.0.6
 -- 
 -- Missing switches implemented
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true)
+GMSDebug:init(g_currentModName, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -153,6 +153,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.ridgeMarkerStatus = 0
 	
 	spec.useGPS = true
+	spec.gpsSetting = 1 -- auto-mode
+	spec.wasGPSAutomatic = false
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteering = false	
 	spec.GSStatus = false
@@ -333,8 +335,8 @@ end
 
 function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
-	dbgprint("TOGGLESTATE : spec:")
-	dbgprint_r(spec)
+	dbgprint("TOGGLESTATE : spec:", 2)
+	dbgprint_r(spec, 2)
 	-- anschalten nur wenn inaktiv
 	if not spec.isActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
@@ -363,6 +365,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useCenterPlow,
 		spec.useRidgeMarker,
 		spec.useGPS,
+		spec.gpsSetting,
 		spec.useGuidanceSteering,
 		spec.useVCA,
 		spec.useDiffLock,
@@ -373,7 +376,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	)
 end
 
-function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, useGuidanceSteering, useVCA, useDiffLock, beep)
+function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useVCA, useDiffLock, beep)
 	local spec = self.spec_HeadlandManagement
 	spec.useSpeedControl = useSpeedControl
 	spec.useModSpeedControl = useModSpeedControl
@@ -384,6 +387,7 @@ function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, tur
 	spec.useCenterPlow = useCenterPlow
 	spec.useRidgeMarker = useRidgeMarker
 	spec.useGPS = useGPS
+	spec.gpsSetting = gpsSetting
 	spec.useGuidanceSteering = useGuidanceSteering
 	spec.useVCA = useVCA
 	spec.useDiffLock = useDiffLock
@@ -414,7 +418,7 @@ function HeadlandManagement:onUpdate(dt)
 			spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
 			spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
 			spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
-			spec.action[HeadlandManagement.STOPGPS] = spec.modGuidanceSteeringFound or spec.modVCAFound	
+			spec.action[HeadlandManagement.STOPGPS] = spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
 			
 			-- Activation
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, true); end
@@ -624,36 +628,39 @@ function HeadlandManagement:stopGPS(self, enable)
 	dbgprint("stopGPS : "..tostring(enable))
 
 -- Part 1: Detect used mod
-	local gpsSetting = 1 -- auto mode
-	if spec.modGuidanceSteeringFound and spec.useGuidanceSteering then gpsSetting = 2; end -- GS mode enforced
-	if spec.modVCAFound and spec.useVCA then gpsSetting = 3; end -- VCA mode enforced
+	if spec.modGuidanceSteeringFound and spec.useGuidanceSteering then spec.gpsSetting = 2; end -- GS mode enforced
+	if spec.modVCAFound and spec.useVCA then spec.gpsSetting = 3; end -- VCA mode enforced
 	
-	if gpsSetting == 1 and spec.modGuidanceSteeringFound then
+	if spec.gpsSetting == 1 then
+		spec.wasGPSAutomatic = true
+	end
+	
+	if spec.gpsSetting == 1 and spec.modGuidanceSteeringFound then
 		local gsSpec = self.spec_globalPositioningSystem
 		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
 		if gpsEnabled then 
-			gpsSetting = 2 
+			spec.gpsSetting = 2 
 			dbgprint("stopGPS : GS is active")
 		end
 	end
 		
-	if gpsSetting == 1 and spec.modVCAFound then
+	if spec.gpsSetting == 1 and spec.modVCAFound then
 		local vcaStatus = self.vcaSnapIsOn
 		if vcaStatus then 
-			gpsSetting = 3 
+			spec.gpsSetting = 3 
 			dbgprint("stopGPS : VCA is active")
 		end
 	end
-	dbgprint("stopGPS : gpsSetting: "..tostring(gpsSetting))
+	dbgprint("stopGPS : gpsSetting: "..tostring(spec.gpsSetting))
 
 -- Part 2: Guidance Steering	
-	if spec.modGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and gpsSetting ~= 3 then
+	if spec.modGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and spec.gpsSetting ~= 3 then
 		local gsSpec = self.spec_globalPositioningSystem
 		if enable then
 			dbgprint("stopGPS : Guidance Steering off")
 			local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
-				gpsSetting = 2
+				spec.gpsSetting = 2
 				spec.GSStatus = true
 				gsSpec.lastInputValues.guidanceSteeringIsActive = false
 				self:onSteeringStateChanged(false)
@@ -664,15 +671,19 @@ function HeadlandManagement:stopGPS(self, enable)
 			local gpsEnabled = spec.GSStatus	
 			if gpsEnabled then
 				dbgprint("stopGPS : Guidance Steering on")
-				gpsSetting = 2
+				spec.gpsSetting = 2
 				gsSpec.lastInputValues.guidanceSteeringIsActive = true
 				self:onSteeringStateChanged(true)
+			end
+			if spec.wasGPSAutomatic then
+				spec.gpsSetting = 1
+				spec.wasGPSAutomatic = false
 			end
 		end
 	end
 	
 -- Part 3: Vehicle Control Addon (VCA)
-	if spec.modVCAFound and gpsSetting ~= 2 and enable then
+	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
 		spec.vcaStatus = self.vcaSnapIsOn
 		if spec.vcaStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
@@ -680,9 +691,13 @@ function HeadlandManagement:stopGPS(self, enable)
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
-	if spec.modVCAFound and spec.vcaStatus and gpsSetting ~= 2 and not enable then
+	if spec.modVCAFound and spec.vcaStatus and spec.gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
+		if spec.wasGPSAutomatic then
+			spec.gpsSetting = 1
+			spec.wasGPSAutomatic = false
+		end
 	end
 end
 

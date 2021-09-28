@@ -2,13 +2,13 @@
 -- register
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 0.6.0.1
+-- Version 0.6.0.6
 --
 -- 
 --
 function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
     local configurations = superfunc(xmlFile, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
-	dbgprint("addHLMconfig : Kat: "..storeItem.categoryName.." / ".."Name: "..storeItem.xmlFilename)
+	dbgprint("addHLMconfig : Kat: "..storeItem.categoryName.." / ".."Name: "..storeItem.xmlFilename, 2)
 
 	local category = storeItem.categoryName
 	if 
