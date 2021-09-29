@@ -1,4 +1,31 @@
 # FS19_HeadlandManagement
+Headland management for tractors, field sprayers, mowers and harvesters.
+
+With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
+
+The headland management system must be added once to the respective vehicle as a configuration before it can be used in the shop or in the workshop. The cost for this is 3000,-.
+It can be activated and deactivated in the vehicle with Shift-X. Alternatively, two different buttons for activation and deactivation can be configured.
+
+Included functions:
+- Reduce speed (cruise control) and raise again.
+- Raise lowered implements and lower them again
+- Turn plough, single-stage or two-stage (via centre position)
+- Raise and change track markers
+- Disengage and re-engage power take-off(s) and hydraulics
+- Beep when headland management is activated
+
+Additionally, if Vehicle Control Addon (VCA) is present: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019
+- Deactivate and reactivate GPS track guidance
+- Disengage and re-engage active differential locks
+
+Additionally, if Guidance Steering is available: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019:
+- Deactivate and reactivate GPS guidance
+
+Additionally for existing SpeedControl: (https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019)
+- Speed adjustment also possible by changing the cruise control level
+
+===
+
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
@@ -23,10 +50,7 @@ Zusätzlich bei vorhandenem Guidance Steering: https://www.farming-simulator.com
 Zusätzlich bei vorhandenem SpeedControl: (https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019)
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
----
-
-
----
+===
 
 Todos:
 - Internationalisierung
