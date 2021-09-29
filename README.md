@@ -18,10 +18,10 @@ Additionally, if Vehicle Control Addon (VCA) is present: https://www.farming-sim
 - Deactivate and reactivate GPS track guidance
 - Disengage and re-engage active differential locks
 
-Additionally, if Guidance Steering is available: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019:
+Additionally, if Guidance Steering is available: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019
 - Deactivate and reactivate GPS guidance
 
-Additionally for existing SpeedControl: (https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019)
+Additionally for existing SpeedControl: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019
 - Speed adjustment also possible by changing the cruise control level
 
 ===
@@ -44,10 +44,10 @@ Zusätzlich bei vorhandenem Vehicle Control Addon (VCA): https://www.farming-sim
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
 
-Zusätzlich bei vorhandenem Guidance Steering: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019:
+Zusätzlich bei vorhandenem Guidance Steering: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019
 - GPS Spurführung deaktivieren und reaktivieren
 
-Zusätzlich bei vorhandenem SpeedControl: (https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019)
+Zusätzlich bei vorhandenem SpeedControl: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 ===
