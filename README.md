@@ -15,15 +15,18 @@ Enthaltene Funktionen:
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
-Zusätzlich bei vorhandenem FS19_VehicleControlAddon (VCA):
+Zusätzlich bei vorhandenem Vehicle Control Addon 
+(https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019)
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
 
-Zusätzlich bei vorhandenem FS19_GuidanceSteering:
+Zusätzlich bei vorhandenem Guidance Steering 
+(https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019):
 - GPS Spurführung deaktivieren und reaktivieren
 
-Zusätzlich bei vorhandenem FS19_zzzSpeedControl:
-- Geschwindigkeitsanpassung optional über Tempomatstufe
+Zusätzlich bei vorhandenem SpeedControl 
+(https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019):
+- Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 ---
 
