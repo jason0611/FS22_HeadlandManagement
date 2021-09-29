@@ -1,11 +1,9 @@
 # FS19_HeadlandManagement
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
 
-Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. 
-Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
+Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
 
-Das Vorgewende-Management muss vor der Nutzung im Shop oder in der Werkstatt dem jeweiligen Fahrzeug einmalig als Konfiguration hinzugefügt werden. 
-Die Kosten dafür liegen bei 3000,-.
+Das Vorgewende-Management muss vor der Nutzung im Shop oder in der Werkstatt dem jeweiligen Fahrzeug einmalig als Konfiguration hinzugefügt werden. Die Kosten dafür liegen bei 3000,-. Es kann im Fahrzeug mit (links) Shift-X aktiviert und deaktiviert werden. Es lassen sich auch zwei verschiedene Tasten für Aktivierung und Deaktivierung konfigurieren.
 
 Enthaltene Funktionen:
 - Geschwindigkeit (Tempomat) reduzieren und wieder anheben
@@ -24,6 +22,8 @@ Zusätzlich bei vorhandenem Guidance Steering: https://www.farming-simulator.com
 
 Zusätzlich bei vorhandenem SpeedControl: (https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019)
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
+
+---
 
 
 ---
