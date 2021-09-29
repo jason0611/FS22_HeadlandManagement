@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 0.6.0.7
+-- Version 0.6.0.8
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -353,6 +353,8 @@ end
 function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
+
+	local gsConfigured = self.spec_globalPositioningSystem ~= nil and spec_globalPositioningSystem.hasGuidanceSystem == true
 	
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	hlmGui.target:setData(
@@ -372,7 +374,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useDiffLock,
 		spec.beep,
 		spec.modSpeedControlFound,
-		spec.modGuidanceSteeringFound,
+		spec.modGuidanceSteeringFound and gsConfigured,
 		spec.modVCAFound
 	)
 end
