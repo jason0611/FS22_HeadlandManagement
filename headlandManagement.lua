@@ -1,15 +1,12 @@
 --
 -- Headland Management for LS 19
 --
--- Martin Eller
-
--- Version 0.6.0.6
--- 
--- Missing switches implemented
+-- Jason06 / Glowins Modschmiede
+-- Version 0.6.0.7
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 2)
+GMSDebug:init(g_currentModName, true, 1)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -39,12 +36,18 @@ function HeadlandManagement:toggleAction(hlmAction)
 	local vehicle = g_currentMission.controlledVehicle
 	
 	if hlmAction == nil then
-		return "hlmToggleAction <Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|beep>"
+		return "hlmToggleAction <Status|Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|beep>"
 	end
 	
 	local spec = vehicle.spec_HeadlandManagement
 	if spec == nil then	
 		return "No Headland Management installed"
+	end
+	
+	if hlmAction == "Status" then
+		print("Spec:")
+		print_r(spec)
+		return "=="
 	end
 	
 	if hlmAction == "Speed" then 
@@ -335,8 +338,6 @@ end
 
 function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
-	dbgprint("TOGGLESTATE : spec:", 2)
-	dbgprint_r(spec, 2)
 	-- anschalten nur wenn inaktiv
 	if not spec.isActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
@@ -687,13 +688,13 @@ function HeadlandManagement:stopGPS(self, enable)
 		spec.vcaStatus = self.vcaSnapIsOn
 		if spec.vcaStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
-			self:vcaSetState( "vcaLastSnapAngle", 10 )
 			self:vcaSetState( "vcaSnapIsOn", false )
 		end
 	end
 	if spec.modVCAFound and spec.vcaStatus and spec.gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "vcaSnapIsOn", true )
+		self:vcaSetSnapFactor()
 		if spec.wasGPSAutomatic then
 			spec.gpsSetting = 1
 			spec.wasGPSAutomatic = false

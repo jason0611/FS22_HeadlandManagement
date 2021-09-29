@@ -1,11 +1,8 @@
 --
 -- Headland Management for LS 19
 --
--- Martin Eller
--- Version 0.6.0.6
--- 
--- Headlandmanagement GUI for configuration
--- Logical dependencies added
+-- Jason06 / Glowins Modschmiede
+-- Version 0.6.0.7
 --
 
 HeadlandManagementGui = {}
