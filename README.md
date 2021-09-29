@@ -14,14 +14,14 @@ Included functions:
 - Disengage and re-engage power take-off(s) and hydraulics
 - Beep when headland management is activated
 
-Additionally, if Vehicle Control Addon (VCA) is present: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019
+Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a> is present:
 - Deactivate and reactivate GPS track guidance
 - Disengage and re-engage active differential locks
 
-Additionally, if Guidance Steering is available: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019
+Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a> is available: 
 - Deactivate and reactivate GPS guidance
 
-Additionally for existing SpeedControl: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019
+Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Speed adjustment also possible by changing the cruise control level
 
 ===
@@ -40,14 +40,14 @@ Enthaltene Funktionen:
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
-Zusätzlich bei vorhandenem Vehicle Control Addon (VCA): https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019
+Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a>:
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
 
-Zusätzlich bei vorhandenem Guidance Steering: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019
+Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a>:
 - GPS Spurführung deaktivieren und reaktivieren
 
-Zusätzlich bei vorhandenem SpeedControl: https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019
+Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 ===
