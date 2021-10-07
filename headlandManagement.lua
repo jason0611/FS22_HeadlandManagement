@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 0.9.0.0
+-- Version 0.9.0.1
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -520,7 +520,6 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 			if lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
 		 				local implSpec = actImplement.spec_attacherJointControl
 		 				implSpec.heightTargetAlpha = implSpec.jointDesc.upperAlpha
-				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    	dbgprint("raiseImplements : implement is raised by heightTargetAlpha: "..tostring(not lowered))
 				    end
@@ -564,7 +563,6 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 			if wasLowered and not lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
 		 				local implSpec = actImplement.spec_attacherJointControl
 		 				implSpec.heightTargetAlpha = implSpec.jointDesc.lowerAlpha
-				        actImplement:requestActionEventUpdate()
 				    	lowered = actImplement:getIsLowered()
 				    	dbgprint("raiseImplements : implement is lowered by heightTargetAlpha: "..tostring(lowered))
 				    end
