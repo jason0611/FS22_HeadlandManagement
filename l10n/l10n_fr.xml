@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <texts>
+    	<text name="input_HLM_TOGGLESTATE" text="Gestion des fourrières : Début / Fin"/>	
+    	<text name="input_HLM_SWITCHON" text="Gestion des fourrières : Début" />
+    	<text name="input_HLM_SWITCHOFF" text="Gestion des fourrières : Fin" />	
+    	<text name="input_HLM_SHOWGUI" text="Gestion des fourrières : paramètres" />
+		
+		<text name="text_HLM_isActive" text="Gestion des fourrières activée"/>
+		<text name="text_HLM_configuration" text="Gestion des fourrière"/>
+		<text name="text_HLM_installed" text="Gestion des tournières intégrée"/>
+		<text name="text_HLM_notInstalled" text="Pas de gestion des tournières intégrée"/>
+
+		<text name="hlmgui_title" text="Gestion des fourrières : configuration pour "/>
+		<text name="hlmgui_on" text="activé"/>
+		<text name="hlmgui_off" text="éteint"/>
+		<text name="hlmgui_speedControl" text="Régler le régulateur de vitesse"/>
+		<text name="hlmgui_speedControlMod" text="Utiliser Mod SpeedControl"/>
+		<text name="hlmgui_speedSetting" text="Vitesse de travail sur le promontoire"/>
+		<text name="hlmgui_speedControlModSetting" text="Étape du régulateur de vitesse sur le promontoire"/>
+		<text name="hlmgui_beep" text="Tonalité d'avertissement lorsque la gestion est activée"/>
+		<text name="hlmgui_raise" text="Accessoires de levage"/>
+		<text name="hlmgui_plow" text="tourner la charrue"/>
+		<text name="hlmgui_plowFull" text="tournez immédiatement"/>
+		<text name="hlmgui_plowCenter" text="tournez en deux temps"/>
+		<text name="hlmgui_plowOff" text="ne pas tourner"/>
+		<text name="hlmgui_pto" text="Coupez l'arbre de la prise de force"/>
+		<text name="hlmgui_ridgeMarker" text="Changement de traceur"/>
+		<text name="hlmgui_gpsSetting" text="Pause du guidage GPS"/>
+		<text name="hlmgui_gpsType" text="Variante GPS utilisée"/>
+		<text name="hlmgui_gps_auto" text="automatique"/>
+		<text name="hlmgui_gps_gs" text="Guidance Steering seulement"/>
+		<text name="hlmgui_gps_vca" text="VCA seulement"/>
+		<text name="hlmgui_diffLock" text="Déblocage des différentiels"/>
+	</texts>
+</l10n>
