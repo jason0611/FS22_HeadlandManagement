@@ -340,7 +340,7 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
 			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
-			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
 		end		
 	end
 end
