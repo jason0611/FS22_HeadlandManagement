@@ -50,6 +50,10 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
+Ideen für Folgeversionen:
+- Reihenfolge der Arbeitsschritte einstellbar
+- Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
+
 ===
 
 Todos:
