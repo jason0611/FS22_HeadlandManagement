@@ -34,6 +34,12 @@ Additionally, if Guidance Steering Mod (FS19_guidanceSteering) is available:
 
 Additionally for existing SpeedControl Mod (FS19_zzzSpeedControl):
 - Speed adjustment also possible by changing the cruise control level
+
+Ideas for subsequent versions:
+- Sequence of work steps adjustable
+- Selectable time interval between individual work steps
+
+Further ideas or wishes are welcome at https://github.com/jason0611/FS19_HeadlandManagement
 ]]>
 		</en>	
 		<de>
@@ -63,6 +69,12 @@ Zusätzlich bei vorhandenem Guidance Steering Mod (FS19_guidanceSteering):
 Zusätzlich bei vorhandenem SpeedControl Mod (FS19_zzzSpeedControl):
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 ]]>
+
+Ideen für Folgeversionen:
+- Reihenfolge der Arbeitsschritte einstellbar
+- Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
+
+Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS19_HeadlandManagement entgegengenommen
 		</de>
 		<fr>
 <![CDATA[
@@ -90,6 +102,12 @@ De plus, si le Guidance Steering Mod (FS19_guidanceSteering) est disponible :
 
 En plus pour le SpeedControl Mod (FS19_zzzSpeedControl) existant :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
+
+Idées pour les versions ultérieures :
+- Séquence des étapes de travail réglable
+- Intervalle de temps sélectionnable entre les différentes étapes de travail
+
+D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
 ]]>
 		</fr>
  	</description>	
