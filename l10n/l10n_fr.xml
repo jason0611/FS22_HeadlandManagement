@@ -10,8 +10,8 @@
 		<text name="text_HLM_configuration" text="Gestion des fourrière"/>
 		<text name="text_HLM_installed" text="Gestion des tournières intégrée"/>
 		<text name="text_HLM_notInstalled" text="Pas de gestion des tournières intégrée"/>
-		<text name="text_HLM_installed_short" text="installé"/>
-		<text name="text_HLM_notInstalled_short" text="non installé"/>
+		<text name="text_HLM_installed_short" text="Installé"/>
+		<text name="text_HLM_notInstalled_short" text="Non installé"/>
 
 
 		<text name="hlmgui_title" text="Gestion des fourrières : configuration pour "/>
