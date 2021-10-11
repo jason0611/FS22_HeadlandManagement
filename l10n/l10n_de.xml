@@ -26,7 +26,7 @@
 		<text name="hlmgui_plowFull" text="sofort drehen"/>
 		<text name="hlmgui_plowCenter" text="in zwei Schritten drehen"/>
 		<text name="hlmgui_plowOff" text="nicht drehen"/>
-		<text name="hlmgui_pto" text="Zapfwelle abschalten"/>
+		<text name="hlmgui_pto" text="Zapfwelle/Hydraulik abschalten"/>
 		<text name="hlmgui_ridgeMarker" text="Spurreißer wechseln"/>
 		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>
 		<text name="hlmgui_gpsType" text="Genutzte GPS-Variante"/>
