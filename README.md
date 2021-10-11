@@ -24,6 +24,10 @@ Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&coun
 Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Speed adjustment also possible by changing the cruise control level
 
+Ideas for subsequent versions:
+- Sequence of work steps adjustable
+- Selectable time interval between individual work steps
+
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
