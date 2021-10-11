@@ -10,6 +10,9 @@
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
 		<text name="text_HLM_installed" text="Headlandmanagement installed"/>
 		<text name="text_HLM_notInstalled" text="Headlandmanagement not installed"/>
+		<text name="text_HLM_installed_short" text="installed"/>
+		<text name="text_HLM_notInstalled_short" text="not installed"/>
+
 
 		<text name="hlmgui_title" text="Headlandmanagement: Settings for "/>
 		<text name="hlmgui_on" text="On"/>

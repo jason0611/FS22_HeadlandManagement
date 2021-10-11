@@ -10,6 +10,8 @@
 		<text name="text_HLM_configuration" text="Vorgewende-Management"/>
 		<text name="text_HLM_installed" text="Vorgewende-Management eingebaut"/>
 		<text name="text_HLM_notInstalled" text="Kein Vorgewende-Management eingebaut"/>
+		<text name="text_HLM_installed_short" text="eingebaut"/>
+		<text name="text_HLM_notInstalled_short" text="nicht eingebaut"/>
 
 		<text name="hlmgui_title" text="Vorgewende-Management: Konfiguration für "/>
 		<text name="hlmgui_on" text="An"/>

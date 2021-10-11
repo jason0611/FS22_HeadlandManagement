@@ -2,11 +2,11 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 0.9.0.2
+-- Version 1.0.0.0
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, false)
+GMSDebug:init(g_currentModName)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -124,6 +124,9 @@ end
 function HeadlandManagement:onLoad(savegame)
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
+	
+	spec.actionEventOn = nil
+	spec.actionEventOn = nil
 	
 	spec.exists = false
 	
@@ -329,9 +332,15 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
 			local actionEventId;
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_HIGH)
+			_, spec.actionEventOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventOn, GS_PRIO_NORMAL)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
+			_, spec.actionEventOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
 		end		
 	end
 end
@@ -441,6 +450,8 @@ function HeadlandManagement:onUpdate(dt)
 			spec.isActive = false
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
+		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
+		g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 	end
 end
 

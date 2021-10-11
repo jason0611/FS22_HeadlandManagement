@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>0.9.0.2</version>
+	<version>1.0.0.0</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -15,7 +15,7 @@ Headland management for tractors, field sprayers, mowers and harvesters.
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
 
 The headland management system must be added once to the respective vehicle as a configuration before it can be used in the shop or in the workshop. The cost for this is 3000,-.
-It can be activated and deactivated in the vehicle with Shift-X. Alternatively, two different buttons for activation and deactivation can be configured.
+It can be activated and deactivated in the vehicle with Shift-X. Alternatively, different buttons for activation and deactivation can be configured.
 
 Included functions:
 - Reduce speed (cruise control) and raise again.
@@ -25,14 +25,14 @@ Included functions:
 - Disengage and re-engage power take-off(s) and hydraulics
 - Beep when headland management is activated
 
-Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a> is present:
+Additionally, if VCA Mod (FS19_VehicleControlAddon) is present:
 - Deactivate and reactivate GPS track guidance
 - Disengage and re-engage active differential locks
 
-Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a> is available: 
+Additionally, if Guidance Steering Mod (FS19_guidanceSteering) is available: 
 - Deactivate and reactivate GPS guidance
 
-Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
+Additionally for existing SpeedControl Mod (FS19_zzzSpeedControl):
 - Speed adjustment also possible by changing the cruise control level
 ]]>
 		</en>	
@@ -42,7 +42,8 @@ Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
 
-Das Vorgewende-Management muss vor der Nutzung im Shop oder in der Werkstatt dem jeweiligen Fahrzeug einmalig als Konfiguration hinzugefügt werden. Die Kosten dafür liegen bei 3000,-. Es kann im Fahrzeug mit (links) Shift-X aktiviert und deaktiviert werden. Es lassen sich auch zwei verschiedene Tasten für Aktivierung und Deaktivierung konfigurieren.
+Das Vorgewende-Management muss vor der Nutzung im Shop oder in der Werkstatt dem jeweiligen Fahrzeug einmalig als Konfiguration hinzugefügt werden. Die Kosten dafür liegen bei 3000,-. 
+Es kann im Fahrzeug mit (links) Shift-X aktiviert und deaktiviert werden. Es lassen sich auch verschiedene Tasten für Aktivierung und Deaktivierung konfigurieren.
 
 Enthaltene Funktionen:
 - Geschwindigkeit (Tempomat) reduzieren und wieder anheben
@@ -52,14 +53,14 @@ Enthaltene Funktionen:
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
-Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a>:
+Zusätzlich bei vorhandenem VCA Mod (FS19_VehicleControlAddon):
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
 
-Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a>:
+Zusätzlich bei vorhandenem Guidance Steering Mod (FS19_guidanceSteering):
 - GPS Spurführung deaktivieren und reaktivieren
 
-Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
+Zusätzlich bei vorhandenem SpeedControl Mod (FS19_zzzSpeedControl):
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 ]]>
 		</de>
@@ -70,7 +71,7 @@ Gestion des fourrières pour tracteurs, pulvérisateurs, faucheuses et moissonne
 Grâce à la gestion des manœuvres en bout de champ, les fonctions peuvent être combinées dans le véhicule et activées ensemble par simple pression sur un bouton afin de simplifier les manœuvres de virage lors des travaux dans les champs. Toutes les fonctions peuvent être activées et désactivées individuellement pour chaque véhicule via une interface graphique afin de s'adapter parfaitement au travail effectué.
 
 Le système de gestion des manœuvres en bout de champ doit être ajouté une fois au véhicule concerné en tant que configuration avant de pouvoir être utilisé dans le magasin ou dans l'atelier. Le coût de cette opération est de 3 000 euros.
-Il peut être activé et désactivé dans le véhicule avec le levier de vitesse (gauche) Shift-X. Deux boutons différents peuvent également être configurés pour l'activation et la désactivation.
+Il peut être activé et désactivé dans le véhicule avec le levier de vitesse (gauche) Shift-X. Boutons différents peuvent également être configurés pour l'activation et la désactivation.
 
 Fonctions incluses :
 - Réduire la vitesse (régulateur de vitesse) et remonter.
@@ -80,16 +81,15 @@ Fonctions incluses :
 - Désengager et réengager la ou les prises de force et le système hydraulique.
 - Bip lorsque la gestion des tournières est activée
 
-En outre, si le <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a> est présent :
+En outre, si le VCA Mod (FS19_VehicleControlAddon) est présent :
 - Désactiver et réactiver le guidage par trace GPS
 - Désengager et réengager les blocages de différentiel actif
 
-De plus, si le <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a> est disponible :
+De plus, si le Guidance Steering Mod (FS19_guidanceSteering) est disponible :
 - Désactiver et réactiver le guidage GPS
 
-En plus pour le <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a> existant :
+En plus pour le SpeedControl Mod (FS19_zzzSpeedControl) existant :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
-
 ]]>
 		</fr>
  	</description>	
