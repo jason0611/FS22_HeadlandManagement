@@ -27,7 +27,7 @@
 		<text name="hlmgui_plowFull" text="tournez immédiatement"/>
 		<text name="hlmgui_plowCenter" text="tournez en deux temps"/>
 		<text name="hlmgui_plowOff" text="ne pas tourner"/>
-		<text name="hlmgui_pto" text="Arrêt de la prise de force et des dispositifs hydrauliques"/>
+		<text name="hlmgui_pto" text="Arrêt PTO et hydraulique"/>
 		<text name="hlmgui_ridgeMarker" text="Changement de traceur"/>
 		<text name="hlmgui_gpsSetting" text="Pause du guidage GPS"/>
 		<text name="hlmgui_gpsType" text="Variante GPS utilisée"/>
