@@ -24,10 +24,12 @@ Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&coun
 Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Speed adjustment also possible by changing the cruise control level
 
-Ideas for subsequent versions:
+Ideas for subsequent versions (without guarantee):
 - Sequence of work steps adjustable
 - Selectable time interval between individual work steps
 - Using the GuidanceSteering headland trigger as a headland management trigger
+- Changing the steering direction during crab steering
+- Taking over the steering during the turning manoeuvre
 
 ===
 
@@ -55,10 +57,12 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
-Ideen für Folgeversionen:
+Ideen für Folgeversionen (ohne Gewähr):
 - Reihenfolge der Arbeitsschritte einstellbar
 - Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
 - Nutzung des GuidanceSteering-Vorgewende-Triggers als Auslöser fürs Vorgewendemanagement
+- Wechsel der Lenkrichtung bei Hundegang
+- Übernahme der Steuerung während des Wendemanövers
 
 ===
 
