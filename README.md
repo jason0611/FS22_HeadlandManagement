@@ -27,6 +27,7 @@ Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lan
 Ideas for subsequent versions:
 - Sequence of work steps adjustable
 - Selectable time interval between individual work steps
+- Using the GuidanceSteering headland trigger as a headland management trigger
 
 ===
 
@@ -57,6 +58,7 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 Ideen für Folgeversionen:
 - Reihenfolge der Arbeitsschritte einstellbar
 - Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
+- Nutzung des GuidanceSteering-Vorgewende-Triggers als Auslöser fürs Vorgewendemanagement
 
 ===
 
