@@ -1,4 +1,6 @@
 # FS19_HeadlandManagement
+https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=221463&title=fs2019
+
 Headland management for tractors, field sprayers, mowers and harvesters.
 
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
