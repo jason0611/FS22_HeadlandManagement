@@ -21,6 +21,10 @@
 		<text name="hlmgui_speedControlMod" text="Usar mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Veloc. trabajo en cabeceras"/>
 		<text name="hlmgui_speedControlModSetting" text="Nivel Speed-Control en cabeceras"/>
+		<text name="hlmgui_crabSteering" text="Girar la dirección del cangrejo"/>
+		<text name="hlmgui_csDirect" text="directo"/>
+		<text name="hlmgui_csTwoStep" text="vía normal"/>
+		<text name="hlmgui_csOff" text="off"/>
 		<text name="hlmgui_beep" text="Alerta audible mientras está activo"/>
 		<text name="hlmgui_raise" text="Subir Implementos"/>
 		<text name="hlmgui_plow" text="Girar Arado"/>

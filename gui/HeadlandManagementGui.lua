@@ -37,6 +37,8 @@ HeadlandManagementGui.CONTROLS = {
 	"turnPlowSetting",
 	"ridgeMarkerTitle",
 	"ridgeMarkerSetting",
+	"crabSteeringTitle",
+	"crabSteeringSetting",
 	
 	"sectionGPSControl",
 	"gpsOnOffTitle",
@@ -58,7 +60,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
@@ -146,6 +148,20 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})
 	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
 	
+	-- CrabSteering control
+	self.crabSteeringTitle:setText(g_i18n:getText("hlmgui_crabSteering"))
+	self.crabSteeringSetting:setTexts({
+		g_i18n:getText("hlmgui_csDirect"),
+		g_i18n:getText("hlmgui_csTwoStep"),
+		g_i18n:getText("hlmgui_csOff")
+	})
+	local csState = 2
+	if useCrabSteering and not useCrabSteeringTwoStep then csState = 1; end
+	if useCrabSteering and useCrabSteeringTwoStep then csState = 2; end
+	if not useCrabSteering then csState = 3; end
+	self.crabSteeringSetting:setState(csState)
+	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
+	
 	-- GPS control
 	self.gpsOnOffTitle:setText(g_i18n:getText("hlmgui_gpsSetting"))
 	self.gpsOnOffSetting:setTexts({
@@ -229,6 +245,9 @@ function HeadlandManagementGui:onClickOk()
 	local useTurnPlow = (plowState < 3)
 	local useCenterPlow = (plowState == 2)
 	local useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
+	local csState = self.crabSteeringSetting:getState()
+	local useCrabSteering = (csState ~= 3)
+	local useCrabSteeringTwoStep = (csState == 2)
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()
 	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
@@ -239,7 +258,7 @@ function HeadlandManagementGui:onClickOk()
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
 end
 
 -- just close gui
