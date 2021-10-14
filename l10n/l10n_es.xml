@@ -34,6 +34,7 @@
 		<text name="hlmgui_gps_auto" text="Detectar Automáticamente"/>
 		<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="Solo VCA"/>
+		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
 		<text name="hlmgui_diffLock" text="Desbloquear Diferenciales"/>	
 	</texts>
 </l10n>

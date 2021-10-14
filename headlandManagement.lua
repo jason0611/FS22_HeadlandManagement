@@ -2,11 +2,13 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.0.0.0
+-- Version 1.0.1.0
+--
+-- Trigger HLM by GuidanceSteering
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName)
+GMSDebug:init(g_currentModName, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -27,6 +29,7 @@ HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
 HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
+HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
 
 -- Console Commands
 
@@ -162,7 +165,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.gpsSetting = 1 -- auto-mode
 	spec.wasGPSAutomatic = false
 	spec.modGuidanceSteeringFound = false
-	spec.useGuidanceSteering = false	
+	spec.useGuidanceSteering = false
+	spec.useGuidanceSteeringTrigger = false	
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.useVCA = false
@@ -210,6 +214,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		spec.useRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.useRidgeMarker)
 		spec.useGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.useGPS)
 		spec.useGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.useGuidanceSteering)
+		spec.useGuidanceSteeringTrigger = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger"), spec.useGuidanceSteeringTrigger)
 		spec.useVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.useVCA)
 		spec.useDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.useDiffLock)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
@@ -238,6 +243,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key)
 		setXMLBool(xmlFile, key.."#switchRidge", spec.useRidgeMarker)
 		setXMLBool(xmlFile, key.."#useGPS", spec.useGPS)
 		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.useGuidanceSteering)
+		setXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		setXMLBool(xmlFile, key.."#useVCA", spec.useVCA)
 		setXMLBool(xmlFile, key.."#useDiffLock", spec.useDiffLock)
 	end
@@ -257,6 +263,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
   	spec.useRidgeMarker = streamReadBool(streamId)
   	spec.useGPS = streamReadBool(streamId)
   	spec.useGuidanceSteering = streamReadBool(streamId)
+  	spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
   	spec.useVCA = streamReadBool(streamId)
   	spec.useDiffLock = streamReadBool(streamId)
 end
@@ -275,6 +282,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
   	streamWriteBool(streamId, spec.useRidgeMarker)
   	streamWriteBool(streamId, spec.useGPS)
   	streamWriteBool(streamId, spec.useGuidanceSteering)
+  	streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
   	streamWriteBool(streamId, spec.useVCA)
   	streamWriteBool(streamId, spec.useDiffLock)
 end
@@ -295,6 +303,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.useRidgeMarker = streamReadBool(streamId)
 			spec.useGPS = streamReadBool(streamId)
 			spec.useGuidanceSteering = streamReadBool(streamId)
+			spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 			spec.useVCA = streamReadBool(streamId)
 			spec.useDiffLock = streamReadBool(streamId)
 		end;
@@ -317,6 +326,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.useRidgeMarker)
 			streamWriteBool(streamId, spec.useGPS)
 			streamWriteBool(streamId, spec.useGuidanceSteering)
+			streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 			streamWriteBool(streamId, spec.useVCA)
 			streamWriteBool(streamId, spec.useDiffLock)
 		end
@@ -379,6 +389,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useGPS,
 		spec.gpsSetting,
 		spec.useGuidanceSteering,
+		spec.useGuidanceSteeringTrigger,
 		spec.useVCA,
 		spec.useDiffLock,
 		spec.beep,
@@ -388,7 +399,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	)
 end
 
-function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useVCA, useDiffLock, beep)
+function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
 	local spec = self.spec_HeadlandManagement
 	spec.useSpeedControl = useSpeedControl
 	spec.useModSpeedControl = useModSpeedControl
@@ -401,6 +412,7 @@ function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, tur
 	spec.useGPS = useGPS
 	spec.gpsSetting = gpsSetting
 	spec.useGuidanceSteering = useGuidanceSteering
+	spec.useGuidanceSteeringTrigger = useGuidanceSteeringTrigger
 	spec.useVCA = useVCA
 	spec.useDiffLock = useDiffLock
 	spec.beep = beep
@@ -420,6 +432,13 @@ function HeadlandManagement:onUpdate(dt)
 		end	
 	else
 		spec.timer = 0
+	end
+	
+	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+		local gsSpec = self.spec_globalPositioningSystem
+		if not spec.isActive and gsSpec.playHeadLandWarning then
+			spec.isActive = true
+		end
 	end
 	
 	if self:getIsActive() and spec.isActive and spec.exists and spec.actStep<spec.maxStep then
@@ -469,6 +488,21 @@ function HeadlandManagement:onDraw(dt)
 		local h = w * g_screenAspectRatio
 		
 		renderOverlay(HeadlandManagement.guiIcon, x, y, w, h)
+	end
+	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger and not spec.isActive then
+		local gsSpec = self.spec_globalPositioningSystem 
+		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
+		
+		if gpsEnabled then
+			local scale = g_gameSettings.uiScale
+		
+			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.fuelGaugeRadiusX * 0.70
+			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY
+			local w = 0.015 * scale
+			local h = w * g_screenAspectRatio
+		
+			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
+		end
 	end
 end
 	

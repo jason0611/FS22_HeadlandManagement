@@ -2,7 +2,7 @@
 -- Register Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 1.0.0.0
+-- Version 1.0.1.0
 --
 
 function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)

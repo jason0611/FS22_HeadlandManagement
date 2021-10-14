@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.0.0.1</version>
+	<version>1.0.1.0</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -40,6 +40,10 @@ Ideas for subsequent versions:
 - Selectable time interval between individual work steps
 
 Further ideas or wishes are welcome at https://github.com/jason0611/FS19_HeadlandManagement
+
+Changelog V1.0.1.0:
+- Spanish translation added (many thanks to Vanquish081).
+- Headland automatic: If using Guidance Steering, the headland management can be activated automatically when the headland is reached
 ]]>
 		</en>	
 		<de>
@@ -74,6 +78,10 @@ Ideen für Folgeversionen:
 - Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
 
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS19_HeadlandManagement entgegengenommen
+
+Changelog V1.0.1.0:
+- Spanische Übersetzung ergänzt (vielen Dank an Vanquish081)
+- Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
 ]]>
 		</de>
 		<fr>
@@ -108,6 +116,10 @@ Idées pour les versions ultérieures :
 - Intervalle de temps sélectionnable entre les différentes étapes de travail
 
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
+
+Changelog V1.0.1.0 :
+- Ajout de la traduction espagnole (merci à Vanquish081).
+- Automatique en bout de champ : lorsque vous utilisez la direction assistée, la gestion des bouts de champ peut être activée automatiquement lorsque le bout de champ est atteint
 ]]>
 		</fr>
  	</description>	

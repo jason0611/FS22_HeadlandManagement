@@ -33,6 +33,7 @@
 		<text name="hlmgui_gps_auto" text="automatisch"/>
 		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
+		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
 		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
 	</texts>
 </l10n>

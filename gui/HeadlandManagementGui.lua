@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.0.0.0
+-- Version 1.0.1.0
 --
 
 HeadlandManagementGui = {}
@@ -43,6 +43,8 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsOnOffSetting",
 	"gpsSettingTitle",
 	"gpsSetting",
+	"gpsAutoTriggerTitle",
+	"gpsAutoTriggerSetting",
 	
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
@@ -56,7 +58,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
@@ -158,8 +160,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_gps_auto"),
 		g_i18n:getText("hlmgui_gps_gs"),
 		g_i18n:getText("hlmgui_gps_vca")
-	})
-	
+	})	
 	if useGuidanceSteering and modGuidanceSteeringFound then gpsSetting = 2; end
 	if useVCA and modVCAFound then gpsSetting = 3; end
 
@@ -172,6 +173,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	end
 	self.gpsSetting:setDisabled(gpsDisabled)
 	
+	self.gpsAutoTriggerTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerSetting"))
+	self.gpsAutoTriggerSetting:setTexts({
+		g_i18n:getText("hlmgui_gps_gs"),
+		g_i18n:getText("hlmgui_off"),
+	})
+	self.gpsAutoTriggerSetting:setState(useGuidanceSteeringTrigger and 1 or 2)
+	self.gpsAutoTriggerSetting:setDisabled(not modGuidanceSteeringFound)
+
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
 	self.diffControlOnOffSetting:setTexts({
@@ -202,6 +211,7 @@ function HeadlandManagementGui:logicalCheck()
 	if gpsSetting == 2 and not self.modGuidanceSteeringFound then gpsSetting = 3; end
 	if gpsSetting == 3 and not self.modVCAFound then gpsSetting = 1; end
 	self.gpsSetting:setState(gpsSetting)
+	self.gpsAutoTriggerSetting:setDisabled(not useGPS or gpsSetting == 3)
 end
 
 -- close gui and send new values to callback
@@ -224,11 +234,12 @@ function HeadlandManagementGui:onClickOk()
 	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
 	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
 	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
+	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
 end
 
 -- just close gui
