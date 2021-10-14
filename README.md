@@ -66,12 +66,4 @@ Ideen für Folgeversionen (ohne Gewähr):
 - Wechsel der Lenkrichtung bei Hundegang
 - Übernahme der Steuerung während des Wendemanövers
 
-===
 
-Todos:
-- Internationalisierung
-- moddesc.xml
-- Screenshots
-
-Noch in Planung:
-- Zeitsteuerung?
