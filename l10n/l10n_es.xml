@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+	<texts>
+    	<text name="input_HLM_TOGGLESTATE" text="Headlandmanagement: Comenzar / Parar"/>	
+    	<text name="input_HLM_SWITCHON" text="Headlandmanagement: Comenzar" />
+    	<text name="input_HLM_SWITCHOFF" text="Headlandmanagement: Parar" />	
+    	<text name="input_HLM_SHOWGUI" text="Headlandmanagement: Ajustes" />
+		
+		<text name="text_HLM_isActive" text="Headlandmanagement Activo"/>
+		<text name="text_HLM_configuration" text="Headlandmanagement"/>
+		<text name="text_HLM_installed" text="Headlandmanagement instalado"/>
+		<text name="text_HLM_notInstalled" text="Headlandmanagement no instalado"/>
+		<text name="text_HLM_installed_short" text="Instalado"/>
+		<text name="text_HLM_notInstalled_short" text="No instalado"/>
+
+
+		<text name="hlmgui_title" text="Headlandmanagement: Ajustes para "/>
+		<text name="hlmgui_on" text="On"/>
+		<text name="hlmgui_off" text="Off"/>
+		<text name="hlmgui_speedControl" text="AjustesSpeed-Control"/>
+		<text name="hlmgui_speedControlMod" text="Usar mod SpeedControl"/>
+		<text name="hlmgui_speedSetting" text="Veloc. trabajo en cabeceras"/>
+		<text name="hlmgui_speedControlModSetting" text="Nivel Speed-Control en cabeceras"/>
+		<text name="hlmgui_beep" text="Alerta audible mientras está activo"/>
+		<text name="hlmgui_raise" text="Subir Implementos"/>
+		<text name="hlmgui_plow" text="Girar Arado"/>
+		<text name="hlmgui_plowFull" text="Giro completo"/>
+		<text name="hlmgui_plowCenter" text="Giro en 2 pasos"/>
+		<text name="hlmgui_plowOff" text="No girar"/>
+		<text name="hlmgui_pto" text="Parar PTO y dispositivos hidráulicos"/>
+		<text name="hlmgui_ridgeMarker" text="Cambiar marcador"/>
+		<text name="hlmgui_gpsSetting" text="Parar GPS de guiado"/>
+		<text name="hlmgui_gpsType" text="Usar GPS-Mod"/>
+		<text name="hlmgui_gps_auto" text="Detectar Automáticamente"/>
+		<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
+		<text name="hlmgui_gps_vca" text="Solo VCA"/>
+		<text name="hlmgui_diffLock" text="Desbloquear Diferenciales"/>	
+	</texts>
+</l10n>
