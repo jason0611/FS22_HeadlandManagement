@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.9.2.1</version>
+	<version>1.1.0.0</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -44,6 +44,10 @@ Further ideas or wishes are welcome at https://github.com/jason0611/FS19_Headlan
 Changelog V1.0.1.0:
 - Spanish translation added (many thanks to Vanquish081).
 - Headland automatic: If using Guidance Steering, the headland management can be activated automatically when the headland is reached
+
+Changelog V1.1.0.0:
+- Crab steering control added
+- Fixed an rare issue with raising implements
 ]]>
 		</en>	
 		<de>
@@ -82,6 +86,10 @@ Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS19
 Changelog V1.0.1.0:
 - Spanische Übersetzung ergänzt (vielen Dank an Vanquish081)
 - Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
+
+Changelog V1.1.0.0:
+- Seitenwechsel bei Hundegang ergänzt
+- Problem behoben, bei dem in seltenen Fällen Anbaugeräte nicht ausgehoben werden konnten
 ]]>
 		</de>
 		<fr>
@@ -120,6 +128,10 @@ D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/j
 Changelog V1.0.1.0 :
 - Ajout de la traduction espagnole (merci à Vanquish081).
 - Automatique en bout de champ : lorsque vous utilisez la direction assistée, la gestion des bouts de champ peut être activée automatiquement lorsque le bout de champ est atteint
+
+Changelog V1.1.0.0 :
+- Ajout d'un changement de côté pour la conduite en crabe
+- Problème résolu lorsque les pièces jointes ne pouvaient pas être retirées dans de rares cas
 ]]>
 		</fr>
  	</description>	

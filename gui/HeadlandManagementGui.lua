@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.0.1.0
+-- Version 1.1.0.0
 --
 
 HeadlandManagementGui = {}

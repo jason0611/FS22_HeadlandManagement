@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.2.1
+-- Version 1.1.0.0
 --
 -- Trigger HLM by GuidanceSteering
 --
