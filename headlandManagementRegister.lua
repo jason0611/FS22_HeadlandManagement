@@ -11,7 +11,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 
 	local category = storeItem.categoryName
 	if 
-			category == "TRACTORSS" 
+		(	category == "TRACTORSS" 
 		or	category == "TRACTORSM"
 		or	category == "TRACTORSL"
 		or	category == "HARVESTERS"
@@ -24,7 +24,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		or	category == "MOWERVEHICLES"
 		or	category == "MISCVEHICLES"
 		or 	category == "JOHNDEEREPACK"
-		
+		)
 		and	configurations ~= nil
 
 	then
