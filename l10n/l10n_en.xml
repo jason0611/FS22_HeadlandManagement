@@ -21,6 +21,10 @@
 		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Working speed in headlands"/>
 		<text name="hlmgui_speedControlModSetting" text="Speed-Control level in headlands"/>
+		<text name="hlmgui_crabSteering" text="Turn crabsteering"/>
+		<text name="hlmgui_csDirect" text="direct"/>
+		<text name="hlmgui_csTwoStep" text="via normal"/>
+		<text name="hlmgui_csOff" text="off"/>
 		<text name="hlmgui_beep" text="Audible alert while active"/>
 		<text name="hlmgui_raise" text="Lift implements"/>
 		<text name="hlmgui_plow" text="Turn plow"/>

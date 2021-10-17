@@ -21,6 +21,10 @@
 		<text name="hlmgui_speedControlMod" text="Utiliser Mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Vitesse de travail sur le promontoire"/>
 		<text name="hlmgui_speedControlModSetting" text="Étape du régulateur de vitesse sur le promontoire"/>
+		<text name="hlmgui_crabSteering" text="Tourner la direction des crabes"/>
+		<text name="hlmgui_csDirect" text="direct"/>
+		<text name="hlmgui_csTwoStep" text="via normal"/>
+		<text name="hlmgui_csOff" text="off"/>
 		<text name="hlmgui_beep" text="Tonalité d'avertissement lorsque la gestion est activée"/>
 		<text name="hlmgui_raise" text="Accessoires de levage"/>
 		<text name="hlmgui_plow" text="tourner la charrue"/>

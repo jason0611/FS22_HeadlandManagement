@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.0.1.0
+-- Version 1.1.0.0
 --
 -- Fixed wrong JointDescIndex
 --
@@ -18,10 +18,11 @@ HeadlandManagement = {}
 HeadlandManagement.MOD_NAME = g_currentModName
 
 HeadlandManagement.REDUCESPEED = 1
-HeadlandManagement.DIFFLOCK = 2
-HeadlandManagement.RAISEIMPLEMENT = 3
-HeadlandManagement.STOPPTO = 4
-HeadlandManagement.STOPGPS = 5
+HeadlandManagement.CRABSTEERING = 2
+HeadlandManagement.DIFFLOCK = 3
+HeadlandManagement.RAISEIMPLEMENT = 4
+HeadlandManagement.STOPPTO = 5
+HeadlandManagement.STOPGPS = 6
 
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
@@ -140,7 +141,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.turnSpeed = 5
 
 	spec.actStep = 0
-	spec.maxStep = 6
+	spec.maxStep = 7
 	
 	spec.isActive = false
 	spec.action = {}
@@ -160,6 +161,10 @@ function HeadlandManagement:onLoad(savegame)
 	
 	spec.useRidgeMarker = true
 	spec.ridgeMarkerStatus = 0
+	
+	spec.crabSteeringFound = false
+	spec.useCrabSteering = true
+	spec.useCrabSteeringTwoStep = true
 	
 	spec.useGPS = true
 	spec.gpsSetting = 1 -- auto-mode
@@ -184,6 +189,11 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.exists = self.configurations["HeadlandManagement"] == 2
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	
+	-- Check if vehicle supports CrabSteering
+	local csSpec = self.spec_crabSteering
+	spec.crabSteeringFound = csSpec ~= nil
+	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound))
+	
 	-- Check if Mod SpeedControl exists
 	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
 		spec.modSpeedControlFound = true 
@@ -207,6 +217,8 @@ function HeadlandManagement:onPostLoad(savegame)
 		spec.isActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.isActive)
 		spec.useSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.useSpeedControl)
 		spec.useModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.useModSpeedControl)
+		spec.useCrabSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteering"), spec.useCrabSteering)
+		spec.useCrabSteeringTwoStep = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteeringTwoStep"), spec.useCrabSteeringTwoStep)
 		spec.useRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), spec.useRaiseImplement)
 		spec.useStopPTO = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTO"), spec.useStopPTO)
 		spec.useTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.useTurnPlow)
@@ -222,6 +234,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	
 	-- Set management actions
 	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
+	spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 	spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
 	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
 	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
@@ -236,6 +249,8 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key)
 		setXMLBool(xmlFile, key.."#isActive", spec.isActive)
 		setXMLBool(xmlFile, key.."#useSpeedControl", spec.useSpeedControl)
 		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.useModSpeedControl)
+		setXMLBool(xmlFile, key.."#useCrabSteering", spec.useCrabSteering)
+		setXMLBool(xmlFile, key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
 		setXMLBool(xmlFile, key.."#useRaiseImplement", spec.useRaiseImplement)
 		setXMLBool(xmlFile, key.."#useStopPTO", spec.useStopPTO)
 		setXMLBool(xmlFile, key.."#turnPlow", spec.useTurnPlow)
@@ -256,6 +271,8 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	spec.isActive = streamReadBool(streamId)
 	spec.useSpeedControl = streamReadBool(streamId)
 	spec.useModSpeedControl = streamReadBool(streamId)
+	spec.useCrabSteering = streamReadBool(streamId)
+	spec.useCrabSteeringTwoStep = streamReadBool(streamId)
 	spec.useRaiseImplement = streamReadBool(streamId)
 	spec.useStopPTO = streamReadBool(streamId)
 	spec.useTurnPlow = streamReadBool(streamId)
@@ -275,6 +292,8 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	streamWriteBool(streamId, spec.isActive)
 	streamWriteBool(streamId, spec.useSpeedControl)
 	streamWriteBool(streamId, spec.useModSpeedControl)
+	streamWriteBool(streamId, spec.useCrabSteering)
+	streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
 	streamWriteBool(streamId, spec.useRaiseImplement)
 	streamWriteBool(streamId, spec.useStopPTO)
 	streamWriteBool(streamId, spec.useTurnPlow)
@@ -296,6 +315,8 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.isActive = streamReadBool(streamId)
 			spec.useSpeedControl = streamReadBool(streamId)
 			spec.useModSpeedControl = streamReadBool(streamId)
+			spec.useCrabSteering = streamReadBool(streamId)
+			spec.useCrabSteeringTwoStep = streamReadBool(streamId)
 			spec.useRaiseImplement = streamReadBool(streamId)
 			spec.useStopPTO = streamReadBool(streamId)
 			spec.useTurnPlow = streamReadBool(streamId)
@@ -319,6 +340,8 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.isActive)
 			streamWriteBool(streamId, spec.useSpeedControl)
 			streamWriteBool(streamId, spec.useModSpeedControl)
+			streamWriteBool(streamId, spec.useCrabSteering)
+			streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
 			streamWriteBool(streamId, spec.useRaiseImplement)
 			streamWriteBool(streamId, spec.useStopPTO)
 			streamWriteBool(streamId, spec.useTurnPlow)
@@ -380,6 +403,9 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		self:getFullName(),
 		spec.useSpeedControl,
 		spec.useModSpeedControl,
+		spec.crabSteeringFound,
+		spec.useCrabSteering,
+		spec.useCrabSteeringTwoStep,
 		spec.turnSpeed,
 		spec.useRaiseImplement,
 		spec.useStopPTO,
@@ -399,10 +425,12 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	)
 end
 
-function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
+function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
 	local spec = self.spec_HeadlandManagement
 	spec.useSpeedControl = useSpeedControl
 	spec.useModSpeedControl = useModSpeedControl
+	spec.useCrabSteering = useCrabSteering
+	spec.useCrabSteeringTwoStep = useCrabSteeringTwoStep
 	spec.turnSpeed = turnSpeed
 	spec.useRaiseImplement = useRaiseImplement
 	spec.useStopPTO = useStopPTO
@@ -446,6 +474,7 @@ function HeadlandManagement:onUpdate(dt)
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
 			-- Set management actions
 			spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
+			spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 			spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
 			spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
 			spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
@@ -453,6 +482,7 @@ function HeadlandManagement:onUpdate(dt)
 			
 			-- Activation
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, true); end
+			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(self, true, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(self, true); end
 			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement:raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow); end
 			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(self, true); end
@@ -462,6 +492,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(self, false); end
 			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement:raiseImplements(self, false, spec.useTurnPlow); end
 			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(self, false); end
+			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(self, false, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == -HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, false); end		
 		end
 		spec.actStep = spec.actStep + 1
@@ -526,6 +557,41 @@ function HeadlandManagement:reduceSpeed(self, enable)
 		else
 			self:setCruiseControlMaxSpeed(spec.normSpeed)
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
+		end
+	end
+end
+
+function HeadlandManagement:crabSteering(self, enable, twoSteps)
+	local spec = self.spec_HeadlandManagement
+	local csSpec = self.spec_crabSteering
+	local stateMax = csSpec.stateMax
+	local state = csSpec.state
+	local newState = 1
+	dbgprint("crabSteering : "..tostring(enable))
+	if enable then
+		local csMode = 0
+		if csSpec.steeringModes ~= nil and csSpec.steeringModes[state].wheels ~= nil and csSpec.steeringModes[state].wheels[1].offset ~= nil then
+			csMode = csSpec.steeringModes[state].wheels[1].offset
+		end
+		-- CrabSteering active? Find opposite state
+		if csMode ~= 0 then
+			for i=1,stateMax do
+				local testMode = csSpec.steeringModes[i].wheels[1].offset
+				if testMode == -csMode then 
+					newState = i
+				end
+			end
+			if twoSteps then
+				csSpec:setCrabSteering(1)
+				spec.csNewState = newState
+			else
+				csSpec:setCrabSteering(newState)
+			end
+		end
+	else
+		if twoSteps and spec.csNewState ~= nil then
+			csSpec:setCrabSteering(spec.csNewState)
+			spec.csNewState = nil
 		end
 	end
 end

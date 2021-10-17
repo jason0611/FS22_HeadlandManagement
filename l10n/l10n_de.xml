@@ -20,6 +20,10 @@
 		<text name="hlmgui_speedControlMod" text="Nutze Mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Arbeitsgeschwindigkeit im Vorgewende"/>
 		<text name="hlmgui_speedControlModSetting" text="Tempomatstufe im Vorgewende"/>
+		<text name="hlmgui_crabSteering" text="Hundegang wechseln"/>
+		<text name="hlmgui_csDirect" text="direkt"/>
+		<text name="hlmgui_csTwoStep" text="über Normal"/>
+		<text name="hlmgui_csOff" text="aus"/>
 		<text name="hlmgui_beep" text="Warnton bei aktiviertem Management"/>
 		<text name="hlmgui_raise" text="Anbaugeräte ausheben"/>
 		<text name="hlmgui_plow" text="Pflug drehen"/>
