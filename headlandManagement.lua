@@ -4,7 +4,7 @@
 -- Jason06 / Glowins Modschmiede
 -- Version 1.0.1.0
 --
--- Trigger HLM by GuidanceSteering
+-- Fixed wrong JointDescIndex
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -542,13 +542,14 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		if spec.useRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
+				local jointDesc = actImplement:getActiveInputAttacherJointDescIndex()
 				if raise then
 					local lowered = actImplement:getIsLowered()
 					dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
 					local wasLowered = lowered
 					spec.implementStatusTable[index] = wasLowered
 					if lowered and actImplement.setLoweredAll ~= nil then 
-						actImplement:setLoweredAll(false, index)
+						actImplement:setLoweredAll(false, jointDesc)
 						lowered = actImplement:getIsLowered()
 						dbgprint("raiseImplements : implement is raised by setLoweredAll: "..tostring(not lowered))
 		 			end
@@ -558,7 +559,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 				dbgprint("raiseImplements : implement is raised by setLowered: "..tostring(not lowered))
 		 			end
 		 			if lowered and self.setJointMoveDown ~= nil then
-		 				self:setJointMoveDown(index, false)
+		 				self:setJointMoveDown(jointDesc, false)
 		 				lowered = actImplement:getIsLowered()
 		 				dbgprint("raiseImplements : implement is raised by setJointMoveDown: "..tostring(not lowered))
 		 			end
@@ -591,7 +592,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 						dbgprint("raiseImplements : plow is turned")
 					end
 					if wasLowered and actImplement.setLoweredAll ~= nil then
-		 				actImplement:setLoweredAll(true, index)
+		 				actImplement:setLoweredAll(true, jointDesc)
 		 				lowered = actImplement:getIsLowered()
 		 				dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
 		 			end
@@ -601,7 +602,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 				dbgprint("raiseImplements : implement is lowered by setLowered: "..tostring(lowered))
 		 			end
 		 			if wasLowered and not lowered and self.setJointMoveDown ~= nil then
-		 				self:setJointMoveDown(index, true)
+		 				self:setJointMoveDown(jointDesc, true)
 		 				lowered = actImplement:getIsLowered()
 		 				dbgprint("raiseImplements : implement is lowered by setJointMoveDown: "..tostring(lowered))
 		 			end
