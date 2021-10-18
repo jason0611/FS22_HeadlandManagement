@@ -425,7 +425,25 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	)
 end
 
-function HeadlandManagement:guiCallback(useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
+function HeadlandManagement:guiCallback(
+		useSpeedControl, 
+		useModSpeedControl, 
+		useCrabSteering, 
+		useCrabSteeringTwoStep, 
+		turnSpeed, 
+		useRaiseImplement, 
+		useStopPTO, 
+		useTurnPlow, 
+		useCenterPlow, 
+		useRidgeMarker, 
+		useGPS, 
+		gpsSetting, 
+		useGuidanceSteering, 
+		useGuidanceSteeringTrigger, 
+		useVCA, 
+		useDiffLock, 
+		beep
+	)
 	local spec = self.spec_HeadlandManagement
 	spec.useSpeedControl = useSpeedControl
 	spec.useModSpeedControl = useModSpeedControl
@@ -650,19 +668,19 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 			end
 		 		else
 		 			local wasLowered = spec.implementStatusTable[index]
-		 			local lowered
+		 			local lowered = false
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.plowRotationMaxNew ~= nil then 
 						actImplement:setRotationMax(spec.plowRotationMaxNew)
 						spec.plowRotationMaxNew = nil
 						dbgprint("raiseImplements : plow is turned")
 					end
-					if wasLowered and not lowered and self.setJointMoveDown ~= nil then
+					if wasLowered and self.setJointMoveDown ~= nil then
 		 				self:setJointMoveDown(jointDesc, true)
 		 				lowered = actImplement:getIsLowered()
 		 				dbgprint("raiseImplements : implement is lowered by setJointMoveDown: "..tostring(lowered))
 		 			end
-					if wasLowered and actImplement.setLoweredAll ~= nil then
+					if wasLowered and not lowered and actImplement.setLoweredAll ~= nil then
 		 				actImplement:setLoweredAll(true, jointDesc)
 		 				lowered = actImplement:getIsLowered()
 		 				dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
