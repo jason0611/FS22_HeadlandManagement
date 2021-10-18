@@ -14,6 +14,7 @@ Included functions:
 - Turn plough, single-stage or two-stage (via centre position)
 - Raise and change track markers
 - Disengage and re-engage power take-off(s) and hydraulics
+- Changing the steering direction during crab steering
 - Beep when headland management is activated
 
 Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a> is present:
@@ -30,7 +31,6 @@ Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lan
 Ideas for subsequent versions (without guarantee):
 - Sequence of work steps adjustable
 - Selectable time interval between individual work steps
-- Changing the steering direction during crab steering
 - Taking over the steering during the turning manoeuvre
 
 ===
@@ -47,6 +47,7 @@ Enthaltene Funktionen:
 - Pflug drehen, einstufig oder zweistufig (über die Mittelstellung)
 - Spurreisser ausheben und wechseln
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
+- Wechsel der Lenkrichtung bei Hundegang
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
 Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a>:
@@ -63,7 +64,6 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 Ideen für Folgeversionen (ohne Gewähr):
 - Reihenfolge der Arbeitsschritte einstellbar
 - Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
-- Wechsel der Lenkrichtung bei Hundegang
 - Übernahme der Steuerung während des Wendemanövers
 
 
