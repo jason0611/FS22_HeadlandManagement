@@ -588,7 +588,7 @@ function HeadlandManagement:crabSteering(self, enable, twoSteps)
 	dbgprint("crabSteering : "..tostring(enable))
 	if enable then
 		local csMode = 0
-		if csSpec.steeringModes ~= nil and csSpec.steeringModes[state].wheels ~= nil and csSpec.steeringModes[state].wheels[1].offset ~= nil then
+		if csSpec ~= nil and csSpec.steeringModes ~= nil and state ~= nil and csSpec.steeringModes[state] ~= nil and csSpec.steeringModes[state].wheels ~= nil and csSpec.steeringModes[state].wheels[1] ~= nil and csSpec.steeringModes[state].wheels[1].offset ~= nil then
 			csMode = csSpec.steeringModes[state].wheels[1].offset
 		end
 		-- CrabSteering active? Find opposite state
