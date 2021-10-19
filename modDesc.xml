@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.1.0.0</version>
+	<version>1.1.0.1</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -48,7 +48,9 @@ Changelog V1.0.1.0:
 
 Changelog V1.1.0.0:
 - Crab steering control added
-- Fixed an rare issue with raising implements
+
+Changelog V1.1.0.1:
+- Fixed an rare issue with implements not working as expected
 ]]>
 		</en>	
 		<de>
@@ -91,7 +93,9 @@ Changelog V1.0.1.0:
 
 Changelog V1.1.0.0:
 - Seitenwechsel bei Hundegang ergänzt
-- Problem behoben, bei dem in seltenen Fällen Anbaugeräte nicht ausgehoben werden konnten
+
+Changelog V1.1.0.1:
+- Problem behoben, bei dem in seltenen Fällen Anbaugeräte nicht wie erwartet funktionierten
 ]]>
 		</de>
 		<fr>
@@ -133,6 +137,8 @@ Changelog V1.0.1.0 :
 
 Changelog V1.1.0.0 :
 - Ajout d'un changement de côté pour la conduite en crabe
+
+Changelog V1.1.0.1 :
 - Problème résolu lorsque les pièces jointes ne pouvaient pas être retirées dans de rares cas
 ]]>
 		</fr>

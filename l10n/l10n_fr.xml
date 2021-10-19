@@ -13,7 +13,6 @@
 		<text name="text_HLM_installed_short" text="Installé"/>
 		<text name="text_HLM_notInstalled_short" text="Non installé"/>
 
-
 		<text name="hlmgui_title" text="Gestion des fourrières : configuration pour "/>
 		<text name="hlmgui_on" text="activé"/>
 		<text name="hlmgui_off" text="éteint"/>
