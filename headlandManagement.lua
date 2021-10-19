@@ -626,10 +626,19 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		if spec.useRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
-				local jointDesc = actImplement:getActiveInputAttacherJointDescIndex()
+				local jointDesc = 1 -- Joint #1 will always exist
+				local actVehicle = actImplement:getAttacherVehicle()
+				-- find corresponding jointDescIndex
+				for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
+					if impl.object == actImplement then
+						jointDesc = impl.jointDescIndex
+						break
+					end
+				end
 				if raise then
 					local lowered = actImplement:getIsLowered()
 					dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
+					dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
 					local wasLowered = lowered
 					spec.implementStatusTable[index] = wasLowered
 					if lowered and self.setJointMoveDown ~= nil then
@@ -641,11 +650,6 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 						actImplement:setLoweredAll(false, jointDesc)
 						lowered = actImplement:getIsLowered()
 						dbgprint("raiseImplements : implement is raised by setLoweredAll: "..tostring(not lowered))
-		 			end
-		 			if lowered and actImplement.setLowered ~= nil then
-		 				actImplement:setLowered(false)
-		 				lowered = actImplement:getIsLowered()
-		 				dbgprint("raiseImplements : implement is raised by setLowered: "..tostring(not lowered))
 		 			end
 		 			if lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
 		 				local implSpec = actImplement.spec_attacherJointControl
@@ -669,6 +673,8 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 		else
 		 			local wasLowered = spec.implementStatusTable[index]
 		 			local lowered = false
+		 			dbgprint("raiseImplements : wasLowered: "..tostring(wasLowered))
+					dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
 		 			local plowSpec = actImplement.spec_plow
 		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.plowRotationMaxNew ~= nil then 
 						actImplement:setRotationMax(spec.plowRotationMaxNew)
@@ -684,11 +690,6 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		 				actImplement:setLoweredAll(true, jointDesc)
 		 				lowered = actImplement:getIsLowered()
 		 				dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
-		 			end
-		 			if wasLowered and not lowered and actImplement.setLowered ~= nil then
-		 				actImplement:setLowered(true)
-		 				lowered = actImplement:getIsLowered()
-		 				dbgprint("raiseImplements : implement is lowered by setLowered: "..tostring(lowered))
 		 			end
 		 			if wasLowered and not lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
 		 				local implSpec = actImplement.spec_attacherJointControl
