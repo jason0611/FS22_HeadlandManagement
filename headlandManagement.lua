@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.0.1
+-- Version 1.1.1.0
 --
 -- Fixed wrong JointDescIndex
 --
@@ -559,30 +559,34 @@ function HeadlandManagement:reduceSpeed(self, enable)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
-		spec.speedControlState = self.getCruiseControlState()
-		dbgprint("reduceSpeed : speedControlState: "..tostring(spec.speedControlState))
+		spec.cruiseControlState = self:getCruiseControlState()
+		dbgprint("reduceSpeed : cruiseControlState: "..tostring(spec.cruiseControlState))
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
 			spec.normSpeed = self.speedControl.currentKey or 2
-			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
-			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
+			if spec.normSpeed ~= spec.turnSpeed then
+				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
+				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
+			end
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.turnSpeed)
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
 		end
 	else
-		if spec.modSpeedControlFound and spec.useModSpeedControl then
-			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
-			SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
+		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			if self.speedControl.currentKey ~= spec.normSpeed then
+				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
+				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
+			end
 		else
 			self:setCruiseControlMaxSpeed(spec.normSpeed)
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
 		end
-		if spec.speedControlState == 1 then
-			self.setCruiseControlState(1)
+		if spec.cruiseControlState == 1 then
+			self:setCruiseControlState(1)
 			dbgprint("reduceSpeed : Reactivating CruiseControl")
 		end
-		spec.speedControlState = nil
+		spec.cruiseControlState = nil
 	end
 end
 
