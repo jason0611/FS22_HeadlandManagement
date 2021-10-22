@@ -559,6 +559,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("reduceSpeed : "..tostring(enable))
 	if enable then
+		spec.speedControlState = self.getCruiseControlState()
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
 			spec.normSpeed = self.speedControl.currentKey or 2
 			dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
@@ -575,6 +576,10 @@ function HeadlandManagement:reduceSpeed(self, enable)
 		else
 			self:setCruiseControlMaxSpeed(spec.normSpeed)
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
+		end
+		if spec.speedControlState == 1 then
+			self.setCruiseControlState(1)
+			spec.speedControlState = nil
 		end
 	end
 end
