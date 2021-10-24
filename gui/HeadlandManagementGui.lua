@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.0.0
+-- Version 1.1.1.0
 --
 
 HeadlandManagementGui = {}
@@ -73,14 +73,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.speedControlOnOffTitle:setText(g_i18n:getText("hlmgui_speedControl"))
 	self.speedControlOnOffSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.speedControlOnOffSetting:setState(useSpeedControl and 1 or 2)
 	
 	self.speedControlUseSCModTitle:setText(g_i18n:getText("hlmgui_speedControlMod"))
 	self.speedControlUseSCModSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.speedControlUseSCModSetting:setState(useModSpeedControl and modSpeedControlFound and 1 or 2)
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not modSpeedControlFound)
@@ -109,7 +109,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.alarmTitle:setText(g_i18n:getText("hlmgui_beep"))
 	self.alarmSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.alarmSetting:setState(beep and 1 or 2)
 	
@@ -117,7 +117,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.raiseTitle:setText(g_i18n:getText("hlmgui_raise"))
 	self.raiseSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.raiseSetting:setState(useRaiseImplement and 1 or 2)
 	
@@ -137,14 +137,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.stopPtoTitle:setText(g_i18n:getText("hlmgui_pto"))
 	self.stopPtoSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.stopPtoSetting:setState(useStopPTO and 1 or 2)
 		
 	self.ridgeMarkerTitle:setText(g_i18n:getText("hlmgui_ridgeMarker"))
 	self.ridgeMarkerSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
 	
@@ -166,7 +166,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.gpsOnOffTitle:setText(g_i18n:getText("hlmgui_gpsSetting"))
 	self.gpsOnOffSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
 	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
@@ -192,7 +192,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.gpsAutoTriggerTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerSetting:setTexts({
 		g_i18n:getText("hlmgui_gps_gs"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.gpsAutoTriggerSetting:setState(useGuidanceSteeringTrigger and 1 or 2)
 	self.gpsAutoTriggerSetting:setDisabled(not modGuidanceSteeringFound)
@@ -201,7 +201,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
 	self.diffControlOnOffSetting:setTexts({
 		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off"),
+		g_i18n:getText("hlmgui_off")
 	})
 	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
 	self.diffControlOnOffSetting:setDisabled(not modVCAFound)

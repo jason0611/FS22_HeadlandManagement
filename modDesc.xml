@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.1.0.1</version>
+	<version>1.1.1.0</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -51,6 +51,9 @@ Changelog V1.1.0.0:
 
 Changelog V1.1.0.1:
 - Fixed an rare issue with implements not working as expected
+
+ChangeLog V1.1.1.0:
+- If cruise control is active when headland management is activated, it will be reactivated when headland management is deactivated again
 ]]>
 		</en>	
 		<de>
@@ -96,6 +99,9 @@ Changelog V1.1.0.0:
 
 Changelog V1.1.0.1:
 - Problem behoben, bei dem in seltenen Fällen Anbaugeräte nicht wie erwartet funktionierten
+
+Changelog V1.1.1.0:
+- Ist der Tempomat aktiv, wenn das Vorgewendemanagement aktiviert wird, so wird er reaktiviert, wenn das Vorgewendemanagement wieder deaktiviert wird
 ]]>
 		</de>
 		<fr>
@@ -140,6 +146,9 @@ Changelog V1.1.0.0 :
 
 Changelog V1.1.0.1 :
 - Problème résolu lorsque les pièces jointes ne pouvaient pas être retirées dans de rares cas
+
+Changelog V1.1.1.0 :
+- Si le régulateur de vitesse est actif lorsque la gestion des manœuvres en bout de champ est activée, il est réactivé lorsque la gestion des manœuvres en bout de champ est à nouveau désactivée.
 ]]>
 		</fr>
  	</description>	
