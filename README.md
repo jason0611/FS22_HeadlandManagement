@@ -29,10 +29,10 @@ Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lan
 - Speed adjustment also possible by changing the cruise control level
 
 Ideas for subsequent versions (without guarantee):
-- Sequence of work steps adjustable
 - Selectable time interval between individual work steps
-- Taking over the steering during the turning manoeuvre
 
+Further thoughts, but put on hold for now:
+- Taking over control during the turning maneuver
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
@@ -62,8 +62,7 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Ideen für Folgeversionen (ohne Gewähr):
-- Reihenfolge der Arbeitsschritte einstellbar
 - Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
+
+Weitere Gedanken, aber zunächst zurückgestellt:
 - Übernahme der Steuerung während des Wendemanövers
-
-
