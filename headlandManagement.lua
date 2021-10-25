@@ -4,11 +4,9 @@
 -- Jason06 / Glowins Modschmiede
 -- Version 1.1.1.0
 --
--- Fixed wrong JointDescIndex
---
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 2)
+GMSDebug:init(g_currentModName)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -31,80 +29,6 @@ loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg"
 
 HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
-
--- Console Commands
-
-addConsoleCommand("hlmToggleAction", "Toggle HeadlandManagement settings: ", "toggleAction", HeadlandManagement)
-function HeadlandManagement:toggleAction(hlmAction)
-	
-	local vehicle = g_currentMission.controlledVehicle
-	
-	if hlmAction == nil then
-		return "hlmToggleAction <Status|Speed|Diffs|Raise|Plow|PlowCenter|PTO|Ridgemarker|GPS|beep>"
-	end
-	
-	local spec = vehicle.spec_HeadlandManagement
-	if spec == nil then	
-		return "No Headland Management installed"
-	end
-	
-	if hlmAction == "Status" then
-		print("Spec:")
-		print_r(spec)
-		return "=="
-	end
-	
-	if hlmAction == "Speed" then 
-		spec.useSpeedControl = not spec.useSpeedControl
-		return "Speedcontrol set to "..tostring(spec.useSpeedControl)
-	end
-	
-	if hlmAction == "Diffs" then
-		spec.useDiffLock = not spec.useDiffLock and spec.modVCAFound
-		return "DiffLock set to "..tostring(spec.useDiffLock)
-	end
-	
-	if hlmAction == "Raise" then
-		spec.useRaiseImplement = not spec.useRaiseImplement
-		return "RaiseImplement set to "..tostring(spec.useRaiseImplement)
-	end
-	
-	if hlmAction == "Plow" then
-		spec.useTurnPlow = not spec.useTurnPlow
-		return "TurnPlow set to "..tostring(spec.useTurnPlow)
-	end
-	
-	if hlmAction == "PlowCenter" then
-		spec.useCenterPlow = not spec.useCenterPlow
-		return "CenterPlow set to "..tostring(spec.useCenterPlow)
-
-	end
-	
-	if hlmAction == "PTO" then
-		spec.useStopPTO = not spec.useStopPTO
-		return "PTO set to "..tostring(spec.useStopPTO)
-	end
-	
-	if hlmAction == "Ridgemarker" then
-		spec.useRidgeMarker = not spec.useRidgeMarker
-		return "RidgeMarker set to "..tostring(spec.useRidgeMarker)
-	end
-	
-	if hlmAction == "GPS" then
-		spec.useGPS = not spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
-		return "GPS is set to "..tostring(spec.useGPS)
-	end
-	
-	if hlmAction == "beep" then
-		spec.beep = not spec.beep
-		return "beep is set to "..tostring(spec.beep)
-	end
-	
-	if hlmAction == "Status" then
-		print_r(spec)
-		return "done"
-	end
-end	
 
 -- Standards / Basics
 
