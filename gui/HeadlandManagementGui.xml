@@ -11,7 +11,7 @@
 		</GuiElement>
 
 		<!-- SpeedControl -->
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px -100px" size="500px 880px">
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px -100px" size="1600px 880px">
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -43,7 +43,7 @@
 		</GuiElement>
 		
 		<!-- AlertMode -->
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" alignmentY="bottom" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px 50px" size="500px 880px">
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="left" alignmentY="bottom" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px 50px" size="1600px 880px">
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="alarmSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -54,7 +54,7 @@
 		</GuiElement>
 
 		<!-- ImplementControl -->
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="500px -100px" size="600px 880px">
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px -100px" size="1600px 880px">
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" onClick="logicalCheck" id="raiseSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -93,7 +93,7 @@
 		</GuiElement>
 		
 		<!-- GPS control -->
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="right" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="1100px -100px" size="500px 880px">
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="right" alignmentY="top" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px -100px" size="1600px 880px">
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
@@ -118,7 +118,7 @@
 		</GuiElement>
 		
 		<!-- Diff control -->
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="right" alignmentY="bottom" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="1100px 50px" size="500px 880px">
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="right" alignmentY="bottom" flowDirection="vertical" numFlows="1" fitFlowToElements="true" position="0px 50px" size="1600px 880px">
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="diffControlOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
