@@ -564,11 +564,16 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 				local jointDesc = 1 -- Joint #1 will always exist
 				local actVehicle = actImplement:getAttacherVehicle()
 				-- find corresponding jointDescIndex
-				for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
-					if impl.object == actImplement then
-						jointDesc = impl.jointDescIndex
-						break
+				if actVehicle ~= nil then
+					for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
+						if impl.object == actImplement then
+							jointDesc = impl.jointDescIndex
+							break
+						end
 					end
+				else 
+					print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: towBar or towBarWeight active?")
+					print("HeadlandManagement :: raiseImplement : Function restricted to first attacher joint")
 				end
 				if raise then
 					local lowered = actImplement:getIsLowered()
