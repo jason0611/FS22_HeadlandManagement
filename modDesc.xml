@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.1.1.0</version>
+	<version>1.1.1.1</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -37,6 +37,8 @@ Additionally, if Guidance Steering Mod (FS19_guidanceSteering) is available:
 Additionally for existing SpeedControl Mod (FS19_zzzSpeedControl):
 - Speed adjustment also possible by changing the cruise control level
 
+ATTENTION: This mod is not compatible with FS19_towBar or FS19_towBarWeight
+
 Further ideas or wishes are welcome at https://github.com/jason0611/FS19_HeadlandManagement
 
 Changelog V1.0.1.0:
@@ -52,6 +54,9 @@ Changelog V1.1.0.1:
 
 ChangeLog V1.1.1.0:
 - If cruise control is active when headland management is activated, it will be reactivated when headland management is deactivated again
+
+ChangeLog V1.1.1.1:
+HOTFIX: Fixes game crash if FS19_towBar or FS19_towBarWeight is active
 ]]>
 		</en>	
 		<de>
@@ -83,6 +88,8 @@ Zusätzlich bei vorhandenem Guidance Steering Mod (FS19_guidanceSteering):
 Zusätzlich bei vorhandenem SpeedControl Mod (FS19_zzzSpeedControl):
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
+ACHTUNG: Dieser Mod ist nicht kompatibel mit FS19_towBar oder FS19_towBarWeight
+
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS19_HeadlandManagement entgegengenommen
 
 Changelog V1.0.1.0:
@@ -98,6 +105,9 @@ Changelog V1.1.0.1:
 
 Changelog V1.1.1.0:
 - Ist der Tempomat aktiv, wenn das Vorgewendemanagement aktiviert wird, so wird er reaktiviert, wenn das Vorgewendemanagement wieder deaktiviert wird
+
+ChangeLog V1.1.1.1:
+HOTFIX: Behebt Spielabsturz wenn FS19_towBar oder FS19_towBarWeight aktiv ist
 ]]>
 		</de>
 		<fr>
@@ -129,6 +139,8 @@ De plus, si le Guidance Steering Mod (FS19_guidanceSteering) est disponible :
 En plus pour le SpeedControl Mod (FS19_zzzSpeedControl) existant :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
 
+ATTENTION : Ce mod n'est pas compatible avec FS19_towBar ou FS19_towBarWeight.
+
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
 Changelog V1.0.1.0 :
@@ -143,6 +155,9 @@ Changelog V1.1.0.1 :
 
 Changelog V1.1.1.0 :
 - Si le régulateur de vitesse est actif lorsque la gestion des manœuvres en bout de champ est activée, il est réactivé lorsque la gestion des manœuvres en bout de champ est à nouveau désactivée.
+
+ChangeLog V1.1.1.1 :
+HOTFIX : Correction du plantage du jeu si FS19_towBar ou FS19_towBarWeight est actif
 ]]>
 		</fr>
  	</description>	
