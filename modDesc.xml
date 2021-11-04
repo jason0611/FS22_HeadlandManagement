@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="53">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.1.1.1</version>
+	<version>1.1.2.0</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -56,7 +56,10 @@ ChangeLog V1.1.1.0:
 - If cruise control is active when headland management is activated, it will be reactivated when headland management is deactivated again
 
 ChangeLog V1.1.1.1:
-HOTFIX: Fixes game crash if FS19_towBar or FS19_towBarWeight is active
+- HOTFIX: Fixes game crash if FS19_towBar or FS19_towBarWeight is active
+
+ChangeLog V1.1.2.0:
+- Crab steering now also works with machines that are designed as articulated steering systems
 ]]>
 		</en>	
 		<de>
@@ -107,7 +110,10 @@ Changelog V1.1.1.0:
 - Ist der Tempomat aktiv, wenn das Vorgewendemanagement aktiviert wird, so wird er reaktiviert, wenn das Vorgewendemanagement wieder deaktiviert wird
 
 ChangeLog V1.1.1.1:
-HOTFIX: Behebt Spielabsturz wenn FS19_towBar oder FS19_towBarWeight aktiv ist
+- HOTFIX: Behebt Spielabsturz wenn FS19_towBar oder FS19_towBarWeight aktiv ist
+
+ChangeLog V1.1.2.0:
+- Hundegangsteuerung funktioniert nun auch mit Maschinen, die als Knicklenker ausgeführt sind
 ]]>
 		</de>
 		<fr>
@@ -157,7 +163,10 @@ Changelog V1.1.1.0 :
 - Si le régulateur de vitesse est actif lorsque la gestion des manœuvres en bout de champ est activée, il est réactivé lorsque la gestion des manœuvres en bout de champ est à nouveau désactivée.
 
 ChangeLog V1.1.1.1 :
-HOTFIX : Correction du plantage du jeu si FS19_towBar ou FS19_towBarWeight est actif
+- HOTFIX : Correction du plantage du jeu si FS19_towBar ou FS19_towBarWeight est actif
+
+ChangeLog V1.1.2.0 :
+- La marche en crabe fonctionne désormais aussi avec les machines conçues comme des dirigeables articulés.
 ]]>
 		</fr>
  	</description>	
