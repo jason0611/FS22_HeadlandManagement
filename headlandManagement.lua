@@ -84,7 +84,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.plowRotationMaxNew = nil
 	
 	spec.useRidgeMarker = true
-	spec.ridgeMarkerStatus = 0
+	spec.ridgeMarkerState = 0
 	
 	spec.crabSteeringFound = false
 	spec.useCrabSteering = true
@@ -520,24 +520,28 @@ function HeadlandManagement:crabSteering(self, enable, twoSteps)
 	local stateMax = csSpec.stateMax
 	local state = csSpec.state
 	local newState = 1
+	local turnState = 1
+	if csSpec.aiSteeringModeIndex ~= nil then
+		turnState = csSpec.aiSteeringModeIndex
+	end
 	dbgprint("crabSteering : "..tostring(enable))
 	if enable then
 		local csMode = 0
-		if csSpec ~= nil and csSpec.steeringModes ~= nil and state ~= nil and csSpec.steeringModes[state] ~= nil and csSpec.steeringModes[state].wheels ~= nil and csSpec.steeringModes[state].wheels[1] ~= nil and csSpec.steeringModes[state].wheels[1].offset ~= nil then
-			csMode = csSpec.steeringModes[state].wheels[1].offset
+		if csSpec ~= nil and csSpec.steeringModes ~= nil and state ~= nil and csSpec.steeringModes[state] ~= nil and csSpec.steeringModes[state].wheels ~= nil and csSpec.steeringModes[state].wheels[3] ~= nil and csSpec.steeringModes[state].wheels[3].offset ~= nil then
+			csMode = csSpec.steeringModes[state].wheels[3].offset
 			dbgprint("crabSteering : Mode: "..tostring(csMode))
 		end
 		-- CrabSteering active? Find opposite state
 		if csMode ~= 0 then
 			for i=1,stateMax do
-				local testMode = csSpec.steeringModes[i].wheels[1].offset
+				local testMode = csSpec.steeringModes[i].wheels[3].offset
 				dbgprint("crabSteering : testMode: state "..tostring(i)..": offset: "..tostring(testMode))
 				if testMode == -csMode then 
 					newState = i
 				end
 			end
 			if twoSteps then
-				csSpec:setCrabSteering(1)
+				csSpec:setCrabSteering(turnState)
 				spec.csNewState = newState
 			else
 				csSpec:setCrabSteering(newState)
@@ -646,17 +650,17 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 			local specRM = actImplement.spec_ridgeMarker
 			if raise then
-				spec.ridgeMarkerStatus = specRM.ridgeMarkerState
-				if spec.ridgeMarkerStatus ~= 0 then
+				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
+				if spec.ridgeMarkerState ~= 0 then
 					actImplement:setRidgeMarkerState(0)
 				end
 			else
-				if spec.ridgeMarkerStatus == 1 then 
-					spec.ridgeMarkerStatus = 2 
-				elseif spec.ridgeMarkerStatus == 2 then
-		  			spec.ridgeMarkerStatus = 1
+				if spec.ridgeMarkerState == 1 then 
+					spec.ridgeMarkerState = 2 
+				elseif spec.ridgeMarkerState == 2 then
+		  			spec.ridgeMarkerState = 1
 				end
-				actImplement:setRidgeMarkerState(spec.ridgeMarkerStatus)
+				actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
 			end
 			dbgprint("ridgeMarker: "..tostring(specRM.ridgeMarkerState))
 		end
