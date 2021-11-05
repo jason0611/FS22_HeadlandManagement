@@ -79,6 +79,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useRaiseImplementB = true
 	spec.implementStatusTable = {}
 	spec.implementPTOTable = {}
+	spec.useStopPTOF = true
 	spec.useStopPTOB = true
 	spec.useTurnPlow = true
 	spec.useCenterPlow = true
@@ -496,6 +497,11 @@ function HeadlandManagement:onDraw(dt)
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
 		end
 	end
+	
+	dbgrender(spec.useRaiseImplementF, 1, 2)
+	dbgrender(spec.useRaiseImplementB, 2, 2)
+	dbgrender(spec.useStopPTOF, 3, 2)
+	dbgrender(spec.useStopPTOB, 4, 2)
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
@@ -586,7 +592,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
-				local jointDesc = 1 -- Joint #1 will always exist
+				local jointDescIndex = 1 -- Joint #1 will always exist
 				local actVehicle = actImplement:getAttacherVehicle()
 				local frontImpl = false
 				local backImpl = false
@@ -595,11 +601,12 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 				if actVehicle ~= nil then
 					for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
 						if impl.object == actImplement then
-							jointDesc = impl.jointDescIndex
+							jointDescIndex = impl.jointDescIndex
 							break
 						end
 					end
 					
+					local jointDesc = actVehicle.spec_attacherJoints.attacherJoints[jointDescIndex]
 					local wx, wy, wz = getWorldTranslation(jointDesc.jointTransform)
 					local lx, ly, lz = worldToLocal(actVehicle.steeringAxleNode, wx, wy, wz)
 				
@@ -615,20 +622,21 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 					print("HeadlandManagement :: raiseImplement : Function restricted to first attacher joint")
 					backImpl = true
 				end
-				if (frontImpl and spec.useRaiseImplementF) or (backImpl and spec.useRaiseImplementG) then
+				
+				if (frontImpl and spec.useRaiseImplementF) or (backImpl and spec.useRaiseImplementB) then
 					if raise then
 						local lowered = actImplement:getIsLowered()
 						dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
-						dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
+						dbgprint("raiseImplements : jointDescIndex: "..tostring(jointDescIndex))
 						local wasLowered = lowered
 						spec.implementStatusTable[index] = wasLowered
 						if lowered and self.setJointMoveDown ~= nil then
-							self:setJointMoveDown(jointDesc, false)
+							self:setJointMoveDown(jointDescIndex, false)
 							lowered = actImplement:getIsLowered()
 							dbgprint("raiseImplements : implement is raised by setJointMoveDown: "..tostring(not lowered))
 						end
 						if lowered and actImplement.setLoweredAll ~= nil then 
-							actImplement:setLoweredAll(false, jointDesc)
+							actImplement:setLoweredAll(false, jointDescIndex)
 							lowered = actImplement:getIsLowered()
 							dbgprint("raiseImplements : implement is raised by setLoweredAll: "..tostring(not lowered))
 						end
@@ -655,7 +663,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 						local wasLowered = spec.implementStatusTable[index]
 						local lowered = false
 						dbgprint("raiseImplements : wasLowered: "..tostring(wasLowered))
-						dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
+						dbgprint("raiseImplements : jointDescIndex: "..tostring(jointDescIndex))
 						local plowSpec = actImplement.spec_plow
 						if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.plowRotationMaxNew ~= nil then 
 							actImplement:setRotationMax(spec.plowRotationMaxNew)
@@ -663,12 +671,12 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 							dbgprint("raiseImplements : plow is turned")
 						end
 						if wasLowered and self.setJointMoveDown ~= nil then
-							self:setJointMoveDown(jointDesc, true)
+							self:setJointMoveDown(jointDescIndex, true)
 							lowered = actImplement:getIsLowered()
 							dbgprint("raiseImplements : implement is lowered by setJointMoveDown: "..tostring(lowered))
 						end
 						if wasLowered and not lowered and actImplement.setLoweredAll ~= nil then
-							actImplement:setLoweredAll(true, jointDesc)
+							actImplement:setLoweredAll(true, jointDescIndex)
 							lowered = actImplement:getIsLowered()
 							dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
 						end
@@ -711,28 +719,63 @@ function HeadlandManagement:stopPTO(self, stopPTO)
     local allImplements = {}
 	self:getRootVehicle():getChildVehicles(allImplements)
 	
-    for index,actImplement in pairs(allImplements) do
-		dbgprint("stopPTO : actImplement: "..actImplement:getName())
-		if stopPTO then
-			local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
-			spec.implementPTOTable[index] = active
-			if active and actImplement.setIsTurnedOn ~= nil then 
-				actImplement:setIsTurnedOn(false)
-				dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
-			elseif active and actImplement.deactivate ~= nil then
-				actImplement:deactivate()
-				dbgprint("raiseImplements : implement PTO stopped by deactivate")
+	for index,actImplement in pairs(allImplements) do
+		if actImplement ~= nil and actImplement.getAttacherVehicle ~= nil then
+			local jointDescIndex = 1 -- Joint #1 will always exist
+			local actVehicle = actImplement:getAttacherVehicle()
+			local frontPTO = false
+			local backPTO = false
+				
+			-- find corresponding jointDescIndex and decide if front or back
+			if actVehicle ~= nil then
+				for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
+					if impl.object == actImplement then
+						jointDescIndex = impl.jointDescIndex
+						break
+					end
+				end
+					
+				local jointDesc = actVehicle.spec_attacherJoints.attacherJoints[jointDescIndex]
+				local wx, wy, wz = getWorldTranslation(jointDesc.jointTransform)
+				local lx, ly, lz = worldToLocal(actVehicle.steeringAxleNode, wx, wy, wz)
+				
+				if lz > 0 then 
+					frontPTO = true 
+					dbgprint("stopPTO: Front PTO")
+				else 
+					backPTO = true
+					dbgprint("stopPTO: Back PTO")
+				end 
+			else 
+				print("HeadlandManagement :: stopPTO : AttacherVehicle not set: towBar or towBarWeight active?")
+				print("HeadlandManagement :: stopPTO : Function restricted to all or nothing")
+				frontPTO = true
+				backPTO = true
 			end
-		else
-			local active = spec.implementPTOTable[index]
-			if active and actImplement.setIsTurnedOn ~= nil then 
-				actImplement:setIsTurnedOn(true) 
-				dbgprint("raiseImplements : implement PTO stopped by setIsTurnedOn")
-			elseif active and actImplement.activate ~= nil then
-				actImplement:activate()
-				dbgprint("raiseImplements : implement PTO stopped by activate")
+			
+			dbgprint("stopPTO : actImplement: "..actImplement:getName())
+			if (frontPTO and spec.useStopPTOF) or (backPTO and spec.useStopPTOB) then
+				if stopPTO then
+					local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
+					spec.implementPTOTable[index] = active
+					if active and actImplement.setIsTurnedOn ~= nil then 
+						actImplement:setIsTurnedOn(false)
+						dbgprint("stopPTO : implement PTO stopped by setIsTurnedOn")
+					elseif active and actImplement.deactivate ~= nil then
+						actImplement:deactivate()
+						dbgprint("stopPTO : implement PTO stopped by deactivate")
+					end
+				else
+					local active = spec.implementPTOTable[index]
+					if active and actImplement.setIsTurnedOn ~= nil then 
+						actImplement:setIsTurnedOn(true) 
+						dbgprint("stopPTO : implement PTO started by setIsTurnedOn")
+					elseif active and actImplement.activate ~= nil then
+						actImplement:activate()
+						dbgprint("stopPTO : implement PTO started by activate")
+					end
+				end
 			end
-			dbgprint("raiseImplements : implement PTO started")
 		end
 	end
 end

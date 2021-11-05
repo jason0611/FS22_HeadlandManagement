@@ -14,8 +14,11 @@
 		<text name="text_HLM_notInstalled_short" text="Not installed"/>
 
 		<text name="hlmgui_title" text="Headlandmanagement: Settings for "/>
-		<text name="hlmgui_on" text="On"/>
-		<text name="hlmgui_off" text="Off"/>
+		<text name="hlmgui_on" text="on"/>
+		<text name="hlmgui_off" text="off"/>
+		<text name="hlmgui_both" text="front and back"/>
+		<text name="hlmgui_front" text="front"/>
+		<text name="hlmgui_back" text="back"/>
 		<text name="hlmgui_speedControl" text="Speed-Control Settings"/>
 		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Working speed in headlands"/>
