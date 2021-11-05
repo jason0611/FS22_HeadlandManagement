@@ -48,9 +48,10 @@ function GMSDebug:render(text, pos, prio)
 	renderText(0, 0.95 - pos * 0.05, 0.03, "GMSDebug: "..text)
 end
 
-function GMSDebug:toggleDebug()
+function GMSDebug:toggleDebug(prio)
 	GMSDebug.state = not GMSDebug.state
-	print("GMSDebug: New state is "..tostring(GMSDebug.state))
+	GMSDebug.level = tonumber(prio) or 1
+	print("GMSDebug: New state is "..tostring(GMSDebug.state).." / Prio-Level is "..tostring(GMSDebug.level)))
 end
 
 
