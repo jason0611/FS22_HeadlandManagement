@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.3.0.1
+-- V1.4.0.0
 --
 
 GMSDebug = {}
@@ -48,9 +48,14 @@ function GMSDebug:render(text, pos, prio)
 	renderText(0, 0.95 - pos * 0.05, 0.03, "GMSDebug: "..text)
 end
 
-function GMSDebug:toggleDebug()
-	GMSDebug.state = not GMSDebug.state
-	print("GMSDebug: New state is "..tostring(GMSDebug.state))
+function GMSDebug:toggleDebug(prio)
+	local level = tonumber(prio) or 1
+	if level == GMSDebug.level then
+		GMSDebug.state = not GMSDebug.state
+	else
+		GMSDebug.level = level
+	end
+	print("GMSDebug: New state is "..tostring(GMSDebug.state).." / Prio-Level is "..tostring(GMSDebug.level))
 end
 
 
