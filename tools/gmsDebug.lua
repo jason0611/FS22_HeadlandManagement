@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.3.1.0
+-- V1.4.0.0
 --
 
 GMSDebug = {}
@@ -35,9 +35,9 @@ end
 function GMSDebug:print_r(table, prio)
 	if prio == nil then prio = 1; end
 	if not GMSDebug.state or prio > GMSDebug.level then return; end
-	GMSDebug:print("BEGIN OF "..tostring(table).." =================", prio)
+	GMSDebug:print("BEGIN OF "..tostring(table).." (Prio "..tostring(prio)..") =================")
 	print_r(table)
-	GMSDebug:print("END OF "..tostring(table).." =================", prio)
+	GMSDebug:print("END OF "..tostring(table).." =================")
 end
 
 function GMSDebug:render(text, pos, prio)
@@ -48,9 +48,14 @@ function GMSDebug:render(text, pos, prio)
 	renderText(0, 0.95 - pos * 0.05, 0.03, "GMSDebug: "..text)
 end
 
-function GMSDebug:toggleDebug()
-	GMSDebug.state = not GMSDebug.state
-	print("GMSDebug: New state is "..tostring(GMSDebug.state))
+function GMSDebug:toggleDebug(prio)
+	local level = tonumber(prio) or 1
+	if level == GMSDebug.level then
+		GMSDebug.state = not GMSDebug.state
+	else
+		GMSDebug.level = level
+	end
+	print("GMSDebug: New state is "..tostring(GMSDebug.state).." / Prio-Level is "..tostring(GMSDebug.level))
 end
 
 
