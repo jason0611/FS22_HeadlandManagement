@@ -693,20 +693,23 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		-- switch ridge marker
 		if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 			local specRM = actImplement.spec_ridgeMarker
+			dbgprint_r(specRM, 2)
 			if raise then
 				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
-				if spec.ridgeMarkerState ~= 0 then
-					actImplement:setRidgeMarkerState(0)
-				end
+				dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
+				actImplement:setRidgeMarkerState(0)
 			else
-				if spec.ridgeMarkerState == 1 then 
-					spec.ridgeMarkerState = 2 
-				elseif spec.ridgeMarkerState == 2 then
-		  			spec.ridgeMarkerState = 1
+				for state,_ in pairs(specRM.ridgeMarkers) do
+					if state ~= spec.ridgeMarkerState then
+						spec.ridgeMarkerState = state
+						break
+					end
 				end
+				dbgprint("ridgeMarker: New state will be "..tostring(spec.ridgeMarkerState))
 				actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
+				-- actImplement:setRidgeMarkerState(spec.ridgeMarkerState, true)
 			end
-			dbgprint("ridgeMarker: "..tostring(specRM.ridgeMarkerState))
+			dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
 		end
 	end
 end
