@@ -47,12 +47,7 @@ for typeName, typeEntry in pairs(g_vehicleTypeManager:getVehicleTypes()) do
 		and	SpecializationUtil.hasSpecialization(Enterable, typeEntry.specializations)
 		and	SpecializationUtil.hasSpecialization(Motorized, typeEntry.specializations)
     
-    	and not
-    
-		(
-    		SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
-		or	SpecializationUtil.hasSpecialization(ConveyorBelt, typeEntry.specializations)
-    	)
+    	and not SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
     
     then
      	g_vehicleTypeManager:addSpecialization(typeName, "HeadlandManagement")
