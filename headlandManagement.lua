@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.2.0
+-- Version 1.2.0.0
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -75,10 +75,11 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modSpeedControlFound = false
 	spec.useModSpeedControl = false
 	
-	spec.useRaiseImplement = true
+	spec.useRaiseImplementF = true
+	spec.useRaiseImplementB = true
 	spec.implementStatusTable = {}
 	spec.implementPTOTable = {}
-	spec.useStopPTO = true
+	spec.useStopPTOB = true
 	spec.useTurnPlow = true
 	spec.useCenterPlow = true
 	spec.plowRotationMaxNew = nil
@@ -143,8 +144,10 @@ function HeadlandManagement:onPostLoad(savegame)
 		spec.useModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.useModSpeedControl)
 		spec.useCrabSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteering"), spec.useCrabSteering)
 		spec.useCrabSteeringTwoStep = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteeringTwoStep"), spec.useCrabSteeringTwoStep)
-		spec.useRaiseImplement = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplement"), spec.useRaiseImplement)
-		spec.useStopPTO = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTO"), spec.useStopPTO)
+		spec.useRaiseImplementF = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplementF"), spec.useRaiseImplementF)
+		spec.useRaiseImplementB = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplementB"), spec.useRaiseImplementB)
+		spec.useStopPTOF = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTOF"), spec.useStopPTOF)
+		spec.useStopPTOB = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTOB"), spec.useStopPTOB)
 		spec.useTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.useTurnPlow)
 		spec.useCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.useCenterPlow)
 		spec.useRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.useRidgeMarker)
@@ -160,8 +163,8 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 	spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 	spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
-	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
-	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
+	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
+	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
 	spec.action[HeadlandManagement.STOPGPS] = (spec.modGuidanceSteeringFound and spec.useGuidanceSteering) or (spec.modVCAFound and spec.useVCA)
 end
 
@@ -175,8 +178,10 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key)
 		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.useModSpeedControl)
 		setXMLBool(xmlFile, key.."#useCrabSteering", spec.useCrabSteering)
 		setXMLBool(xmlFile, key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
-		setXMLBool(xmlFile, key.."#useRaiseImplement", spec.useRaiseImplement)
-		setXMLBool(xmlFile, key.."#useStopPTO", spec.useStopPTO)
+		setXMLBool(xmlFile, key.."#useRaiseImplementF", spec.useRaiseImplementF)
+		setXMLBool(xmlFile, key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		setXMLBool(xmlFile, key.."#useStopPTOF", spec.useStopPTOF)
+		setXMLBool(xmlFile, key.."#useStopPTOB", spec.useStopPTOB)
 		setXMLBool(xmlFile, key.."#turnPlow", spec.useTurnPlow)
 		setXMLBool(xmlFile, key.."#centerPlow", spec.useCenterPlow)
 		setXMLBool(xmlFile, key.."#switchRidge", spec.useRidgeMarker)
@@ -197,8 +202,10 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	spec.useModSpeedControl = streamReadBool(streamId)
 	spec.useCrabSteering = streamReadBool(streamId)
 	spec.useCrabSteeringTwoStep = streamReadBool(streamId)
-	spec.useRaiseImplement = streamReadBool(streamId)
-	spec.useStopPTO = streamReadBool(streamId)
+	spec.useRaiseImplementF = streamReadBool(streamId)
+	spec.useRaiseImplementB = streamReadBool(streamId)
+	spec.useStopPTOF = streamReadBool(streamId)
+	spec.useStopPTOB = streamReadBool(streamId)
 	spec.useTurnPlow = streamReadBool(streamId)
 	spec.useCenterPlow = streamReadBool(streamId)
   	spec.useRidgeMarker = streamReadBool(streamId)
@@ -218,8 +225,10 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	streamWriteBool(streamId, spec.useModSpeedControl)
 	streamWriteBool(streamId, spec.useCrabSteering)
 	streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
-	streamWriteBool(streamId, spec.useRaiseImplement)
-	streamWriteBool(streamId, spec.useStopPTO)
+	streamWriteBool(streamId, spec.useRaiseImplementF)
+	streamWriteBool(streamId, spec.useRaiseImplementB)
+	streamWriteBool(streamId, spec.useStopPTOF)
+	streamWriteBool(streamId, spec.useStopPTOB)
 	streamWriteBool(streamId, spec.useTurnPlow)
 	streamWriteBool(streamId, spec.useCenterPlow)
   	streamWriteBool(streamId, spec.useRidgeMarker)
@@ -241,8 +250,10 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.useModSpeedControl = streamReadBool(streamId)
 			spec.useCrabSteering = streamReadBool(streamId)
 			spec.useCrabSteeringTwoStep = streamReadBool(streamId)
-			spec.useRaiseImplement = streamReadBool(streamId)
-			spec.useStopPTO = streamReadBool(streamId)
+			spec.useRaiseImplementF = streamReadBool(streamId)
+			spec.useRaiseImplementB = streamReadBool(streamId)
+			spec.useStopPTOF = streamReadBool(streamId)
+			spec.useStopPTOB = streamReadBool(streamId)
 			spec.useTurnPlow = streamReadBool(streamId)
 			spec.useCenterPlow = streamReadBool(streamId)
 			spec.useRidgeMarker = streamReadBool(streamId)
@@ -266,8 +277,10 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.useModSpeedControl)
 			streamWriteBool(streamId, spec.useCrabSteering)
 			streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
-			streamWriteBool(streamId, spec.useRaiseImplement)
-			streamWriteBool(streamId, spec.useStopPTO)
+			streamWriteBool(streamId, spec.useRaiseImplementF)
+			streamWriteBool(streamId, spec.useRaiseImplementB)
+			streamWriteBool(streamId, spec.useStopPTOF)
+			streamWriteBool(streamId, spec.useStopPTOB)
 			streamWriteBool(streamId, spec.useTurnPlow)
 			streamWriteBool(streamId, spec.useCenterPlow)
 			streamWriteBool(streamId, spec.useRidgeMarker)
@@ -331,8 +344,10 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useCrabSteering,
 		spec.useCrabSteeringTwoStep,
 		spec.turnSpeed,
-		spec.useRaiseImplement,
-		spec.useStopPTO,
+		spec.useRaiseImplementF,
+		spec.useRaiseImplementB,
+		spec.useStopPTOF,
+		spec.useStopPTOB,
 		spec.useTurnPlow,
 		spec.useCenterPlow,
 		spec.useRidgeMarker,
@@ -355,8 +370,10 @@ function HeadlandManagement:guiCallback(
 		useCrabSteering, 
 		useCrabSteeringTwoStep, 
 		turnSpeed, 
-		useRaiseImplement, 
-		useStopPTO, 
+		useRaiseImplementF, 
+		useRaiseImplementB, 
+		useStopPTOF, 
+		useStopPTOB, 
 		useTurnPlow, 
 		useCenterPlow, 
 		useRidgeMarker, 
@@ -374,8 +391,10 @@ function HeadlandManagement:guiCallback(
 	spec.useCrabSteering = useCrabSteering
 	spec.useCrabSteeringTwoStep = useCrabSteeringTwoStep
 	spec.turnSpeed = turnSpeed
-	spec.useRaiseImplement = useRaiseImplement
-	spec.useStopPTO = useStopPTO
+	spec.useRaiseImplementF = useRaiseImplementF
+	spec.useRaiseImplementB = useRaiseImplementB
+	spec.useStopPTOF = useStopPTOF
+	spec.useStopPTOB = useStopPTOB
 	spec.useTurnPlow = useTurnPlow
 	spec.useCenterPlow = useCenterPlow
 	spec.useRidgeMarker = useRidgeMarker
@@ -418,8 +437,8 @@ function HeadlandManagement:onUpdate(dt)
 			spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 			spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 			spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
-			spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplement
-			spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTO
+			spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
+			spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
 			spec.action[HeadlandManagement.STOPGPS] = spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
 			
 			-- Activation
@@ -564,11 +583,14 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
     
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
-		if spec.useRaiseImplement and actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
+		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
 				local jointDesc = 1 -- Joint #1 will always exist
 				local actVehicle = actImplement:getAttacherVehicle()
+				local frontImpl = false
+				local backImpl = false
+				
 				-- find corresponding jointDescIndex
 				if actVehicle ~= nil then
 					for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
@@ -577,73 +599,87 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 							break
 						end
 					end
+					
+					local wx, wy, wz = getWorldTranslation(jointDesc.jointTransform)
+					local lx, ly, lz = worldToLocal(actVehicle.steeringAxleNode, wx, wy, wz)
+				
+					if lz > 0 then 
+						frontImpl = true 
+						dbgprint("raiseImplements: Front implement")
+					else 
+						backImpl = true
+						dbgprint("raiseImplements: Back implement")
+					end 
 				else 
 					print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: towBar or towBarWeight active?")
 					print("HeadlandManagement :: raiseImplement : Function restricted to first attacher joint")
+					backImpl = true
 				end
-				if raise then
-					local lowered = actImplement:getIsLowered()
-					dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
-					dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
-					local wasLowered = lowered
-					spec.implementStatusTable[index] = wasLowered
-					if lowered and self.setJointMoveDown ~= nil then
-		 				self:setJointMoveDown(jointDesc, false)
-		 				lowered = actImplement:getIsLowered()
-		 				dbgprint("raiseImplements : implement is raised by setJointMoveDown: "..tostring(not lowered))
-		 			end
-					if lowered and actImplement.setLoweredAll ~= nil then 
-						actImplement:setLoweredAll(false, jointDesc)
-						lowered = actImplement:getIsLowered()
-						dbgprint("raiseImplements : implement is raised by setLoweredAll: "..tostring(not lowered))
-		 			end
-		 			if lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
-		 				local implSpec = actImplement.spec_attacherJointControl
-		 				implSpec.heightTargetAlpha = implSpec.jointDesc.upperAlpha
-				    	lowered = actImplement:getIsLowered()
-				    	dbgprint("raiseImplements : implement is raised by heightTargetAlpha: "..tostring(not lowered))
-				    end
-		 			local plowSpec = actImplement.spec_plow
-		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
-				        if actImplement:getIsPlowRotationAllowed() then
-							spec.plowRotationMaxNew = not plowSpec.rotationMax
-							if centerPlow then 
-								actImplement:setRotationCenter()
-                				dbgprint("raiseImplements : plow is centered")
-							else
-								actImplement:setRotationMax(spec.plowRotationMaxNew)
-                				dbgprint("raiseImplements : plow is turned")
+				if (frontImpl and spec.useRaiseImplementF) or (backImpl and spec.useRaiseImplementG) then
+					if raise then
+						local lowered = actImplement:getIsLowered()
+						dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
+						dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
+						local wasLowered = lowered
+						spec.implementStatusTable[index] = wasLowered
+						if lowered and self.setJointMoveDown ~= nil then
+							self:setJointMoveDown(jointDesc, false)
+							lowered = actImplement:getIsLowered()
+							dbgprint("raiseImplements : implement is raised by setJointMoveDown: "..tostring(not lowered))
+						end
+						if lowered and actImplement.setLoweredAll ~= nil then 
+							actImplement:setLoweredAll(false, jointDesc)
+							lowered = actImplement:getIsLowered()
+							dbgprint("raiseImplements : implement is raised by setLoweredAll: "..tostring(not lowered))
+						end
+						if lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
+							local implSpec = actImplement.spec_attacherJointControl
+							implSpec.heightTargetAlpha = implSpec.jointDesc.upperAlpha
+							lowered = actImplement:getIsLowered()
+							dbgprint("raiseImplements : implement is raised by heightTargetAlpha: "..tostring(not lowered))
+						end
+						local plowSpec = actImplement.spec_plow
+						if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered then 
+							if actImplement:getIsPlowRotationAllowed() then
+								spec.plowRotationMaxNew = not plowSpec.rotationMax
+								if centerPlow then 
+									actImplement:setRotationCenter()
+									dbgprint("raiseImplements : plow is centered")
+								else
+									actImplement:setRotationMax(spec.plowRotationMaxNew)
+									dbgprint("raiseImplements : plow is turned")
+								end
 							end
-				        end
-		 			end
-		 		else
-		 			local wasLowered = spec.implementStatusTable[index]
-		 			local lowered = false
-		 			dbgprint("raiseImplements : wasLowered: "..tostring(wasLowered))
-					dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
-		 			local plowSpec = actImplement.spec_plow
-		 			if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.plowRotationMaxNew ~= nil then 
-						actImplement:setRotationMax(spec.plowRotationMaxNew)
-						spec.plowRotationMaxNew = nil
-						dbgprint("raiseImplements : plow is turned")
-					end
-					if wasLowered and self.setJointMoveDown ~= nil then
-		 				self:setJointMoveDown(jointDesc, true)
-		 				lowered = actImplement:getIsLowered()
-		 				dbgprint("raiseImplements : implement is lowered by setJointMoveDown: "..tostring(lowered))
-		 			end
-					if wasLowered and not lowered and actImplement.setLoweredAll ~= nil then
-		 				actImplement:setLoweredAll(true, jointDesc)
-		 				lowered = actImplement:getIsLowered()
-		 				dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
-		 			end
-		 			if wasLowered and not lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
-		 				local implSpec = actImplement.spec_attacherJointControl
-		 				implSpec.heightTargetAlpha = implSpec.jointDesc.lowerAlpha
-				    	lowered = actImplement:getIsLowered()
-				    	dbgprint("raiseImplements : implement is lowered by heightTargetAlpha: "..tostring(lowered))
-				    end
-		 		end	
+						end
+					else
+						local wasLowered = spec.implementStatusTable[index]
+						local lowered = false
+						dbgprint("raiseImplements : wasLowered: "..tostring(wasLowered))
+						dbgprint("raiseImplements : jointDesc: "..tostring(jointDesc))
+						local plowSpec = actImplement.spec_plow
+						if plowSpec ~= nil and plowSpec.rotationPart ~= nil and plowSpec.rotationPart.turnAnimation ~= nil and turnPlow and wasLowered and spec.plowRotationMaxNew ~= nil then 
+							actImplement:setRotationMax(spec.plowRotationMaxNew)
+							spec.plowRotationMaxNew = nil
+							dbgprint("raiseImplements : plow is turned")
+						end
+						if wasLowered and self.setJointMoveDown ~= nil then
+							self:setJointMoveDown(jointDesc, true)
+							lowered = actImplement:getIsLowered()
+							dbgprint("raiseImplements : implement is lowered by setJointMoveDown: "..tostring(lowered))
+						end
+						if wasLowered and not lowered and actImplement.setLoweredAll ~= nil then
+							actImplement:setLoweredAll(true, jointDesc)
+							lowered = actImplement:getIsLowered()
+							dbgprint("raiseImplements : implement is lowered by setLoweredAll: "..tostring(lowered))
+						end
+						if wasLowered and not lowered and (actImplement.spec_attacherJointControlPlow ~= nil or actImplement.spec_attacherJointControlCutter~= nil or actImplement.spec_attacherJointControlCultivator~= nil) then
+							local implSpec = actImplement.spec_attacherJointControl
+							implSpec.heightTargetAlpha = implSpec.jointDesc.lowerAlpha
+							lowered = actImplement:getIsLowered()
+							dbgprint("raiseImplements : implement is lowered by heightTargetAlpha: "..tostring(lowered))
+						end
+					end	
+				end
 		 	end
 		end
 		-- switch ridge marker
