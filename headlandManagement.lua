@@ -498,10 +498,10 @@ function HeadlandManagement:onDraw(dt)
 		end
 	end
 	
-	dbgrender(spec.useRaiseImplementF, 1, 2)
-	dbgrender(spec.useRaiseImplementB, 2, 2)
-	dbgrender(spec.useStopPTOF, 3, 2)
-	dbgrender(spec.useStopPTOB, 4, 2)
+	dbgrender(spec.useRaiseImplementF, 1, 3)
+	dbgrender(spec.useRaiseImplementB, 2, 3)
+	dbgrender(spec.useStopPTOF, 3, 3)
+	dbgrender(spec.useStopPTOB, 4, 3)
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
