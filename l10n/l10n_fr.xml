@@ -16,6 +16,9 @@
 		<text name="hlmgui_title" text="Gestion des fourrières : configuration pour "/>
 		<text name="hlmgui_on" text="activé"/>
 		<text name="hlmgui_off" text="éteint"/>
+		<text name="hlmgui_both" text="avant et arrière"/>
+		<text name="hlmgui_front" text="avant"/>
+		<text name="hlmgui_back" text="arrière"/>
 		<text name="hlmgui_speedControl" text="Régler le régulateur de vitesse"/>
 		<text name="hlmgui_speedControlMod" text="Utiliser Mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Vitesse de travail sur le promontoire"/>

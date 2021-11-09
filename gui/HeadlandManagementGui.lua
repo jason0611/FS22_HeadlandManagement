@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.2.1
+-- Version 1.1.9.0
 --
 
 HeadlandManagementGui = {}
@@ -60,7 +60,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
@@ -116,10 +116,16 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	-- Implement control
 	self.raiseTitle:setText(g_i18n:getText("hlmgui_raise"))
 	self.raiseSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_both"),
+		g_i18n:getText("hlmgui_front"),
+		g_i18n:getText("hlmgui_back"),
 		g_i18n:getText("hlmgui_off")
 	})
-	self.raiseSetting:setState(useRaiseImplement and 1 or 2)
+	local raiseState = 4
+	if useRaiseImplementF and useRaiseImplementB then raiseState = 1; end
+	if useRaiseImplementF and not useRaiseImplementB then raiseState = 2; end
+	if not useRaiseImplementF and useRaiseImplementB then raiseState = 3; end
+	self.raiseSetting:setState(raiseState)
 	
 	self.turnPlowTitle:setText(g_i18n:getText("hlmgui_plow"))
 	self.turnPlowSetting:setTexts({
@@ -132,14 +138,20 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	if useTurnPlow and useCenterPlow then plowState = 2; end
 	if not useTurnPlow then plowState = 3; end
 	self.turnPlowSetting:setState(plowState)
-	self.turnPlowSetting:setDisabled(not useRaiseImplement)
+	self.turnPlowSetting:setDisabled(raiseState == 4)
 
 	self.stopPtoTitle:setText(g_i18n:getText("hlmgui_pto"))
 	self.stopPtoSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_both"),
+		g_i18n:getText("hlmgui_front"),
+		g_i18n:getText("hlmgui_back"),
 		g_i18n:getText("hlmgui_off")
 	})
-	self.stopPtoSetting:setState(useStopPTO and 1 or 2)
+	local ptoState = 4
+	if useStopPTOF and useStopPTOB then ptoState = 1; end
+	if useStopPTOF and not useStopPTOB then ptoState = 2; end
+	if not useStopPTOF and useStopPTOB then ptoState = 3; end
+	self.stopPtoSetting:setState(ptoState)
 		
 	self.ridgeMarkerTitle:setText(g_i18n:getText("hlmgui_ridgeMarker"))
 	self.ridgeMarkerSetting:setTexts({
@@ -216,7 +228,7 @@ function HeadlandManagementGui:logicalCheck()
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
 	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.modSpeedControlFound or not useSpeedControl)
 	
-	local useRaiseImplement = self.raiseSetting:getState() == 1	
+	local useRaiseImplement = self.raiseSetting:getState() ~= 4	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
@@ -239,8 +251,15 @@ function HeadlandManagementGui:onClickOk()
 	else 
 		turnSpeed = self.speedControlTurnSpeedSetting1:getState()
 	end
-	local useRaiseImplement = self.raiseSetting:getState() == 1
-	local useStopPTO = self.stopPtoSetting:getState() == 1
+	local raiseState = self.raiseSetting:getState()
+	local useRaiseImplementF
+	local useRaiseImplementB
+	if raiseState == 1 then useRaiseImplementF = true; useRaiseImplementB = true; end
+	if raiseState == 2 then useRaiseImplementF = true; useRaiseImplementB = false; end
+	if raiseState == 3 then useRaiseImplementF = false; useRaiseImplementB = true; end
+	if raiseState == 4 then useRaiseImplementF = false; useRaiseImplementB = false; end
+	local useStopPTOF = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 2)
+	local useStopPTOB = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 3)
 	local plowState = self.turnPlowSetting:getState()
 	local useTurnPlow = (plowState < 3)
 	local useCenterPlow = (plowState == 2)
@@ -258,7 +277,7 @@ function HeadlandManagementGui:onClickOk()
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplement, useStopPTO, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
 end
 
 -- just close gui

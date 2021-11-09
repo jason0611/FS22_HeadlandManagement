@@ -2,7 +2,7 @@
 -- Register Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 1.1.2.1
+-- Version 1.1.9.0
 --
 
 function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
@@ -47,12 +47,7 @@ for typeName, typeEntry in pairs(g_vehicleTypeManager:getVehicleTypes()) do
 		and	SpecializationUtil.hasSpecialization(Enterable, typeEntry.specializations)
 		and	SpecializationUtil.hasSpecialization(Motorized, typeEntry.specializations)
     
-    	and not
-    
-		(
-    		SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
-		or	SpecializationUtil.hasSpecialization(ConveyorBelt, typeEntry.specializations)
-    	)
+    	and not SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
     
     then
      	g_vehicleTypeManager:addSpecialization(typeName, "HeadlandManagement")
