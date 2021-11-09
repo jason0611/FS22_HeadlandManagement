@@ -6,7 +6,7 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 2)
+GMSDebug:init(g_currentModName, true, 3)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -140,7 +140,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	
 		spec.beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.beep)
 		spec.turnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.turnSpeed)
-		spec.isActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.isActive)
+		--spec.isActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.isActive)
 		spec.useSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.useSpeedControl)
 		spec.useModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.useModSpeedControl)
 		spec.useCrabSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteering"), spec.useCrabSteering)
@@ -174,7 +174,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key)
 	if spec.exists then
 		setXMLBool(xmlFile, key.."#beep", spec.beep)
 		setXMLFloat(xmlFile, key.."#turnSpeed", spec.turnSpeed)
-		setXMLBool(xmlFile, key.."#isActive", spec.isActive)
+		--setXMLBool(xmlFile, key.."#isActive", spec.isActive)
 		setXMLBool(xmlFile, key.."#useSpeedControl", spec.useSpeedControl)
 		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.useModSpeedControl)
 		setXMLBool(xmlFile, key.."#useCrabSteering", spec.useCrabSteering)
@@ -198,7 +198,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	spec.beep = streamReadBool(streamId)
 	spec.turnSpeed = streamReadFloat32(streamId)
-	spec.isActive = streamReadBool(streamId)
+	--spec.isActive = streamReadBool(streamId)
 	spec.useSpeedControl = streamReadBool(streamId)
 	spec.useModSpeedControl = streamReadBool(streamId)
 	spec.useCrabSteering = streamReadBool(streamId)
@@ -221,7 +221,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.beep)
 	streamWriteFloat32(streamId, spec.turnSpeed)
-	streamWriteBool(streamId, spec.isActive)
+	--streamWriteBool(streamId, spec.isActive)
 	streamWriteBool(streamId, spec.useSpeedControl)
 	streamWriteBool(streamId, spec.useModSpeedControl)
 	streamWriteBool(streamId, spec.useCrabSteering)
@@ -246,7 +246,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 		if streamReadBool(streamId) then
 			spec.beep = streamReadBool(streamId)
 			spec.turnSpeed = streamReadFloat32(streamId)
-			spec.isActive = streamReadBool(streamId)
+			--spec.isActive = streamReadBool(streamId)
 			spec.useSpeedControl = streamReadBool(streamId)
 			spec.useModSpeedControl = streamReadBool(streamId)
 			spec.useCrabSteering = streamReadBool(streamId)
@@ -273,7 +273,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
 			streamWriteBool(streamId, spec.beep)
 			streamWriteFloat32(streamId, spec.turnSpeed)
-			streamWriteBool(streamId, spec.isActive)
+			--streamWriteBool(streamId, spec.isActive)
 			streamWriteBool(streamId, spec.useSpeedControl)
 			streamWriteBool(streamId, spec.useModSpeedControl)
 			streamWriteBool(streamId, spec.useCrabSteering)
@@ -418,6 +418,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
 			playSample(HeadlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
+			dbgprint("Beep", 3)
 			spec.timer = 0
 		end	
 	else
@@ -497,11 +498,12 @@ function HeadlandManagement:onDraw(dt)
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
 		end
 	end
-	
-	dbgrender(spec.useRaiseImplementF, 1, 3)
-	dbgrender(spec.useRaiseImplementB, 2, 3)
-	dbgrender(spec.useStopPTOF, 3, 3)
-	dbgrender(spec.useStopPTOB, 4, 3)
+	dbgrender("isActive: "..tostring(spec.isActive), 1, 3)
+	dbgrender("spec.cruiseControlState: "..tostring(spec.cruiseControlState), 2, 3)
+	dbgrender("self:getCruiseControlState: "..tostring(self:getCruiseControlState()), 3, 3)
+	dbgrender("self:getCruiseControlSpeed: "..tostring(self:getCruiseControlSpeed()), 4, 3)
+	dbgrender("spec.normSpeed: "..tostring(spec.normSpeed), 5, 3)
+	dbgrender("spec.turnSpeed: "..tostring(spec.turnSpeed), 6, 3)
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
@@ -519,6 +521,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.turnSpeed)
+			self:setCruiseControlState(spec.cruiseControlState)
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
 		end
 	else
