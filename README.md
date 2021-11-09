@@ -10,10 +10,10 @@ It can be activated and deactivated in the vehicle with Shift-X. Alternatively, 
 
 Included functions:
 - Reduce speed (cruise control) and raise again.
-- Raise lowered implements and lower them again
+- Raise lowered implements and lower them again, optionally only front or only rear
 - Turn plough, single-stage or two-stage (via centre position)
 - Raise and change track markers
-- Disengage and re-engage power take-off(s) and hydraulics
+- Disengage and re-engage power take-off(s) and hydraulics, optionally only front or only rear
 - Changing the steering direction during crab steering
 - Beep when headland management is activated
 
@@ -43,10 +43,10 @@ Das Vorgewende-Management muss vor der Nutzung im Shop oder in der Werkstatt dem
 
 Enthaltene Funktionen:
 - Geschwindigkeit (Tempomat) reduzieren und wieder anheben
-- Abgesenkte Geräte ausheben und wieder absenken
+- Abgesenkte Geräte ausheben und wieder absenken, wahlweise auch nur vorne oder nur hinten
 - Pflug drehen, einstufig oder zweistufig (über die Mittelstellung)
 - Spurreisser ausheben und wechseln
-- Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
+- Zapfwelle(n) und Hydraulik abschalten und wieder anschalten, wahlweise auch nur vorne oder nur hinten
 - Wechsel der Lenkrichtung bei Hundegang
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
