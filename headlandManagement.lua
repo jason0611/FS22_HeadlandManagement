@@ -6,7 +6,7 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 3)
+GMSDebug:init(g_currentModName, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -414,25 +414,25 @@ end
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
-	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and spec.beep and spec.isActive then
+	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.isActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
 			playSample(HeadlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
-			dbgprint("Beep", 3)
+			dbgprint("Beep: "..self:getName(), 3)
 			spec.timer = 0
 		end	
 	else
 		spec.timer = 0
 	end
 	
-	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning then
 			spec.isActive = true
 		end
 	end
 	
-	if self:getIsActive() and spec.isActive and spec.exists and spec.actStep<spec.maxStep then
+	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<spec.maxStep then
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
 			-- Set management actions
@@ -498,12 +498,14 @@ function HeadlandManagement:onDraw(dt)
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
 		end
 	end
-	dbgrender("isActive: "..tostring(spec.isActive), 1, 3)
-	dbgrender("spec.cruiseControlState: "..tostring(spec.cruiseControlState), 2, 3)
-	dbgrender("self:getCruiseControlState: "..tostring(self:getCruiseControlState()), 3, 3)
-	dbgrender("self:getCruiseControlSpeed: "..tostring(self:getCruiseControlSpeed()), 4, 3)
-	dbgrender("spec.normSpeed: "..tostring(spec.normSpeed), 5, 3)
-	dbgrender("spec.turnSpeed: "..tostring(spec.turnSpeed), 6, 3)
+	dbgrender("spec.isActive: "..tostring(spec.isActive), 1, 3)
+	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 2, 3)
+	dbgrender("self:getIsActive(): "..tostring(self:getIsActive()), 3, 3)
+	dbgrender("self:getIsActiveForInput(): "..tostring(self:getIsActiveForInput()), 4, 3)
+	dbgrender("spec.exists: "..tostring(spec.exists), 5, 3)
+	dbgrender("spec.beep: "..tostring(spec.beep), 6, 3)
+	dbgrender("self:getName(): "..self:getName(), 7, 3)
+	dbgrender("controlledVehicle:getName(): "..g_currentMission.controlledVehicle:getName(), 8, 3)
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
