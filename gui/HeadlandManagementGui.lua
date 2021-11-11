@@ -215,7 +215,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		gsMode = 1
 		vcaMode = 2
 	end
-	if not modGuidanceSteeringFound and modVCAFound then
+	if not modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
 			g_i18n:getText("hlmgui_gps_auto"),
 		})
