@@ -271,7 +271,7 @@ function HeadlandManagementGui:logicalCheck()
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
 	self.gpsSetting:setDisabled(not useGPS)
 
-	self.gpsAutoTriggerSetting:setDisabled(not useGPS or gpsSetting == 3)
+	self.gpsAutoTriggerSetting:setDisabled(not useGPS or self.gpsSetting:getState() == 3)
 end
 
 -- close gui and send new values to callback
