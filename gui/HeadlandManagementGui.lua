@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.0
+-- Version 1.1.9.1
 --
 
 HeadlandManagementGui = {}
@@ -84,6 +84,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})
 	self.speedControlUseSCModSetting:setState(useModSpeedControl and modSpeedControlFound and 1 or 2)
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not modSpeedControlFound)
+	self.speedControlUseSCModSetting:setVisible(modSpeedControlFound)
 	
 	self.speedControlTurnSpeedTitle1:setText(g_i18n:getText("hlmgui_speedSetting"))
 	local speedTable = {}
@@ -104,6 +105,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
 	self.speedControlTurnSpeedSetting2:setState(useModSpeedControl and turnSpeed or 1)
 	self.speedControlTurnSpeedSetting2:setDisabled(disableSpeedcontrolMod)
+	self.speedControlTurnSpeedSetting2:setVisible(modSpeedControlFound)
 
 	-- AlertMode
 	self.alarmTitle:setText(g_i18n:getText("hlmgui_beep"))
@@ -172,7 +174,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	if useCrabSteering and useCrabSteeringTwoStep then csState = 2; end
 	if not useCrabSteering then csState = 3; end
 	self.crabSteeringSetting:setState(csState)
-	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
+	self.crabSteeringSetting:setVisible(not crabSteeringFound)
 	
 	-- GPS control
 	self.gpsOnOffTitle:setText(g_i18n:getText("hlmgui_gpsSetting"))
