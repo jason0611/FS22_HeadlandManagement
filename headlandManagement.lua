@@ -524,8 +524,8 @@ function HeadlandManagement:reduceSpeed(self, enable)
 			end
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
-			spec_drv.lastInputValues.cruiseControlValue = spec.turnSpeed
 			self:setCruiseControlMaxSpeed(spec.turnSpeed)
+			spec_drv.lastInputValues.cruiseControlValue = spec.turnSpeed
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
 		end
 	else
@@ -535,8 +535,8 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 			end
 		else
-			spec_drv.lastInputValues.cruiseControlValue = spec.normSpeed
 			self:setCruiseControlMaxSpeed(spec.normSpeed)
+			spec_drv.lastInputValues.cruiseControlValue = spec.normSpeed
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
 		end
 		if spec.cruiseControlState == 1 then
