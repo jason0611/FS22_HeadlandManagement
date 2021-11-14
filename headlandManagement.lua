@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.3
+-- Version 1.1.9.4
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -531,6 +531,10 @@ function HeadlandManagement:reduceSpeed(self, enable)
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.turnSpeed)
+			if spec.modSpeedControlFound and self.speedControl ~= nil then
+				self.speedControl.keys[self.speedControl.currentKey].speed = spec.turnSpeed
+				dbgprint("reduceSpeed: SpeedControl adjusted")
+			end
 			if not self.isServer then
 				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.turnSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
@@ -544,7 +548,12 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 			end
 		else
+			spec.turnSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.normSpeed)
+			if spec.modSpeedControlFound and self.speedControl ~= nil then
+				self.speedControl.keys[self.speedControl.currentKey].speed = spec.normSpeed
+				dbgprint("reduceSpeed: SpeedControl adjusted")
+			end
 			if not self.isServer then
 				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.normSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
