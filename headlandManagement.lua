@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.1
+-- Version 1.1.9.3
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -511,6 +511,7 @@ function HeadlandManagement:onDraw(dt)
 	dbgrender("cruiseControlValue: "..tostring(spec_drv.lastInputValues.cruiseControlValue), 9, 3)
 	dbgrender("spec.turnSpeed: "..tostring(spec.turnSpeed), 10, 3)
 	dbgrender("spec.normSpeed: "..tostring(spec.normSpeed), 11, 3)
+	dbgrender("cruiseControlState: "..tostring(self:getCruiseControlState()), 12, 3)
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
@@ -529,9 +530,11 @@ function HeadlandManagement:reduceSpeed(self, enable)
 			end
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
-			--spec_drv.lastInputValues.cruiseControlValue = spec.normSpeed
 			self:setCruiseControlMaxSpeed(spec.turnSpeed)
-			--spec_drv.cruiseControl.speed = spec.turnSpeed
+			if not self.isServer then
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.turnSpeed))
+				dbgprint("reduceSpeed: speed sent to server")
+			end
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
 		end
 	else
@@ -541,9 +544,11 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 			end
 		else
-			--spec_drv.lastInputValues.cruiseControlValue = spec.turnSpeed
 			self:setCruiseControlMaxSpeed(spec.normSpeed)
-			--spec_drv.cruiseControl.speed = spec.normSpeed
+			if not self.isServer then
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.normSpeed))
+				dbgprint("reduceSpeed: speed sent to server")
+			end
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
 		end
 		if spec.cruiseControlState == Drivable.CRUISECONTROL_STATE_ACTIVE then
