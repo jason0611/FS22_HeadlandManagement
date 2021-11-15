@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.5
+-- Version 1.1.9.6
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -98,6 +98,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteering = false
 	spec.useGuidanceSteeringTrigger = false	
+	spec.gsOffset = -3
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.useVCA = false
@@ -130,7 +131,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil
-	
+
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil
 
@@ -496,7 +497,25 @@ function HeadlandManagement:onDraw(dt)
 			local h = w * g_screenAspectRatio
 		
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
+			
+			-- set offset for GS headland detection
+			if spec.lastHeadlandActDistance == nil then
+				spec.lastHeadlandActDistance = gsSpec.headlandActDistance
+				gsSpec.headlandActDistance = MathUtil.clamp(gsSpec.headlandActDistance + spec.gsOffset, 0, 100)
+			end
 		end
+	end
+	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+		local gsSpec = self.spec_globalPositioningSystem 
+		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
+		if not gpsEnabled then
+			-- reset offset for GS headland detection if set before
+			if spec.lastHeadlandActDistance ~= nil then
+				gsSpec.headlandActDistance = spec.lastHeadlandActDistance
+				spec.lastHeadlandActDistance = nil
+			end
+		end
+		dbgrender("gs_headlandActDistance: "..tostring(gsSpec.headlandActDistance), 11, 3)
 	end
 	dbgrenderTable(spec, 1, 3)
 	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 2, 3)
