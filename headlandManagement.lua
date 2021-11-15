@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.4
+-- Version 1.1.9.5
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -498,20 +498,16 @@ function HeadlandManagement:onDraw(dt)
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
 		end
 	end
-	dbgrender("spec.isActive: "..tostring(spec.isActive), 1, 3)
+	dbgrenderTable(spec, 1, 3)
 	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 2, 3)
 	dbgrender("self:getIsActive(): "..tostring(self:getIsActive()), 3, 3)
 	dbgrender("self:getIsActiveForInput(): "..tostring(self:getIsActiveForInput()), 4, 3)
-	dbgrender("spec.exists: "..tostring(spec.exists), 5, 3)
-	dbgrender("spec.beep: "..tostring(spec.beep), 6, 3)
-	dbgrender("self:getName(): "..self:getName(), 7, 3)
-	dbgrender("controlledVehicle:getName(): "..g_currentMission.controlledVehicle:getName(), 8, 3)
+	dbgrender("self:getName(): "..self:getName(), 5, 3)
+	dbgrender("controlledVehicle:getName(): "..g_currentMission.controlledVehicle:getName(), 6, 3)
 	
 	local spec_drv = self.spec_drivable
-	dbgrender("cruiseControlValue: "..tostring(spec_drv.lastInputValues.cruiseControlValue), 9, 3)
-	dbgrender("spec.turnSpeed: "..tostring(spec.turnSpeed), 10, 3)
-	dbgrender("spec.normSpeed: "..tostring(spec.normSpeed), 11, 3)
-	dbgrender("cruiseControlState: "..tostring(self:getCruiseControlState()), 12, 3)
+	dbgrender("cruiseControlValue: "..tostring(spec_drv.lastInputValues.cruiseControlValue), 8, 3)
+	dbgrender("cruiseControlState: "..tostring(self:getCruiseControlState()), 9, 3)
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
