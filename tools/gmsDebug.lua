@@ -1,7 +1,7 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.4.0.0
+-- V1.5.0.0
 --
 
 GMSDebug = {}
@@ -52,7 +52,13 @@ function GMSDebug:renderTable(data, pos, prio)
 	if prio == nil then prio = 1; end
 	if not GMSDebug.state or prio > GMSDebug.level then return; end
 	if pos == nil then pos = 1; end
-	DebugUtil.renderTable(0.5, 0.83 - pos * 0.02, 0.01, data)
+	local n = 0
+	for i, d in pairs(data) do
+		if string.sub(tostring(d), 1, 5) ~= "table" then
+			renderText(0.50, 0.95 - (pos + n) * 0.02, 0.01, tostring(i)..": "..tostring(d), pos + n, prio)
+			n = n + 1
+		end
+	end
 end
 
 function GMSDebug:toggleDebug(prio)
