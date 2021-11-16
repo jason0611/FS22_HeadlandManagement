@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.6
+-- Version 1.1.9.7
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -415,6 +415,7 @@ end
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
+	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.isActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
@@ -426,6 +427,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.timer = 0
 	end
 	
+	-- activate headland management at headland in auto-mode
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning then
@@ -433,6 +435,7 @@ function HeadlandManagement:onUpdate(dt)
 		end
 	end
 	
+	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<spec.maxStep then
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
@@ -467,11 +470,34 @@ function HeadlandManagement:onUpdate(dt)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 	end
+	
+	-- adapt guidance steering's headland detection
+	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound then
+		local spec_gs = self.spec_globalPositioningSystem 
+		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
+		if gpsEnabled and spec.useGuidanceSteeringTrigger and not spec.isActive then
+			-- set offset for GS headland detection
+			if spec.lastHeadlandActDistance == nil then
+				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
+				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance + spec.gsOffset, 0, 100)
+				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
+			end
+		end
+		if not gpsEnabled then
+			-- reset offset for GS headland detection if set before
+			if spec.lastHeadlandActDistance ~= nil then
+				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
+				spec.lastHeadlandActDistance = nil
+				dbgprint("onUpdate: adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
+			end
+		end
+	end
 end
 
 function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
 
+	-- show icon if active
 	if self:getIsActive() and spec.isActive and spec.exists then 
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
 	 
@@ -484,9 +510,11 @@ function HeadlandManagement:onDraw(dt)
 		
 		renderOverlay(HeadlandManagement.guiIcon, x, y, w, h)
 	end
+	
+	-- show icon if standby in auto-mode
 	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger and not spec.isActive then
-		local gsSpec = self.spec_globalPositioningSystem 
-		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
+		local spec_gs = self.spec_globalPositioningSystem 
+		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 		
 		if gpsEnabled then
 			local scale = g_gameSettings.uiScale
@@ -497,36 +525,28 @@ function HeadlandManagement:onDraw(dt)
 			local h = w * g_screenAspectRatio
 		
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
-			
-			-- set offset for GS headland detection
-			if spec.lastHeadlandActDistance == nil then
-				spec.lastHeadlandActDistance = gsSpec.headlandActDistance
-				gsSpec.headlandActDistance = MathUtil.clamp(gsSpec.headlandActDistance + spec.gsOffset, 0, 100)
-			end
 		end
 	end
-	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
-		local gsSpec = self.spec_globalPositioningSystem 
-		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
-		if not gpsEnabled then
-			-- reset offset for GS headland detection if set before
-			if spec.lastHeadlandActDistance ~= nil then
-				gsSpec.headlandActDistance = spec.lastHeadlandActDistance
-				spec.lastHeadlandActDistance = nil
-			end
-		end
-		dbgrender("gs_headlandActDistance: "..tostring(gsSpec.headlandActDistance), 11, 3)
-	end
-	dbgrenderTable(spec, 1, 3)
-	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 2, 3)
-	dbgrender("self:getIsActive(): "..tostring(self:getIsActive()), 3, 3)
-	dbgrender("self:getIsActiveForInput(): "..tostring(self:getIsActiveForInput()), 4, 3)
-	dbgrender("self:getName(): "..self:getName(), 5, 3)
-	dbgrender("controlledVehicle:getName(): "..g_currentMission.controlledVehicle:getName(), 6, 3)
+
+	-- debug output prio 3
+	
+	--dbgrenderTable(spec, 1, 3)
+	dbgrenderTable(g_currentMission.controlledVehicle.spec_attacherJoints.attacherJoints, 1, 3)
+	
+	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 1, 3)
+	dbgrender("self:getIsActive(): "..tostring(self:getIsActive()), 2, 3)
+	dbgrender("self:getIsActiveForInput(): "..tostring(self:getIsActiveForInput()), 3, 3)
+	dbgrender("self:getName(): "..self:getName(), 4, 3)
+	dbgrender("controlledVehicle:getName(): "..g_currentMission.controlledVehicle:getName(), 5, 3)
 	
 	local spec_drv = self.spec_drivable
-	dbgrender("cruiseControlValue: "..tostring(spec_drv.lastInputValues.cruiseControlValue), 8, 3)
-	dbgrender("cruiseControlState: "..tostring(self:getCruiseControlState()), 9, 3)
+	dbgrender("cruiseControlValue: "..tostring(spec_drv.lastInputValues.cruiseControlValue), 7, 3)
+	dbgrender("cruiseControlState: "..tostring(self:getCruiseControlState()), 8, 3)
+	
+	local spec_gs = self.spec_globalPositioningSystem
+	if spec_gs ~= nil then 
+		dbgrender("gs_headlandActDistance: "..tostring(spec_gs.headlandActDistance), 10, 3)
+	end
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
