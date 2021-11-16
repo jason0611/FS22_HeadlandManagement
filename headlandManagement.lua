@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.7
+-- Version 1.1.9.8
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -98,7 +98,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteering = false
 	spec.useGuidanceSteeringTrigger = false	
-	spec.gsOffset = -3
+	spec.gsOffsetF = 0
+	spec.gsOffsetB = 0
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.useVCA = false
@@ -131,6 +132,19 @@ function HeadlandManagement:onPostLoad(savegame)
 	
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil
+	
+	-- Calculate front and back offset for GuidanceSteering
+	local spec_at = self.spec_attacherJoints
+	if spec_at ~= nil and spec.modGuidanceSteeringFound then
+		for _,joint in pairs(spec_at.attacherJoints) do
+			local wx, wy, wz = getWorldTranslation(joint.jointTransform)
+			local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
+			spec.gsOffsetF = math.max(spec.gsOffsetF, lz)
+			spec.gsOffsetB = math.min(spec.gsOffsetB, lz)
+		end
+		spec.gsOffsetF = math.floor(spec.gsOffsetF * 10) / 10
+		spec.gsOffsetB = math.floor(spec.gsOffsetB * 10) / 10
+	end
 
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil
@@ -336,6 +350,10 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 
 	local gsConfigured = self.spec_globalPositioningSystem ~= nil and self.spec_globalPositioningSystem.hasGuidanceSystem == true
+	local gsValue = 0
+	if gsConfigured then
+		gsValue = self.spec_globalPositioningSystem.headlandActDistance
+	end
 	
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	hlmGui.target:setData(
@@ -357,6 +375,10 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.gpsSetting,
 		spec.useGuidanceSteering,
 		spec.useGuidanceSteeringTrigger,
+		spec.gsOffsetF,
+		spec.gsOffsetB,
+		gsValue,
+		spec.lastHeadlandActDistance,
 		spec.useVCA,
 		spec.useDiffLock,
 		spec.beep,
@@ -383,6 +405,7 @@ function HeadlandManagement:guiCallback(
 		gpsSetting, 
 		useGuidanceSteering, 
 		useGuidanceSteeringTrigger, 
+		gsTrigger,
 		useVCA, 
 		useDiffLock, 
 		beep
@@ -408,6 +431,27 @@ function HeadlandManagement:guiCallback(
 	spec.useDiffLock = useDiffLock
 	spec.beep = beep
 	self:raiseDirtyFlags(spec.dirtyFlag)
+	
+	local spec_gs = self.spec_globalPositioningSystem
+	if spec_gs ~= nil then
+		-- reset GS headland distance
+		if spec.lastHeadlandActDistance ~= nil then
+			spec_gs.headlandActDistance = spec.lastHeadlandActDistance
+			spec.lastHeadlandActDistance = nil
+		end
+		if gsTrigger == 1 then
+			-- set GS headland distance front offset
+			spec.lastHeadlandActDistance = spec_gs.headlandActDistance
+			spec_gs.headlandActDistance = spec_gs.headlandActDistance + spec.gsOffsetF
+		elseif gsTrigger == 3 then
+			-- set GS headland distance back offset
+			spec.lastHeadlandActDistance = spec_gs.headlandActDistance
+			spec_gs.headlandActDistance = spec_gs.headlandActDistance + spec.gsOffsetB
+		end
+		if not self.isServer then
+			g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
+		end
+	end
 end
 
 -- Main part
@@ -471,7 +515,7 @@ function HeadlandManagement:onUpdate(dt)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 	end
 	
-	-- adapt guidance steering's headland detection
+	--[[ adapt guidance steering's headland detection
 	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound then
 		local spec_gs = self.spec_globalPositioningSystem 
 		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
@@ -479,7 +523,10 @@ function HeadlandManagement:onUpdate(dt)
 			-- set offset for GS headland detection
 			if spec.lastHeadlandActDistance == nil then
 				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
-				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance + spec.gsOffset, 0, 100)
+				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance + spec.gsOffsetB, 0, 100)
+				if not self.isServer then
+					g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
+				end
 				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
 			end
 		end
@@ -488,10 +535,14 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance ~= nil then
 				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
 				spec.lastHeadlandActDistance = nil
+				if not self.isServer then
+					g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
+				end
 				dbgprint("onUpdate: adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
 			end
 		end
 	end
+	--]]
 end
 
 function HeadlandManagement:onDraw(dt)
@@ -530,8 +581,8 @@ function HeadlandManagement:onDraw(dt)
 
 	-- debug output prio 3
 	
-	--dbgrenderTable(spec, 1, 3)
-	dbgrenderTable(g_currentMission.controlledVehicle.spec_attacherJoints.attacherJoints, 1, 3)
+	dbgrenderTable(spec, 1, 3)
+	--dbgrenderTable(g_currentMission.controlledVehicle.spec_attacherJoints.attacherJoints[1], 1, 3)
 	
 	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 1, 3)
 	dbgrender("self:getIsActive(): "..tostring(self:getIsActive()), 2, 3)

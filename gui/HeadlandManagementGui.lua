@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.5
+-- Version 1.1.9.8
 --
 
 HeadlandManagementGui = {}
@@ -47,10 +47,12 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsSetting",
 	"gpsAutoTriggerTitle",
 	"gpsAutoTriggerSetting",
+	"gpsAutoTriggerDistanceTitle",
+	"gpsAutoTriggerDistanceSetting",
 	
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
-	"diffControlOnOffSetting",
+	"diffControlOnOffSetting"
 }
 
 function HeadlandManagementGui:new()
@@ -60,7 +62,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, gsOffsetF, gsOffsetB, gsValue, lastHeadlandActDistance, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
@@ -244,6 +246,22 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})
 	self.gpsAutoTriggerSetting:setState(useGuidanceSteeringTrigger and 1 or 2)
 	self.gpsAutoTriggerSetting:setVisible(modGuidanceSteeringFound)
+	
+	self.gpsAutoTriggerDistanceTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceSetting"))
+	self.gpsAutoTriggerDistanceSetting:setTexts({
+		g_i18n:getText("hlmgui_trigger_front"),
+		g_i18n:getText("hlmgui_trigger_center"),
+		g_i18n:getText("hlmgui_trigge_back")
+	})	
+	local triggerState = 2
+	if lastHeadlandActDistance == gsValue - gsOffsetF then
+		triggerState = 1
+	elseif lastHeadlandActDistance == gsValue - gsOffsetB then
+		triggerState = 3
+	end
+	self.gpsAutoTriggerDistanceSetting:setState(triggerState)
+	self.gpsAutoTriggerDistanceSetting:setVisible(modGuidanceSteeringFound)
+	self.gpsAutoTriggerDistanceSetting:setDisabled(not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
 
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
@@ -272,6 +290,7 @@ function HeadlandManagementGui:logicalCheck()
 	self.gpsSetting:setDisabled(not useGPS)
 
 	self.gpsAutoTriggerSetting:setDisabled(not useGPS or self.gpsSetting:getState() == 3)
+	--self.gpsAutoTriggerDistanceSetting:setDisabled(not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
 end
 
 -- close gui and send new values to callback
@@ -305,11 +324,12 @@ function HeadlandManagementGui:onClickOk()
 	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
 	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
 	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
+	local gsTrigger = self.gpsAutoTriggerDistanceSetting:getState()
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
+	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, gsTrigger, useVCA, useDiffLock, beep)
 end
 
 -- just close gui
