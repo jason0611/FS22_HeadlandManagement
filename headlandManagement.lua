@@ -142,8 +142,8 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.gsOffsetF = math.max(spec.gsOffsetF, lz)
 			spec.gsOffsetB = math.min(spec.gsOffsetB, lz)
 		end
-		spec.gsOffsetF = math.floor(spec.gsOffsetF * 10) / 10
-		spec.gsOffsetB = math.floor(spec.gsOffsetB * 10) / 10
+		spec.gsOffsetF = math.ceil(spec.gsOffsetF)
+		spec.gsOffsetB = math.ceil(spec.gsOffsetB)
 	end
 
 	-- Check if Mod VCA exists
@@ -434,6 +434,9 @@ function HeadlandManagement:guiCallback(
 	
 	local spec_gs = self.spec_globalPositioningSystem
 	if spec_gs ~= nil then
+		-- stop GS to change headland distance
+		spec_gs.lastInputValues.guidanceSteeringIsActive = false
+		self:onSteeringStateChanged(false)
 		-- reset GS headland distance
 		if spec.lastHeadlandActDistance ~= nil then
 			spec_gs.headlandActDistance = spec.lastHeadlandActDistance
@@ -514,35 +517,6 @@ function HeadlandManagement:onUpdate(dt)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 	end
-	
-	--[[ adapt guidance steering's headland detection
-	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound then
-		local spec_gs = self.spec_globalPositioningSystem 
-		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
-		if gpsEnabled and spec.useGuidanceSteeringTrigger and not spec.isActive then
-			-- set offset for GS headland detection
-			if spec.lastHeadlandActDistance == nil then
-				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
-				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance + spec.gsOffsetB, 0, 100)
-				if not self.isServer then
-					g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
-				end
-				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
-			end
-		end
-		if not gpsEnabled then
-			-- reset offset for GS headland detection if set before
-			if spec.lastHeadlandActDistance ~= nil then
-				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
-				spec.lastHeadlandActDistance = nil
-				if not self.isServer then
-					g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
-				end
-				dbgprint("onUpdate: adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
-			end
-		end
-	end
-	--]]
 end
 
 function HeadlandManagement:onDraw(dt)
