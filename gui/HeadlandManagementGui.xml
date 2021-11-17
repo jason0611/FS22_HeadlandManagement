@@ -122,7 +122,7 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsAutoTriggerDistanceTitle"/>
 			</GuiElement>	
-			<GuiElement type="text" textAlignment="center" id="gpsAutoTriggerDistanceText" />
+			<GuiElement type="text" profile="multiTextOptionSilo" hasFrame="true" margin="0px 0px 10px 50px" textSize="15px" textAlignment="center" id="gpsAutoTriggerDistanceText"/>
 		</GuiElement>
 		
 		<!-- Diff control -->
