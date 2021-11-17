@@ -33,6 +33,7 @@ Ideas for subsequent versions (without guarantee):
 
 Further thoughts, but put on hold for now:
 - Taking over control during the turning maneuver
+- Determination of an offset for Guidance Steering to activate the automatic suitable for front or rear devices
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
@@ -66,3 +67,4 @@ Ideen für Folgeversionen (ohne Gewähr):
 
 Weitere Gedanken, aber zunächst zurückgestellt:
 - Übernahme der Steuerung während des Wendemanövers
+- Ermittlung eines Offsets für Guidance Steering, um die Automatik passend für vordere oder hintere Geräte zu aktivieren
