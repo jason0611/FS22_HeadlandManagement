@@ -56,11 +56,6 @@ HeadlandManagementGui.CONTROLS = {
 	"diffControlOnOffSetting"
 }
 
-HeadlandManagementGui.gsValue = 0
-HeadlandManagementGui.gsOffsetF = 0
-HeadlandManagementGui.gsOffsetB = 0
-HeadlandManagementGui.lastHeadlandActDistance = 0
-
 function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
@@ -74,10 +69,14 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
 	
-	HeadlandManagementGui.gsValue = gsValue
-	HeadlandManagementGui.gsOffsetF = gsOffsetF
-	HeadlandManagementGui.gsOffsetB = gsOffsetB
-	HeadlandManagementGui.lastHeadlandActDistance = lastHeadlandActDistance
+	self.gsValue = gsValue
+	self.gsOffsetF = gsOffsetF
+	self.gsOffsetB = gsOffsetB
+	self.lastHeadlandActDistance = lastHeadlandActDistance
+	
+	if self.lastHeadlandActDistance == nil then
+		self.lastHeadlandActDistance = self.gsValue
+	end
 	
 	-- Titel
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
@@ -265,17 +264,20 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 		g_i18n:getText("hlmgui_back")
 	})	
 	local triggerState = 2
-	if lastHeadlandActDistance == gsValue - gsOffsetF then
+	local triggerText = string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText"),self.lastHeadlandActDistance, self.gsValue)
+	if self.lastHeadlandActDistance ~= nil and self.lastHeadlandActDistance == self.gsValue - self.gsOffsetF then
 		triggerState = 1
-	elseif lastHeadlandActDistance == gsValue - gsOffsetB then
+		triggerText = string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText"),self.lastHeadlandActDistance, math.ceil(self.lastHeadlandActDistance - self.gsOffsetF))
+	elseif self.lastHeadlandActDistance ~= nil and self.lastHeadlandActDistance == self.gsValue - self.gsOffsetB then
 		triggerState = 3
+		triggerText = string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText"),self.lastHeadlandActDistance, math.ceil(self.lastHeadlandActDistance - self.gsOffsetB))
 	end
 	self.gpsAutoTriggerDistanceSetting:setState(triggerState)
 	self.gpsAutoTriggerDistanceSetting:setVisible(modGuidanceSteeringFound)
 	self.gpsAutoTriggerDistanceSetting:setDisabled(not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
 	
-	self.gpsAutoTriggerDistanceText:setText(string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText")),gsValue + gsOffsetF, gsValue, gsValue + gsOffsetB)
-	self.gpsAutoTriggerDistanceText:setVisible(modGuidanceSteeringFound and useGuidanceSteeringTrigger)
+	self.gpsAutoTriggerDistanceText:setText(triggerText)
+	self.gpsAutoTriggerDistanceText:setVisible(modGuidanceSteeringFound and useGuidanceSteeringTrigger and useGPS and self.gpsSetting:getState() ~= 3)
 
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
@@ -305,17 +307,17 @@ function HeadlandManagementGui:logicalCheck()
 
 	self.gpsAutoTriggerSetting:setDisabled(not useGPS or self.gpsSetting:getState() == 3)
 	self.gpsAutoTriggerDistanceSetting:setDisabled(self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
-	self.gpsAutoTriggerDistanceText:setVisible(self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerDistanceText:setVisible(self.modGuidanceSteeringFound and self.gpsAutoTriggerSetting:getState() == 1 and useGPS and self.gpsSetting:getState() ~= 3)
 	
 	local gsTrigger = self.gpsAutoTriggerDistanceSetting:getState()
 	if gsTrigger == 1 then
-		HeadlandManagementGui.gsValue = HeadlandManagementGui.lastHeadlandActDistance + HeadlandManagementGui.gsOffsetF
+		self.gsValue = self.lastHeadlandActDistance + self.gsOffsetF
 	elseif gsTrigger == 2 then
-		HeadlandManagementGui.gsValue = HeadlandManagementGui.lastHeadlandActDistance
+		self.gsValue = self.lastHeadlandActDistance
 	elseif gsTrigger == 3 then
-		HeadlandManagementGui.gsValue = HeadlandManagementGui.lastHeadlandActDistance + HeadlandManagementGui.gsOffsetB
+		self.gsValue = self.lastHeadlandActDistance + self.gsOffsetB
 	end
-	self.gpsAutoTriggerDistanceText:setText(string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText")),math.ceil(HeadlandManagementGui.gsValue - HeadlandManagementGui.gsOffsetF), HeadlandManagementGui.gsValue, math.ceil(HeadlandManagementGui.gsValue - HeadlandManagementGui.gsOffsetB))
+	self.gpsAutoTriggerDistanceText:setText(string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText"),self.lastHeadlandActDistance, self.gsValue))
 end
 
 -- close gui and send new values to callback
