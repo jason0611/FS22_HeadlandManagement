@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.8
+-- Version 1.1.9.9
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -442,11 +442,11 @@ function HeadlandManagement:guiCallback(
 		if gsTrigger == 1 then
 			-- set GS headland distance front offset
 			spec.lastHeadlandActDistance = spec_gs.headlandActDistance
-			spec_gs.headlandActDistance = spec_gs.headlandActDistance + spec.gsOffsetF
+			spec_gs.headlandActDistance = math.ceil(spec_gs.headlandActDistance + spec.gsOffsetF)
 		elseif gsTrigger == 3 then
 			-- set GS headland distance back offset
 			spec.lastHeadlandActDistance = spec_gs.headlandActDistance
-			spec_gs.headlandActDistance = spec_gs.headlandActDistance + spec.gsOffsetB
+			spec_gs.headlandActDistance = math.ceil(spec_gs.headlandActDistance + spec.gsOffsetB)
 		end
 		if not self.isServer then
 			g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))

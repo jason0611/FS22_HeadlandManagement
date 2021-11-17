@@ -19,6 +19,7 @@
 		<text name="hlmgui_both" text="front and back"/>
 		<text name="hlmgui_front" text="front"/>
 		<text name="hlmgui_back" text="back"/>
+				<text name="hlmgui_default" text="default"/>
 		<text name="hlmgui_speedControl" text="Speed-Control Settings"/>
 		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Working speed in headlands"/>
@@ -41,6 +42,8 @@
 		<text name="hlmgui_gps_gs" text="only Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="only VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
+		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Guidance Steering: Headland adaption"/>
+		<text name="hlmgui_gpsAutoTriggerDistanceText" text="Front: %d m | Guidance Steering: %2.2f m | Back: %d m"/>
 		<text name="hlmgui_diffLock" text="Unlock differentials"/>	
 	</texts>
 </l10n>

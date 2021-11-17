@@ -121,7 +121,8 @@
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsAutoTriggerDistanceTitle"/>
-			</GuiElement>				
+			</GuiElement>	
+			<GuiElement type="text" textAlignment="center" id="gpsAutoTriggerDistanceText" />
 		</GuiElement>
 		
 		<!-- Diff control -->

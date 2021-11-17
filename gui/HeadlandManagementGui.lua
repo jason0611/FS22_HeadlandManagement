@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.8
+-- Version 1.1.9.9
 --
 
 HeadlandManagementGui = {}
@@ -49,11 +49,17 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsAutoTriggerSetting",
 	"gpsAutoTriggerDistanceTitle",
 	"gpsAutoTriggerDistanceSetting",
+	"gpsAutoTriggerDistanceText",
 	
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
 	"diffControlOnOffSetting"
 }
+
+HeadlandManagementGui.gsValue = 0
+HeadlandManagementGui.gsOffsetF = 0
+HeadlandManagementGui.gsOffsetB = 0
+HeadlandManagementGui.lastHeadlandActDistance = 0
 
 function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
@@ -67,6 +73,11 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
+	
+	HeadlandManagementGui.gsValue = gsValue
+	HeadlandManagementGui.gsOffsetF = gsOffsetF
+	HeadlandManagementGui.gsOffsetB = gsOffsetB
+	HeadlandManagementGui.lastHeadlandActDistance = lastHeadlandActDistance
 	
 	-- Titel
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
@@ -249,9 +260,9 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	
 	self.gpsAutoTriggerDistanceTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceSetting"))
 	self.gpsAutoTriggerDistanceSetting:setTexts({
-		g_i18n:getText("hlmgui_trigger_front"),
-		g_i18n:getText("hlmgui_trigger_center"),
-		g_i18n:getText("hlmgui_trigge_back")
+		g_i18n:getText("hlmgui_front"),
+		g_i18n:getText("hlmgui_default"),
+		g_i18n:getText("hlmgui_back")
 	})	
 	local triggerState = 2
 	if lastHeadlandActDistance == gsValue - gsOffsetF then
@@ -262,6 +273,9 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	self.gpsAutoTriggerDistanceSetting:setState(triggerState)
 	self.gpsAutoTriggerDistanceSetting:setVisible(modGuidanceSteeringFound)
 	self.gpsAutoTriggerDistanceSetting:setDisabled(not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
+	
+	self.gpsAutoTriggerDistanceText:setText(string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText")),gsValue + gsOffsetF, gsValue, gsValue + gsOffsetB)
+	self.gpsAutoTriggerDistanceText:setVisible(modGuidanceSteeringFound and useGuidanceSteeringTrigger)
 
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
@@ -290,11 +304,23 @@ function HeadlandManagementGui:logicalCheck()
 	self.gpsSetting:setDisabled(not useGPS)
 
 	self.gpsAutoTriggerSetting:setDisabled(not useGPS or self.gpsSetting:getState() == 3)
-	--self.gpsAutoTriggerDistanceSetting:setDisabled(not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerDistanceSetting:setDisabled(self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerDistanceText:setVisible(self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
+	
+	local gsTrigger = self.gpsAutoTriggerDistanceSetting:getState()
+	if gsTrigger == 1 then
+		HeadlandManagementGui.gsValue = HeadlandManagementGui.lastHeadlandActDistance + HeadlandManagementGui.gsOffsetF
+	elseif gsTrigger == 2 then
+		HeadlandManagementGui.gsValue = HeadlandManagementGui.lastHeadlandActDistance
+	elseif gsTrigger == 3 then
+		HeadlandManagementGui.gsValue = HeadlandManagementGui.lastHeadlandActDistance + HeadlandManagementGui.gsOffsetB
+	end
+	self.gpsAutoTriggerDistanceText:setText(string.format(g_i18n:getText("hlmgui_gpsAutoTriggerDistanceText")),math.ceil(HeadlandManagementGui.gsValue - HeadlandManagementGui.gsOffsetF), HeadlandManagementGui.gsValue, math.ceil(HeadlandManagementGui.gsValue - HeadlandManagementGui.gsOffsetB))
 end
 
 -- close gui and send new values to callback
 function HeadlandManagementGui:onClickOk()
+	-- speed control
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
 	if useModSpeedControl then
@@ -302,6 +328,7 @@ function HeadlandManagementGui:onClickOk()
 	else 
 		turnSpeed = self.speedControlTurnSpeedSetting1:getState()
 	end
+	-- raise
 	local raiseState = self.raiseSetting:getState()
 	local useRaiseImplementF
 	local useRaiseImplementB
@@ -309,23 +336,31 @@ function HeadlandManagementGui:onClickOk()
 	if raiseState == 2 then useRaiseImplementF = true; useRaiseImplementB = false; end
 	if raiseState == 3 then useRaiseImplementF = false; useRaiseImplementB = true; end
 	if raiseState == 4 then useRaiseImplementF = false; useRaiseImplementB = false; end
+	-- pto
 	local useStopPTOF = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 2)
 	local useStopPTOB = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 3)
+	-- plow
 	local plowState = self.turnPlowSetting:getState()
 	local useTurnPlow = (plowState < 3)
 	local useCenterPlow = (plowState == 2)
+	-- ridgemarker
 	local useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
+	-- crab steering
 	local csState = self.crabSteeringSetting:getState()
 	local useCrabSteering = (csState ~= 3)
 	local useCrabSteeringTwoStep = (csState == 2)
+	-- gps
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()
 	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
 	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
 	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
+	-- gps trigger
 	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
 	local gsTrigger = self.gpsAutoTriggerDistanceSetting:getState()
+	-- diffs
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
+	-- beep
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
