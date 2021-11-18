@@ -42,8 +42,7 @@
 		<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="Solo VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
-		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Guidance Steering: Ajuste de la cabecera"/>
-		<text name="hlmgui_gpsAutoTriggerDistanceText" text="Delantero: %d m | Guidance Steering: %2.2f m | Trasero: %d m"/>
+		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Utilizar el desplazamiento para las fijaciones traseras"/>
 		<text name="hlmgui_diffLock" text="Desbloquear Diferenciales"/>	
 	</texts>
 </l10n>

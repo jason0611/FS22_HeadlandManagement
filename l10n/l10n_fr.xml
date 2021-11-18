@@ -42,8 +42,7 @@
 		<text name="hlmgui_gps_gs" text="Guidance Steering seulement"/>
 		<text name="hlmgui_gps_vca" text="VCA seulement"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Fourrière automatique"/>
-		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Guidance Steering: Adaptation des tournières"/>
-		<text name="hlmgui_gpsAutoTriggerDistanceText" text="Avant : %d m | Guidance Steering: %2.2f m | Arrière: %d m"/>
+		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Utiliser le déport pour les outils arrière"/>
 		<text name="hlmgui_diffLock" text="Déblocage des différentiels"/>
 	</texts>
 </l10n>

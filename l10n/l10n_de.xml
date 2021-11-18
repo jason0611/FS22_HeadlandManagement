@@ -42,8 +42,7 @@
 		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
-		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Guidance Steering: Vorwende-Anpassung"/>
-		<text name="hlmgui_gpsAutoTriggerDistanceText" text="Guidance Steering: %d m wird angepasst auf %d m"/>
+		<text name="hlmgui_gpsAutoTriggerDistanceSetting" text="Nutze Offset für hintere Anbaugeräte"/>
 		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
 	</texts>
 </l10n>
