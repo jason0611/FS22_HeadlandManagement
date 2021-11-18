@@ -499,6 +499,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance == nil then
 				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
 				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
+				self:raiseDirtyFlags(spec_gs.guidanceDirtyFlag)
 				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
 			end
 		end
