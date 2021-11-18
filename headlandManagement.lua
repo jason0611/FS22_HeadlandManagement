@@ -500,7 +500,7 @@ function HeadlandManagement:onUpdate(dt)
 				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
 				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
 				self:raiseDirtyFlags(spec_gs.guidanceDirtyFlag)
-				g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
+				g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(g_currentMission.controlledVehicle, spec_gs.headlandMode, spec_gs.headlandActDistance))
 				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
 			end
 		end
@@ -509,7 +509,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance ~= nil then
 				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
 				spec.lastHeadlandActDistance = nil
-				g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(self, spec_gs.headlandMode, spec_gs.headlandActDistance))
+				g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(g_currentMission.controlledVehicle, spec_gs.headlandMode, spec_gs.headlandActDistance))
 				dbgprint("onUpdate: adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
 			end
 		end
