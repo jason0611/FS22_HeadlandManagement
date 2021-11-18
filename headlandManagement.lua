@@ -140,10 +140,13 @@ function HeadlandManagement:onPostLoad(savegame)
 		for _,joint in pairs(spec_at.attacherJoints) do
 			local wx, wy, wz = getWorldTranslation(joint.jointTransform)
 			local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
-			distFront = math.max(spec.gsOffsetF, lz)
-			distBack = math.min(spec.gsOffsetB, lz)
+			distFront = math.max(distFront, lz)
+			distBack = math.min(distBack, lz)
 		end
 		spec.guidanceSteeringOffset = math.ceil(math.abs(distFront)) + math.ceil(math.abs(distBack))
+		dbgprint("onPostLoad : distFront:"..tostring(distFront))
+		dbgprint("onPostLoad : distBack:"..tostring(distBack))
+		dbgprint("onPostLoad : offset:"..tostring(spec.guidanceSteeringOffset))
 	end
 
 	-- Check if Mod VCA exists
@@ -488,18 +491,18 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- adapt guidance steering's headland detection
-	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound then
+	if self:getIsActive() and spec.exists and spec.useGuidanceSteeringOffset and spec.modGuidanceSteeringFound then
 		local spec_gs = self.spec_globalPositioningSystem 
 		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 		if gpsEnabled and spec.useGuidanceSteeringTrigger and not spec.isActive then
 			-- set offset for GS headland detection
 			if spec.lastHeadlandActDistance == nil then
 				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
-				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance + spec.guidanceSteeringOffset, 0, 100)
+				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
 				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
 			end
 		end
-		if not gpsEnabled then
+		if not gpsEnabled and not spec.isActive then
 			-- reset offset for GS headland detection if set before
 			if spec.lastHeadlandActDistance ~= nil then
 				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
