@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.10
+-- Version 1.1.9.11
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -100,6 +100,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useGuidanceSteeringTrigger = false	
 	spec.useGuidanceSteeringOffset = false
 	spec.guidanceSteeringOffset = 0
+	spec.setServerHeadlandActDistance = 0
+	spec.setServerHeadlandActDistanceFlag = false
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.useVCA = false
@@ -173,6 +175,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		spec.useGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.useGPS)
 		spec.useGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.useGuidanceSteering)
 		spec.useGuidanceSteeringTrigger = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger"), spec.useGuidanceSteeringTrigger)
+		spec.useGuidanceSteeringOffset = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringOffset"), spec.useGuidanceSteeringOffset)
 		spec.useVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.useVCA)
 		spec.useDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.useDiffLock)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
@@ -207,6 +210,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key)
 		setXMLBool(xmlFile, key.."#useGPS", spec.useGPS)
 		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.useGuidanceSteering)
 		setXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+		setXMLBool(xmlFile, key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
 		setXMLBool(xmlFile, key.."#useVCA", spec.useVCA)
 		setXMLBool(xmlFile, key.."#useDiffLock", spec.useDiffLock)
 	end
@@ -231,6 +235,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
   	spec.useGPS = streamReadBool(streamId)
   	spec.useGuidanceSteering = streamReadBool(streamId)
   	spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
+  	spec.useGuidanceSteeringOffset = streamReadBool(streamId)
   	spec.useVCA = streamReadBool(streamId)
   	spec.useDiffLock = streamReadBool(streamId)
 end
@@ -254,6 +259,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
   	streamWriteBool(streamId, spec.useGPS)
   	streamWriteBool(streamId, spec.useGuidanceSteering)
   	streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
+  	streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
   	streamWriteBool(streamId, spec.useVCA)
   	streamWriteBool(streamId, spec.useDiffLock)
 end
@@ -279,6 +285,9 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.useGPS = streamReadBool(streamId)
 			spec.useGuidanceSteering = streamReadBool(streamId)
 			spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
+			spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+			spec.setServerHeadlandActDistanceFlag = streamReadBool(streamId)
+			spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
 			spec.useVCA = streamReadBool(streamId)
 			spec.useDiffLock = streamReadBool(streamId)
 		end;
@@ -306,6 +315,9 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.useGPS)
 			streamWriteBool(streamId, spec.useGuidanceSteering)
 			streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
+			streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+			streamWriteBool(streamId, spec.setServerHeadlandActDistanceFlag)
+			streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
 			streamWriteBool(streamId, spec.useVCA)
 			streamWriteBool(streamId, spec.useDiffLock)
 		end
@@ -499,8 +511,12 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance == nil then
 				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
 				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
-				--g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(g_currentMission.controlledVehicle, spec_gs.headlandMode, spec_gs.headlandActDistance))
-				dbgprint("onUpdate: adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
+				if not self.isServer then
+					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
+					spec.setServerHeadlandActDistanceFlag = true
+					self:raiseDirtyFlags(spec.dirtyFlag)
+				end
+				dbgprint("onUpdate: (local) adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
 			end
 		end
 		if not gpsEnabled and not spec.isActive then
@@ -508,10 +524,20 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance ~= nil then
 				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
 				spec.lastHeadlandActDistance = nil
-				--g_client:getServerConnection():sendEvent(HeadlandModeChangedEvent:new(g_currentMission.controlledVehicle, spec_gs.headlandMode, spec_gs.headlandActDistance))
-				dbgprint("onUpdate: adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
+				if not self.isServer then
+					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
+					spec.setServerHeadlandActDistanceFlag = true
+					self:raiseDirtyFlags(spec.dirtyFlag)
+				end
+				dbgprint("onUpdate: (local) adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
 			end
 		end
+	end
+	-- set headland adaption on server, too
+	if self.isServer and spec.modGuidanceSteeringFound and spec.setServerHeadlandActDistanceFlag then
+		local spec_gs = self.spec_globalPositioningSystem 
+		spec_gs.headlandActDistance = spec.setServerHeadlandActDistance
+		spec.setServerHeadlandActDistanceFlag = false
 	end
 end
 
