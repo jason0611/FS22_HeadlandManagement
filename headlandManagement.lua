@@ -507,6 +507,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance == nil then
 				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
 				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
+				spec_gs.stateMachine:requestStateUpdate()
 				if not self.isServer then
 					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
 					self:raiseDirtyFlags(spec.dirtyFlag)
@@ -519,6 +520,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.lastHeadlandActDistance ~= nil then
 				dbgprint("onUpdate: (local) reset GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
 				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
+				spec_gs.stateMachine:requestStateUpdate()
 				spec.lastHeadlandActDistance = nil
 				if not self.isServer then
 					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
@@ -532,6 +534,7 @@ function HeadlandManagement:onUpdate(dt)
 		local spec_gs = self.spec_globalPositioningSystem 
 		if spec.setServerHeadlandActDistance >= 0 and spec_gs.headlandActDistance ~= spec.setServerHeadlandActDistance then
 			spec_gs.headlandActDistance = spec.setServerHeadlandActDistance
+			spec_gs.stateMachine:requestStateUpdate()
 			dbgprint("onUpdate: (remote) adapted GS distance to "..tostring(spec.setServerHeadlandActDistance), 2)
 		end
 	end
