@@ -516,12 +516,13 @@ function HeadlandManagement:onUpdate(dt)
 					spec.setServerHeadlandActDistanceFlag = true
 					self:raiseDirtyFlags(spec.dirtyFlag)
 				end
-				dbgprint("onUpdate: (local) adapted GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
+				dbgprint("onUpdate: (local) set GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
 			end
 		end
 		if not gpsEnabled and not spec.isActive then
 			-- reset offset for GS headland detection if set before
 			if spec.lastHeadlandActDistance ~= nil then
+				dbgprint("onUpdate: (local) reset GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
 				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
 				spec.lastHeadlandActDistance = nil
 				if not self.isServer then
@@ -529,7 +530,6 @@ function HeadlandManagement:onUpdate(dt)
 					spec.setServerHeadlandActDistanceFlag = true
 					self:raiseDirtyFlags(spec.dirtyFlag)
 				end
-				dbgprint("onUpdate: (local) adapted GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
 			end
 		end
 	end
