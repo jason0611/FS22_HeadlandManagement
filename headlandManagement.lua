@@ -356,7 +356,9 @@ end
 function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
-	local gsConfigured = self.spec_globalPositioningSystem ~= nil and self.spec_globalPositioningSystem.hasGuidanceSystem == true
+	local spec_gs = self.spec_globalPositioningSystem
+	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
+	local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 		
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	hlmGui.target:setData(
@@ -384,7 +386,8 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.beep,
 		spec.modSpeedControlFound,
 		spec.modGuidanceSteeringFound and gsConfigured,
-		spec.modVCAFound
+		spec.modVCAFound,
+		gpsEnabled
 	)
 end
 
