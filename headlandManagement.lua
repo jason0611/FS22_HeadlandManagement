@@ -100,8 +100,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useGuidanceSteeringTrigger = false	
 	spec.useGuidanceSteeringOffset = false
 	spec.guidanceSteeringOffset = 0
-	spec.setServerHeadlandActDistance = 0
-	spec.setServerHeadlandActDistanceFlag = false
+	spec.setServerHeadlandActDistance = -1
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.useVCA = false
@@ -220,7 +219,6 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	spec.beep = streamReadBool(streamId)
 	spec.turnSpeed = streamReadFloat32(streamId)
-	--spec.isActive = streamReadBool(streamId)
 	spec.useSpeedControl = streamReadBool(streamId)
 	spec.useModSpeedControl = streamReadBool(streamId)
 	spec.useCrabSteering = streamReadBool(streamId)
@@ -244,7 +242,6 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.beep)
 	streamWriteFloat32(streamId, spec.turnSpeed)
-	--streamWriteBool(streamId, spec.isActive)
 	streamWriteBool(streamId, spec.useSpeedControl)
 	streamWriteBool(streamId, spec.useModSpeedControl)
 	streamWriteBool(streamId, spec.useCrabSteering)
@@ -270,7 +267,6 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 		if streamReadBool(streamId) then
 			spec.beep = streamReadBool(streamId)
 			spec.turnSpeed = streamReadFloat32(streamId)
-			--spec.isActive = streamReadBool(streamId)
 			spec.useSpeedControl = streamReadBool(streamId)
 			spec.useModSpeedControl = streamReadBool(streamId)
 			spec.useCrabSteering = streamReadBool(streamId)
@@ -286,7 +282,6 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.useGuidanceSteering = streamReadBool(streamId)
 			spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 			spec.useGuidanceSteeringOffset = streamReadBool(streamId)
-			spec.setServerHeadlandActDistanceFlag = streamReadBool(streamId)
 			spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
 			spec.useVCA = streamReadBool(streamId)
 			spec.useDiffLock = streamReadBool(streamId)
@@ -300,7 +295,6 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
 			streamWriteBool(streamId, spec.beep)
 			streamWriteFloat32(streamId, spec.turnSpeed)
-			--streamWriteBool(streamId, spec.isActive)
 			streamWriteBool(streamId, spec.useSpeedControl)
 			streamWriteBool(streamId, spec.useModSpeedControl)
 			streamWriteBool(streamId, spec.useCrabSteering)
@@ -316,7 +310,6 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.useGuidanceSteering)
 			streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 			streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
-			streamWriteBool(streamId, spec.setServerHeadlandActDistanceFlag)
 			streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
 			streamWriteBool(streamId, spec.useVCA)
 			streamWriteBool(streamId, spec.useDiffLock)
@@ -513,7 +506,6 @@ function HeadlandManagement:onUpdate(dt)
 				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
 				if not self.isServer then
 					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
-					spec.setServerHeadlandActDistanceFlag = true
 					self:raiseDirtyFlags(spec.dirtyFlag)
 				end
 				dbgprint("onUpdate: (local) set GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
@@ -527,18 +519,18 @@ function HeadlandManagement:onUpdate(dt)
 				spec.lastHeadlandActDistance = nil
 				if not self.isServer then
 					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
-					spec.setServerHeadlandActDistanceFlag = true
 					self:raiseDirtyFlags(spec.dirtyFlag)
 				end
 			end
 		end
 	end
 	-- set headland adaption on server, too
-	if self.isServer and spec.modGuidanceSteeringFound and spec.setServerHeadlandActDistanceFlag then
+	if self.isServer and spec.modGuidanceSteeringFound then
 		local spec_gs = self.spec_globalPositioningSystem 
-		spec_gs.headlandActDistance = spec.setServerHeadlandActDistance
-		spec.setServerHeadlandActDistanceFlag = false
-		dbgprint("onUpdate: (remote) adapted GS distance to "..tostring(spec.setServerHeadlandActDistance), 2)
+		if spec.setServerHeadlandActDistance >= 0 and spec_gs.headlandActDistance ~= spec.setServerHeadlandActDistance then
+			spec_gs.headlandActDistance = spec.setServerHeadlandActDistance
+			dbgprint("onUpdate: (remote) adapted GS distance to "..tostring(spec.setServerHeadlandActDistance), 2)
+		end
 	end
 end
 
