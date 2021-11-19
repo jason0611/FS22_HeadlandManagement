@@ -538,6 +538,7 @@ function HeadlandManagement:onUpdate(dt)
 		local spec_gs = self.spec_globalPositioningSystem 
 		spec_gs.headlandActDistance = spec.setServerHeadlandActDistance
 		spec.setServerHeadlandActDistanceFlag = false
+		dbgprint("onUpdate: (remote) adapted GS distance to "..tostring(spec.setServerHeadlandActDistance), 2)
 	end
 end
 
