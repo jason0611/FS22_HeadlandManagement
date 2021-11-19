@@ -62,11 +62,39 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useGuidanceSteeringOffset, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(
+	vehicleName, 
+	useSpeedControl, 
+	useModSpeedControl, 
+	crabSteeringFound, 
+	useCrabSteering, 
+	useCrabSteeringTwoStep, 
+	turnSpeed, 
+	useRaiseImplementF, 
+	useRaiseImplementB, 
+	useStopPTOF, 
+	useStopPTOB, 
+	useTurnPlow, 
+	useCenterPlow, 
+	useRidgeMarker, 
+	useGPS, 
+	gpsSetting, 
+	useGuidanceSteering, 
+	useGuidanceSteeringTrigger, 
+	useGuidanceSteeringOffset, 
+	useVCA, 
+	useDiffLock, 
+	beep, 
+	modSpeedControlFound, 
+	modGuidanceSteeringFound, 
+	modVCAFound, 
+	gpsEnabled
+)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
+	self.gpsEnabled = gpsEnabled
 		
 	-- Titel
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
@@ -254,7 +282,7 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})	
 	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
 	self.gpsAutoTriggerOffsetSetting:setVisible(modGuidanceSteeringFound)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(self.gpsEnabled or not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
 	
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
@@ -282,7 +310,7 @@ function HeadlandManagementGui:logicalCheck()
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
 	self.gpsSetting:setDisabled(not useGPS)
 	self.gpsAutoTriggerSetting:setDisabled(not useGPS or self.gpsSetting:getState() == 3)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(self.gpsEnabled or self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
 end
 
 -- close gui and send new values to callback
