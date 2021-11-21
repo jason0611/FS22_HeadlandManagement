@@ -19,6 +19,7 @@
 		<text name="hlmgui_both" text="delantero y trasero"/>
 		<text name="hlmgui_front" text="delantero"/>
 		<text name="hlmgui_back" text="trasero"/>
+		<text name="hlmgui_default" text="por defecto"/>
 		<text name="hlmgui_speedControl" text="AjustesSpeed-Control"/>
 		<text name="hlmgui_speedControlMod" text="Usar mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Veloc. trabajo en cabeceras"/>
@@ -41,6 +42,7 @@
 		<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="Solo VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Utilizar el desplazamiento para las fijaciones traseras"/>
 		<text name="hlmgui_diffLock" text="Desbloquear Diferenciales"/>	
 	</texts>
 </l10n>

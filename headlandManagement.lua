@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.6
+-- Version 1.1.9.13
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -98,6 +98,9 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteering = false
 	spec.useGuidanceSteeringTrigger = false	
+	spec.useGuidanceSteeringOffset = false
+	spec.guidanceSteeringOffset = 0
+	spec.setServerHeadlandActDistance = -1
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.useVCA = false
@@ -131,6 +134,22 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil
 	
+	-- Calculate front and back offset for GuidanceSteering
+	local spec_at = self.spec_attacherJoints
+	if spec.modGuidanceSteeringFound and spec_at ~= nil then
+		local distFront, distBack = 0, 0
+		for _,joint in pairs(spec_at.attacherJoints) do
+			local wx, wy, wz = getWorldTranslation(joint.jointTransform)
+			local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
+			distFront = math.max(distFront, lz)
+			distBack = math.min(distBack, lz)
+		end
+		spec.guidanceSteeringOffset = math.ceil(math.abs(distFront)) + math.ceil(math.abs(distBack))
+		dbgprint("onPostLoad : distFront:"..tostring(distFront))
+		dbgprint("onPostLoad : distBack:"..tostring(distBack))
+		dbgprint("onPostLoad : offset:"..tostring(spec.guidanceSteeringOffset))
+	end
+
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil
 
@@ -155,6 +174,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		spec.useGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.useGPS)
 		spec.useGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.useGuidanceSteering)
 		spec.useGuidanceSteeringTrigger = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger"), spec.useGuidanceSteeringTrigger)
+		spec.useGuidanceSteeringOffset = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringOffset"), spec.useGuidanceSteeringOffset)
 		spec.useVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.useVCA)
 		spec.useDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.useDiffLock)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
@@ -189,6 +209,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key)
 		setXMLBool(xmlFile, key.."#useGPS", spec.useGPS)
 		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.useGuidanceSteering)
 		setXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+		setXMLBool(xmlFile, key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
 		setXMLBool(xmlFile, key.."#useVCA", spec.useVCA)
 		setXMLBool(xmlFile, key.."#useDiffLock", spec.useDiffLock)
 	end
@@ -198,7 +219,6 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	spec.beep = streamReadBool(streamId)
 	spec.turnSpeed = streamReadFloat32(streamId)
-	--spec.isActive = streamReadBool(streamId)
 	spec.useSpeedControl = streamReadBool(streamId)
 	spec.useModSpeedControl = streamReadBool(streamId)
 	spec.useCrabSteering = streamReadBool(streamId)
@@ -213,6 +233,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
   	spec.useGPS = streamReadBool(streamId)
   	spec.useGuidanceSteering = streamReadBool(streamId)
   	spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
+  	spec.useGuidanceSteeringOffset = streamReadBool(streamId)
   	spec.useVCA = streamReadBool(streamId)
   	spec.useDiffLock = streamReadBool(streamId)
 end
@@ -221,7 +242,6 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.beep)
 	streamWriteFloat32(streamId, spec.turnSpeed)
-	--streamWriteBool(streamId, spec.isActive)
 	streamWriteBool(streamId, spec.useSpeedControl)
 	streamWriteBool(streamId, spec.useModSpeedControl)
 	streamWriteBool(streamId, spec.useCrabSteering)
@@ -236,6 +256,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
   	streamWriteBool(streamId, spec.useGPS)
   	streamWriteBool(streamId, spec.useGuidanceSteering)
   	streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
+  	streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
   	streamWriteBool(streamId, spec.useVCA)
   	streamWriteBool(streamId, spec.useDiffLock)
 end
@@ -246,7 +267,6 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 		if streamReadBool(streamId) then
 			spec.beep = streamReadBool(streamId)
 			spec.turnSpeed = streamReadFloat32(streamId)
-			--spec.isActive = streamReadBool(streamId)
 			spec.useSpeedControl = streamReadBool(streamId)
 			spec.useModSpeedControl = streamReadBool(streamId)
 			spec.useCrabSteering = streamReadBool(streamId)
@@ -261,6 +281,8 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.useGPS = streamReadBool(streamId)
 			spec.useGuidanceSteering = streamReadBool(streamId)
 			spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
+			spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+			spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
 			spec.useVCA = streamReadBool(streamId)
 			spec.useDiffLock = streamReadBool(streamId)
 		end;
@@ -273,7 +295,6 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
 			streamWriteBool(streamId, spec.beep)
 			streamWriteFloat32(streamId, spec.turnSpeed)
-			--streamWriteBool(streamId, spec.isActive)
 			streamWriteBool(streamId, spec.useSpeedControl)
 			streamWriteBool(streamId, spec.useModSpeedControl)
 			streamWriteBool(streamId, spec.useCrabSteering)
@@ -288,6 +309,8 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.useGPS)
 			streamWriteBool(streamId, spec.useGuidanceSteering)
 			streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
+			streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+			streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
 			streamWriteBool(streamId, spec.useVCA)
 			streamWriteBool(streamId, spec.useDiffLock)
 		end
@@ -333,9 +356,10 @@ end
 function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
-
-	local gsConfigured = self.spec_globalPositioningSystem ~= nil and self.spec_globalPositioningSystem.hasGuidanceSystem == true
-	
+	local spec_gs = self.spec_globalPositioningSystem
+	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
+	local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
+		
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	hlmGui.target:setData(
 		self:getFullName(),
@@ -356,12 +380,14 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.gpsSetting,
 		spec.useGuidanceSteering,
 		spec.useGuidanceSteeringTrigger,
+		spec.useGuidanceSteeringOffset,
 		spec.useVCA,
 		spec.useDiffLock,
 		spec.beep,
 		spec.modSpeedControlFound,
 		spec.modGuidanceSteeringFound and gsConfigured,
-		spec.modVCAFound
+		spec.modVCAFound,
+		gpsEnabled
 	)
 end
 
@@ -382,6 +408,7 @@ function HeadlandManagement:guiCallback(
 		gpsSetting, 
 		useGuidanceSteering, 
 		useGuidanceSteeringTrigger, 
+		useGuidanceSteeringOffset,
 		useVCA, 
 		useDiffLock, 
 		beep
@@ -403,6 +430,7 @@ function HeadlandManagement:guiCallback(
 	spec.gpsSetting = gpsSetting
 	spec.useGuidanceSteering = useGuidanceSteering
 	spec.useGuidanceSteeringTrigger = useGuidanceSteeringTrigger
+	spec.useGuidanceSteeringOffset = useGuidanceSteeringOffset
 	spec.useVCA = useVCA
 	spec.useDiffLock = useDiffLock
 	spec.beep = beep
@@ -414,6 +442,7 @@ end
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
+	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.isActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
@@ -425,6 +454,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.timer = 0
 	end
 	
+	-- activate headland management at headland in auto-mode
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning then
@@ -432,6 +462,7 @@ function HeadlandManagement:onUpdate(dt)
 		end
 	end
 	
+	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<spec.maxStep then
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
@@ -466,11 +497,53 @@ function HeadlandManagement:onUpdate(dt)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
 	end
+	
+	-- adapt guidance steering's headland detection
+	if self:getIsActive() and spec.exists and spec.useGuidanceSteeringOffset and spec.modGuidanceSteeringFound then
+		local spec_gs = self.spec_globalPositioningSystem 
+		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
+		if gpsEnabled and spec.useGuidanceSteeringTrigger and not spec.isActive then
+			-- set offset for GS headland detection
+			if spec.lastHeadlandActDistance == nil then
+				spec.lastHeadlandActDistance = spec_gs.headlandActDistance
+				spec_gs.headlandActDistance = MathUtil.clamp(spec_gs.headlandActDistance - spec.guidanceSteeringOffset, 0, 100)
+				spec_gs.stateMachine:requestStateUpdate()
+				if not self.isServer then
+					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
+					self:raiseDirtyFlags(spec.dirtyFlag)
+				end
+				dbgprint("onUpdate: (local) set GS distance from "..tostring(spec.lastHeadlandActDistance).." to "..tostring(spec_gs.headlandActDistance), 2)
+			end
+		end
+		if not gpsEnabled and not spec.isActive then
+			-- reset offset for GS headland detection if set before
+			if spec.lastHeadlandActDistance ~= nil then
+				dbgprint("onUpdate: (local) reset GS distance from "..tostring(spec_gs.headlandActDistance).." to "..tostring(spec.lastHeadlandActDistance), 2)
+				spec_gs.headlandActDistance = spec.lastHeadlandActDistance
+				spec_gs.stateMachine:requestStateUpdate()
+				spec.lastHeadlandActDistance = nil
+				if not self.isServer then
+					spec.setServerHeadlandActDistance = spec_gs.headlandActDistance
+					self:raiseDirtyFlags(spec.dirtyFlag)
+				end
+			end
+		end
+	end
+	-- set headland adaption on server, too
+	if self.isServer and spec.modGuidanceSteeringFound then
+		local spec_gs = self.spec_globalPositioningSystem 
+		if spec.setServerHeadlandActDistance >= 0 and spec_gs.headlandActDistance ~= spec.setServerHeadlandActDistance then
+			spec_gs.headlandActDistance = spec.setServerHeadlandActDistance
+			spec_gs.stateMachine:requestStateUpdate()
+			dbgprint("onUpdate: (remote) adapted GS distance to "..tostring(spec.setServerHeadlandActDistance), 2)
+		end
+	end
 end
 
 function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
 
+	-- show icon if active
 	if self:getIsActive() and spec.isActive and spec.exists then 
 		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
 	 
@@ -483,9 +556,11 @@ function HeadlandManagement:onDraw(dt)
 		
 		renderOverlay(HeadlandManagement.guiIcon, x, y, w, h)
 	end
+	
+	-- show icon if standby in auto-mode
 	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger and not spec.isActive then
-		local gsSpec = self.spec_globalPositioningSystem 
-		local gpsEnabled = (gsSpec.lastInputValues ~= nil and gsSpec.lastInputValues.guidanceSteeringIsActive)
+		local spec_gs = self.spec_globalPositioningSystem 
+		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 		
 		if gpsEnabled then
 			local scale = g_gameSettings.uiScale
@@ -498,16 +573,9 @@ function HeadlandManagement:onDraw(dt)
 			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
 		end
 	end
-	dbgrenderTable(spec, 1, 3)
-	dbgrender("HeadlandManagement.isDedi: "..tostring(HeadlandManagement.isDedi), 2, 3)
-	dbgrender("self:getIsActive(): "..tostring(self:getIsActive()), 3, 3)
-	dbgrender("self:getIsActiveForInput(): "..tostring(self:getIsActiveForInput()), 4, 3)
-	dbgrender("self:getName(): "..self:getName(), 5, 3)
-	dbgrender("controlledVehicle:getName(): "..g_currentMission.controlledVehicle:getName(), 6, 3)
-	
-	local spec_drv = self.spec_drivable
-	dbgrender("cruiseControlValue: "..tostring(spec_drv.lastInputValues.cruiseControlValue), 8, 3)
-	dbgrender("cruiseControlState: "..tostring(self:getCruiseControlState()), 9, 3)
+
+	--dbgrenderTable(spec, 1, 3)
+	local spec_gs = self.spec_globalPositioningSystem; if spec_gs ~= nil then dbgrenderTable(spec_gs, 1, 3); end
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	

@@ -24,6 +24,7 @@ Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&coun
 Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a> is available: 
 - Deactivate and reactivate GPS guidance
 - Headland automatic: If using Guidance Steering, the headland management can be activated automatically when the headland is reached
+- Determination of an offset for Guidance Steering to activate the automatic suitable for rear devices 
 
 Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Speed adjustment also possible by changing the cruise control level
@@ -33,7 +34,7 @@ Ideas for subsequent versions (without guarantee):
 
 Further thoughts, but put on hold for now:
 - Taking over control during the turning maneuver
-- Determination of an offset for Guidance Steering to activate the automatic suitable for front or rear devices
+
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
@@ -58,6 +59,7 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a>:
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
+- Erittlung eines Offsets für Guidance Steering, um die Automatik passend für am Heck befestigte Geräte zu aktivieren
 
 Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich

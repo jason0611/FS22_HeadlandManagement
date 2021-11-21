@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.6
+-- Version 1.1.9.13
 --
 
 HeadlandManagementGui = {}
@@ -47,10 +47,12 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsSetting",
 	"gpsAutoTriggerTitle",
 	"gpsAutoTriggerSetting",
+	"gpsAutoTriggerOffsetTitle",
+	"gpsAutoTriggerOffsetSetting",
 	
 	"sectionDiffControl",
 	"diffControlOnOffTitle",
-	"diffControlOnOffSetting",
+	"diffControlOnOffSetting"
 }
 
 function HeadlandManagementGui:new()
@@ -60,12 +62,40 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeedControl, crabSteeringFound, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep, modSpeedControlFound, modGuidanceSteeringFound, modVCAFound)
+function HeadlandManagementGui:setData(
+	vehicleName, 
+	useSpeedControl, 
+	useModSpeedControl, 
+	crabSteeringFound, 
+	useCrabSteering, 
+	useCrabSteeringTwoStep, 
+	turnSpeed, 
+	useRaiseImplementF, 
+	useRaiseImplementB, 
+	useStopPTOF, 
+	useStopPTOB, 
+	useTurnPlow, 
+	useCenterPlow, 
+	useRidgeMarker, 
+	useGPS, 
+	gpsSetting, 
+	useGuidanceSteering, 
+	useGuidanceSteeringTrigger, 
+	useGuidanceSteeringOffset, 
+	useVCA, 
+	useDiffLock, 
+	beep, 
+	modSpeedControlFound, 
+	modGuidanceSteeringFound, 
+	modVCAFound, 
+	gpsEnabled
+)
 	
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
-	
+	self.gpsEnabled = gpsEnabled
+		
 	-- Titel
 	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
 
@@ -244,7 +274,16 @@ function HeadlandManagementGui:setData(vehicleName, useSpeedControl, useModSpeed
 	})
 	self.gpsAutoTriggerSetting:setState(useGuidanceSteeringTrigger and 1 or 2)
 	self.gpsAutoTriggerSetting:setVisible(modGuidanceSteeringFound)
-
+	
+	self.gpsAutoTriggerOffsetTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
+	self.gpsAutoTriggerOffsetSetting:setTexts({
+		g_i18n:getText("hlmgui_on"),
+		g_i18n:getText("hlmgui_off")
+	})	
+	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
+	self.gpsAutoTriggerOffsetSetting:setVisible(modGuidanceSteeringFound)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(self.gpsEnabled or not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
+	
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
 	self.diffControlOnOffSetting:setTexts({
@@ -270,12 +309,13 @@ function HeadlandManagementGui:logicalCheck()
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
 	self.gpsSetting:setDisabled(not useGPS)
-
 	self.gpsAutoTriggerSetting:setDisabled(not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(self.gpsEnabled or self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
 end
 
 -- close gui and send new values to callback
 function HeadlandManagementGui:onClickOk()
+	-- speed control
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
 	if useModSpeedControl then
@@ -283,6 +323,7 @@ function HeadlandManagementGui:onClickOk()
 	else 
 		turnSpeed = self.speedControlTurnSpeedSetting1:getState()
 	end
+	-- raise
 	local raiseState = self.raiseSetting:getState()
 	local useRaiseImplementF
 	local useRaiseImplementB
@@ -290,26 +331,57 @@ function HeadlandManagementGui:onClickOk()
 	if raiseState == 2 then useRaiseImplementF = true; useRaiseImplementB = false; end
 	if raiseState == 3 then useRaiseImplementF = false; useRaiseImplementB = true; end
 	if raiseState == 4 then useRaiseImplementF = false; useRaiseImplementB = false; end
+	-- pto
 	local useStopPTOF = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 2)
 	local useStopPTOB = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 3)
+	-- plow
 	local plowState = self.turnPlowSetting:getState()
 	local useTurnPlow = (plowState < 3)
 	local useCenterPlow = (plowState == 2)
+	-- ridgemarker
 	local useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
+	-- crab steering
 	local csState = self.crabSteeringSetting:getState()
 	local useCrabSteering = (csState ~= 3)
 	local useCrabSteeringTwoStep = (csState == 2)
+	-- gps
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()
 	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
 	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
 	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
+	-- gps trigger
 	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
+	local useGuidanceSteeringOffset = self.gpsAutoTriggerOffsetSetting:getState() == 1
+	-- diffs
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
+	-- beep
 	local beep = self.alarmSetting:getState() == 1
 
 	self:close()
-	self.callbackFunc(self.target, useSpeedControl, useModSpeedControl, useCrabSteering, useCrabSteeringTwoStep, turnSpeed, useRaiseImplementF, useRaiseImplementB, useStopPTOF, useStopPTOB, useTurnPlow, useCenterPlow, useRidgeMarker, useGPS, gpsSetting, useGuidanceSteering, useGuidanceSteeringTrigger, useVCA, useDiffLock, beep)
+	self.callbackFunc(
+		self.target, 
+		useSpeedControl, 
+		useModSpeedControl, 
+		useCrabSteering, 
+		useCrabSteeringTwoStep, 
+		turnSpeed, 
+		useRaiseImplementF, 
+		useRaiseImplementB, 
+		useStopPTOF, 
+		useStopPTOB, 
+		useTurnPlow, 
+		useCenterPlow, 
+		useRidgeMarker, 
+		useGPS, 
+		gpsSetting, 
+		useGuidanceSteering, 
+		useGuidanceSteeringTrigger, 
+		useGuidanceSteeringOffset,
+		useVCA, 
+		useDiffLock, 
+		beep
+	)
 end
 
 -- just close gui

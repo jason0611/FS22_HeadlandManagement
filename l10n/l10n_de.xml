@@ -19,6 +19,7 @@
 		<text name="hlmgui_both" text="vorne und hinten"/>
 		<text name="hlmgui_front" text="vorne"/>
 		<text name="hlmgui_back" text="hinten"/>
+		<text name="hlmgui_default" text="Standardeinstellung"/>
 		<text name="hlmgui_speedControl" text="Tempomat anpassen"/>
 		<text name="hlmgui_speedControlMod" text="Nutze Mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Arbeitsgeschwindigkeit im Vorgewende"/>
@@ -41,6 +42,7 @@
 		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Offset für hintere Anbaugeräte"/>
 		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
 	</texts>
 </l10n>
