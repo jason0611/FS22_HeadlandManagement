@@ -790,8 +790,10 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 			if raise then
 				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
 				dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
-				if numRigdeMarkers ~= 0 then
+				if spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers ~= 0 then
 					actImplement:setRidgeMarkerState(0)
+				elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
+					print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
 				end
 			elseif spec.ridgeMarkerState ~= 0 then
 				for state,_ in pairs(specRM.ridgeMarkers) do
@@ -801,11 +803,11 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 					end
 				end
 				dbgprint("ridgeMarker: New state will be "..tostring(spec.ridgeMarkerState))
-				if numRigdeMarkers ~= 0 then
+				if specRM.numRigdeMarkers ~= 0 then
 					actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
 					dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
-				else
-					dbgprint("ridgeMarker: Can't set ridgeMarkerState: numRidgeMarkers == 0!")
+				elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
+					print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
 				end
 			end
 		end
