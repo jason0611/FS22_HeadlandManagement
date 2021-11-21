@@ -69,3 +69,4 @@ Ideen für Folgeversionen (ohne Gewähr):
 
 Weitere Gedanken, aber zunächst zurückgestellt:
 - Übernahme der Steuerung während des Wendemanövers
+- Ermittlung eines Offsets für Guidance Steering, um die Automatik passend für vordere oder hintere Geräte zu aktivieren

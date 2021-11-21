@@ -790,7 +790,9 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 			if raise then
 				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
 				dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
-				actImplement:setRidgeMarkerState(0)
+				if numRigdeMarkers ~= 0 then
+					actImplement:setRidgeMarkerState(0)
+				end
 			elseif spec.ridgeMarkerState ~= 0 then
 				for state,_ in pairs(specRM.ridgeMarkers) do
 					if state ~= spec.ridgeMarkerState then
@@ -799,10 +801,13 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 					end
 				end
 				dbgprint("ridgeMarker: New state will be "..tostring(spec.ridgeMarkerState))
-				actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
-				-- actImplement:setRidgeMarkerState(spec.ridgeMarkerState, true)
+				if numRigdeMarkers ~= 0 then
+					actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
+					dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
+				else
+					dbgprint("ridgeMarker: Can't set ridgeMarkerState: numRidgeMarkers == 0!")
+				end
 			end
-			dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
 		end
 	end
 end

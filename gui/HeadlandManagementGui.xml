@@ -116,7 +116,7 @@
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsAutoTriggerOffsetTitle"/>
-			</GuiElement>
+			</GuiElement>		
 		<!-- Diff control -->
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="diffControlOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
