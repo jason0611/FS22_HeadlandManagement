@@ -48,8 +48,6 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
 			</GuiElement>
-		<!-- Empty place -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px"/>
 		<!-- ImplementControl -->
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" onClick="logicalCheck" id="raiseSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
@@ -86,8 +84,6 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="crabSteeringTitle"/>
 			</GuiElement>
-		<!-- Empty place -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px"/>
 		<!-- GPS control -->
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
