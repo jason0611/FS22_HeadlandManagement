@@ -2,7 +2,7 @@
 -- Headland Management for LS 19
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.1.9.13
+-- Version 1.2.0.0
 --
 
 HeadlandManagementGui = {}
@@ -277,8 +277,8 @@ function HeadlandManagementGui:setData(
 	
 	self.gpsAutoTriggerOffsetTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
 	self.gpsAutoTriggerOffsetSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n:getText("hlmgui_front"),
+		g_i18n:getText("hlmgui_back")
 	})	
 	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
 	self.gpsAutoTriggerOffsetSetting:setVisible(modGuidanceSteeringFound)

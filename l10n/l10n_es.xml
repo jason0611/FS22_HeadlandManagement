@@ -42,7 +42,7 @@
 		<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="Solo VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
-		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Utilizar el desplazamiento para las fijaciones traseras"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Disparador para el automático"/>
 		<text name="hlmgui_diffLock" text="Desbloquear Diferenciales"/>	
 	</texts>
 </l10n>
