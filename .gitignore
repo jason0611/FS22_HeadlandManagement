@@ -3,7 +3,7 @@ luac.out
 
 # luarocks build files
 *.src.rock
-#*.zip
+*.zip
 *.tar.gz
 
 # Object files
@@ -39,8 +39,5 @@ luac.out
 *.x86_64
 *.hex
 
-FS19_HeadlandTurn.bbprojectd/martin.bbprojectsettings
 *.bbprojectdata
-FS19_HeadlandTurn.bbprojectd/Scratchpad.txt
-FS19_HeadlandTurn.bbprojectd/Unix Worksheet.worksheet
 .DS_Store
