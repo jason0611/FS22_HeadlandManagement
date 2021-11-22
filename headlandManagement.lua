@@ -120,7 +120,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	
 	-- Check if vehicle supports CrabSteering
 	local csSpec = self.spec_crabSteering
-	spec.crabSteeringFound = csSpec ~= nil
+	spec.crabSteeringFound = csSpec ~= nil and csSpec.stateMax ~= nil and csSpec.stateMax > 0
 	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound))
 	
 	-- Check if Mod SpeedControl exists
