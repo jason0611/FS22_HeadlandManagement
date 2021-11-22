@@ -30,7 +30,7 @@ Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lan
 - Speed adjustment also possible by changing the cruise control level
 
 Ideas for subsequent versions (without guarantee):
-- Selectable time interval between individual work steps
+- Separate lifting of front and rear devices, each when reaching the headland
 
 Further thoughts, but put on hold for now:
 - Taking over control during the turning maneuver
@@ -65,8 +65,7 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Ideen für Folgeversionen (ohne Gewähr):
-- Wählbarer zeitlicher Abstand zwischen einzelnen Arbeitsschritten
+- Separates Ausheben von vorderen und hinteren Geräten, jeweils bei Erreichen des Vorgewendes
 
 Weitere Gedanken, aber zunächst zurückgestellt:
 - Übernahme der Steuerung während des Wendemanövers
-- Ermittlung eines Offsets für Guidance Steering, um die Automatik passend für vordere oder hintere Geräte zu aktivieren
