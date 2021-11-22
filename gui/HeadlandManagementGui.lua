@@ -273,8 +273,8 @@ function HeadlandManagementGui:setData(
 	
 	self.gpsAutoTriggerOffsetTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
 	self.gpsAutoTriggerOffsetSetting:setTexts({
-		g_i18n:getText("hlmgui_front"),
-		g_i18n:getText("hlmgui_back")
+		g_i18n:getText("hlmgui_back"),
+		g_i18n:getText("hlmgui_front")
 	})	
 	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
 	self.gpsAutoTriggerOffsetSetting:setDisabled(not modGuidanceSteeringFound or self.gpsEnabled or not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
