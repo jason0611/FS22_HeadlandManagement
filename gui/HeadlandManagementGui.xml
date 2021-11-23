@@ -47,6 +47,14 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="crabSteeringTitle"/>
 			</GuiElement>
+		<!-- Diff control -->
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="diffControlOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="diffControlOnOffTitle"/>
+			</GuiElement>
 		<!-- GPS control -->
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
@@ -75,15 +83,15 @@
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsAutoTriggerOffsetTitle"/>
-			</GuiElement>		
-		<!-- Diff control -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="diffControlOnOffSetting">
+			</GuiElement>	
+		<!-- AlertMode -->
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="alarmSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="diffControlOnOffTitle"/>
-			</GuiElement>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
+			</GuiElement>	
 		<!-- SpeedControl -->
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
@@ -113,14 +121,6 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlTurnSpeedTitle2"/>
 			</GuiElement>	
-		<!-- AlertMode -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="alarmSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
-			</GuiElement>
 		</GuiElement>
 	
 		<!-- footer -->
