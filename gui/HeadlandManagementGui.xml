@@ -11,43 +11,6 @@
 		</GuiElement>
 		
 		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" numFlows="3" fitFlowToElements="true" position="0px -100px" size="1600px 880px">
-		<!-- SpeedControl -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlOnOffTitle"/>
-			</GuiElement>	
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting1">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlTurnSpeedTitle1"/>
-			</GuiElement>	
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlUseSCModSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlUseSCModTitle"/>
-			</GuiElement>	
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting2">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlTurnSpeedTitle2"/>
-			</GuiElement>	
-		<!-- AlertMode -->
-			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="alarmSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
-			</GuiElement>
 		<!-- ImplementControl -->
 			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" onClick="logicalCheck" id="raiseSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
@@ -120,6 +83,43 @@
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="diffControlOnOffTitle"/>
+			</GuiElement>
+		<!-- SpeedControl -->
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlOnOffTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting1">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlTurnSpeedTitle1"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlUseSCModSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlUseSCModTitle"/>
+			</GuiElement>	
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting2">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlTurnSpeedTitle2"/>
+			</GuiElement>	
+		<!-- AlertMode -->
+			<GuiElement type="checkedOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="alarmSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="alarmTitle"/>
 			</GuiElement>
 		</GuiElement>
 	
