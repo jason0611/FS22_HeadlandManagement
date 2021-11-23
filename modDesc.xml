@@ -60,6 +60,14 @@ ChangeLog V1.1.1.1:
 
 ChangeLog V1.1.2.0:
 - Crab steering now also works with machines that are designed as articulated steering systems
+
+ChangeLog V1.2.0.0:
+- Added rear trigger for headland automatic
+- Fixed lua error when using ridge marker switching on some DLC implements. Note: These implements can't be switched by this mod, because they are not addressable by script.
+- Changed gui layout to work better on high resolutions
+
+Many thanks to team Agrarplay and the project LU Wohnzimmer for the extensive test-support!
+
 ]]>
 		</en>	
 		<de>
@@ -114,6 +122,14 @@ ChangeLog V1.1.1.1:
 
 ChangeLog V1.1.2.0:
 - Hundegangsteuerung funktioniert nun auch mit Maschinen, die als Knicklenker ausgeführt sind
+
+ChangeLog V1.2.0.0:
+- Auslöser für das hintere Fahrzeugende zur Vorgewendeautomatik hinzugefügt
+- Lua-Fehler bei der Verwendung der Spurreißer-Umschaltung bei einigen DLC-Geräten behoben. Hinweis: Diese Geräte können von diesem Mod nicht geschaltet werden, da sie nicht per Skript adressierbar sind.
+- Das Layout der Benutzeroberfläche wurde geändert, um bei hohen Auflösungen besser zu funktionieren.
+
+Vielen Dank an das Team Agrarplay und das Projekt LU Wohnzimmer für die umfangreiche Testunterstützung!
+
 ]]>
 		</de>
 		<fr>
@@ -166,7 +182,15 @@ ChangeLog V1.1.1.1 :
 - HOTFIX : Correction du plantage du jeu si FS19_towBar ou FS19_towBarWeight est actif
 
 ChangeLog V1.1.2.0 :
-- La marche en crabe fonctionne désormais aussi avec les machines conçues comme des dirigeables articulés.
+- La marche en crabe fonctionne désormais aussi avec les machines conçues comme des dirigeables articulés
+
+ChangeLog V1.2.0.0 :
+- Ajout d'une gâchette arrière pour l'automatique en bout de champ
+- Correction d'une erreur lua lors de l'utilisation de la commutation de marqueur de crête sur certains outils DLC. Note : Ces outils ne peuvent pas être changés par ce mod, car ils ne sont pas adressables par le script
+- Modification de la disposition de l'interface pour un meilleur fonctionnement en haute résolution
+
+Un grand merci à l'équipe d'Agrarplay et au projet LU Wohnzimmer pour leur soutien important en matière de tests !
+
 ]]>
 		</fr>
  	</description>	
