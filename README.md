@@ -1,5 +1,5 @@
-# FS19_HeadlandManagement
-https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=221463&title=fs2019
+# FS22_HeadlandManagement
+!!! Work in progress !!!
 
 Headland management for tractors, field sprayers, mowers and harvesters.
 
