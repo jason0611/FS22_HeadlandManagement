@@ -32,6 +32,8 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
         	{name = g_i18n:getText("text_HLM_notInstalled_short"), index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
         	{name = g_i18n:getText("text_HLM_installed_short"), index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
     	}
+    	dbgprint("addHLMconfig : Configuration HeadlandManagement added", 2)
+    	dbgprint_r(configurations["HeadlandManagement"], 3)
 	end
 	
     return configurations
@@ -41,7 +43,7 @@ if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil 
   	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
 end
 
-for typeName, typeEntry in pairs(g_vehicleTypeManager:getVehicleTypes()) do
+for typeName, typeEntry in pairs(g_vehicleTypeManager.types) do
     if
     		SpecializationUtil.hasSpecialization(Drivable, typeEntry.specializations) 
 		and	SpecializationUtil.hasSpecialization(Enterable, typeEntry.specializations)
