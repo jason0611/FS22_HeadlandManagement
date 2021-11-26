@@ -36,6 +36,73 @@ function HeadlandManagement.prerequisitesPresent(specializations)
   return true
 end
 
+function HeadlandManagement.initSpecialization()
+    local schema = Vehicle.xmlSchema
+    dbgprint("initSpecialization: starting xmlSchema registration process")
+    schema:setXMLSpecializationType("headlandmanagement")
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#beep", "Audible alert", true)
+	
+	schema:register(XMLValueType.FLOAT, "vehicle.headlandmanagement#turnSpeed", "Speed in headlands", 5)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useSpeedControl", "Change speed in headlands", true)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useModSpeedControl", "use mod SpeedControl", false)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useCrabSteering", "Change crab steering in headlands", true)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useRaiseImplementF", "Raise front attachements in headlands", true)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useRaiseImplementB", "Raise back attahements in headlands", true)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useStopPTOF", "Stop front PTO in headlands", true)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useStopPTOB", "Stop back PTO in headlands", true)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#turnPlow", "Turn plow in headlands", true)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#centerPlow", "Center plow first in headlands", false)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#switchRidge", "Change ridgemarkers", true)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGPS", "Change GPS", true)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGuidanceSteering", "Use mod GuidanceSteering", false)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGuidanceSteeringOffset", "Use back trigger", false)
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useVCA", "Use mod VCA", false)
+	
+	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useDiffLock", "Unlock diff locks in headland", true)
+	dbgprint("initSpecialization: finished xmlSchema registration process")
+	
+    schema:setXMLSpecializationType()
+
+    local schemaSavegame = Vehicle.xmlSchemaSavegame
+	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process")
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#beep", "Audible alert", true)
+	
+	schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?).headlandmanagement#turnSpeed", "Speed in headlands", 5)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useSpeedControl", "Change speed in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useModSpeedControl", "use mod SpeedControl", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useCrabSteering", "Change crab steering in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useRaiseImplementF", "Raise front attachements in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useRaiseImplementB", "Raise back attahements in headlands", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useStopPTOF", "Stop front PTO in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useStopPTOB", "Stop back PTO in headlands", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#turnPlow", "Turn plow in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#centerPlow", "Center plow first in headlands", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#switchRidge", "Change ridgemarkers", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useGPS", "Change GPS", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useGuidanceSteering", "Use mod GuidanceSteering", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useGuidanceSteeringOffset", "Use back trigger", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useVCA", "Use mod VCA", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).headlandmanagement#useDiffLock", "Unlock diff locks in headland", true)
+	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process")
+end
+
 function HeadlandManagement.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onDraw", HeadlandManagement)
@@ -112,10 +179,14 @@ function HeadlandManagement:onLoad(savegame)
 end
 
 function HeadlandManagement:onPostLoad(savegame)
+
+	HeadlandManagement.initSpecialization()
+	
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	spec.exists = self.configurations["HeadlandManagement"] == 2
+	--spec.exists = self.configurations["HeadlandManagement"] == 2
+	spec.exists = true
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	
 	-- Check if vehicle supports CrabSteering
@@ -154,29 +225,28 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.modVCAFound = self.vcaSetState ~= nil
 
 	if savegame ~= nil and spec.exists then	
-		local xmlFile = savegame.xmlFile
-		local key = savegame.key .. ".HeadlandManagement"
+		local xmlFile = self.xmlFile
+		local key = savegame.key .. ".headlandmanagement"
 	
-		spec.beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.beep)
-		spec.turnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.turnSpeed)
-		--spec.isActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.isActive)
-		spec.useSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.useSpeedControl)
-		spec.useModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.useModSpeedControl)
-		spec.useCrabSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteering"), spec.useCrabSteering)
-		spec.useCrabSteeringTwoStep = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteeringTwoStep"), spec.useCrabSteeringTwoStep)
-		spec.useRaiseImplementF = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplementF"), spec.useRaiseImplementF)
-		spec.useRaiseImplementB = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplementB"), spec.useRaiseImplementB)
-		spec.useStopPTOF = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTOF"), spec.useStopPTOF)
-		spec.useStopPTOB = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTOB"), spec.useStopPTOB)
-		spec.useTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.useTurnPlow)
-		spec.useCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.useCenterPlow)
-		spec.useRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.useRidgeMarker)
-		spec.useGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.useGPS)
-		spec.useGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.useGuidanceSteering)
-		spec.useGuidanceSteeringTrigger = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger"), spec.useGuidanceSteeringTrigger)
-		spec.useGuidanceSteeringOffset = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringOffset"), spec.useGuidanceSteeringOffset)
-		spec.useVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.useVCA)
-		spec.useDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.useDiffLock)
+		spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
+		spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
+		spec.useSpeedControl = xmlFile:getValue(key.."#useSpeedControl", spec.useSpeedControl)
+		spec.useModSpeedControl = xmlFile:getValue(key.."#useModSpeedControl", spec.useModSpeedControl)
+		spec.useCrabSteering = xmlFile:getValue(key.."#useCrabSteering", spec.useCrabSteering)
+		spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+		spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
+		spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		spec.useStopPTOF = xmlFile:getValue(key.."#useStopPTOF", spec.useStopPTOF)
+		spec.useStopPTOB = xmlFile:getValue(key.."#useStopPTOB", spec.useStopPTOB)
+		spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
+		spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
+		spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
+		spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
+		spec.useGuidanceSteering = xmlFile:getValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
+		spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+		spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		spec.useVCA = xmlFile:getValue(key.."#useVCA", spec.useVCA)
+		spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
