@@ -1,8 +1,8 @@
 --
--- Headland Management for LS 19
+-- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.2.0.0
+-- Version 1.9.0.0
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -115,7 +115,8 @@ function HeadlandManagement:onPostLoad(savegame)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	spec.exists = self.configurations["HeadlandManagement"] == 2
+	--spec.exists = self.configurations["HeadlandManagement"] == 2
+	spec.exists = true
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	
 	-- Check if vehicle supports CrabSteering
@@ -154,7 +155,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.modVCAFound = self.vcaSetState ~= nil
 
 	if savegame ~= nil and spec.exists then	
-		local xmlFile = savegame.xmlFile
+		local xmlFile = self.xmlFile --savegame.xmlFile
 		local key = savegame.key .. ".HeadlandManagement"
 	
 		spec.beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.beep)
