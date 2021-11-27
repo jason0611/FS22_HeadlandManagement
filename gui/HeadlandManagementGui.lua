@@ -58,6 +58,7 @@ HeadlandManagementGui.CONTROLS = {
 function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
+	dbgprint("HeadlandManagementGui created", 2)
 	return gui
 end
 
@@ -90,7 +91,7 @@ function HeadlandManagementGui:setData(
 	modVCAFound, 
 	gpsEnabled
 )
-	
+	dbgprint("HeadlandManagementGui: setData", 2)
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
@@ -291,6 +292,7 @@ end
 
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
+	dbgprint("HeadlandManagementGui: logicalCheck", 2)
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound) 
 	
