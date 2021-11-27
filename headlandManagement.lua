@@ -6,7 +6,7 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 2)
+GMSDebug:init(g_currentModName, true, 3)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -262,6 +262,7 @@ function HeadlandManagement:onPostLoad(savegame)
 end
 
 function HeadlandManagement:saveToXMLFile(xmlFile, key)
+-- TODO: Change save routines to xml and schema-based way using xmlFile.setData
 	dbgprint("saveToXMLFile", 2)
 	local spec = self.spec_HeadlandManagement
 	if spec.exists then
@@ -444,9 +445,11 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec_gs = self.spec_globalPositioningSystem
 	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
-		
+	dbgprint_r(hlmGui, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	hlmGui.target:setData(
+	--hlmGui.target:setData(
+	HeadlandManagementGui.setData(
+		hlmGui.target,
 		self:getFullName(),
 		spec.useSpeedControl,
 		spec.useModSpeedControl,

@@ -63,7 +63,8 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui:setData(
+function HeadlandManagementGui.setData(
+	self,
 	vehicleName, 
 	useSpeedControl, 
 	useModSpeedControl, 
@@ -292,6 +293,7 @@ end
 
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
+--function HeadlandManagementGui:onClickCallback()
 	dbgprint("HeadlandManagementGui: logicalCheck", 2)
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound) 
