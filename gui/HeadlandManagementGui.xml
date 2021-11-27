@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
-	<GuiElement type="empty" profile="newLayer"/>
 	<GuiElement type="bitmap" profile="dialogFullscreenBg"/>
-	
 	<GuiElement type="bitmap" profile="siloDialogBg" id="dialogElement" size="1600px 900px">
 
 		<!-- header -->
 		<GuiElement type="bitmap" profile="dialogHeaderDocked">
 			<GuiElement type="text" profile="dialogHeaderText" textAutoSize="true" id="guiTitle"/>
 		</GuiElement>
-		
-		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" numFlows="3" fitFlowToElements="true" position="0px -100px" size="1600px 880px">
+
+		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" numFlows="3" fitFlowToElements="true" position="0px 0px" size="1600px 880px">
 		<!-- ImplementControl -->
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" onClick="logicalCheck" id="raiseSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="raiseSetting" onClick="logicalCheck">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="raiseTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="turnPlowSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>

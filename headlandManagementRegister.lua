@@ -41,6 +41,7 @@ end
 
 if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
   	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
+  	dbgprint("Specialization 'HeadlandManagement' added", 2)
 end
 
 for typeName, typeEntry in pairs(g_vehicleTypeManager.types) do
@@ -60,12 +61,15 @@ end
 if g_configurationManager.configurations["HeadlandManagement"] == nil then
 	g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
 	StoreItemUtil.getConfigurationsFromXML = Utils.overwrittenFunction(StoreItemUtil.getConfigurationsFromXML, addHLMconfig)
+	dbgprint("Configuration 'HeadlandManagement' added", 2)
 end
 
 -- make localizations available
---[[
+--![[
 local i18nTable = getfenv(0).g_i18n
 for l18nId,l18nText in pairs(g_i18n.texts) do
-  i18nTable:setText(l18nId, l18nText)
+	dbgprint(l18nId, 3)
+	dbgprint(l18nText, 3)
+	i18nTable:setText(l18nId, l18nText)
 end
 --]]

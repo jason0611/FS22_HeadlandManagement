@@ -37,44 +37,9 @@ function HeadlandManagement.prerequisitesPresent(specializations)
 end
 
 function HeadlandManagement.initSpecialization()
-    --[[
-    local schema = Vehicle.xmlSchema
-    dbgprint("initSpecialization: starting xmlSchema registration process")
-    schema:setXMLSpecializationType("headlandmanagement")
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#beep", "Audible alert", true)
-	
-	schema:register(XMLValueType.FLOAT, "vehicle.headlandmanagement#turnSpeed", "Speed in headlands", 5)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useSpeedControl", "Change speed in headlands", true)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useModSpeedControl", "use mod SpeedControl", false)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useCrabSteering", "Change crab steering in headlands", true)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useRaiseImplementF", "Raise front attachements in headlands", true)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useRaiseImplementB", "Raise back attahements in headlands", true)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useStopPTOF", "Stop front PTO in headlands", true)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useStopPTOB", "Stop back PTO in headlands", true)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#turnPlow", "Turn plow in headlands", true)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#centerPlow", "Center plow first in headlands", false)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#switchRidge", "Change ridgemarkers", true)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGPS", "Change GPS", true)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGuidanceSteering", "Use mod GuidanceSteering", false)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useGuidanceSteeringOffset", "Use back trigger", false)
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useVCA", "Use mod VCA", false)
-	
-	schema:register(XMLValueType.BOOL, "vehicle.headlandmanagement#useDiffLock", "Unlock diff locks in headland", true)
-	
-    schema:setXMLSpecializationType()
-   	dbgprint("initSpecialization: finished xmlSchema registration process")
-   	--]]
-
     local schemaSavegame = Vehicle.xmlSchemaSavegame
 	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process")
+	
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
 	
 	schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
@@ -766,8 +731,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 	local spec = self.spec_HeadlandManagement
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
     
-	local allImplements = {}
-	self:getRootVehicle():getChildVehicles(allImplements)
+	local allImplements = self:getRootVehicle():getChildVehicles()
     
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
@@ -875,7 +839,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		-- switch ridge marker
 		if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 			local specRM = actImplement.spec_ridgeMarker
-			dbgprint_r(specRM, 2)
+			dbgprint_r(specRM, 4)
 			if raise then
 				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
 				dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
@@ -905,14 +869,13 @@ end
 
 function HeadlandManagement:stopPTO(self, stopPTO)
 	local spec = self.spec_HeadlandManagement
-    --local jointSpec = self.spec_attacherJoints
     dbgprint("stopPTO: "..tostring(stopPTO))
 	
-    local allImplements = {}
-	self:getRootVehicle():getChildVehicles(allImplements)
+    local allImplements = self:getRootVehicle():getChildVehicles()
 	
 	for index,actImplement in pairs(allImplements) do
 		if actImplement ~= nil and actImplement.getAttacherVehicle ~= nil then
+			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			local jointDescIndex = 1 -- Joint #1 will always exist
 			local actVehicle = actImplement:getAttacherVehicle()
 			local frontPTO = false

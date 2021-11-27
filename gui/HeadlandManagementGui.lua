@@ -55,10 +55,12 @@ HeadlandManagementGui.CONTROLS = {
 	"diffControlOnOffSetting"
 }
 
+-- constructor
 function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
 	dbgprint("HeadlandManagementGui created", 2)
+	dbgprint_r(YesNoDialog, 3)
 	return gui
 end
 
@@ -99,7 +101,8 @@ function HeadlandManagementGui.setData(
 	self.gpsEnabled = gpsEnabled
 		
 	-- Titel
-	self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
+	self.guiTitle:setText(g_i18n:getText("$l10n_button_ok"))
+	--self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
 
 	-- SpeedControl
 	self.speedControlOnOffTitle:setText(g_i18n:getText("hlmgui_speedControl"))
@@ -294,7 +297,7 @@ end
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
 --function HeadlandManagementGui:onClickCallback()
-	dbgprint("HeadlandManagementGui: logicalCheck", 2)
+	dbgprint("HeadlandManagementGui: logicalCheck", 3)
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound) 
 	
@@ -314,6 +317,8 @@ end
 
 -- close gui and send new values to callback
 function HeadlandManagementGui:onClickOk()
+	dbgprint("onClickOk", 3)
+	
 	-- speed control
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
@@ -384,6 +389,7 @@ function HeadlandManagementGui:onClickOk()
 end
 
 -- just close gui
-function HeadlandManagementGui:onClickBack()
+function HeadlandManagementGui:onCloseCallback()
+	dbgprint("onClickBack", 3)
 	self:close()
 end
