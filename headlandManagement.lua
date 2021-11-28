@@ -598,12 +598,12 @@ function HeadlandManagement:onDraw(dt)
 
 	-- show icon if active
 	if self:getIsActive() and spec.isActive and spec.exists then 
-		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
+		g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
 	 
 		local scale = g_gameSettings.uiScale
 		
-		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.fuelGaugeRadiusX * 0.70
-		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY
+		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX
+		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
 		
@@ -618,8 +618,8 @@ function HeadlandManagement:onDraw(dt)
 		if gpsEnabled then
 			local scale = g_gameSettings.uiScale
 		
-			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.fuelGaugeRadiusX * 0.70
-			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY
+			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX
+			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY
 			local w = 0.015 * scale
 			local h = w * g_screenAspectRatio
 		

@@ -65,7 +65,7 @@ if g_configurationManager.configurations["HeadlandManagement"] == nil then
 end
 
 -- make localizations available
---![[
+--[[
 local i18nTable = getfenv(0).g_i18n
 for l18nId,l18nText in pairs(g_i18n.texts) do
 	dbgprint(l18nId, 3)

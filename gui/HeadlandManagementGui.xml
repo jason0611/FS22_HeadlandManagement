@@ -91,18 +91,19 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>	
 		<!-- SpeedControl -->
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
-				<GuiElement type="button" profile="multiTextOptionLeft"/>
-				<GuiElement type="button" profile="multiTextOptionRight"/>
-				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
-				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlOnOffTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
-			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlUseSCModSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlUseSCModTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+			</GuiElement>	
+
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionLeft"/>
+				<GuiElement type="button" profile="multiTextOptionRight"/>
+				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="text" profile="multiTextOptionTitle" id="speedControlOnOffTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting1">

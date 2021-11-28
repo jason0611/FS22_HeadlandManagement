@@ -60,7 +60,7 @@ function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
 	dbgprint("HeadlandManagementGui created", 2)
-	dbgprint_r(YesNoDialog, 3)
+	dbgprint_r(YesNoDialog, 4)
 	return gui
 end
 
@@ -95,32 +95,33 @@ function HeadlandManagementGui.setData(
 	gpsEnabled
 )
 	dbgprint("HeadlandManagementGui: setData", 2)
+	dbgprint("HeadlandManagementGui: setData: g_i18n:", 4)
+	dbgprint_r(g_i18n, 3, 1)
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
 	self.gpsEnabled = gpsEnabled
 		
 	-- Titel
-	self.guiTitle:setText(g_i18n:getText("$l10n_button_ok"))
-	--self.guiTitle:setText(g_i18n:getText("hlmgui_title")..vehicleName)
+	self.guiTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_title")..vehicleName)
 
 	-- SpeedControl
-	self.speedControlOnOffTitle:setText(g_i18n:getText("hlmgui_speedControl"))
+	self.speedControlOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControl"))
 	self.speedControlOnOffSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.speedControlOnOffSetting:setState(useSpeedControl and 1 or 2)
 	
-	self.speedControlUseSCModTitle:setText(g_i18n:getText("hlmgui_speedControlMod"))
+	self.speedControlUseSCModTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlMod"))
 	self.speedControlUseSCModSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.speedControlUseSCModSetting:setState(useModSpeedControl and modSpeedControlFound and 1 or 2)
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not modSpeedControlFound)
 	
-	self.speedControlTurnSpeedTitle1:setText(g_i18n:getText("hlmgui_speedSetting"))
+	self.speedControlTurnSpeedTitle1:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSetting"))
 	local speedTable = {}
 	for n=1,40 do
 		speedTable[n] = tostring(n)
@@ -135,26 +136,26 @@ function HeadlandManagementGui.setData(
 	end
 	self.speedControlTurnSpeedSetting1:setDisabled(not disableSpeedcontrolMod or not useSpeedControl)
 	
-	self.speedControlTurnSpeedTitle2:setText(g_i18n:getText("hlmgui_speedControlModSetting"))
+	self.speedControlTurnSpeedTitle2:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModSetting"))
 	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
 	self.speedControlTurnSpeedSetting2:setState(useModSpeedControl and turnSpeed or 1)
 	self.speedControlTurnSpeedSetting2:setDisabled(disableSpeedcontrolMod or not modSpeedControlFound)
 
 	-- AlertMode
-	self.alarmTitle:setText(g_i18n:getText("hlmgui_beep"))
+	self.alarmTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_beep"))
 	self.alarmSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.alarmSetting:setState(beep and 1 or 2)
 	
 	-- Implement control
-	self.raiseTitle:setText(g_i18n:getText("hlmgui_raise"))
+	self.raiseTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_raise"))
 	self.raiseSetting:setTexts({
-		g_i18n:getText("hlmgui_both"),
-		g_i18n:getText("hlmgui_front"),
-		g_i18n:getText("hlmgui_back"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_both"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	local raiseState = 4
 	if useRaiseImplementF and useRaiseImplementB then raiseState = 1; end
@@ -162,11 +163,11 @@ function HeadlandManagementGui.setData(
 	if not useRaiseImplementF and useRaiseImplementB then raiseState = 3; end
 	self.raiseSetting:setState(raiseState)
 	
-	self.turnPlowTitle:setText(g_i18n:getText("hlmgui_plow"))
+	self.turnPlowTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plow"))
 	self.turnPlowSetting:setTexts({
-		g_i18n:getText("hlmgui_plowFull"),
-		g_i18n:getText("hlmgui_plowCenter"),
-		g_i18n:getText("hlmgui_plowOff")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plowFull"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plowCenter"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plowOff")
 	})
 	local plowState
 	if useTurnPlow and not useCenterPlow then plowState = 1; end
@@ -175,12 +176,12 @@ function HeadlandManagementGui.setData(
 	self.turnPlowSetting:setState(plowState)
 	self.turnPlowSetting:setDisabled(raiseState == 4)
 
-	self.stopPtoTitle:setText(g_i18n:getText("hlmgui_pto"))
+	self.stopPtoTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_pto"))
 	self.stopPtoSetting:setTexts({
-		g_i18n:getText("hlmgui_both"),
-		g_i18n:getText("hlmgui_front"),
-		g_i18n:getText("hlmgui_back"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_both"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	local ptoState = 4
 	if useStopPTOF and useStopPTOB then ptoState = 1; end
@@ -188,19 +189,19 @@ function HeadlandManagementGui.setData(
 	if not useStopPTOF and useStopPTOB then ptoState = 3; end
 	self.stopPtoSetting:setState(ptoState)
 		
-	self.ridgeMarkerTitle:setText(g_i18n:getText("hlmgui_ridgeMarker"))
+	self.ridgeMarkerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_ridgeMarker"))
 	self.ridgeMarkerSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
 	
 	-- CrabSteering control
-	self.crabSteeringTitle:setText(g_i18n:getText("hlmgui_crabSteering"))
+	self.crabSteeringTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_crabSteering"))
 	self.crabSteeringSetting:setTexts({
-		g_i18n:getText("hlmgui_csDirect"),
-		g_i18n:getText("hlmgui_csTwoStep"),
-		g_i18n:getText("hlmgui_csOff")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csDirect"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csTwoStep"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	local csState = 2
 	if useCrabSteering and not useCrabSteeringTwoStep then csState = 1; end
@@ -210,46 +211,46 @@ function HeadlandManagementGui.setData(
 	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
 	
 	-- GPS control
-	self.gpsOnOffTitle:setText(g_i18n:getText("hlmgui_gpsSetting"))
+	self.gpsOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsSetting"))
 	self.gpsOnOffSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
 	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
 		
-	self.gpsSettingTitle:setText(g_i18n:getText("hlmgui_gpsType"))
+	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	local gsMode
 	local vcaMode
 	self.showGPS = true
 	if modGuidanceSteeringFound and modVCAFound then
 		self.gpsSetting:setTexts({
-			g_i18n:getText("hlmgui_gps_auto"),
-			g_i18n:getText("hlmgui_gps_gs"),
-			g_i18n:getText("hlmgui_gps_vca")
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vca")
 		})
 		gsMode = 2
 		vcaMode = 3
 	end
 	if modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
-			g_i18n:getText("hlmgui_gps_auto"),
-			g_i18n:getText("hlmgui_gps_gs"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
 		})
 		gsMode = 2
 		vcaMode = 1
 	end
 	if not modGuidanceSteeringFound and modVCAFound then
 		self.gpsSetting:setTexts({
-			g_i18n:getText("hlmgui_gps_auto"),
-			g_i18n:getText("hlmgui_gps_vca")
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vca")
 		})
 		gsMode = 1
 		vcaMode = 2
 	end
 	if not modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
-			g_i18n:getText("hlmgui_gps_auto"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
 		})
 		gsMode = 1
 		vcaMode = 1
@@ -268,27 +269,27 @@ function HeadlandManagementGui.setData(
 	end
 	self.gpsSetting:setDisabled(gpsDisabled or not self.showGPS)
 	
-	self.gpsAutoTriggerTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerSetting"))
+	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerSetting:setTexts({
-		g_i18n:getText("hlmgui_gps_gs"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.gpsAutoTriggerSetting:setState(useGuidanceSteeringTrigger and 1 or 2)
 	self.gpsAutoTriggerSetting:setDisabled(not modGuidanceSteeringFound)
 	
-	self.gpsAutoTriggerOffsetTitle:setText(g_i18n:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
+	self.gpsAutoTriggerOffsetTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
 	self.gpsAutoTriggerOffsetSetting:setTexts({
-		g_i18n:getText("hlmgui_back"),
-		g_i18n:getText("hlmgui_front")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front")
 	})	
 	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
 	self.gpsAutoTriggerOffsetSetting:setDisabled(not modGuidanceSteeringFound or self.gpsEnabled or not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
 	
 	-- Diff control
-	self.diffControlOnOffTitle:setText(g_i18n:getText("hlmgui_diffLock"))
+	self.diffControlOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_diffLock"))
 	self.diffControlOnOffSetting:setTexts({
-		g_i18n:getText("hlmgui_on"),
-		g_i18n:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
 	self.diffControlOnOffSetting:setDisabled(not modVCAFound)
