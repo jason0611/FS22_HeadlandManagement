@@ -410,9 +410,8 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec_gs = self.spec_globalPositioningSystem
 	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
-	dbgprint_r(hlmGui, 4, 2)
+	dbgprint_r(hlmGui.target, 4, 1)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	--hlmGui.target:setData(
 	HeadlandManagementGui.setData(
 		hlmGui.target,
 		self:getFullName(),
