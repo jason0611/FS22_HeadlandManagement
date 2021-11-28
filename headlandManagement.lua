@@ -6,7 +6,7 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 2)
+GMSDebug:init(g_currentModName, true, 3)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -36,6 +36,40 @@ function HeadlandManagement.prerequisitesPresent(specializations)
   return true
 end
 
+function HeadlandManagement.initSpecialization()
+    local schemaSavegame = Vehicle.xmlSchemaSavegame
+	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process")
+	
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
+	
+	schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useSpeedControl", "Change speed in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useModSpeedControl", "use mod SpeedControl", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useCrabSteering", "Change crab steering in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementF", "Raise front attachements in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementB", "Raise back attahements in headlands", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOF", "Stop front PTO in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOB", "Stop back PTO in headlands", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#turnPlow", "Turn plow in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#centerPlow", "Center plow first in headlands", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchRidge", "Change ridgemarkers", true)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteering", "Use mod GuidanceSteering", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useVCA", "Use mod VCA", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
+	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process")
+end
+
 function HeadlandManagement.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onDraw", HeadlandManagement)
@@ -50,6 +84,7 @@ function HeadlandManagement.registerEventListeners(vehicleType)
 end
 
 function HeadlandManagement:onLoad(savegame)
+	dbgprint("onLoad", 2)
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
@@ -112,6 +147,7 @@ function HeadlandManagement:onLoad(savegame)
 end
 
 function HeadlandManagement:onPostLoad(savegame)
+	dbgprint("onPostLoad", 2)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
@@ -155,29 +191,29 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.modVCAFound = self.vcaSetState ~= nil
 
 	if savegame ~= nil and spec.exists then	
-		local xmlFile = self.xmlFile --savegame.xmlFile
+		dbgprint("onPostLoad : loading saved data", 2)
+		local xmlFile = savegame.xmlFile
 		local key = savegame.key .. ".HeadlandManagement"
 	
-		spec.beep = Utils.getNoNil(getXMLBool(xmlFile, key.."#beep"), spec.beep)
-		spec.turnSpeed = Utils.getNoNil(getXMLFloat(xmlFile, key.."#turnSpeed"), spec.turnSpeed)
-		--spec.isActive = Utils.getNoNil(getXMLBool(xmlFile, key.."#isActive"), spec.isActive)
-		spec.useSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useSpeedControl"), spec.useSpeedControl)
-		spec.useModSpeedControl = Utils.getNoNil(getXMLBool(xmlFile, key.."#useModSpeedControl"), spec.useModSpeedControl)
-		spec.useCrabSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteering"), spec.useCrabSteering)
-		spec.useCrabSteeringTwoStep = Utils.getNoNil(getXMLBool(xmlFile, key.."#useCrabSteeringTwoStep"), spec.useCrabSteeringTwoStep)
-		spec.useRaiseImplementF = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplementF"), spec.useRaiseImplementF)
-		spec.useRaiseImplementB = Utils.getNoNil(getXMLBool(xmlFile, key.."#useRaiseImplementB"), spec.useRaiseImplementB)
-		spec.useStopPTOF = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTOF"), spec.useStopPTOF)
-		spec.useStopPTOB = Utils.getNoNil(getXMLBool(xmlFile, key.."#useStopPTOB"), spec.useStopPTOB)
-		spec.useTurnPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#turnPlow"), spec.useTurnPlow)
-		spec.useCenterPlow = Utils.getNoNil(getXMLBool(xmlFile, key.."#centerPlow"), spec.useCenterPlow)
-		spec.useRidgeMarker = Utils.getNoNil(getXMLBool(xmlFile, key.."#switchRidge"), spec.useRidgeMarker)
-		spec.useGPS = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGPS"), spec.useGPS)
-		spec.useGuidanceSteering = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteering"), spec.useGuidanceSteering)
-		spec.useGuidanceSteeringTrigger = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger"), spec.useGuidanceSteeringTrigger)
-		spec.useGuidanceSteeringOffset = Utils.getNoNil(getXMLBool(xmlFile, key.."#useGuidanceSteeringOffset"), spec.useGuidanceSteeringOffset)
-		spec.useVCA = Utils.getNoNil(getXMLBool(xmlFile, key.."#useVCA"), spec.useVCA)
-		spec.useDiffLock = Utils.getNoNil(getXMLBool(xmlFile, key.."#useDiffLock"), spec.useDiffLock)
+		spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
+		spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
+		spec.useSpeedControl = xmlFile:getValue(key.."#useSpeedControl", spec.useSpeedControl)
+		spec.useModSpeedControl = xmlFile:getValue(key.."#useModSpeedControl", spec.useModSpeedControl)
+		spec.useCrabSteering = xmlFile:getValue(key.."#useCrabSteering", spec.useCrabSteering)
+		spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+		spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
+		spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		spec.useStopPTOF = xmlFile:getValue(key.."#useStopPTOF", spec.useStopPTOF)
+		spec.useStopPTOB = xmlFile:getValue(key.."#useStopPTOB", spec.useStopPTOB)
+		spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
+		spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
+		spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
+		spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
+		spec.useGuidanceSteering = xmlFile:getValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
+		spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+		spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		spec.useVCA = xmlFile:getValue(key.."#useVCA", spec.useVCA)
+		spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
@@ -191,32 +227,37 @@ function HeadlandManagement:onPostLoad(savegame)
 end
 
 function HeadlandManagement:saveToXMLFile(xmlFile, key)
+-- TODO: Change save routines to xml and schema-based way using xmlFile.setData
+	dbgprint("saveToXMLFile", 2)
 	local spec = self.spec_HeadlandManagement
 	if spec.exists then
-		setXMLBool(xmlFile, key.."#beep", spec.beep)
-		setXMLFloat(xmlFile, key.."#turnSpeed", spec.turnSpeed)
-		--setXMLBool(xmlFile, key.."#isActive", spec.isActive)
-		setXMLBool(xmlFile, key.."#useSpeedControl", spec.useSpeedControl)
-		setXMLBool(xmlFile, key.."#useModSpeedControl", spec.useModSpeedControl)
-		setXMLBool(xmlFile, key.."#useCrabSteering", spec.useCrabSteering)
-		setXMLBool(xmlFile, key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
-		setXMLBool(xmlFile, key.."#useRaiseImplementF", spec.useRaiseImplementF)
-		setXMLBool(xmlFile, key.."#useRaiseImplementB", spec.useRaiseImplementB)
-		setXMLBool(xmlFile, key.."#useStopPTOF", spec.useStopPTOF)
-		setXMLBool(xmlFile, key.."#useStopPTOB", spec.useStopPTOB)
-		setXMLBool(xmlFile, key.."#turnPlow", spec.useTurnPlow)
-		setXMLBool(xmlFile, key.."#centerPlow", spec.useCenterPlow)
-		setXMLBool(xmlFile, key.."#switchRidge", spec.useRidgeMarker)
-		setXMLBool(xmlFile, key.."#useGPS", spec.useGPS)
-		setXMLBool(xmlFile, key.."#useGuidanceSteering", spec.useGuidanceSteering)
-		setXMLBool(xmlFile, key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
-		setXMLBool(xmlFile, key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
-		setXMLBool(xmlFile, key.."#useVCA", spec.useVCA)
-		setXMLBool(xmlFile, key.."#useDiffLock", spec.useDiffLock)
+		dbgprint("saveToXMLFile : key: "..tostring(key), 2)
+		dbgprint_r(xmlFile, 4)
+		setXMLBool(xmlFile.handle, key.."#beep", spec.beep)
+		setXMLFloat(xmlFile.handle, key.."#turnSpeed", spec.turnSpeed)
+		setXMLBool(xmlFile.handle, key.."#useSpeedControl", spec.useSpeedControl)
+		setXMLBool(xmlFile.handle, key.."#useModSpeedControl", spec.useModSpeedControl)
+		setXMLBool(xmlFile.handle, key.."#useCrabSteering", spec.useCrabSteering)
+		setXMLBool(xmlFile.handle, key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+		setXMLBool(xmlFile.handle, key.."#useRaiseImplementF", spec.useRaiseImplementF)
+		setXMLBool(xmlFile.handle, key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		setXMLBool(xmlFile.handle, key.."#useStopPTOF", spec.useStopPTOF)
+		setXMLBool(xmlFile.handle, key.."#useStopPTOB", spec.useStopPTOB)
+		setXMLBool(xmlFile.handle, key.."#turnPlow", spec.useTurnPlow)
+		setXMLBool(xmlFile.handle, key.."#centerPlow", spec.useCenterPlow)
+		setXMLBool(xmlFile.handle, key.."#switchRidge", spec.useRidgeMarker)
+		setXMLBool(xmlFile.handle, key.."#useGPS", spec.useGPS)
+		setXMLBool(xmlFile.handle, key.."#useGuidanceSteering", spec.useGuidanceSteering)
+		setXMLBool(xmlFile.handle, key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+		setXMLBool(xmlFile.handle, key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		setXMLBool(xmlFile.handle, key.."#useVCA", spec.useVCA)
+		setXMLBool(xmlFile.handle, key.."#useDiffLock", spec.useDiffLock)
+		dbgprint("saveToXMLFile : saving data finished", 2)
 	end
 end
 
 function HeadlandManagement:onReadStream(streamId, connection)
+	dbgprint("onReadStream", 2)
 	local spec = self.spec_HeadlandManagement
 	spec.beep = streamReadBool(streamId)
 	spec.turnSpeed = streamReadFloat32(streamId)
@@ -240,6 +281,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 end
 
 function HeadlandManagement:onWriteStream(streamId, connection)
+	dbgprint("onWriteStream", 2)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.beep)
 	streamWriteFloat32(streamId, spec.turnSpeed)
@@ -263,7 +305,9 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 end
 	
 function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
+	dbgprint("onReadUpdateStream", 3)
 	if not connection:getIsServer() then
+		dbgprint("onReadUpdateStream: receiving data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamReadBool(streamId) then
 			spec.beep = streamReadBool(streamId)
@@ -291,7 +335,9 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 end
 
 function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
+	dbgprint("onReadUpdateStream", 3)
 	if connection:getIsServer() then
+		dbgprint("onReadUpdateStream: sending data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
 			streamWriteBool(streamId, spec.beep)
@@ -321,6 +367,7 @@ end
 -- inputBindings / inputActions
 	
 function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
+	dbgprint("onRegisterActionEvents", 2)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
@@ -341,7 +388,9 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 end
 
 function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
+	dbgprint("TOGGLESTATE", 3)
 	local spec = self.spec_HeadlandManagement
+	dbgprint_r(spec, 4)
 	-- anschalten nur wenn inaktiv
 	if not spec.isActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
@@ -355,14 +404,16 @@ end
 -- GUI
 
 function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
+	dbgprint("SHOWGUI", 3)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
 	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
-		
+	dbgprint_r(hlmGui.target, 4, 1)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	hlmGui.target:setData(
+	HeadlandManagementGui.setData(
+		hlmGui.target,
 		self:getFullName(),
 		spec.useSpeedControl,
 		spec.useModSpeedControl,
@@ -414,6 +465,7 @@ function HeadlandManagement:guiCallback(
 		useDiffLock, 
 		beep
 	)
+	dbgprint("guiCallback", 2)
 	local spec = self.spec_HeadlandManagement
 	spec.useSpeedControl = useSpeedControl
 	spec.useModSpeedControl = useModSpeedControl
@@ -546,12 +598,12 @@ function HeadlandManagement:onDraw(dt)
 
 	-- show icon if active
 	if self:getIsActive() and spec.isActive and spec.exists then 
-		g_currentMission:addExtraPrintText(g_i18n:getText("text_HLM_isActive"))
+		g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
 	 
 		local scale = g_gameSettings.uiScale
 		
-		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.fuelGaugeRadiusX * 0.70
-		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY
+		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX
+		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
 		
@@ -566,8 +618,8 @@ function HeadlandManagement:onDraw(dt)
 		if gpsEnabled then
 			local scale = g_gameSettings.uiScale
 		
-			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.fuelGaugeRadiusX * 0.70
-			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY
+			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX
+			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY
 			local w = 0.015 * scale
 			local h = w * g_screenAspectRatio
 		
@@ -678,8 +730,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 	local spec = self.spec_HeadlandManagement
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
     
-	local allImplements = {}
-	self:getRootVehicle():getChildVehicles(allImplements)
+	local allImplements = self:getRootVehicle():getChildVehicles()
     
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
@@ -787,7 +838,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 		-- switch ridge marker
 		if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 			local specRM = actImplement.spec_ridgeMarker
-			dbgprint_r(specRM, 2)
+			dbgprint_r(specRM, 4)
 			if raise then
 				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
 				dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
@@ -817,14 +868,13 @@ end
 
 function HeadlandManagement:stopPTO(self, stopPTO)
 	local spec = self.spec_HeadlandManagement
-    --local jointSpec = self.spec_attacherJoints
     dbgprint("stopPTO: "..tostring(stopPTO))
 	
-    local allImplements = {}
-	self:getRootVehicle():getChildVehicles(allImplements)
+    local allImplements = self:getRootVehicle():getChildVehicles()
 	
 	for index,actImplement in pairs(allImplements) do
 		if actImplement ~= nil and actImplement.getAttacherVehicle ~= nil then
+			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			local jointDescIndex = 1 -- Joint #1 will always exist
 			local actVehicle = actImplement:getAttacherVehicle()
 			local frontPTO = false

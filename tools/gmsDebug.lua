@@ -32,11 +32,11 @@ function GMSDebug:print(text, prio)
 	print(GMSDebug.modName.." :: Prio "..tostring(prio).." :: "..tostring(text))
 end
 
-function GMSDebug:print_r(table, prio)
+function GMSDebug:print_r(table, prio, level)
 	if prio == nil then prio = 1; end
 	if not GMSDebug.state or prio > GMSDebug.level then return; end
 	GMSDebug:print("BEGIN OF "..tostring(table).." (Prio "..tostring(prio)..") =================")
-	print_r(table)
+	print_r(table, level)
 	GMSDebug:print("END OF "..tostring(table).." =================")
 end
 
@@ -84,8 +84,8 @@ function dbgprint(text, prio)
 	GMSDebug:print(text, prio)
 end
 
-function dbgprint_r(table, prio)
-	GMSDebug:print_r(table, prio)
+function dbgprint_r(table, prio, level)
+	GMSDebug:print_r(table, prio, level)
 end
 
 function dbgrender(text, pos, prio)
