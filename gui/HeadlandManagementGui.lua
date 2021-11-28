@@ -96,7 +96,7 @@ function HeadlandManagementGui.setData(
 )
 	dbgprint("HeadlandManagementGui: setData", 2)
 	dbgprint("HeadlandManagementGui: setData: g_i18n:", 4)
-	dbgprint_r(g_i18n, 3, 1)
+	dbgprint_r(g_i18n, 4, 1)
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
@@ -107,6 +107,7 @@ function HeadlandManagementGui.setData(
 
 	-- SpeedControl
 	self.speedControlOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControl"))
+	self.speedControlOnOffSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.speedControlOnOffSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
@@ -114,6 +115,7 @@ function HeadlandManagementGui.setData(
 	self.speedControlOnOffSetting:setState(useSpeedControl and 1 or 2)
 	
 	self.speedControlUseSCModTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlMod"))
+	self.speedControlUseSCModSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.speedControlUseSCModSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
@@ -151,6 +153,8 @@ function HeadlandManagementGui.setData(
 	
 	-- Implement control
 	self.raiseTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_raise"))
+	
+	self.raiseSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.raiseSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_both"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front"),
@@ -212,6 +216,7 @@ function HeadlandManagementGui.setData(
 	
 	-- GPS control
 	self.gpsOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsSetting"))
+	self.gpsOnOffSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.gpsOnOffSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
@@ -220,6 +225,7 @@ function HeadlandManagementGui.setData(
 	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
 		
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
+	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	local gsMode
 	local vcaMode
 	self.showGPS = true
@@ -270,6 +276,7 @@ function HeadlandManagementGui.setData(
 	self.gpsSetting:setDisabled(gpsDisabled or not self.showGPS)
 	
 	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
+	self.gpsAutoTriggerSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.gpsAutoTriggerSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
@@ -278,6 +285,7 @@ function HeadlandManagementGui.setData(
 	self.gpsAutoTriggerSetting:setDisabled(not modGuidanceSteeringFound)
 	
 	self.gpsAutoTriggerOffsetTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
+	self.gpsAutoTriggerOffsetSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.gpsAutoTriggerOffsetSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front")
@@ -293,10 +301,15 @@ function HeadlandManagementGui.setData(
 	})
 	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
 	self.diffControlOnOffSetting:setDisabled(not modVCAFound)
+	
+	self.yesButton.onClickCallback=HeadlandManagementGui.onClickOk
+	self.noButton.onClickCallback=HeadlandManagementGui.onClickBack
+	
 end
 
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
+--function HeadlandManagementGui:onUpdate(dt)
 --function HeadlandManagementGui:onClickCallback()
 	dbgprint("HeadlandManagementGui: logicalCheck", 3)
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
@@ -390,7 +403,7 @@ function HeadlandManagementGui:onClickOk()
 end
 
 -- just close gui
-function HeadlandManagementGui:onCloseCallback()
+function HeadlandManagementGui:onClickBack()
 	dbgprint("onClickBack", 3)
 	self:close()
 end

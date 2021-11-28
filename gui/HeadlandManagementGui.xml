@@ -10,7 +10,7 @@
 
 		<GuiElement type="boxLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" numFlows="3" fitFlowToElements="true" position="0px 0px" size="1600px 880px">
 		<!-- ImplementControl -->
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="raiseSetting" onClick="logicalCheck">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="raiseSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
@@ -54,28 +54,28 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>
 		<!-- GPS control -->
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsOnOffSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsOnOffTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>	
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsSettingTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsAutoTriggerSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsAutoTriggerSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
 				<GuiElement type="text" profile="multiTextOptionTitle" id="gpsAutoTriggerTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="gpsAutoTriggerOffsetSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsAutoTriggerOffsetSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
@@ -91,7 +91,7 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>	
 		<!-- SpeedControl -->
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlUseSCModSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlUseSCModSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
@@ -99,7 +99,7 @@
 				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
 			</GuiElement>	
 
-			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" onClick="logicalCheck" id="speedControlOnOffSetting">
+			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlOnOffSetting">
 				<GuiElement type="button" profile="multiTextOptionLeft"/>
 				<GuiElement type="button" profile="multiTextOptionRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionBgSilo"/>
