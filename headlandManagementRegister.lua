@@ -32,6 +32,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
         	{name = g_i18n:getText("text_HLM_notInstalled_short"), index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
         	{name = g_i18n:getText("text_HLM_installed_short"), index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
     	}
+    	StoreItemUtil.addConfigurationItem(configurations["HeadlandManagement"])
     	dbgprint("addHLMconfig : Configuration HeadlandManagement added", 2)
     	dbgprint_r(configurations["HeadlandManagement"], 3)
 	end
@@ -61,15 +62,6 @@ end
 if g_configurationManager.configurations["HeadlandManagement"] == nil then
 	g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
 	StoreItemUtil.getConfigurationsFromXML = Utils.overwrittenFunction(StoreItemUtil.getConfigurationsFromXML, addHLMconfig)
+	--StoreItemUtil.addConfigurationItem(g_configurationManager.configurations["HeadlandManagement"])
 	dbgprint("Configuration 'HeadlandManagement' added", 2)
 end
-
--- make localizations available
---[[
-local i18nTable = getfenv(0).g_i18n
-for l18nId,l18nText in pairs(g_i18n.texts) do
-	dbgprint(l18nId, 3)
-	dbgprint(l18nText, 3)
-	i18nTable:setText(l18nId, l18nText)
-end
---]]
