@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.0
+-- Version 1.9.0.1
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
