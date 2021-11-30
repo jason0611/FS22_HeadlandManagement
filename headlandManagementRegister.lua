@@ -2,7 +2,7 @@
 -- Register Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 1.9.0.0
+-- Version 1.9.0.1
 --
 
 function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
@@ -32,7 +32,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
         	{name = g_i18n:getText("text_HLM_notInstalled_short"), index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
         	{name = g_i18n:getText("text_HLM_installed_short"), index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
     	}
-    	StoreItemUtil.addConfigurationItem(configurations["HeadlandManagement"])
+    	--StoreItemUtil.addConfigurationItem(configurations["HeadlandManagement"])
     	dbgprint("addHLMconfig : Configuration HeadlandManagement added", 2)
     	dbgprint_r(configurations["HeadlandManagement"], 3)
 	end
