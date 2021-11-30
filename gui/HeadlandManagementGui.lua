@@ -366,7 +366,13 @@ function HeadlandManagementGui:onClickOk()
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()
 	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false; end
-	if gpsSetting == 2 then useGuidanceSteering = true; useVCA = false; end
+	if gpsSetting == 2 and self.modGuidanceSteeringFound then 
+		useGuidanceSteering = true
+		useVCA = false
+	else
+		useGuidanceSteering = false
+		useVCA = true
+	end
 	if gpsSetting == 3 then useGuidanceSteering = false; useVCA = true; end
 	-- gps trigger
 	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
