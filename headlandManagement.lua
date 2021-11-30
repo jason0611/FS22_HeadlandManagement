@@ -995,15 +995,15 @@ function HeadlandManagement:stopGPS(self, enable)
 	
 -- Part 3: Vehicle Control Addon (VCA)
 	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
-		spec.vcaStatus = self.vcaSnapIsOn
+		spec.vcaStatus = self:vcaGetState("snapIsOn") --self.vcaSnapIsOn
 		if spec.vcaStatus then 
 			dbgprint("stopGPS : VCA-GPS off")
-			self:vcaSetState( "vcaSnapIsOn", false )
+			self:vcaSetState( "snapIsOn", false )
 		end
 	end
 	if spec.modVCAFound and spec.vcaStatus and spec.gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
-		self:vcaSetState( "vcaSnapIsOn", true )
+		self:vcaSetState( "snapIsOn", true )
 		self:vcaSetSnapFactor()
 		if spec.wasGPSAutomatic then
 			spec.gpsSetting = 1
@@ -1015,19 +1015,19 @@ end
 function HeadlandManagement:disableDiffLock(self, disable)
 	local spec = self.spec_HeadlandManagement
 	if disable then
-		spec.diffStateF = self.vcaDiffLockFront
-		spec.diffStateB = self.vcaDiffLockBack
+		spec.diffStateF = self:vcaGetState("diffLockFront") --self.vcaDiffLockFront
+		spec.diffStateB = self:vcaGetState("diffLockBack") --self.vcaDiffLockBack
 		if spec.diffStateF then 
 			dbgprint("disableDiffLock : DiffLockF off")
-			self:vcaSetState("vcaDiffLockFront", false)
+			self:vcaSetState("diffLockFront", false)
 		end
 		if spec.diffStateB then 
 			dbgprint("disableDiffLock : DiffLockB off")
-			self:vcaSetState("vcaDiffLockBack", false)
+			self:vcaSetState("diffLockBack", false)
 		end
 	else
 		dbgprint("disableDiffLock : DiffLock reset")
-		self:vcaSetState("vcaDiffLockFront", spec.diffStateF)
-		self:vcaSetState("vcaDiffLockBack", spec.diffStateB)
+		self:vcaSetState("diffLockFront", spec.diffStateF)
+		self:vcaSetState("diffLockBack", spec.diffStateB)
 	end
 end
