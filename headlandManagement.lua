@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.1
+-- Version 1.9.0.2
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -30,6 +30,42 @@ loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg"
 HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
 
+-- set configuration 
+
+function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
+    local configurations, defaultConfigurationIds = superfunc(xmlFile, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
+	dbgprint("addHLMconfig : Kat: "..storeItem.categoryName.." / ".."Name: "..storeItem.xmlFilename, 2)
+
+	local category = storeItem.categoryName
+	if 
+		(	category == "TRACTORSS" 
+		or	category == "TRACTORSM"
+		or	category == "TRACTORSL"
+		or	category == "HARVESTERS"
+		or	category == "FORAGEHARVESTERS"
+		or	category == "BEETVEHICLES"
+		or	category == "POTATOVEHICLES"
+		or	category == "COTTONVEHICLES"
+		or	category == "SPRAYERVEHICLES"
+		or	category == "SUGARCANEVEHICLES"
+		or	category == "MOWERVEHICLES"
+		or	category == "MISCVEHICLES"
+		or 	category == "JOHNDEEREPACK"
+		)
+		and	configurations ~= nil
+
+	then
+		configurations["HeadlandManagement"] = {
+        	{name = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_notInstalled_short"), index = 1, isDefault = true,  isSelectable = true, price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
+        	{name = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_installed_short"), index = 2, isDefault = false, isSelectable = true, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
+    	}
+    	dbgprint("addHLMconfig : Configuration HeadlandManagement added", 2)
+    	dbgprint_r(configurations["HeadlandManagement"], 3)
+	end
+	
+    return configurations, defaultConfigurationIds
+end
+
 -- Standards / Basics
 
 function HeadlandManagement.prerequisitesPresent(specializations)
@@ -37,9 +73,17 @@ function HeadlandManagement.prerequisitesPresent(specializations)
 end
 
 function HeadlandManagement.initSpecialization()
+	dbgprint("initSpecialization : start", 2)
+	if g_configurationManager.configurations["HeadlandManagement"] == nil then
+		g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+	end
+	StoreItemUtil.getConfigurationsFromXML = Utils.overwrittenFunction(StoreItemUtil.getConfigurationsFromXML, addHLMconfig)
+	dbgprint("initSpecialization : Configuration initialized", 1)
+	
     local schemaSavegame = Vehicle.xmlSchemaSavegame
 	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process")
 	
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
 	
 	schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
@@ -151,8 +195,9 @@ function HeadlandManagement:onPostLoad(savegame)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	spec.exists = self.configurations["HeadlandManagement"] == 2
-	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
+	dbgprint("configSaver is "..tostring(HeadlandManagement.configSaver), 3)
+	-- there seems to be a bug in handling reconfigured vehicles that reset the config to default
+	-- so we use a config-saver as a "dirty" hack, this couldn't be a part of spec, because spec will be reinitialized, too
 	
 	-- Check if vehicle supports CrabSteering
 	local csSpec = self.spec_crabSteering
@@ -189,32 +234,48 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil
 
-	if savegame ~= nil and spec.exists then	
+	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
 		local xmlFile = savegame.xmlFile
 		local key = savegame.key .. ".HeadlandManagement"
-	
-		spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
-		spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
-		spec.useSpeedControl = xmlFile:getValue(key.."#useSpeedControl", spec.useSpeedControl)
-		spec.useModSpeedControl = xmlFile:getValue(key.."#useModSpeedControl", spec.useModSpeedControl)
-		spec.useCrabSteering = xmlFile:getValue(key.."#useCrabSteering", spec.useCrabSteering)
-		spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
-		spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
-		spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
-		spec.useStopPTOF = xmlFile:getValue(key.."#useStopPTOF", spec.useStopPTOF)
-		spec.useStopPTOB = xmlFile:getValue(key.."#useStopPTOB", spec.useStopPTOB)
-		spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
-		spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
-		spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
-		spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
-		spec.useGuidanceSteering = xmlFile:getValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
-		spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
-		spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
-		spec.useVCA = xmlFile:getValue(key.."#useVCA", spec.useVCA)
-		spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
+		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
+		if spec.exists then
+			spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
+			spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
+			spec.useSpeedControl = xmlFile:getValue(key.."#useSpeedControl", spec.useSpeedControl)
+			spec.useModSpeedControl = xmlFile:getValue(key.."#useModSpeedControl", spec.useModSpeedControl)
+			spec.useCrabSteering = xmlFile:getValue(key.."#useCrabSteering", spec.useCrabSteering)
+			spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+			spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
+			spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+			spec.useStopPTOF = xmlFile:getValue(key.."#useStopPTOF", spec.useStopPTOF)
+			spec.useStopPTOB = xmlFile:getValue(key.."#useStopPTOB", spec.useStopPTOB)
+			spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
+			spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
+			spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
+			spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
+			spec.useGuidanceSteering = xmlFile:getValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
+			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+			spec.useVCA = xmlFile:getValue(key.."#useVCA", spec.useVCA)
+			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
+			dbgprint("onPostLoad : Loaded whole data set", 2)
+		end
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
+	
+--[[
+	if HeadlandManagement.configSaver then
+		self.configurations["HeadlandManagement"] = 2
+		dbgprint("spec.saver used to restore HLM", 2)
+		HeadlandManagement.configSaver = nil
+	end
+--]]
+
+	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
+	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
+	dbgprint_r(self.configurations, 4, 2)
+	
 	
 	-- Set management actions
 	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
@@ -225,34 +286,43 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.action[HeadlandManagement.STOPGPS] = (spec.modGuidanceSteeringFound and spec.useGuidanceSteering) or (spec.modVCAFound and spec.useVCA)
 end
 
-function HeadlandManagement:saveToXMLFile(xmlFile, key)
--- TODO: Change save routines to xml and schema-based way using xmlFile.setData
+function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 	dbgprint("saveToXMLFile", 2)
+	dbgprint("1:", 4)
+	dbgprint_r(self.configurations, 4, 2)
+	
 	local spec = self.spec_HeadlandManagement
-	if spec.exists then
-		dbgprint("saveToXMLFile : key: "..tostring(key), 2)
-		dbgprint_r(xmlFile, 4)
-		setXMLBool(xmlFile.handle, key.."#beep", spec.beep)
-		setXMLFloat(xmlFile.handle, key.."#turnSpeed", spec.turnSpeed)
-		setXMLBool(xmlFile.handle, key.."#useSpeedControl", spec.useSpeedControl)
-		setXMLBool(xmlFile.handle, key.."#useModSpeedControl", spec.useModSpeedControl)
-		setXMLBool(xmlFile.handle, key.."#useCrabSteering", spec.useCrabSteering)
-		setXMLBool(xmlFile.handle, key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
-		setXMLBool(xmlFile.handle, key.."#useRaiseImplementF", spec.useRaiseImplementF)
-		setXMLBool(xmlFile.handle, key.."#useRaiseImplementB", spec.useRaiseImplementB)
-		setXMLBool(xmlFile.handle, key.."#useStopPTOF", spec.useStopPTOF)
-		setXMLBool(xmlFile.handle, key.."#useStopPTOB", spec.useStopPTOB)
-		setXMLBool(xmlFile.handle, key.."#turnPlow", spec.useTurnPlow)
-		setXMLBool(xmlFile.handle, key.."#centerPlow", spec.useCenterPlow)
-		setXMLBool(xmlFile.handle, key.."#switchRidge", spec.useRidgeMarker)
-		setXMLBool(xmlFile.handle, key.."#useGPS", spec.useGPS)
-		setXMLBool(xmlFile.handle, key.."#useGuidanceSteering", spec.useGuidanceSteering)
-		setXMLBool(xmlFile.handle, key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
-		setXMLBool(xmlFile.handle, key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
-		setXMLBool(xmlFile.handle, key.."#useVCA", spec.useVCA)
-		setXMLBool(xmlFile.handle, key.."#useDiffLock", spec.useDiffLock)
-		dbgprint("saveToXMLFile : saving data finished", 2)
+	spec.exists = self.configurations["HeadlandManagement"] == 2
+	dbgprint("saveToXMLFile : key: "..tostring(key), 2)
+		
+	--HeadlandManagement.configSaver = true -- trigger saving config data if reconfiguring
+	xmlFile:setValue(key.."#configured", spec.exists)
+	if spec.exists then	
+		xmlFile:setValue(key.."#beep", spec.beep)
+		xmlFile:setValue(key.."#turnSpeed", spec.turnSpeed)
+		xmlFile:setValue(key.."#useSpeedControl", spec.useSpeedControl)
+		xmlFile:setValue(key.."#useModSpeedControl", spec.useModSpeedControl)
+		xmlFile:setValue(key.."#useCrabSteering", spec.useCrabSteering)
+		xmlFile:setValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+		xmlFile:setValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
+		xmlFile:setValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		xmlFile:setValue(key.."#useStopPTOF", spec.useStopPTOF)
+		xmlFile:setValue(key.."#useStopPTOB", spec.useStopPTOB)
+		xmlFile:setValue(key.."#turnPlow", spec.useTurnPlow)
+		xmlFile:setValue(key.."#centerPlow", spec.useCenterPlow)
+		xmlFile:setValue(key.."#switchRidge", spec.useRidgeMarker)
+		xmlFile:setValue(key.."#useGPS", spec.useGPS)
+		xmlFile:setValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
+		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		xmlFile:setValue(key.."#useVCA", spec.useVCA)
+		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
+		dbgprint("saveToXMLFile : saving whole data", 2)
+	--else
+		--HeadlandManagement.configSaver = nil -- clean up hack data to preserver config HLM
 	end
+	dbgprint("saveToXMLFile : saving data finished", 2)
+	--dbgprint("configSaver is "..tostring(HeadlandManagement.configSaver), 3)
 end
 
 function HeadlandManagement:onReadStream(streamId, connection)

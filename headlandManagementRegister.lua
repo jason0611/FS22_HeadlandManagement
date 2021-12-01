@@ -2,9 +2,29 @@
 -- Register Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 1.9.0.1
+-- Version 1.9.0.2
 --
 
+if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
+  	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
+  	dbgprint("Specialization 'HeadlandManagement' added", 2)
+end
+
+for typeName, typeEntry in pairs(g_vehicleTypeManager.types) do
+    if
+    		SpecializationUtil.hasSpecialization(Drivable, typeEntry.specializations) 
+		and	SpecializationUtil.hasSpecialization(Enterable, typeEntry.specializations)
+		and	SpecializationUtil.hasSpecialization(Motorized, typeEntry.specializations)
+    
+    	and not SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
+    
+    then
+     	g_vehicleTypeManager:addSpecialization(typeName, "HeadlandManagement")
+		dbgprint("registered for "..typeName)
+    end
+end
+
+--[[
 function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
     local configurations, defaultConfigurationIds = superfunc(xmlFile, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
 	dbgprint("addHLMconfig : Kat: "..storeItem.categoryName.." / ".."Name: "..storeItem.xmlFilename, 2)
@@ -39,29 +59,15 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
     return configurations, defaultConfigurationIds
 end
 
-if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
-  	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
-  	dbgprint("Specialization 'HeadlandManagement' added", 2)
-end
-
-for typeName, typeEntry in pairs(g_vehicleTypeManager.types) do
-    if
-    		SpecializationUtil.hasSpecialization(Drivable, typeEntry.specializations) 
-		and	SpecializationUtil.hasSpecialization(Enterable, typeEntry.specializations)
-		and	SpecializationUtil.hasSpecialization(Motorized, typeEntry.specializations)
-    
-    	and not SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
-    
-    then
-     	g_vehicleTypeManager:addSpecialization(typeName, "HeadlandManagement")
-		dbgprint("registered for "..typeName)
-    end
-end
-
-if g_configurationManager.configurations["HeadlandManagement"] == nil then
-	g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
-	dbgprint("Configuration 'HeadlandManagement' defined", 2)
+--function initHLMConfig()
+	if g_configurationManager.configurations["HeadlandManagement"] == nil then
+		g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+		dbgprint("Configuration 'HeadlandManagement' initialized by headlandManagementRegister", 2)
+	end
 	StoreItemUtil.getConfigurationsFromXML = Utils.overwrittenFunction(StoreItemUtil.getConfigurationsFromXML, addHLMconfig)
-end
+--end
+
+--Vehicle.init = Utils.appendedFunction(Vehicle.init, initHLMConfig)
+--]]
 
 

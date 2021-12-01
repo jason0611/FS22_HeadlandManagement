@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.1
+-- Version 1.9.0.2
 --
 
 HeadlandManagementGui = {}
@@ -65,7 +65,6 @@ function HeadlandManagementGui:new()
 	local gui = YesNoDialog:new(nil, HeadlandManagementGui_mt)
 	gui:registerControls(HeadlandManagementGui.CONTROLS)
 	dbgprint("HeadlandManagementGui created", 2)
-	dbgprint_r(YesNoDialog, 4)
 	return gui
 end
 
@@ -100,8 +99,6 @@ function HeadlandManagementGui.setData(
 	gpsEnabled
 )
 	dbgprint("HeadlandManagementGui: setData", 2)
-	dbgprint("HeadlandManagementGui: setData: g_i18n:", 4)
-	dbgprint_r(g_i18n, 4, 1)
 	self.modSpeedControlFound = modSpeedControlFound
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
