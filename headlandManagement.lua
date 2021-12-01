@@ -151,8 +151,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	--spec.exists = self.configurations["HeadlandManagement"] == 2
-	spec.exists = true
+	spec.exists = self.configurations["HeadlandManagement"] == 2
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	
 	-- Check if vehicle supports CrabSteering
