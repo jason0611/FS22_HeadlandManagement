@@ -29,6 +29,7 @@ HeadlandManagementGui.CONTROLS = {
 	"alarmSetting",
 		
 	"sectionImplementControl",
+	"implementControl",
 	"raiseTitle",
 	"raiseSetting",
 	"stopPtoTitle",
@@ -152,6 +153,8 @@ function HeadlandManagementGui.setData(
 	self.alarmSetting:setState(beep and 1 or 2)
 	
 	-- Implement control
+	self.implementControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_implementControl"))
+	
 	self.raiseTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_raise"))
 	
 	self.raiseSetting.onClickCallback = HeadlandManagementGui.logicalCheck
