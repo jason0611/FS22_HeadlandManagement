@@ -6,7 +6,7 @@
 --
 
 function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
-    local configurations = superfunc(xmlFile, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
+    local configurations, defaultConfigurationIds = superfunc(xmlFile, baseXMLName, baseDir, customEnvironment, isMod, storeItem)
 	dbgprint("addHLMconfig : Kat: "..storeItem.categoryName.." / ".."Name: "..storeItem.xmlFilename, 2)
 
 	local category = storeItem.categoryName
@@ -29,15 +29,14 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 
 	then
 		configurations["HeadlandManagement"] = {
-        	{name = g_i18n:getText("text_HLM_notInstalled_short"), index = 1, isDefault = true,  price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
-        	{name = g_i18n:getText("text_HLM_installed_short"), index = 2, isDefault = false, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
+        	{name = g_i18n:getText("text_HLM_notInstalled_short"), index = 1, isDefault = true,  isSelectable = true, price = 0, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_notInstalled")},
+        	{name = g_i18n:getText("text_HLM_installed_short"), index = 2, isDefault = false, isSelectable = true, price = 3000, dailyUpkeep = 0, desc = g_i18n:getText("text_HLM_installed")}
     	}
-    	--StoreItemUtil.addConfigurationItem(configurations["HeadlandManagement"])
     	dbgprint("addHLMconfig : Configuration HeadlandManagement added", 2)
     	dbgprint_r(configurations["HeadlandManagement"], 3)
 	end
 	
-    return configurations
+    return configurations, defaultConfigurationIds
 end
 
 if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
@@ -61,7 +60,8 @@ end
 
 if g_configurationManager.configurations["HeadlandManagement"] == nil then
 	g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
+	dbgprint("Configuration 'HeadlandManagement' defined", 2)
 	StoreItemUtil.getConfigurationsFromXML = Utils.overwrittenFunction(StoreItemUtil.getConfigurationsFromXML, addHLMconfig)
-	--StoreItemUtil.addConfigurationItem(g_configurationManager.configurations["HeadlandManagement"])
-	dbgprint("Configuration 'HeadlandManagement' added", 2)
 end
+
+
