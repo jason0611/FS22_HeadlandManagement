@@ -15,6 +15,7 @@ HeadlandManagementGui.CONTROLS = {
 	"guiTitle",
 	
 	"sectionSpeedControl",
+	"speedControl",
 	"speedControlOnOffTitle",
 	"speedControlOnOffSetting",
 	"speedControlUseSCModTitle",
@@ -25,10 +26,12 @@ HeadlandManagementGui.CONTROLS = {
 	"speedControlTurnSpeedSetting2",
 
 	"sectionAlarm",
+	"alarmControl",
 	"alarmTitle",
 	"alarmSetting",
 		
 	"sectionImplementControl",
+	"implementControl",
 	"raiseTitle",
 	"raiseSetting",
 	"stopPtoTitle",
@@ -41,6 +44,7 @@ HeadlandManagementGui.CONTROLS = {
 	"crabSteeringSetting",
 	
 	"sectionGPSControl",
+	"gpsControl",
 	"gpsOnOffTitle",
 	"gpsOnOffSetting",
 	"gpsSettingTitle",
@@ -51,6 +55,7 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsAutoTriggerOffsetSetting",
 	
 	"sectionDiffControl",
+	"vehicleControl",
 	"diffControlOnOffTitle",
 	"diffControlOnOffSetting"
 }
@@ -106,6 +111,7 @@ function HeadlandManagementGui.setData(
 	self.guiTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_title")..vehicleName)
 
 	-- SpeedControl
+	self.speedControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControl"))
 	self.speedControlOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControl"))
 	self.speedControlOnOffSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.speedControlOnOffSetting:setTexts({
@@ -144,6 +150,7 @@ function HeadlandManagementGui.setData(
 	self.speedControlTurnSpeedSetting2:setDisabled(disableSpeedcontrolMod or not modSpeedControlFound)
 
 	-- AlertMode
+	self.alarmControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmControl"))
 	self.alarmTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_beep"))
 	self.alarmSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
@@ -152,6 +159,8 @@ function HeadlandManagementGui.setData(
 	self.alarmSetting:setState(beep and 1 or 2)
 	
 	-- Implement control
+	self.implementControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_implementControl"))
+	
 	self.raiseTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_raise"))
 	
 	self.raiseSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -200,21 +209,8 @@ function HeadlandManagementGui.setData(
 	})
 	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
 	
-	-- CrabSteering control
-	self.crabSteeringTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_crabSteering"))
-	self.crabSteeringSetting:setTexts({
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csDirect"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csTwoStep"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
-	})
-	local csState = 2
-	if useCrabSteering and not useCrabSteeringTwoStep then csState = 1; end
-	if useCrabSteering and useCrabSteeringTwoStep then csState = 2; end
-	if not useCrabSteering then csState = 3; end
-	self.crabSteeringSetting:setState(csState)
-	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
-	
 	-- GPS control
+	self.gpsControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsControl"))
 	self.gpsOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsSetting"))
 	self.gpsOnOffSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.gpsOnOffSetting:setTexts({
@@ -293,6 +289,9 @@ function HeadlandManagementGui.setData(
 	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
 	self.gpsAutoTriggerOffsetSetting:setDisabled(not modGuidanceSteeringFound or self.gpsEnabled or not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
 	
+	-- Vehicle control
+	self.vehicleControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vehicleControl"))
+	
 	-- Diff control
 	self.diffControlOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_diffLock"))
 	self.diffControlOnOffSetting:setTexts({
@@ -305,6 +304,19 @@ function HeadlandManagementGui.setData(
 	self.yesButton.onClickCallback=HeadlandManagementGui.onClickOk
 	self.noButton.onClickCallback=HeadlandManagementGui.onClickBack
 	
+	-- CrabSteering control
+	self.crabSteeringTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_crabSteering"))
+	self.crabSteeringSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csDirect"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csTwoStep"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	local csState = 2
+	if useCrabSteering and not useCrabSteeringTwoStep then csState = 1; end
+	if useCrabSteering and useCrabSteeringTwoStep then csState = 2; end
+	if not useCrabSteering then csState = 3; end
+	self.crabSteeringSetting:setState(csState)
+	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
 end
 
 -- check logical dependencies
