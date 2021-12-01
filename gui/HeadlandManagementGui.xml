@@ -8,7 +8,8 @@
 			<GuiElement type="text" profile="dialogHeaderText" textAutoSize="true" id="guiTitle"/>
 		</GuiElement>
 
-		<GuiElement type="scrollingLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" fitFlowToElements="true" position="0px 0px" size="1600px 880px">
+		<!-- GuiElement type="scrollingLayout" hasFrame="true" alignmentX="center" alignmentY="top" flowDirection="vertical" fitFlowToElements="true" position="0px 0px" size="1600px 880px" -->
+		<GuiElement type="scrollingLayout" profile="ingameMenuSettingsLayout">
 		<!-- ImplementControl -->
 			<GuiElement type="text" profile="dialogHeaderText" id="implementControl"/>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="raiseSetting">
@@ -23,28 +24,28 @@
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="turnPlowTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>				
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="stopPtoSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="stopPtoTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="ridgeMarkerSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="ridgeMarkerTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="10px 50px 10px 50px" id="crabSteeringSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="crabSteeringTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>
 		<!-- Diff control -->
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="diffControlOnOffSetting">
@@ -52,7 +53,7 @@
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="diffControlOnOffTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>
 		<!-- GPS control -->
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsOnOffSetting">
@@ -60,28 +61,28 @@
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsOnOffTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsSettingTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsAutoTriggerSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="gpsAutoTriggerOffsetSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerOffsetTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 		<!-- AlertMode -->
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="alarmSetting">
@@ -89,7 +90,7 @@
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="alarmTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 		<!-- SpeedControl -->
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlUseSCModSetting">
@@ -97,7 +98,7 @@
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlUseSCModTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlOnOffSetting">
@@ -105,21 +106,21 @@
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlOnOffTitle"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting1">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlTurnSpeedTitle1"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSilo" hasFrame="true" margin="20px 50px 10px 50px" id="speedControlTurnSpeedSetting2">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
 				<GuiElement type="text" textSize="20px" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlTurnSpeedTitle2"/>
-				<GuiElement type="bitmap" profile="multiTextOptionBgSilo"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 			</GuiElement>	
 		</GuiElement>
 	
