@@ -26,10 +26,7 @@
 		<text name="hlmgui_speedSetting" text="Arbeitsgeschwindigkeit im Vorgewende"/>
 		<text name="hlmgui_speedControlModSetting" text="Tempomatstufe im Vorgewende"/>
 		
-		<text name="hlmgui_crabSteering" text="Hundegang wechseln"/>
-		<text name="hlmgui_csDirect" text="direkt"/>
-		<text name="hlmgui_csTwoStep" text="über Normal"/>
-		
+		<text name="hlmgui_alarmControl" text="Generelle Einstellungen"/>
 		<text name="hlmgui_beep" text="Warnton bei aktiviertem Management"/>
 
 		<text name="hlmgui_implementControl" text="Steuerung der Anbaugeräte"/>
@@ -41,6 +38,7 @@
 		<text name="hlmgui_pto" text="Zapfwelle/Hydraulik abschalten"/>
 		<text name="hlmgui_ridgeMarker" text="Spurreißer wechseln"/>
 
+		<text name="hlmgui_gpsControl" text="GPS-Einstellungen"/>
 		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>
 		<text name="hlmgui_gpsType" text="Genutzte GPS-Variante"/>
 		<text name="hlmgui_gps_auto" text="automatisch"/>
@@ -49,6 +47,10 @@
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
 
+		<text name="hlmgui_vehicleControl" text="Fahrzeug-Einstellungen"/>
 		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
+		<text name="hlmgui_crabSteering" text="Hundegang wechseln"/>
+		<text name="hlmgui_csDirect" text="direkt"/>
+		<text name="hlmgui_csTwoStep" text="über Normal"/>
 	</texts>
 </l10n>
