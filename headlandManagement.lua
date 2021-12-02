@@ -368,7 +368,6 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 end
 	
 function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
-	dbgprint("onReadUpdateStream", 3)
 	if not connection:getIsServer() then
 		dbgprint("onReadUpdateStream: receiving data...", 2)
 		local spec = self.spec_HeadlandManagement
@@ -401,9 +400,8 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 end
 
 function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
-	dbgprint("onReadUpdateStream", 3)
 	if connection:getIsServer() then
-		dbgprint("onReadUpdateStream: sending data...", 2)
+		dbgprint("onWriteUpdateStream: sending data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
 			streamWriteBool(streamId, spec.exists)
@@ -436,7 +434,7 @@ end
 -- inputBindings / inputActions
 	
 function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
-	dbgprint("onRegisterActionEvents", 2)
+	dbgprint("onRegisterActionEvents", 3)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
@@ -723,7 +721,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				dbgprint("reduceSpeed: SpeedControl adjusted")
 			end
 			if not self.isServer then
-				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.turnSpeed))
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, spec.turnSpeed, spec.turnSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
 			end
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
@@ -742,7 +740,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				dbgprint("reduceSpeed: SpeedControl adjusted")
 			end
 			if not self.isServer then
-				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.normSpeed))
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, spec.normSpeed, spec.normSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
 			end
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
