@@ -6,7 +6,7 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 3)
+GMSDebug:init(g_currentModName, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -670,8 +670,8 @@ function HeadlandManagement:onDraw(dt)
 	 
 		local scale = g_gameSettings.uiScale
 		
-		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX
-		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY
+		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX * 0.9
+		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY * 0.92
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
 		
@@ -686,8 +686,8 @@ function HeadlandManagement:onDraw(dt)
 		if gpsEnabled then
 			local scale = g_gameSettings.uiScale
 		
-			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX
-			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY + g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY
+			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX * 0.9
+			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY * 0.92
 			local w = 0.015 * scale
 			local h = w * g_screenAspectRatio
 		
