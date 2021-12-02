@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.3
+-- Version 1.9.0.4
 --
 
 HeadlandManagementGui = {}
@@ -118,6 +118,9 @@ function HeadlandManagementGui.setData(
 	self.modGuidanceSteeringFound = modGuidanceSteeringFound
 	self.modVCAFound = modVCAFound
 	self.gpsEnabled = gpsEnabled
+	
+	self.yesButton.onClickCallback=HeadlandManagementGui.onClickOk
+	self.noButton.onClickCallback=HeadlandManagementGui.onClickBack
 		
 	-- Titel
 	self.guiTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_title")..vehicleName)
@@ -215,6 +218,7 @@ function HeadlandManagementGui.setData(
 	self.stopPtoSetting:setState(ptoState)
 		
 	self.ridgeMarkerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_ridgeMarker"))
+	self.ridgeMarkerSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.ridgeMarkerSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
@@ -314,9 +318,6 @@ function HeadlandManagementGui.setData(
 	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
 	self.diffControlOnOffSetting:setDisabled(not modVCAFound)
 	
-	self.yesButton.onClickCallback=HeadlandManagementGui.onClickOk
-	self.noButton.onClickCallback=HeadlandManagementGui.onClickBack
-	
 	-- CrabSteering control
 	self.crabSteeringTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_crabSteering"))
 	self.crabSteeringSetting:setTexts({
@@ -351,8 +352,6 @@ end
 
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
---function HeadlandManagementGui:onUpdate(dt)
---function HeadlandManagementGui:onClickCallback()
 	dbgprint("HeadlandManagementGui: logicalCheck", 3)
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound) 
@@ -363,6 +362,7 @@ function HeadlandManagementGui:logicalCheck()
 	
 	local useRaiseImplement = self.raiseSetting:getState() ~= 4	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
+	self.ridgeMarkerSetting:setDisabled(not useRaiseImplement)
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)

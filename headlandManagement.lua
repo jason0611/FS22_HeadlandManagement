@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.3
+-- Version 1.9.0.4
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -479,7 +479,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec_gs = self.spec_globalPositioningSystem
 	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
-	dbgprint_r(hlmGui.target, 4, 1)
+	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	HeadlandManagementGui.setData(
 		hlmGui.target,
@@ -557,6 +557,7 @@ function HeadlandManagement:guiCallback(
 	spec.useDiffLock = useDiffLock
 	spec.beep = beep
 	self:raiseDirtyFlags(spec.dirtyFlag)
+	dbgprint_r(spec, 4, 2)
 end
 
 -- Main part
@@ -586,16 +587,16 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<spec.maxStep then
+		-- Set management actions
+		spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
+		spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
+		spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
+		spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
+		spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
+		spec.action[HeadlandManagement.STOPGPS] = spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
+		
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
-			-- Set management actions
-			spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
-			spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
-			spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
-			spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
-			spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
-			spec.action[HeadlandManagement.STOPGPS] = spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
-			
 			-- Activation
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, true); end
 			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(self, true, spec.useCrabSteeringTwoStep); end
@@ -901,36 +902,36 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow)
 							dbgprint("raiseImplements : implement is lowered by heightTargetAlpha: "..tostring(lowered))
 						end
 					end	
-				end
-		 	end
-		end
-		-- switch ridge marker
-		if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
-			local specRM = actImplement.spec_ridgeMarker
-			dbgprint_r(specRM, 4)
-			if raise then
-				spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
-				dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
-				if spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers ~= 0 then
-					actImplement:setRidgeMarkerState(0)
-				elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
-					print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
-				end
-			elseif spec.ridgeMarkerState ~= 0 then
-				for state,_ in pairs(specRM.ridgeMarkers) do
-					if state ~= spec.ridgeMarkerState then
-						spec.ridgeMarkerState = state
-						break
+					-- switch ridge marker
+					if spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
+						local specRM = actImplement.spec_ridgeMarker
+						dbgprint_r(specRM, 4)
+						if raise then
+							spec.ridgeMarkerState = specRM.ridgeMarkerState or 0
+							dbgprint("ridgeMarker: State is "..tostring(spec.ridgeMarkerState).." / "..tostring(specRM.ridgeMarkerState))
+							if spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers ~= 0 then
+								actImplement:setRidgeMarkerState(0)
+							elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
+								print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
+							end
+						elseif spec.ridgeMarkerState ~= 0 then
+							for state,_ in pairs(specRM.ridgeMarkers) do
+								if state ~= spec.ridgeMarkerState then
+									spec.ridgeMarkerState = state
+									break
+								end
+							end
+							dbgprint("ridgeMarker: New state will be "..tostring(spec.ridgeMarkerState))
+							if specRM.numRigdeMarkers ~= 0 then
+								actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
+								dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
+							elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
+								print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
+							end
+						end
 					end
 				end
-				dbgprint("ridgeMarker: New state will be "..tostring(spec.ridgeMarkerState))
-				if specRM.numRigdeMarkers ~= 0 then
-					actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
-					dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
-				elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
-					print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
-				end
-			end
+		 	end
 		end
 	end
 end
