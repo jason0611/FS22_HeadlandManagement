@@ -11,7 +11,7 @@
 	<GuiElement type="bitmap" profile="bgGlowDialog" id="dialogElement" size="1600px 900px"/>
 	
 	
-	<GuiElement type="empty" profile="ingameMenuCenterBox" id="settingsContainer" >
+	<GuiElement type="empty" profile="ingameMenuCenterBox" id="settingsContainer">
 		<GuiElement type="bitmap" profile="topScrollClipper" name="topClipper" />
 		<GuiElement type="bitmap" profile="bottomScrollClipper" name="bottomClipper" />
 		
@@ -32,6 +32,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="alarmTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="alarmTT"/>
 			</GuiElement>	
 			
 		<!-- ImplementControl -->
@@ -44,6 +45,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="raiseTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="raiseTT"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="turnPlowSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -51,6 +53,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="turnPlowTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="plowTT"/>
 			</GuiElement>				
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="stopPtoSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -58,6 +61,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="stopPtoTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="ptoTT"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="ridgeMarkerSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -65,6 +69,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="ridgeMarkerTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="ridgeMarkerTT"/>
 			</GuiElement>
 			
 		<!-- Vehicle control -->
@@ -77,6 +82,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="diffControlOnOffTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="diffLockTT"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="crabSteeringSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -84,6 +90,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="crabSteeringTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="csTT"/>
 			</GuiElement>
 			
 		<!-- GPS control -->
@@ -96,6 +103,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsOnOffTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsTT"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -103,6 +111,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsSettingTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsTypeTT"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsAutoTriggerSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -110,6 +119,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerTT"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsAutoTriggerOffsetSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -117,6 +127,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerOffsetTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerOffsetTT"/>
 			</GuiElement>	
 		
 		<!-- SpeedControl -->
@@ -129,6 +140,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlOnOffTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlTT"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlUseSCModSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -136,6 +148,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlUseSCModTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlModTT"/>
 			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlTurnSpeedSetting1">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -143,6 +156,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlTurnSpeedTitle1"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedSettingTT"/>
 			</GuiElement>	
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlTurnSpeedSetting2">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
@@ -150,6 +164,7 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlTurnSpeedTitle2"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlModSettingTT"/>
 			</GuiElement>	
 			<GuiElement type="text" profile="dialogHeaderText"/>
 		</GuiElement>

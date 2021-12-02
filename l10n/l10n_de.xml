@@ -22,35 +22,50 @@
 		<text name="hlmgui_default" text="Standardeinstellung"/>
 		
 		<text name="hlmgui_speedControl" text="Tempomat anpassen"/>
+		<text name="hlmgui_speedControlTT" text="Im Vorgewende kann die Tempomateinstellung auf einen einstellbaren Wert geändert und anschließend zurückgestellt werden."/>
 		<text name="hlmgui_speedControlMod" text="Nutze Mod SpeedControl"/>
+		<text name="hlmgui_speedControlModTT" text="Wenn vorhanden, kann die Mod 'SpeedControl' für die Tempomatregelung genutzt werden."/>
 		<text name="hlmgui_speedSetting" text="Arbeitsgeschwindigkeit im Vorgewende"/>
+		<text name="hlmgui_speedSettingTT" text="Gewünschte Tempomateinstellung im Vorgewende."/>
 		<text name="hlmgui_speedControlModSetting" text="Tempomatstufe im Vorgewende"/>
+		<text name="hlmgui_speedControlModSettingTT" text="Nutze Tempomat 1, 2, oder 3 im Vorgewende."/>
 		
 		<text name="hlmgui_alarmControl" text="Generelle Einstellungen"/>
 		<text name="hlmgui_beep" text="Warnton bei aktiviertem Management"/>
+		<text name="hlmgui_alarmTT" text="Bei aktiviertem Vorgewende-Management wird ein regelmäßiger Warnton ausgegeben."/>
 
 		<text name="hlmgui_implementControl" text="Steuerung der Anbaugeräte"/>
 		<text name="hlmgui_raise" text="Anbaugeräte ausheben"/>
+		<text name="hlmgui_raiseTT" text="Im Vorgewende können abgesenkte Anbaugeräte ausgehoben und anschließend wieder abgesenkt werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_plow" text="Pflug drehen"/>
 		<text name="hlmgui_plowFull" text="sofort drehen"/>
 		<text name="hlmgui_plowCenter" text="in zwei Schritten drehen"/>
 		<text name="hlmgui_plowOff" text="nicht drehen"/>
+		<text name="hlmgui_plowTT" text="Mit dem Ausheben können Pflüge gedreht werden. Entweder direkt, oder zunächst nur zur Mitte und erst beim Absenken vollständig."/>
 		<text name="hlmgui_pto" text="Zapfwelle/Hydraulik abschalten"/>
+		<text name="hlmgui_ptoTT" text="Im Vorgewende können aktivierte Anbaugeräte abgeschaltet und anschließend wieder angeschaltet werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_ridgeMarker" text="Spurreißer wechseln"/>
+		<text name="hlmgui_ridgeMarkerTT" text="Mit dem Ausheben kann der Spurreißer auf die gegenüberliegende Seite umgeschaltet werden."/>
 
 		<text name="hlmgui_gpsControl" text="GPS-Einstellungen"/>
 		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>
+		<text name="hlmgui_gpsTT" text="Im Vorgewende wird die GPS-Spurführung pausiert und anschließend fortgesetzt."/>
 		<text name="hlmgui_gpsType" text="Genutzte GPS-Variante"/>
 		<text name="hlmgui_gps_auto" text="automatisch"/>
 		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
+		<text name="hlmgui_gpsTypeTT" text="Die Funktion kann auf Guidance Steering oder VCA eingeschränkt werden, oder automatisch das jeweils gerade aktive System pausieren."/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
+		<text name="hlmgui_gpsAutoTriggerTT" text="In Verbindung mit Guidance Steering kann das Vorgewende-Management bei Erreichen des Vorgewendes automatisch aktiviert werden."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardmäßig wird das Vorgewende-Management aktiviert, wenn die Front des Fahrzeugs das Vorgewende erreicht. Das kann auf das Heck des Fahrzeugs umgeschaltet werden."/>
 
 		<text name="hlmgui_vehicleControl" text="Fahrzeug-Einstellungen"/>
 		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
+		<text name="hlmgui_diffLockTT" text="Im Vorgewende werden aktive Differentialsperren gelöst und anschließend wieder gesetzt."/>
 		<text name="hlmgui_crabSteering" text="Hundegang wechseln"/>
 		<text name="hlmgui_csDirect" text="direkt"/>
 		<text name="hlmgui_csTwoStep" text="über Normal"/>
+		<text name="hlmgui_csTT" text="Bei Erreichen des Vorgewendes kann eine aktive Hundegangstellung umgeschaltet werden. Entweder direkt, oder zunächst in Normalstellung und erst am Ende des Vorgewendes vollständig."/>
 	</texts>
 </l10n>

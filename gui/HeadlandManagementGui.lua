@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.2
+-- Version 1.9.0.3
 --
 
 HeadlandManagementGui = {}
@@ -18,46 +18,61 @@ HeadlandManagementGui.CONTROLS = {
 	"speedControl",
 	"speedControlOnOffTitle",
 	"speedControlOnOffSetting",
+	"speedControlTT",
 	"speedControlUseSCModTitle",
 	"speedControlUseSCModSetting",
+	"speedControlModTT",
 	"speedControlTurnSpeedTitle1",
 	"speedControlTurnSpeedSetting1",
+	"speedSettingTT",
 	"speedControlTurnSpeedTitle2",
 	"speedControlTurnSpeedSetting2",
+	"speedControlModSettingTT",
 
 	"sectionAlarm",
 	"alarmControl",
 	"alarmTitle",
 	"alarmSetting",
+	"alarmTT",
 		
 	"sectionImplementControl",
 	"implementControl",
 	"raiseTitle",
 	"raiseSetting",
+	"raiseTT",
 	"stopPtoTitle",
 	"stopPtoSetting",
+	"ptoTT",
 	"turnPlowTitle",
 	"turnPlowSetting",
+	"plowTT",
 	"ridgeMarkerTitle",
 	"ridgeMarkerSetting",
+	"ridgeMarkerTT",
 	"crabSteeringTitle",
 	"crabSteeringSetting",
+	"csTT",
 	
 	"sectionGPSControl",
 	"gpsControl",
 	"gpsOnOffTitle",
 	"gpsOnOffSetting",
+	"gpsTT",
 	"gpsSettingTitle",
 	"gpsSetting",
+	"gpsTypeTT",
 	"gpsAutoTriggerTitle",
 	"gpsAutoTriggerSetting",
+	"gpsAutoTriggerTT",
 	"gpsAutoTriggerOffsetTitle",
 	"gpsAutoTriggerOffsetSetting",
+	"gpsAutoTriggerOffsetTT",
 	
 	"sectionDiffControl",
 	"vehicleControl",
 	"diffControlOnOffTitle",
-	"diffControlOnOffSetting"
+	"diffControlOnOffSetting",
+	"diffLockTT"
 }
 
 -- constructor
@@ -205,6 +220,7 @@ function HeadlandManagementGui.setData(
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.ridgeMarkerSetting:setState(useRidgeMarker and 1 or 2)
+	self.ridgeMarkerSetting:setDisabled(raiseState == 4)
 	
 	-- GPS control
 	self.gpsControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsControl"))
@@ -314,6 +330,23 @@ function HeadlandManagementGui.setData(
 	if not useCrabSteering then csState = 3; end
 	self.crabSteeringSetting:setState(csState)
 	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
+	
+	-- Set ToolTip-Texts
+	self.alarmTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmTT"))
+	self.raiseTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_raiseTT"))
+	self.plowTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plowTT"))
+	self.ptoTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_ptoTT"))
+	self.ridgeMarkerTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_ridgeMarkerTT"))
+	self.diffLockTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_diffLockTT"))
+	self.csTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_csTT"))
+	self.gpsTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsTT"))
+	self.gpsTypeTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsTypeTT"))
+	self.gpsAutoTriggerTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerTT"))
+	self.gpsAutoTriggerOffsetTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetTT"))
+	self.speedControlTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlTT"))
+	self.speedControlModTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModTT"))
+	self.speedSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSettingTT"))
+	self.speedControlModSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModSettingTT"))
 end
 
 -- check logical dependencies
