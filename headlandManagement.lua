@@ -195,10 +195,6 @@ function HeadlandManagement:onPostLoad(savegame)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	dbgprint("configSaver is "..tostring(HeadlandManagement.configSaver), 3)
-	-- there seems to be a bug in handling reconfigured vehicles that reset the config to default
-	-- so we use a config-saver as a "dirty" hack, this couldn't be a part of spec, because spec will be reinitialized, too
-	
 	-- Check if vehicle supports CrabSteering
 	local csSpec = self.spec_crabSteering
 	spec.crabSteeringFound = csSpec ~= nil and csSpec.stateMax ~= nil and csSpec.stateMax > 0
@@ -268,13 +264,14 @@ function HeadlandManagement:onPostLoad(savegame)
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	dbgprint_r(self.configurations, 4, 2)
 	
-	-- Set management actions
+	--[[ Set management actions
 	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 	spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 	spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
 	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
 	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
 	spec.action[HeadlandManagement.STOPGPS] = (spec.modGuidanceSteeringFound and spec.useGuidanceSteering) or (spec.modVCAFound and spec.useVCA)
+	--]]
 end
 
 function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
