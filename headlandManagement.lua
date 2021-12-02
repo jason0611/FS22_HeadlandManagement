@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.4
+-- Version 1.9.0.5
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -195,10 +195,6 @@ function HeadlandManagement:onPostLoad(savegame)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
-	dbgprint("configSaver is "..tostring(HeadlandManagement.configSaver), 3)
-	-- there seems to be a bug in handling reconfigured vehicles that reset the config to default
-	-- so we use a config-saver as a "dirty" hack, this couldn't be a part of spec, because spec will be reinitialized, too
-	
 	-- Check if vehicle supports CrabSteering
 	local csSpec = self.spec_crabSteering
 	spec.crabSteeringFound = csSpec ~= nil and csSpec.stateMax ~= nil and csSpec.stateMax > 0
@@ -264,26 +260,18 @@ function HeadlandManagement:onPostLoad(savegame)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
---[[
-	if HeadlandManagement.configSaver then
-		self.configurations["HeadlandManagement"] = 2
-		dbgprint("spec.saver used to restore HLM", 2)
-		HeadlandManagement.configSaver = nil
-	end
---]]
-
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	dbgprint_r(self.configurations, 4, 2)
 	
-	
-	-- Set management actions
+	--[[ Set management actions
 	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 	spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 	spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
 	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
 	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
 	spec.action[HeadlandManagement.STOPGPS] = (spec.modGuidanceSteeringFound and spec.useGuidanceSteering) or (spec.modVCAFound and spec.useVCA)
+	--]]
 end
 
 function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
@@ -328,107 +316,117 @@ end
 function HeadlandManagement:onReadStream(streamId, connection)
 	dbgprint("onReadStream", 2)
 	local spec = self.spec_HeadlandManagement
-	spec.beep = streamReadBool(streamId)
-	spec.turnSpeed = streamReadFloat32(streamId)
-	spec.useSpeedControl = streamReadBool(streamId)
-	spec.useModSpeedControl = streamReadBool(streamId)
-	spec.useCrabSteering = streamReadBool(streamId)
-	spec.useCrabSteeringTwoStep = streamReadBool(streamId)
-	spec.useRaiseImplementF = streamReadBool(streamId)
-	spec.useRaiseImplementB = streamReadBool(streamId)
-	spec.useStopPTOF = streamReadBool(streamId)
-	spec.useStopPTOB = streamReadBool(streamId)
-	spec.useTurnPlow = streamReadBool(streamId)
-	spec.useCenterPlow = streamReadBool(streamId)
-  	spec.useRidgeMarker = streamReadBool(streamId)
-  	spec.useGPS = streamReadBool(streamId)
-  	spec.useGuidanceSteering = streamReadBool(streamId)
-  	spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
-  	spec.useGuidanceSteeringOffset = streamReadBool(streamId)
-  	spec.useVCA = streamReadBool(streamId)
-  	spec.useDiffLock = streamReadBool(streamId)
+	spec.exists = streamReadBool(streamId, connection)
+	if spec.exists then
+		spec.beep = streamReadBool(streamId)
+		spec.turnSpeed = streamReadFloat32(streamId)
+		spec.useSpeedControl = streamReadBool(streamId)
+		spec.useModSpeedControl = streamReadBool(streamId)
+		spec.useCrabSteering = streamReadBool(streamId)
+		spec.useCrabSteeringTwoStep = streamReadBool(streamId)
+		spec.useRaiseImplementF = streamReadBool(streamId)
+		spec.useRaiseImplementB = streamReadBool(streamId)
+		spec.useStopPTOF = streamReadBool(streamId)
+		spec.useStopPTOB = streamReadBool(streamId)
+		spec.useTurnPlow = streamReadBool(streamId)
+		spec.useCenterPlow = streamReadBool(streamId)
+		spec.useRidgeMarker = streamReadBool(streamId)
+		spec.useGPS = streamReadBool(streamId)
+		spec.useGuidanceSteering = streamReadBool(streamId)
+		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
+		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+		spec.useVCA = streamReadBool(streamId)
+		spec.useDiffLock = streamReadBool(streamId)
+	end
 end
 
 function HeadlandManagement:onWriteStream(streamId, connection)
 	dbgprint("onWriteStream", 2)
 	local spec = self.spec_HeadlandManagement
-	streamWriteBool(streamId, spec.beep)
-	streamWriteFloat32(streamId, spec.turnSpeed)
-	streamWriteBool(streamId, spec.useSpeedControl)
-	streamWriteBool(streamId, spec.useModSpeedControl)
-	streamWriteBool(streamId, spec.useCrabSteering)
-	streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
-	streamWriteBool(streamId, spec.useRaiseImplementF)
-	streamWriteBool(streamId, spec.useRaiseImplementB)
-	streamWriteBool(streamId, spec.useStopPTOF)
-	streamWriteBool(streamId, spec.useStopPTOB)
-	streamWriteBool(streamId, spec.useTurnPlow)
-	streamWriteBool(streamId, spec.useCenterPlow)
-  	streamWriteBool(streamId, spec.useRidgeMarker)
-  	streamWriteBool(streamId, spec.useGPS)
-  	streamWriteBool(streamId, spec.useGuidanceSteering)
-  	streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
-  	streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
-  	streamWriteBool(streamId, spec.useVCA)
-  	streamWriteBool(streamId, spec.useDiffLock)
+	streamWriteBool(streamId, spec.exists)
+	if spec.exists then
+		streamWriteBool(streamId, spec.beep)
+		streamWriteFloat32(streamId, spec.turnSpeed)
+		streamWriteBool(streamId, spec.useSpeedControl)
+		streamWriteBool(streamId, spec.useModSpeedControl)
+		streamWriteBool(streamId, spec.useCrabSteering)
+		streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
+		streamWriteBool(streamId, spec.useRaiseImplementF)
+		streamWriteBool(streamId, spec.useRaiseImplementB)
+		streamWriteBool(streamId, spec.useStopPTOF)
+		streamWriteBool(streamId, spec.useStopPTOB)
+		streamWriteBool(streamId, spec.useTurnPlow)
+		streamWriteBool(streamId, spec.useCenterPlow)
+		streamWriteBool(streamId, spec.useRidgeMarker)
+		streamWriteBool(streamId, spec.useGPS)
+		streamWriteBool(streamId, spec.useGuidanceSteering)
+		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
+		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+		streamWriteBool(streamId, spec.useVCA)
+		streamWriteBool(streamId, spec.useDiffLock)
+	end
 end
 	
 function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
-	dbgprint("onReadUpdateStream", 3)
 	if not connection:getIsServer() then
 		dbgprint("onReadUpdateStream: receiving data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamReadBool(streamId) then
-			spec.beep = streamReadBool(streamId)
-			spec.turnSpeed = streamReadFloat32(streamId)
-			spec.useSpeedControl = streamReadBool(streamId)
-			spec.useModSpeedControl = streamReadBool(streamId)
-			spec.useCrabSteering = streamReadBool(streamId)
-			spec.useCrabSteeringTwoStep = streamReadBool(streamId)
-			spec.useRaiseImplementF = streamReadBool(streamId)
-			spec.useRaiseImplementB = streamReadBool(streamId)
-			spec.useStopPTOF = streamReadBool(streamId)
-			spec.useStopPTOB = streamReadBool(streamId)
-			spec.useTurnPlow = streamReadBool(streamId)
-			spec.useCenterPlow = streamReadBool(streamId)
-			spec.useRidgeMarker = streamReadBool(streamId)
-			spec.useGPS = streamReadBool(streamId)
-			spec.useGuidanceSteering = streamReadBool(streamId)
-			spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
-			spec.useGuidanceSteeringOffset = streamReadBool(streamId)
-			spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
-			spec.useVCA = streamReadBool(streamId)
-			spec.useDiffLock = streamReadBool(streamId)
-		end;
+			spec.exists = streamReadBool(streamId)
+			if spec.exists then
+				spec.beep = streamReadBool(streamId)
+				spec.turnSpeed = streamReadFloat32(streamId)
+				spec.useSpeedControl = streamReadBool(streamId)
+				spec.useModSpeedControl = streamReadBool(streamId)
+				spec.useCrabSteering = streamReadBool(streamId)
+				spec.useCrabSteeringTwoStep = streamReadBool(streamId)
+				spec.useRaiseImplementF = streamReadBool(streamId)
+				spec.useRaiseImplementB = streamReadBool(streamId)
+				spec.useStopPTOF = streamReadBool(streamId)
+				spec.useStopPTOB = streamReadBool(streamId)
+				spec.useTurnPlow = streamReadBool(streamId)
+				spec.useCenterPlow = streamReadBool(streamId)
+				spec.useRidgeMarker = streamReadBool(streamId)
+				spec.useGPS = streamReadBool(streamId)
+				spec.useGuidanceSteering = streamReadBool(streamId)
+				spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
+				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
+				spec.useVCA = streamReadBool(streamId)
+				spec.useDiffLock = streamReadBool(streamId)
+			end
+		end
 	end
 end
 
 function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
-	dbgprint("onReadUpdateStream", 3)
 	if connection:getIsServer() then
-		dbgprint("onReadUpdateStream: sending data...", 2)
+		dbgprint("onWriteUpdateStream: sending data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
-			streamWriteBool(streamId, spec.beep)
-			streamWriteFloat32(streamId, spec.turnSpeed)
-			streamWriteBool(streamId, spec.useSpeedControl)
-			streamWriteBool(streamId, spec.useModSpeedControl)
-			streamWriteBool(streamId, spec.useCrabSteering)
-			streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
-			streamWriteBool(streamId, spec.useRaiseImplementF)
-			streamWriteBool(streamId, spec.useRaiseImplementB)
-			streamWriteBool(streamId, spec.useStopPTOF)
-			streamWriteBool(streamId, spec.useStopPTOB)
-			streamWriteBool(streamId, spec.useTurnPlow)
-			streamWriteBool(streamId, spec.useCenterPlow)
-			streamWriteBool(streamId, spec.useRidgeMarker)
-			streamWriteBool(streamId, spec.useGPS)
-			streamWriteBool(streamId, spec.useGuidanceSteering)
-			streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
-			streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
-			streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
-			streamWriteBool(streamId, spec.useVCA)
-			streamWriteBool(streamId, spec.useDiffLock)
+			streamWriteBool(streamId, spec.exists)
+			if spec.exists then
+				streamWriteBool(streamId, spec.beep)
+				streamWriteFloat32(streamId, spec.turnSpeed)
+				streamWriteBool(streamId, spec.useSpeedControl)
+				streamWriteBool(streamId, spec.useModSpeedControl)
+				streamWriteBool(streamId, spec.useCrabSteering)
+				streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
+				streamWriteBool(streamId, spec.useRaiseImplementF)
+				streamWriteBool(streamId, spec.useRaiseImplementB)
+				streamWriteBool(streamId, spec.useStopPTOF)
+				streamWriteBool(streamId, spec.useStopPTOB)
+				streamWriteBool(streamId, spec.useTurnPlow)
+				streamWriteBool(streamId, spec.useCenterPlow)
+				streamWriteBool(streamId, spec.useRidgeMarker)
+				streamWriteBool(streamId, spec.useGPS)
+				streamWriteBool(streamId, spec.useGuidanceSteering)
+				streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
+				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
+				streamWriteBool(streamId, spec.useVCA)
+				streamWriteBool(streamId, spec.useDiffLock)
+			end
 		end
 	end
 end
@@ -436,7 +434,7 @@ end
 -- inputBindings / inputActions
 	
 function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
-	dbgprint("onRegisterActionEvents", 2)
+	dbgprint("onRegisterActionEvents", 3)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
@@ -723,7 +721,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				dbgprint("reduceSpeed: SpeedControl adjusted")
 			end
 			if not self.isServer then
-				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.turnSpeed))
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, spec.turnSpeed, spec.turnSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
 			end
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
@@ -742,7 +740,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 				dbgprint("reduceSpeed: SpeedControl adjusted")
 			end
 			if not self.isServer then
-				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent:new(self, spec.normSpeed))
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, spec.normSpeed, spec.normSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
 			end
 			dbgprint("reduceSpeed : Set cruise control back to "..tostring(spec.normSpeed))
