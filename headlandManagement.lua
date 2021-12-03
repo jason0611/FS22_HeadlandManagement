@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.7
+-- Version 1.9.0.8
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -29,6 +29,11 @@ loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg"
 
 HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
+
+-- Killbits for not yet published mods
+HeadlandManagement.kbVCA = false
+HeadlandManagement.kbGS = true
+HeadlandManagement.kbSC = true
 
 -- set configuration 
 
@@ -201,7 +206,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound))
 	
 	-- Check if Mod SpeedControl exists
-	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil then 
+	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC = true then 
 		spec.modSpeedControlFound = true 
 		spec.useModSpeedControl = true
 		spec.turnSpeed = 1 --SpeedControl Mode 1
@@ -209,7 +214,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	end
 	
 	-- Check if Mod GuidanceSteering exists
-	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil
+	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil and not HeadlandManagement.kbGS
 	
 	-- Calculate front and back offset for GuidanceSteering
 	local spec_at = self.spec_attacherJoints
@@ -228,7 +233,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	end
 
 	-- Check if Mod VCA exists
-	spec.modVCAFound = self.vcaSetState ~= nil
+	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
 
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
@@ -263,15 +268,6 @@ function HeadlandManagement:onPostLoad(savegame)
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	dbgprint_r(self.configurations, 4, 2)
-	
-	--[[ Set management actions
-	spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
-	spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
-	spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
-	spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
-	spec.action[HeadlandManagement.STOPPTO] = spec.useStopPTOF or spec.useStopPTOB
-	spec.action[HeadlandManagement.STOPGPS] = (spec.modGuidanceSteeringFound and spec.useGuidanceSteering) or (spec.modVCAFound and spec.useVCA)
-	--]]
 end
 
 function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)

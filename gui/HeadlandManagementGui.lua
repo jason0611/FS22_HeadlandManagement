@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.7
+-- Version 1.9.0.8
 --
 
 HeadlandManagementGui = {}
@@ -143,6 +143,7 @@ function HeadlandManagementGui.setData(
 	})
 	self.speedControlUseSCModSetting:setState(useModSpeedControl and modSpeedControlFound and 1 or 2)
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not modSpeedControlFound)
+	self.speedControlUseSCModSetting:setVisible(modSpeedControlFound)
 	
 	self.speedControlTurnSpeedTitle1:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSetting"))
 	local speedTable = {}
@@ -163,6 +164,7 @@ function HeadlandManagementGui.setData(
 	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
 	self.speedControlTurnSpeedSetting2:setState(useModSpeedControl and turnSpeed or 1)
 	self.speedControlTurnSpeedSetting2:setDisabled(disableSpeedcontrolMod or not modSpeedControlFound)
+	self.speedControlTurnSpeedSetting2:setVisible(modSpeedControlFound)
 
 	-- AlertMode
 	self.alarmControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmControl"))
@@ -236,6 +238,7 @@ function HeadlandManagementGui.setData(
 	})
 	self.gpsOnOffSetting:setState(useGPS and 1 or 2)
 	self.gpsOnOffSetting:setDisabled(not modGuidanceSteeringFound and not modVCAFound)
+	self.gpsOnOffSetting:setVisible(modGuidanceSteeringFound or modVCAFound)
 		
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -287,6 +290,7 @@ function HeadlandManagementGui.setData(
 		gpsDisabled = not useGPS
 	end
 	self.gpsSetting:setDisabled(gpsDisabled or not self.showGPS)
+	self.gpsSetting:setVisible(modGuidanceSteeringFound or modVCAFound)
 	
 	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -296,6 +300,7 @@ function HeadlandManagementGui.setData(
 	})
 	self.gpsAutoTriggerSetting:setState(useGuidanceSteeringTrigger and 1 or 2)
 	self.gpsAutoTriggerSetting:setDisabled(not modGuidanceSteeringFound)
+	self.gpsAutoTriggerSetting:setVisible(modGuidanceSteeringFound)
 	
 	self.gpsAutoTriggerOffsetTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
 	self.gpsAutoTriggerOffsetSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -305,6 +310,7 @@ function HeadlandManagementGui.setData(
 	})	
 	self.gpsAutoTriggerOffsetSetting:setState(useGuidanceSteeringOffset and 1 or 2)
 	self.gpsAutoTriggerOffsetSetting:setDisabled(not modGuidanceSteeringFound or self.gpsEnabled or not useGuidanceSteeringTrigger or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsAutoTriggerOffsetSetting:setVisible(modGuidanceSteeringFound)
 	
 	-- Vehicle control
 	self.vehicleControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vehicleControl"))
@@ -317,6 +323,7 @@ function HeadlandManagementGui.setData(
 	})
 	self.diffControlOnOffSetting:setState(useDiffLock and 1 or 2)
 	self.diffControlOnOffSetting:setDisabled(not modVCAFound)
+	self.diffControlOnOffSetting:setVisible(modVCAFound)
 	
 	-- CrabSteering control
 	self.crabSteeringTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_crabSteering"))
@@ -331,6 +338,7 @@ function HeadlandManagementGui.setData(
 	if not useCrabSteering then csState = 3; end
 	self.crabSteeringSetting:setState(csState)
 	self.crabSteeringSetting:setDisabled(not crabSteeringFound)
+	self.crabSteeringSetting:setVisible(crabSteeringFound)
 	
 	-- Set ToolTip-Texts
 	self.alarmTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmTT"))
