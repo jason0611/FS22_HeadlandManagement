@@ -206,7 +206,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound))
 	
 	-- Check if Mod SpeedControl exists
-	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC = true then 
+	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
 		spec.modSpeedControlFound = true 
 		spec.useModSpeedControl = true
 		spec.turnSpeed = 1 --SpeedControl Mode 1
