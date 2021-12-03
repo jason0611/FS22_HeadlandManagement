@@ -20,21 +20,25 @@
 		<text name="hlmgui_front" text="avant"/>
 		<text name="hlmgui_back" text="arrière"/>
 		<text name="hlmgui_default" text="défaut"/>
+		
 		<text name="hlmgui_speedControl" text="Régler le régulateur de vitesse"/>
 		<text name="hlmgui_speedControlMod" text="Utiliser Mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Vitesse de travail sur le promontoire"/>
 		<text name="hlmgui_speedControlModSetting" text="Étape du régulateur de vitesse sur le promontoire"/>
-		<text name="hlmgui_crabSteering" text="Tourner la direction des crabes"/>
-		<text name="hlmgui_csDirect" text="direct"/>
-		<text name="hlmgui_csTwoStep" text="via normal"/>
+
+		<text name="hlmgui_alarmControl" text="Paramètres généraux"/>
 		<text name="hlmgui_beep" text="Tonalité d'avertissement lorsque la gestion est activée"/>
-		<text name="hlmgui_raise" text="Accessoires de levage"/>
+
+		<text name="hlmgui_implementControl" text="Contrôle de l'équipement"/>
+		<text name="hlmgui_raise" text="Lever les équipements"/>
 		<text name="hlmgui_plow" text="tourner la charrue"/>
 		<text name="hlmgui_plowFull" text="tournez immédiatement"/>
 		<text name="hlmgui_plowCenter" text="tournez en deux temps"/>
 		<text name="hlmgui_plowOff" text="ne pas tourner"/>
 		<text name="hlmgui_pto" text="Arrêt PTO et hydraulique"/>
 		<text name="hlmgui_ridgeMarker" text="Changement de traceur"/>
+		
+		<text name="hlmgui_gpsControl" text="Paramètres GPS"/>
 		<text name="hlmgui_gpsSetting" text="Pause du guidage GPS"/>
 		<text name="hlmgui_gpsType" text="Variante GPS utilisée"/>
 		<text name="hlmgui_gps_auto" text="automatique"/>
@@ -42,6 +46,27 @@
 		<text name="hlmgui_gps_vca" text="VCA seulement"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Fourrière automatique"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Déclencheur automatique"/>
+		
+		<text name="hlmgui_vehicleControl" text="Paramètres du véhicule"/>
 		<text name="hlmgui_diffLock" text="Déblocage des différentiels"/>
+		<text name="hlmgui_crabSteering" text="Tourner la direction des crabes"/>
+		<text name="hlmgui_csDirect" text="direct"/>
+		<text name="hlmgui_csTwoStep" text="via normal"/>
+		
+		<text name="hlmgui_speedControlTT" text="En bout de champ, le réglage du régulateur de vitesse peut être modifié sur une valeur réglable, puis réinitialisé."/>
+		<text name="hlmgui_speedControlModTT" text="Si disponible, le mod 'SpeedControl' peut être utilisé pour la régulation du régulateur de vitesse."/>
+		<text name="hlmgui_speedSettingTT" text="Réglage souhaité du régulateur de vitesse en bout de champ."/>
+		<text name="hlmgui_speedControlModSettingTT" text="Utilise le régulateur de vitesse 1, 2 ou 3 dans les tournières."/>
+		<text name="hlmgui_alarmTT" text="Lorsque la gestion des manœuvres en bout de champ est activée, un avertissement sonore régulier est émis."/>
+		<text name="hlmgui_raiseTT" text="En bout de champ, les outils portés abaissés peuvent être relevés puis redescendus. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
+		<text name="hlmgui_plowTT" text="Avec le relevage, les charrues peuvent être retournées. Soit directement, soit d'abord seulement vers le centre et seulement complètement lors de l'abaissement."/>
+		<text name="hlmgui_ridgeMarkerTT" text="Le relevage permet de commuter le traceur sur le côté opposé."/>
+		<text name="hlmgui_ptoTT" text="En bout de champ, les outils portés activés peuvent être désactivés puis réactivés. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
+		<text name="hlmgui_gpsTT" text="Dans les tournières, le guidage GPS est mis en pause, puis repris."/>
+		<text name="hlmgui_gpsTypeTT" text="La fonction peut être limitée à Guidance Steering ou VCA, ou mettre automatiquement en pause le système actuellement actif."/>
+		<text name="hlmgui_gpsAutoTriggerTT" text="En combinaison avec Guidance Steering, la gestion des fourrières peut être activée automatiquement lorsque la fourrière est atteinte."/>
+		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Par défaut, le système automatique active la gestion des fourrières lorsque l'avant du véhicule atteint la fourrière. Cela peut être commuté sur l'arrière du véhicule."/>
+		<text name="hlmgui_diffLockTT" text="Dans les tournières, les blocages de différentiel actifs sont relâchés puis remis en place."/>
+		<text name="hlmgui_csTT" text="Lorsque la fourrière est atteinte, il est possible de passer à une position de marche en crabe active. Soit directement, soit d'abord en position normale et seulement complètement à la fin de la tournière."/>
 	</texts>
 </l10n>

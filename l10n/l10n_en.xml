@@ -19,15 +19,17 @@
 		<text name="hlmgui_both" text="front and back"/>
 		<text name="hlmgui_front" text="front"/>
 		<text name="hlmgui_back" text="back"/>
-				<text name="hlmgui_default" text="default"/>
+		<text name="hlmgui_default" text="default"/>
+		
 		<text name="hlmgui_speedControl" text="Speed-Control Settings"/>
 		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Working speed in headlands"/>
 		<text name="hlmgui_speedControlModSetting" text="Speed-Control level in headlands"/>
-		<text name="hlmgui_crabSteering" text="Turn crabsteering"/>
-		<text name="hlmgui_csDirect" text="direct"/>
-		<text name="hlmgui_csTwoStep" text="via normal"/>
+	
+		<text name="hlmgui_alarmControl" text="General settings"/>
 		<text name="hlmgui_beep" text="Audible alert while active"/>
+		
+		<text name="hlmgui_implementControl" text="Implement control"/>
 		<text name="hlmgui_raise" text="Lift implements"/>
 		<text name="hlmgui_plow" text="Turn plow"/>
 		<text name="hlmgui_plowFull" text="Full turn"/>
@@ -35,6 +37,8 @@
 		<text name="hlmgui_plowOff" text="Don't turn"/>
 		<text name="hlmgui_pto" text="Stop PTO and hydraulical devices"/>
 		<text name="hlmgui_ridgeMarker" text="Change ridgemarker"/>
+		
+		<text name="hlmgui_gpsControl" text="GPS control"/>
 		<text name="hlmgui_gpsSetting" text="Stop GPS steering"/>
 		<text name="hlmgui_gpsType" text="Used GPS-Mod"/>
 		<text name="hlmgui_gps_auto" text="detect automatically"/>
@@ -42,6 +46,27 @@
 		<text name="hlmgui_gps_vca" text="only VCA"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger for automatic"/>
+		
+		<text name="hlmgui_vehicleControl" text="Vehicle control"/>
 		<text name="hlmgui_diffLock" text="Unlock differentials"/>	
+		<text name="hlmgui_crabSteering" text="Turn crabsteering"/>
+		<text name="hlmgui_csDirect" text="direct"/>
+		<text name="hlmgui_csTwoStep" text="via normal"/>
+		
+		<text name="hlmgui_speedControlTT" text="On the headland, the cruise control setting can be changed to an adjustable value and then reset afterwards."/>
+		<text name="hlmgui_speedControlModTT" text="If available, the mod 'SpeedControl' can be used for adjusting cruise control."/>
+		<text name="hlmgui_speedSettingTT" text="Desired cruise control setting in the headland."/>
+		<text name="hlmgui_speedControlModSettingTT" text="Use cruise control 1, 2, or 3 on the headland."/>
+		<text name="hlmgui_alarmTT" text="When headland management is activated, a regular warning tone is emitted."/>
+		<text name="hlmgui_raiseTT" text="In the headland, lowered implements can be raised and then lowered again. Optionally adjustable for all, only front or only rear implements."/>
+		<text name="hlmgui_plowTT" text="While lifting, plows can be turned. Either directly, or initially only to the center, and afterwards completely while lowering."/>
+		<text name="hlmgui_ptoTT" text="At the headland, activated implements can be switched off and then switched on again. Optionally adjustable for all, only front or only rear implements."/>
+		<text name="hlmgui_ridgeMarkerTT" text="While lifting, the ridgemarker can be switched to the opposite side."/>
+		<text name="hlmgui_gpsTT" text="GPS tracking is paused at the headland and then resumed."/>
+		<text name="hlmgui_gpsTypeTT" text="The function can be limited to Guidance Steering or VCA, or automatically pause the currently active system."/>
+		<text name="hlmgui_gpsAutoTriggerTT" text="In conjunction with Guidance Steering, headland management can be activated automatically when the headland is reached."/>
+		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="By default, headland management is activated when the front of the vehicle reaches the headland. This can be switched to the rear of the vehicle."/>
+		<text name="hlmgui_diffLockTT" text="At the headland, active differential locks are released and then set again."/>
+		<text name="hlmgui_csTT" text="When the headland is reached, an active crab steering can be switched over. Either directly, or first in normal or reversing position and then at the end of the headland completely."/>
 	</texts>
 </l10n>

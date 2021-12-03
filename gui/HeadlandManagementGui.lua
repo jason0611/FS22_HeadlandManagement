@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.0.6
+-- Version 1.9.0.7
 --
 
 HeadlandManagementGui = {}
