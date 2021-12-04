@@ -310,7 +310,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 end
 
 function HeadlandManagement:onReadStream(streamId, connection)
-	dbgprint("onReadStream", 2)
+	dbgprint("onReadStream", 3)
 	local spec = self.spec_HeadlandManagement
 	spec.exists = streamReadBool(streamId, connection)
 	if spec.exists then
@@ -337,7 +337,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 end
 
 function HeadlandManagement:onWriteStream(streamId, connection)
-	dbgprint("onWriteStream", 2)
+	dbgprint("onWriteStream", 3)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.exists)
 	if spec.exists then
@@ -365,9 +365,9 @@ end
 	
 function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 	if not connection:getIsServer() then
-		dbgprint("onReadUpdateStream: receiving data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamReadBool(streamId) then
+			dbgprint("onReadUpdateStream: receiving data...", 3)
 			spec.exists = streamReadBool(streamId)
 			if spec.exists then
 				spec.beep = streamReadBool(streamId)
@@ -397,9 +397,9 @@ end
 
 function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
-		dbgprint("onWriteUpdateStream: sending data...", 2)
 		local spec = self.spec_HeadlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
+			dbgprint("onWriteUpdateStream: sending data...", 3)
 			streamWriteBool(streamId, spec.exists)
 			if spec.exists then
 				streamWriteBool(streamId, spec.beep)
