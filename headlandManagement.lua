@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.1.0
+-- Version 1.9.1.1
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -927,7 +927,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, r
 							if spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers ~= 0 then
 								actImplement:setRidgeMarkerState(0)
 							elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
-								print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
+								print("FS22_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
 							end
 						elseif spec.ridgeMarkerState ~= 0 then
 							for state,_ in pairs(specRM.ridgeMarkers) do
@@ -941,7 +941,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, r
 								actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
 								dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
 							elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
-								print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
+								print("FS22_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
 							end
 						end
 					end
@@ -1097,6 +1097,21 @@ function HeadlandManagement:stopGPS(self, enable)
 	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
 		spec.vcaStatus = self:vcaGetState("snapIsOn") --self.vcaSnapIsOn
 		if spec.vcaStatus then 
+		
+			--[[
+			self:vcaSetState( "snapIsOn", true )
+		 
+			local x = (self:vcaGetState("snapDirection") + 2) % 4
+			self:vcaSetState( "snapDirection" , x)
+			
+			local l,r = self.spec_vca.snapLeft, self.spec_vca.snapRight 
+			self:vcaSetState( "snapFactor", -self.spec_vca.snapFactor + l )
+			self:vcaSetState( "snapLeft", r )
+			self:vcaSetState( "snapRight", l )
+		
+			--self.spec_vca.snapPosTimer = math.max( Utils.getNoNil( self.spec_vca.snapPosTimer , 0 ), 3000 )
+			--]]
+		
 			dbgprint("stopGPS : VCA-GPS off")
 			self:vcaSetState( "snapIsOn", false )
 		end
@@ -1104,6 +1119,7 @@ function HeadlandManagement:stopGPS(self, enable)
 	if spec.modVCAFound and spec.vcaStatus and spec.gpsSetting ~= 2 and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "snapIsOn", true )
+		self:vcaSetState( "snapDirection", 0 )
 		self:vcaSetSnapFactor()
 		if spec.wasGPSAutomatic then
 			spec.gpsSetting = 1
