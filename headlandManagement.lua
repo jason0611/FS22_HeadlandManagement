@@ -6,7 +6,7 @@
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 3)
+GMSDebug:init(g_currentModName, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -954,8 +954,7 @@ end
 
 function HeadlandManagement:wait(self, waitTime, dt)
 	local spec = self.spec_HeadlandManagement
-	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 3)
-	dbgprint("wait : dt: "..tostring(dt), 3)
+	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
 	if spec.waitCounter == nil then
 		spec.waitCounter = 0
 	end
