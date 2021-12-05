@@ -67,6 +67,6 @@
 		<text name="hlmgui_gpsAutoTriggerTT" text="En combinaison avec Guidance Steering, la gestion des fourrières peut être activée automatiquement lorsque la fourrière est atteinte."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Par défaut, le système automatique active la gestion des fourrières lorsque l'avant du véhicule atteint la fourrière. Cela peut être commuté sur l'arrière du véhicule."/>
 		<text name="hlmgui_diffLockTT" text="Dans les tournières, les blocages de différentiel actifs sont relâchés puis remis en place."/>
-		<text name="hlmgui_csTT" text="Lorsque la fourrière est atteinte, il est possible de passer à une position de marche en crabe active. Soit directement, soit d'abord en position normale et seulement complètement à la fin de la tournière."/>
+		<text name="hlmgui_csTT" text="Lorsque la fourrière est atteinte, il est possible de passer à une position de marche en crabe active. Soit directement, soit d'abord en position normale et seulement complètement à la fin de la tournière. Remarque : dans ce dernier cas, un bon timing est important. Il est donc recommandé de s'arrêter brièvement pour tourner et abaisser la charrue à la fin de la tournière."/>
 	</texts>
 </l10n>
