@@ -59,7 +59,7 @@
 		<text name="hlmgui_speedControlModSettingTT" text="Nutze Tempomat 1, 2, oder 3 im Vorgewende."/>
 		<text name="hlmgui_alarmTT" text="Bei aktiviertem Vorgewende-Management wird ein regelmäßiger Warnton ausgegeben."/>
 		<text name="hlmgui_raiseTT" text="Im Vorgewende können abgesenkte Anbaugeräte ausgehoben und anschließend wieder abgesenkt werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
-		<text name="hlmgui_plowTT" text="Mit dem Ausheben können Pflüge gedreht werden. Entweder direkt, oder zunächst nur zur Mitte und erst beim Absenken vollständig."/>
+		<text name="hlmgui_plowTT" text="Nach dem Ausheben können Pflüge gedreht werden. Entweder sofort vollständig, oder zunächst nur zur Mitte und erst beim Absenken vollständig. Hinweis: In letzterem Fall ist ein gutes Timing wichtig. Es wird daher empfohlen, zum Drehen und Absenken des Pflugs kurz anzuhalten."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Mit dem Ausheben kann der Spurreißer auf die gegenüberliegende Seite umgeschaltet werden."/>
 		<text name="hlmgui_ptoTT" text="Im Vorgewende können aktivierte Anbaugeräte abgeschaltet und anschließend wieder angeschaltet werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_gpsTT" text="Im Vorgewende wird die GPS-Spurführung pausiert und anschließend fortgesetzt."/>

@@ -32,9 +32,6 @@ Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lan
 Ideas for subsequent versions (without guarantee):
 - Separate lifting of front and rear devices, each when reaching the headland
 
-Further thoughts, but put on hold for now:
-- Taking over control during the turning maneuver
-
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
@@ -67,5 +64,3 @@ Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?l
 Ideen für Folgeversionen (ohne Gewähr):
 - Separates Ausheben von vorderen und hinteren Geräten, jeweils bei Erreichen des Vorgewendes
 
-Weitere Gedanken, aber zunächst zurückgestellt:
-- Übernahme der Steuerung während des Wendemanövers
