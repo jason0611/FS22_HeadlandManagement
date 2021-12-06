@@ -4,6 +4,10 @@
 -- Jason06 / Glowins Modschmiede
 -- Version 1.9.1.2
 --
+-- TODO:
+-- Konfiguration funktioniert derzeit nicht beim Händler
+-- Hundegangwechsel auf dem DediServer prüfen
+
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
 GMSDebug:init(g_currentModName, true, 2)
