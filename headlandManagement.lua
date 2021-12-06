@@ -1099,6 +1099,7 @@ function HeadlandManagement:stopGPS(self, enable)
 	end
 	
 -- Part 3: Vehicle Control Addon (VCA)
+	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
 	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
 		spec.vcaStatus = self:vcaGetState("snapIsOn") --self.vcaSnapIsOn
 		if spec.vcaStatus then 

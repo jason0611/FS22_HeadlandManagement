@@ -442,6 +442,7 @@ function HeadlandManagementGui:onClickOk()
 	-- beep
 	local beep = self.alarmSetting:getState() == 1
 
+	dbgprint("gpsSetting (GUI): "..tostring(gpsSetting), 3)
 	self:close()
 	self.callbackFunc(
 		self.target, 
