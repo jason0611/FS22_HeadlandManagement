@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.1.1
+-- Version 1.9.1.2
 --
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
@@ -185,7 +185,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCrabSteeringTwoStep = true
 	
 	spec.useGPS = true
-	spec.gpsSetting = 1 -- auto-mode
+	spec.gpsSetting = 1 -- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
 	spec.wasGPSAutomatic = false
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteering = false
@@ -1102,26 +1102,30 @@ function HeadlandManagement:stopGPS(self, enable)
 	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
 		spec.vcaStatus = self:vcaGetState("snapIsOn") --self.vcaSnapIsOn
 		if spec.vcaStatus then 
-		
-			--[[
-			self:vcaSetState( "snapIsOn", true )
-		 
-			local x = (self:vcaGetState("snapDirection") + 2) % 4
-			self:vcaSetState( "snapDirection" , x)
-			
-			local l,r = self.spec_vca.snapLeft, self.spec_vca.snapRight 
-			self:vcaSetState( "snapFactor", -self.spec_vca.snapFactor + l )
-			self:vcaSetState( "snapLeft", r )
-			self:vcaSetState( "snapRight", l )
-		
-			--self.spec_vca.snapPosTimer = math.max( Utils.getNoNil( self.spec_vca.snapPosTimer , 0 ), 3000 )
-			--]]
-		
-			dbgprint("stopGPS : VCA-GPS off")
-			self:vcaSetState( "snapIsOn", false )
-		end
+			if spec.gpsSetting == 1 or spec.gpsSetting == 3 then
+				dbgprint("stopGPS : VCA-GPS off")
+				self:vcaSetState( "snapIsOn", false )
+			else
+				local l,r = self.spec_vca.snapLeft, self.spec_vca.snapRight
+				if spec.vcaStatus == 4 then 
+					local l,r = self.spec_vca.snapLeft, self.spec_vca.snapRight 
+					self:vcaSetState( "snapFactor", -self.spec_vca.snapFactor + l )
+					self:vcaSetState( "snapLeft", r )
+					self:vcaSetState( "snapRight", l )
+					spec.vcaStatus = 5
+					dbgprint("stopGPS : VCA-GPS left")
+				else
+					self:vcaSetState( "snapFactor", -self.spec_vca.snapFactor - r )
+					self:vcaSetState( "snapLeft", r )
+					self:vcaSetState( "snapRight", l )
+					spec.vcaStatus = 4
+					dbgprint("stopGPS : VCA-GPS right")
+				end
+			end
+		end 
+		--self.spec_vca.snapPosTimer = math.max( Utils.getNoNil( self.spec_vca.snapPosTimer , 0 ), 3000 )
 	end
-	if spec.modVCAFound and spec.vcaStatus and spec.gpsSetting ~= 2 and not enable then
+	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 1 of spec.gpsSetting == 3) and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "snapIsOn", true )
 		self:vcaSetState( "snapDirection", 0 )
