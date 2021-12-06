@@ -1125,7 +1125,7 @@ function HeadlandManagement:stopGPS(self, enable)
 		end 
 		--self.spec_vca.snapPosTimer = math.max( Utils.getNoNil( self.spec_vca.snapPosTimer , 0 ), 3000 )
 	end
-	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 1 of spec.gpsSetting == 3) and not enable then
+	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 1 or spec.gpsSetting == 3) and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "snapIsOn", true )
 		self:vcaSetState( "snapDirection", 0 )
