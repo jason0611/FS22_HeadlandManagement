@@ -102,10 +102,10 @@ function HeadlandManagementGui.setData(
 	useRidgeMarker, 
 	useGPS, 
 	gpsSetting, 
-	useGuidanceSteering, 
+	-- useGuidanceSteering, 
 	useGuidanceSteeringTrigger, 
 	useGuidanceSteeringOffset, 
-	useVCA, 
+	-- useVCA, 
 	useDiffLock, 
 	beep, 
 	modSpeedControlFound, 
@@ -243,8 +243,10 @@ function HeadlandManagementGui.setData(
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	
-	self.showGPS, self.gsMode, self.vcaMode, self.vcaFirstLeft, self.vcaFirstRight = true, 0, 0, 0, 0
+	self.showGPS = true
 	-- gpsSetting: 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
+	
+	if not modGuidanceSteeringFound and gpsSetting > 1 then gpsSetting = gpsSetting - 1 end
 	
 	if modGuidanceSteeringFound and modVCAFound then
 		self.gpsSetting:setTexts({
@@ -254,17 +256,12 @@ function HeadlandManagementGui.setData(
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaL"),
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaR")
 		})
-		self.gsMode = 2
-		self.vcaMode = 3
-		self.vcaFirstLeft = 4
-		self.vcaFirstRight = 5
 	end
 	if modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
 		})
-		self.gsMode = 2
 		if gpsSetting > 2 then gpsSetting = 1 end
 	end
 	if not modGuidanceSteeringFound and modVCAFound then
@@ -274,10 +271,7 @@ function HeadlandManagementGui.setData(
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaL"),
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaR")
 		})
-		self.vcaMode = 2
-		self.vcaFirstLeft = 3
-		self.vcaFirstRight = 4
-		if useGuidanceSteering then gpsSetting = 1 end
+		if gpsSetting == 2 then gpsSetting = 1 end
 	end
 	if not modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
@@ -421,18 +415,8 @@ function HeadlandManagementGui:onClickOk()
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()
 	-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
-	
-	if gpsSetting == 1 then useGuidanceSteering = false; useVCA = false end -- triggers auto-mode
-	if gpsSetting == 2 and self.modGuidanceSteeringFound then 
-		useGuidanceSteering = true
-		useVCA = false
-	elseif gpsSetting > 1 and not self.modGuidanceSteeringFound then
-		useGuidanceSteering = false
-		useVCA = true
+	if gpsSetting > 1 and not self.modGuidanceSteeringFound then
 		gpsSetting = gpsSetting + 1
-	elseif gpsSetting > 2 and self.modGuidanceSteeringFound then
-		useGuidanceSteering = false
-		useVCA = true
 	end
 	-- gps trigger
 	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
@@ -460,10 +444,8 @@ function HeadlandManagementGui:onClickOk()
 		useRidgeMarker, 
 		useGPS, 
 		gpsSetting, 
-		useGuidanceSteering, 
 		useGuidanceSteeringTrigger, 
 		useGuidanceSteeringOffset,
-		useVCA, 
 		useDiffLock, 
 		beep
 	)
