@@ -2,8 +2,11 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.1.0
+-- Version 1.9.1.2
 --
+-- TODO:
+-- Hundegangwechsel auf dem DediServer prüfen
+
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
 GMSDebug:init(g_currentModName, true, 2)
@@ -23,6 +26,11 @@ HeadlandManagement.WAITTIME = 5
 HeadlandManagement.TURNPLOW = 6
 HeadlandManagement.STOPPTO = 7
 HeadlandManagement.STOPGPS = 8
+
+HeadlandManagement.VCAIGNORE = 0
+HeadlandManagement.VCASUSPEND = 1
+HeadlandManagement.VCALEFT = 2
+HeadlandManagement.VCARIGHT = 3
 
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
@@ -112,10 +120,8 @@ function HeadlandManagement.initSpecialization()
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchRidge", "Change ridgemarkers", true)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteering", "Use mod GuidanceSteering", false)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useVCA", "Use mod VCA", false)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
 	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process")
@@ -180,17 +186,15 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCrabSteeringTwoStep = true
 	
 	spec.useGPS = true
-	spec.gpsSetting = 1 -- auto-mode
+	spec.gpsSetting = 1 -- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
 	spec.wasGPSAutomatic = false
 	spec.modGuidanceSteeringFound = false
-	spec.useGuidanceSteering = false
 	spec.useGuidanceSteeringTrigger = false	
 	spec.useGuidanceSteeringOffset = false
 	spec.guidanceSteeringOffset = 0
 	spec.setServerHeadlandActDistance = -1
 	spec.GSStatus = false
 	spec.modVCAFound = false
-	spec.useVCA = false
 	spec.vcaStatus = false
 	
 	spec.useDiffLock = true
@@ -238,6 +242,9 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
 
+	-- HLM configured?
+	spec.exists = self.configurations["HeadlandManagement"] == 2
+	
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
 		local xmlFile = savegame.xmlFile
@@ -258,16 +265,15 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
 			spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
 			spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
-			spec.useGuidanceSteering = xmlFile:getValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
 			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
-			spec.useVCA = xmlFile:getValue(key.."#useVCA", spec.useVCA)
 			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
 			dbgprint("onPostLoad : Loaded whole data set", 2)
 		end
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
+	-- HLM now configured?
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	dbgprint_r(self.configurations, 4, 2)
@@ -282,7 +288,6 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 	spec.exists = self.configurations["HeadlandManagement"] == 2
 	dbgprint("saveToXMLFile : key: "..tostring(key), 2)
 		
-	--HeadlandManagement.configSaver = true -- trigger saving config data if reconfiguring
 	xmlFile:setValue(key.."#configured", spec.exists)
 	if spec.exists then	
 		xmlFile:setValue(key.."#beep", spec.beep)
@@ -299,17 +304,12 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#centerPlow", spec.useCenterPlow)
 		xmlFile:setValue(key.."#switchRidge", spec.useRidgeMarker)
 		xmlFile:setValue(key.."#useGPS", spec.useGPS)
-		xmlFile:setValue(key.."#useGuidanceSteering", spec.useGuidanceSteering)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
-		xmlFile:setValue(key.."#useVCA", spec.useVCA)
 		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
 		dbgprint("saveToXMLFile : saving whole data", 2)
-	--else
-		--HeadlandManagement.configSaver = nil -- clean up hack data to preserver config HLM
 	end
 	dbgprint("saveToXMLFile : saving data finished", 2)
-	--dbgprint("configSaver is "..tostring(HeadlandManagement.configSaver), 3)
 end
 
 function HeadlandManagement:onReadStream(streamId, connection)
@@ -331,10 +331,8 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.useCenterPlow = streamReadBool(streamId)
 		spec.useRidgeMarker = streamReadBool(streamId)
 		spec.useGPS = streamReadBool(streamId)
-		spec.useGuidanceSteering = streamReadBool(streamId)
 		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
-		spec.useVCA = streamReadBool(streamId)
 		spec.useDiffLock = streamReadBool(streamId)
 	end
 end
@@ -358,10 +356,8 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteBool(streamId, spec.useCenterPlow)
 		streamWriteBool(streamId, spec.useRidgeMarker)
 		streamWriteBool(streamId, spec.useGPS)
-		streamWriteBool(streamId, spec.useGuidanceSteering)
 		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
-		streamWriteBool(streamId, spec.useVCA)
 		streamWriteBool(streamId, spec.useDiffLock)
 	end
 end
@@ -387,11 +383,9 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.useCenterPlow = streamReadBool(streamId)
 				spec.useRidgeMarker = streamReadBool(streamId)
 				spec.useGPS = streamReadBool(streamId)
-				spec.useGuidanceSteering = streamReadBool(streamId)
 				spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
 				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
-				spec.useVCA = streamReadBool(streamId)
 				spec.useDiffLock = streamReadBool(streamId)
 			end
 		end
@@ -419,11 +413,9 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.useCenterPlow)
 				streamWriteBool(streamId, spec.useRidgeMarker)
 				streamWriteBool(streamId, spec.useGPS)
-				streamWriteBool(streamId, spec.useGuidanceSteering)
 				streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
 				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
-				streamWriteBool(streamId, spec.useVCA)
 				streamWriteBool(streamId, spec.useDiffLock)
 			end
 		end
@@ -496,10 +488,8 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useRidgeMarker,
 		spec.useGPS,
 		spec.gpsSetting,
-		spec.useGuidanceSteering,
 		spec.useGuidanceSteeringTrigger,
 		spec.useGuidanceSteeringOffset,
-		spec.useVCA,
 		spec.useDiffLock,
 		spec.beep,
 		spec.modSpeedControlFound,
@@ -524,10 +514,8 @@ function HeadlandManagement:guiCallback(
 		useRidgeMarker, 
 		useGPS, 
 		gpsSetting, 
-		useGuidanceSteering, 
 		useGuidanceSteeringTrigger, 
 		useGuidanceSteeringOffset,
-		useVCA, 
 		useDiffLock, 
 		beep
 	)
@@ -547,10 +535,8 @@ function HeadlandManagement:guiCallback(
 	spec.useRidgeMarker = useRidgeMarker
 	spec.useGPS = useGPS
 	spec.gpsSetting = gpsSetting
-	spec.useGuidanceSteering = useGuidanceSteering
 	spec.useGuidanceSteeringTrigger = useGuidanceSteeringTrigger
 	spec.useGuidanceSteeringOffset = useGuidanceSteeringOffset
-	spec.useVCA = useVCA
 	spec.useDiffLock = useDiffLock
 	spec.beep = beep
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -927,7 +913,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, r
 							if spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers ~= 0 then
 								actImplement:setRidgeMarkerState(0)
 							elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
-								print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
+								print("FS22_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
 							end
 						elseif spec.ridgeMarkerState ~= 0 then
 							for state,_ in pairs(specRM.ridgeMarkers) do
@@ -941,7 +927,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, r
 								actImplement:setRidgeMarkerState(spec.ridgeMarkerState)
 								dbgprint("ridgeMarker: Set to "..tostring(specRM.ridgeMarkerState))
 							elseif spec.ridgeMarkerState ~= 0 and specRM.numRigdeMarkers == 0 then
-								print("FS19_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
+								print("FS22_HeadlandManagement :: Info : Can't set ridgeMarkerState: RidgeMarkers not controllable by script!")
 							end
 						end
 					end
@@ -974,7 +960,7 @@ function HeadlandManagement:stopPTO(self, stopPTO)
 	
 	for index,actImplement in pairs(allImplements) do
 		if actImplement ~= nil and actImplement.getAttacherVehicle ~= nil then
-			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
+			dbgprint("stopPTO : actImplement: "..actImplement:getName())
 			local jointDescIndex = 1 -- Joint #1 will always exist
 			local actVehicle = actImplement:getAttacherVehicle()
 			local frontPTO = false
@@ -1001,8 +987,8 @@ function HeadlandManagement:stopPTO(self, stopPTO)
 					dbgprint("stopPTO: Back PTO")
 				end 
 			else 
-				print("HeadlandManagement :: stopPTO : AttacherVehicle not set: towBar or towBarWeight active?")
-				print("HeadlandManagement :: stopPTO : Function restricted to all or nothing")
+				-- print("HeadlandManagement :: stopPTO : AttacherVehicle not set: towBar or towBarWeight active?")
+				-- print("HeadlandManagement :: stopPTO : Function restricted to all or nothing")
 				frontPTO = true
 				backPTO = true
 			end
@@ -1039,9 +1025,6 @@ function HeadlandManagement:stopGPS(self, enable)
 	dbgprint("stopGPS : "..tostring(enable))
 
 -- Part 1: Detect used mod
-	if spec.modGuidanceSteeringFound and spec.useGuidanceSteering then spec.gpsSetting = 2; end -- GS mode enforced
-	if spec.modVCAFound and spec.useVCA then spec.gpsSetting = 3; end -- VCA mode enforced
-	
 	if spec.gpsSetting == 1 then
 		spec.wasGPSAutomatic = true
 	end
@@ -1094,14 +1077,27 @@ function HeadlandManagement:stopGPS(self, enable)
 	end
 	
 -- Part 3: Vehicle Control Addon (VCA)
+	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
 	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
-		spec.vcaStatus = self:vcaGetState("snapIsOn") --self.vcaSnapIsOn
+		spec.vcaStatus = self:vcaGetState("snapIsOn")
 		if spec.vcaStatus then 
-			dbgprint("stopGPS : VCA-GPS off")
-			self:vcaSetState( "snapIsOn", false )
-		end
+			if spec.gpsSetting == 1 or spec.gpsSetting == 3 then
+				dbgprint("stopGPS : VCA-GPS off")
+				self:vcaSetState( "snapIsOn", false )
+			else
+				if spec.gpsSetting == 4 then 
+					self:vcaSnapReverseLeft()
+					spec.gpsSetting = 5
+					dbgprint("stopGPS : VCA-GPS left")
+				else
+					self:vcaSnapReverseRight()
+					spec.gpsSetting = 4
+					dbgprint("stopGPS : VCA-GPS right")
+				end
+			end
+		end 
 	end
-	if spec.modVCAFound and spec.vcaStatus and spec.gpsSetting ~= 2 and not enable then
+	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 1 or spec.gpsSetting == 3) and not enable then
 		dbgprint("stopGPS : VCA-GPS on")
 		self:vcaSetState( "snapIsOn", true )
 		self:vcaSetState( "snapDirection", 0 )

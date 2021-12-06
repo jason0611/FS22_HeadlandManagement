@@ -44,6 +44,9 @@
 		<text name="hlmgui_gps_auto" text="automatisch"/>
 		<text name="hlmgui_gps_gs" text="nur Guidance Steering"/>
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
+		<text name="hlmgui_gps_vcaL" text="nur VCA: Automatische Wende links"/>
+		<text name="hlmgui_gps_vcaR" text="nur VCA: Automatische Wende rechts"/>
+		
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
 
