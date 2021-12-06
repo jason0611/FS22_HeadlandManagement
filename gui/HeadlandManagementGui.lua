@@ -242,17 +242,22 @@ function HeadlandManagementGui.setData(
 		
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
-	local gsMode
-	local vcaMode
+	
+	local gsMode, vcaMode, vcaFirstLeft, vcaFirstRight
 	self.showGPS = true
+	
 	if modGuidanceSteeringFound and modVCAFound then
 		self.gpsSetting:setTexts({
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
-			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vca")
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vca"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaL"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaR")
 		})
 		gsMode = 2
 		vcaMode = 3
+		vcaFirstLeft = 4
+		vcaFirstRight = 5
 	end
 	if modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
@@ -265,10 +270,14 @@ function HeadlandManagementGui.setData(
 	if not modGuidanceSteeringFound and modVCAFound then
 		self.gpsSetting:setTexts({
 			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
-			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vca")
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vca"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaL"),
+			g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_vcaR")
 		})
 		gsMode = 1
 		vcaMode = 2
+		vcaFirstLeft = 3
+		vcaFirstRight = 4
 	end
 	if not modGuidanceSteeringFound and not modVCAFound then
 		self.gpsSetting:setTexts({
@@ -279,10 +288,12 @@ function HeadlandManagementGui.setData(
 		self.showGPS = false
 	end
 
-	if useGuidanceSteering and modGuidanceSteeringFound then gpsSetting = gsMode; end
-	if useVCA and modVCAFound then gpsSetting = vcaMode; end
-
+	if modGuidanceSteeringFound and useGuidanceSteering then gpsSetting = gsMode; end
+	if modVCAFound and useVCA == HeadlandManagement.VCASUSPEND then gpsSetting = vcaMode; end
+	if modVCAFound and useVCA == HeadlandManagement.VCALEFT then gpsSetting = vcaFirstLeft; end
+	if modVCAFound and useVCA == HeadlandManagement.VCARIGHT then gpsSetting = vcaFirstRight; end
 	self.gpsSetting:setState(gpsSetting)
+	
 	local gpsDisabled
 	if not modGuidanceSteeringFound and not modVCAFound then
 		gpsDisabled = true
