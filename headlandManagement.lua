@@ -24,6 +24,11 @@ HeadlandManagement.TURNPLOW = 6
 HeadlandManagement.STOPPTO = 7
 HeadlandManagement.STOPGPS = 8
 
+HeadlandManagement.VCAIGNORE = 0
+HeadlandManagement.VCASUSPEND = 1
+HeadlandManagement.VCALEFT = 2
+HeadlandManagement.VCARIGHT = 3
+
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
