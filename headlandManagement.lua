@@ -5,7 +5,6 @@
 -- Version 1.9.1.2
 --
 -- TODO:
--- Konfiguration funktioniert derzeit nicht beim Händler
 -- Hundegangwechsel auf dem DediServer prüfen
 
 
@@ -243,6 +242,9 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
 
+	-- HLM configured?
+	spec.exists = self.configurations["HeadlandManagement"] == 2
+	
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
 		local xmlFile = savegame.xmlFile
@@ -271,6 +273,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
 	
+	-- HLM now configured?
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	dbgprint_r(self.configurations, 4, 2)
