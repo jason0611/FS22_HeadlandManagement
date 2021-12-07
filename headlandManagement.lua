@@ -562,8 +562,10 @@ function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
 	-- debug output
-	dbgprint("onUpdate : spec_HeadlandManagement:", 3)
-	dbgprint_r(spec, 3)
+	if spec.actStep == 1 then
+		dbgprint("onUpdate : spec_HeadlandManagement:", 3)
+		dbgprint_r(spec, 3)
+	end
 	
 	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.isActive then
