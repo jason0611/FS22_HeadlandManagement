@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.1.3
+-- Version 1.9.1.5
 --
 -- TODO:
 -- Hundegangwechsel auf dem DediServer prüfen
@@ -27,11 +27,6 @@ HeadlandManagement.TURNPLOW = 6
 HeadlandManagement.STOPPTO = 7
 HeadlandManagement.STOPGPS = 8
 
-HeadlandManagement.VCAIGNORE = 0
-HeadlandManagement.VCASUSPEND = 1
-HeadlandManagement.VCALEFT = 2
-HeadlandManagement.VCARIGHT = 3
-
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
@@ -39,6 +34,14 @@ loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg"
 
 HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
 HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
+
+HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
+HeadlandManagement.guiIconFieldR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_right.dds")
+HeadlandManagement.guiIconFieldL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_left.dds")
+HeadlandManagement.guiIconStandby = createImageOverlay(g_currentModDirectory.."gui/hlm_standby.dds")
+HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
+HeadlandManagement.guiIconHeadlandR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_right.dds")
+HeadlandManagement.guiIconHeadlandL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_left.dds")
 
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
@@ -120,6 +123,7 @@ function HeadlandManagement.initSpecialization()
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchRidge", "Change ridgemarkers", true)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
+	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#gpsSetting", "GPS-Mode", 1)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
 	
@@ -265,6 +269,7 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
 			spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
 			spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
+			spec.gpsSetting = xmlFile:getValue(key.."#gpsSetting", spec.gpsSetting)
 			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
 			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
@@ -272,6 +277,9 @@ function HeadlandManagement:onPostLoad(savegame)
 		end
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
+	
+	if spec.gpsSetting == 2 and not spec.modGuidanceSteeringFound then spec.gpsSetting = 1 end
+	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
 	
 	-- HLM now configured?
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
@@ -304,6 +312,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#centerPlow", spec.useCenterPlow)
 		xmlFile:setValue(key.."#switchRidge", spec.useRidgeMarker)
 		xmlFile:setValue(key.."#useGPS", spec.useGPS)
+		xmlFile:setValue(key.."#gpsSetting", spec.gpsSetting)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
 		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
@@ -331,6 +340,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.useCenterPlow = streamReadBool(streamId)
 		spec.useRidgeMarker = streamReadBool(streamId)
 		spec.useGPS = streamReadBool(streamId)
+		spec.gpsSetting = streamReadInt8(streamId)
 		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
 		spec.useDiffLock = streamReadBool(streamId)
@@ -356,6 +366,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteBool(streamId, spec.useCenterPlow)
 		streamWriteBool(streamId, spec.useRidgeMarker)
 		streamWriteBool(streamId, spec.useGPS)
+		streamWriteInt8(streamId, spec.gpsSetting)
 		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
 		streamWriteBool(streamId, spec.useDiffLock)
@@ -383,6 +394,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.useCenterPlow = streamReadBool(streamId)
 				spec.useRidgeMarker = streamReadBool(streamId)
 				spec.useGPS = streamReadBool(streamId)
+				spec.gpsSetting = streamReadInt8(streamId)
 				spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
 				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
@@ -413,6 +425,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.useCenterPlow)
 				streamWriteBool(streamId, spec.useRidgeMarker)
 				streamWriteBool(streamId, spec.useGPS)
+				streamWriteInt8(streamId, spec.gpsSetting)
 				streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
 				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
@@ -657,8 +670,10 @@ function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
 
 	-- show icon if active
-	if self:getIsActive() and spec.isActive and spec.exists then 
-		g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
+	if self:getIsActive() and spec.exists then 
+		if self.isActive then
+			g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
+		end
 	 
 		local scale = g_gameSettings.uiScale
 		
@@ -666,29 +681,42 @@ function HeadlandManagement:onDraw(dt)
 		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY * 0.92
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
+		local guiIcon = HeadlandManagement.guiIconField
 		
-		renderOverlay(HeadlandManagement.guiIcon, x, y, w, h)
+		if spec.isActive then 
+			guiIcon = HeadlandManagement.guiIconHeadland
+		end
+
+		if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn")then
+			if not spec.isActive then 
+				guiIcon = HeadlandManagement.guiIconFieldL
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandL
+			end
+		end
+		if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then
+			if not spec.isActive then 
+				guiIcon = HeadlandManagement.guiIconFieldR
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandR
+			end
+		end
+		if not spec.isActive and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+			local spec_gs = self.spec_globalPositioningSystem 
+			local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
+			if gpsEnabled then
+				guiIcon = HeadlandManagement.guiIconStandby
+			end
+		end
+		
+		renderOverlay(guiIcon, x, y, w, h)
 	end
 	
-	-- show icon if standby in auto-mode
-	if self:getIsActive() and spec.exists and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger and not spec.isActive then
-		local spec_gs = self.spec_globalPositioningSystem 
-		local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
-		
-		if gpsEnabled then
-			local scale = g_gameSettings.uiScale
-		
-			local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX * 0.9
-			local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY * 0.92
-			local w = 0.015 * scale
-			local h = w * g_screenAspectRatio
-		
-			renderOverlay(HeadlandManagement.guiAuto, x, y, w, h)
-		end
+	dbgrenderTable(spec, 1, 3)
+	local spec_gs = self.spec_globalPositioningSystem
+	if spec_gs ~= nil then 
+		-- dbgrenderTable(spec_gs, 1, 3)
 	end
-
-	--dbgrenderTable(spec, 1, 3)
-	local spec_gs = self.spec_globalPositioningSystem; if spec_gs ~= nil then dbgrenderTable(spec_gs, 1, 3); end
 end
 	
 function HeadlandManagement:reduceSpeed(self, enable)	
@@ -1039,7 +1067,7 @@ function HeadlandManagement:stopGPS(self, enable)
 	end
 		
 	if spec.gpsSetting == 1 and spec.modVCAFound then
-		local vcaStatus = self.vcaSnapIsOn
+		local vcaStatus = self:vcaGetState("snapIsOn")
 		if vcaStatus then 
 			spec.gpsSetting = 3 
 			dbgprint("stopGPS : VCA is active")
@@ -1048,7 +1076,7 @@ function HeadlandManagement:stopGPS(self, enable)
 	dbgprint("stopGPS : gpsSetting: "..tostring(spec.gpsSetting))
 
 -- Part 2: Guidance Steering	
-	if spec.modGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and spec.gpsSetting ~= 3 then
+	if spec.modGuidanceSteeringFound and self.onSteeringStateChanged ~= nil and spec.gpsSetting < 3 then
 		local gsSpec = self.spec_globalPositioningSystem
 		if enable then
 			dbgprint("stopGPS : Guidance Steering off")
@@ -1086,13 +1114,15 @@ function HeadlandManagement:stopGPS(self, enable)
 				self:vcaSetState( "snapIsOn", false )
 			else
 				if spec.gpsSetting == 4 then 
-					self:vcaSnapReverseLeft()
-					spec.gpsSetting = 5
-					dbgprint("stopGPS : VCA-GPS left")
+					if self.vcaSnapReverseLeft ~= nil then 
+						self:vcaSnapReverseLeft()
+						dbgprint("stopGPS : VCA-GPS turn left")
+					end
 				else
-					self:vcaSnapReverseRight()
-					spec.gpsSetting = 4
-					dbgprint("stopGPS : VCA-GPS right")
+					if self.vcaSnapReverseRight ~= nil then 
+						self:vcaSnapReverseRight() 
+						dbgprint("stopGPS : VCA-GPS turn right")
+					end
 				end
 			end
 		end 
@@ -1105,6 +1135,13 @@ function HeadlandManagement:stopGPS(self, enable)
 		if spec.wasGPSAutomatic then
 			spec.gpsSetting = 1
 			spec.wasGPSAutomatic = false
+		end
+	end
+	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 4 or spec.gpsSetting == 5) and not enable then
+		if spec.gpsSetting == 4 then 
+			spec.gpsSetting = 5
+		else
+			spec.gpsSetting = 4
 		end
 	end
 end
