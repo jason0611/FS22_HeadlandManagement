@@ -597,23 +597,23 @@ function HeadlandManagement:onUpdate(dt)
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
 			dbgprint("onUpdate : waitTime: "..tostring(spec.waitTime), 3)
 			-- Activation
-			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, true); end
-			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(self, true, spec.useCrabSteeringTwoStep); end
-			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(self, true); end
-			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then spec.waitTime = HeadlandManagement:raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1); end
-			if spec.actStep == HeadlandManagement.WAITTIME and spec.action[HeadlandManagement.WAITTIME] then HeadlandManagement:wait(self, spec.waitTime, dt); end
-			if spec.actStep == HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then HeadlandManagement:raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 2); end
-			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(self, true); end
-			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement:stopGPS(self, true); end
+			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(true); end
+			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(true, spec.useCrabSteeringTwoStep); end
+			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(true); end
+			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then spec.waitTime = HeadlandManagement:raiseImplements(true, spec.useTurnPlow, spec.useCenterPlow, 1); end
+			if spec.actStep == HeadlandManagement.WAITTIME and spec.action[HeadlandManagement.WAITTIME] then HeadlandManagement:wait(spec.waitTime, dt); end
+			if spec.actStep == HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then HeadlandManagement:raiseImplements(true, spec.useTurnPlow, spec.useCenterPlow, 2); end
+			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(true); end
+			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement:stopGPS(true); end
 			-- Deactivation
-			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement:stopGPS(self, false); end
-			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(self, false); end
-			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime = HeadlandManagement:raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2); end
-			if spec.actStep == -HeadlandManagement.WAITTIME and spec.action[HeadlandManagement.WAITTIME] then HeadlandManagement:wait(self, spec.waitTime, dt); end
-			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement:raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1); end
-			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(self, false); end
-			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(self, false, spec.useCrabSteeringTwoStep); end
-			if spec.actStep == -HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(self, false); end		
+			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement:stopGPS(false); end
+			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement:stopPTO(false); end
+			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime = HeadlandManagement:raiseImplements(false, spec.useTurnPlow, spec.useCenterPlow, 2); end
+			if spec.actStep == -HeadlandManagement.WAITTIME and spec.action[HeadlandManagement.WAITTIME] then HeadlandManagement:wait(spec.waitTime, dt); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement:raiseImplements(false, spec.useTurnPlow, spec.useCenterPlow, 1); end
+			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement:disableDiffLock(false); end
+			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement:crabSteering(false, spec.useCrabSteeringTwoStep); end
+			if spec.actStep == -HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement:reduceSpeed(false); end		
 		end
 		spec.actStep = spec.actStep + 1
 		if spec.actStep == 0 then 
@@ -719,7 +719,7 @@ function HeadlandManagement:onDraw(dt)
 	end
 end
 	
-function HeadlandManagement:reduceSpeed(self, enable)	
+function HeadlandManagement:reduceSpeed(enable)	
 	local spec = self.spec_HeadlandManagement
 	local spec_drv = self.spec_drivable
 	if spec_drv == nil then return; end;
@@ -773,7 +773,7 @@ function HeadlandManagement:reduceSpeed(self, enable)
 	end
 end
 
-function HeadlandManagement:crabSteering(self, enable, twoSteps)
+function HeadlandManagement:crabSteering(enable, twoSteps)
 	local spec = self.spec_HeadlandManagement
 	local csSpec = self.spec_crabSteering
 	local stateMax = csSpec.stateMax
@@ -814,7 +814,7 @@ function HeadlandManagement:crabSteering(self, enable, twoSteps)
 	end
 end
 
-function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, round)
+function HeadlandManagement:raiseImplements(raise, turnPlow, centerPlow, round)
 	local spec = self.spec_HeadlandManagement
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
     
@@ -965,7 +965,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, r
 	end
 end
 
-function HeadlandManagement:wait(self, waitTime, dt)
+function HeadlandManagement:wait(waitTime, dt)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
 	if spec.waitCounter == nil then
@@ -979,7 +979,7 @@ function HeadlandManagement:wait(self, waitTime, dt)
 	end
 end
 
-function HeadlandManagement:stopPTO(self, stopPTO)
+function HeadlandManagement:stopPTO(stopPTO)
 	local spec = self.spec_HeadlandManagement
     dbgprint("stopPTO: "..tostring(stopPTO))
 	
@@ -1014,8 +1014,7 @@ function HeadlandManagement:stopPTO(self, stopPTO)
 					dbgprint("stopPTO: Back PTO")
 				end 
 			else 
-				-- print("HeadlandManagement :: stopPTO : AttacherVehicle not set: towBar or towBarWeight active?")
-				-- print("HeadlandManagement :: stopPTO : Function restricted to all or nothing")
+				print("HeadlandManagement :: stopPTO : AttacherVehicle not set: Function restricted to all or nothing")
 				frontPTO = true
 				backPTO = true
 			end
@@ -1047,7 +1046,7 @@ function HeadlandManagement:stopPTO(self, stopPTO)
 	end
 end
 
-function HeadlandManagement:stopGPS(self, enable)
+function HeadlandManagement:stopGPS(enable)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("stopGPS : "..tostring(enable))
 
@@ -1145,7 +1144,7 @@ function HeadlandManagement:stopGPS(self, enable)
 	end
 end
 
-function HeadlandManagement:disableDiffLock(self, disable)
+function HeadlandManagement:disableDiffLock(disable)
 	local spec = self.spec_HeadlandManagement
 	if disable then
 		spec.diffStateF = self:vcaGetState("diffLockFront") --self.vcaDiffLockFront
