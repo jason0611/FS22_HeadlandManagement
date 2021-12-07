@@ -858,8 +858,7 @@ function HeadlandManagement:raiseImplements(self, raise, turnPlow, centerPlow, r
 					end
 					waitTime = math.max(waitTime, moveTime)
 				else 
-					-- print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: towBar or towBarWeight active?")
-					-- print("HeadlandManagement :: raiseImplement : Function restricted to first attacher joint")
+					print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: Function restricted to first attacher joint")
 					backImpl = true
 				end
 				
