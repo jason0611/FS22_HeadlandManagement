@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
     <texts>
-    	<text name="input_HLM_TOGGLESTATE" text="Gestion des fourrières : Début / Fin"/>	
-    	<text name="input_HLM_SWITCHON" text="Gestion des fourrières : Début" />
-    	<text name="input_HLM_SWITCHOFF" text="Gestion des fourrières : Fin" />	
-    	<text name="input_HLM_SHOWGUI" text="Gestion des fourrières : paramètres" />
+    	<text name="input_HLM_TOGGLESTATE" text="Début / Fin"/>	
+    	<text name="input_HLM_SWITCHON" text="Début" />
+    	<text name="input_HLM_SWITCHOFF" text="Fin" />	
+    	<text name="input_HLM_SHOWGUI" text="Paramètres" />
 		
-		<text name="text_HLM_isActive" text="Gestion des fourrières activée"/>
+		<text name="text_HLM_isActive" text="Mode fourrière actif"/>
 		<text name="text_HLM_configuration" text="Gestion des fourrière"/>
 		<text name="text_HLM_installed" text="Gestion des tournières intégrée"/>
 		<text name="text_HLM_notInstalled" text="Pas de gestion des tournières intégrée"/>

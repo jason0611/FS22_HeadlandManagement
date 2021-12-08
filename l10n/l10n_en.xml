@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
 	<texts>
-    	<text name="input_HLM_TOGGLESTATE" text="Headlandmanagement: Start / Stop"/>	
-    	<text name="input_HLM_SWITCHON" text="Headlandmanagement: Start" />
-    	<text name="input_HLM_SWITCHOFF" text="Headlandmanagement: Stop" />	
-    	<text name="input_HLM_SHOWGUI" text="Headlandmanagement: Settings" />
+    	<text name="input_HLM_TOGGLESTATE" text="Start / Stop"/>	
+    	<text name="input_HLM_SWITCHON" text="Start" />
+    	<text name="input_HLM_SWITCHOFF" text="Stop" />	
+    	<text name="input_HLM_SHOWGUI" text="Settings" />
 		
-		<text name="text_HLM_isActive" text="Headlandmanagement active"/>
+		<text name="text_HLM_isActive" text="Headland-Mode active"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
 		<text name="text_HLM_installed" text="Headlandmanagement installed"/>
 		<text name="text_HLM_notInstalled" text="Headlandmanagement not installed"/>

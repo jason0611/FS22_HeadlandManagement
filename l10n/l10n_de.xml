@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
     <texts>
-    	<text name="input_HLM_TOGGLESTATE" text="Vorgewende-Management: Start / Stop"/>	
-    	<text name="input_HLM_SWITCHON" text="Vorgewende-Management: Start" />
-    	<text name="input_HLM_SWITCHOFF" text="Vorgewende-Management: Stop" />	
-    	<text name="input_HLM_SHOWGUI" text="Vorgewende-Management: Einstellungen" />
+    	<text name="input_HLM_TOGGLESTATE" text="Start / Stop"/>	
+    	<text name="input_HLM_SWITCHON" text="Start" />
+    	<text name="input_HLM_SWITCHOFF" text="Stop" />	
+    	<text name="input_HLM_SHOWGUI" text="Einstellungen" />
 		
-		<text name="text_HLM_isActive" text="Vorgewende-Management aktiviert"/>
+		<text name="text_HLM_isActive" text="Vorgewende-Modus aktiv"/>
 		<text name="text_HLM_configuration" text="Vorgewende-Management"/>
 		<text name="text_HLM_installed" text="Vorgewende-Management eingebaut"/>
 		<text name="text_HLM_notInstalled" text="Kein Vorgewende-Management eingebaut"/>
