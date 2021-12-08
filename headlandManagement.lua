@@ -826,12 +826,15 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
     
     local waitTime = 0
 	local allImplements = self:getRootVehicle():getChildVehicles()
+	
+	dbgprint("raiseImplements : #allImplements = "..tostring(#allImplements), 3)
     
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
 			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
 			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
+				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") allows lowering, is PickUp or is foldable", 3)
 				local jointDescIndex = 1 -- Joint #1 will always exist
 				local actVehicle = actImplement:getAttacherVehicle()
 				local frontImpl = false
@@ -965,10 +968,18 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						end
 					end
 				end
+		 	else
+		 		dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") don't allows lowering, is no PickUp and is not foldable", 3)
 		 	end
+		else
+			if actImplement ~= nil then
+				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 3)
+			else
+				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 3)
+			end
 		end
-	return waitTime
 	end
+	return waitTime
 end
 
 function HeadlandManagement.wait(self, waitTime, dt)
@@ -992,6 +1003,7 @@ function HeadlandManagement.stopPTO(self, stopPTO)
     local allImplements = self:getRootVehicle():getChildVehicles()
 	
 	for index,actImplement in pairs(allImplements) do
+		-- stop or start implement
 		if actImplement ~= nil and actImplement.getAttacherVehicle ~= nil then
 			dbgprint("stopPTO : actImplement: "..actImplement:getName())
 			local jointDescIndex = 1 -- Joint #1 will always exist
