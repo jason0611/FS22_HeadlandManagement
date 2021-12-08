@@ -17,16 +17,17 @@ Included functions:
 - Changing the steering direction during crab steering
 - Beep when headland management is activated
 
-Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a> is present:
+Additionally, if Vehicle Control Addon (VCA) is present:
 - Deactivate and reactivate GPS track guidance
+- Trigger VCA's turn-function
 - Disengage and re-engage active differential locks
 
-Additionally, if <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a> is available: 
+Additionally, once if Guidance Steering is available: 
 - Deactivate and reactivate GPS guidance
 - Headland automatic: If using Guidance Steering, the headland management can be activated automatically when the headland is reached
 - Determination of an offset for Guidance Steering to activate the automatic suitable for rear devices 
 
-Additionally for existing <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
+Additionally, once if SpeedControl will be available :
 - Speed adjustment also possible by changing the cruise control level
 
 Ideas for subsequent versions (without guarantee):
@@ -49,16 +50,17 @@ Enthaltene Funktionen:
 - Wechsel der Lenkrichtung bei Hundegang
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
-Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=159429&title=fs2019">Vehicle Control Addon (VCA)</a>:
+Zusätzlich bei vorhandenem Vehicle Control Addon (VCA):
 - GPS Spurführung deaktivieren und reaktivieren
+- Automatische Wendefunktion von VCA auslösen
 - Aktive Differentialsperren lösen und wieder setzen
 
-Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=140328&title=fs2019">Guidance Steering</a>:
+Zusätzlich, wenn Guidance Steering verfügbar ist:
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
 - Erittlung eines Offsets für Guidance Steering, um die Automatik passend für am Heck befestigte Geräte zu aktivieren
 
-Zusätzlich bei vorhandenem <a href="https://www.farming-simulator.com/mod.php?lang=de&country=de&mod_id=125190&title=fs2019">SpeedControl</a>:
+Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Ideen für Folgeversionen (ohne Gewähr):
