@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
     <texts>
-    	<text name="input_HLM_TOGGLESTATE" text="Start / Stop"/>	
-    	<text name="input_HLM_SWITCHON" text="Start" />
-    	<text name="input_HLM_SWITCHOFF" text="Stop" />	
-    	<text name="input_HLM_SHOWGUI" text="Einstellungen" />
+    	<text name="input_HLM_TOGGLESTATE" text="Vorgewende-Modus / Feld-Modus"/>	
+    	<text name="input_HLM_SWITCHON" text="Vorgewende-Modus" />
+    	<text name="input_HLM_SWITCHOFF" text="Feld-Modus" />	
+    	<text name="input_HLM_SHOWGUI" text="Vorgewende: Einstellungen" />
 		
 		<text name="text_HLM_isActive" text="Vorgewende-Modus aktiv"/>
 		<text name="text_HLM_configuration" text="Vorgewende-Management"/>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
     <texts>
-    	<text name="input_HLM_TOGGLESTATE" text="Début / Fin"/>	
-    	<text name="input_HLM_SWITCHON" text="Début" />
-    	<text name="input_HLM_SWITCHOFF" text="Fin" />	
-    	<text name="input_HLM_SHOWGUI" text="Paramètres" />
+    	<text name="input_HLM_TOGGLESTATE" text="Mode fourrière / Mode champ"/>	
+    	<text name="input_HLM_SWITCHON" text="Mode fourrière" />
+    	<text name="input_HLM_SWITCHOFF" text="Mode champ" />	
+    	<text name="input_HLM_SHOWGUI" text="Fourrière : Paramètres" />
 		
 		<text name="text_HLM_isActive" text="Mode fourrière actif"/>
 		<text name="text_HLM_configuration" text="Gestion des fourrière"/>

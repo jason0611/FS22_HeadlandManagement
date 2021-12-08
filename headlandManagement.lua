@@ -443,15 +443,18 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
 		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
-			local actionEventId;
-			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_HIGH)
+			_, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
+			
 			_, spec.actionEventOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOn, GS_PRIO_NORMAL)
 			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
+			
 			_, spec.actionEventOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
 			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
+			
+			local actionEventId
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
 		end		
@@ -564,7 +567,6 @@ function HeadlandManagement:onUpdate(dt)
 	-- debug output
 	if spec.actStep == 1 then
 		dbgprint("onUpdate : spec_HeadlandManagement:", 3)
-		dbgprint_r(spec, 3)
 	end
 	
 	-- play warning sound if headland management is active
@@ -677,10 +679,13 @@ function HeadlandManagement:onDraw(dt)
 
 	-- show icon if active
 	if self:getIsActive() and spec.exists then 
-		if self.isActive then
+		if spec.isActive then
 			g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
+			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHOFF"))
+		else
+			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHON"))
 		end
-	 
+		
 		local scale = g_gameSettings.uiScale
 		
 		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX * 0.9

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="62">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>1.9.1.7</version>
+	<version>1.9.1.8</version>
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -26,47 +26,21 @@ Included functions:
 - Disengage and re-engage power take-off(s) and hydraulics
 - Beep when headland management is activated
 
-Planned, if VCA Mod (FS22_VehicleControlAddon) is present:
+If VCA Mod (FS22_VehicleControlAddon) is present:
 - Deactivate and reactivate GPS track guidance
 - Disengage and re-engage active differential locks
+- Trigger VCA's turn function
 
-Planned, if Guidance Steering Mod (FS22_guidanceSteering) is available: 
+Planned, once if Guidance Steering Mod (FS22_guidanceSteering) is available: 
 - Deactivate and reactivate GPS guidance
 - Headland automatic: Activate headland management automatically when headland is reached
 
-Planned, if SpeedControl Mod (FS22_zzzSpeedControl) is present:
+Planned, once if SpeedControl Mod (FS22_zzzSpeedControl) is available:
 - Speed adjustment also possible by changing the cruise control level
 
-ATTENTION: This mod is not compatible with FS19_towBar or FS19_towBarWeight
+Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
-Further ideas or wishes are welcome at https://github.com/jason0611/FS19_HeadlandManagement
-
-Changelog V1.0.1.0:
-- Spanish translation added (many thanks to Vanquish081).
-- Added support for Ifko's JohnDeerePack
-- Headland automatic: If using Guidance Steering, the headland management can be activated automatically when the headland is reached
-
-Changelog V1.1.0.0:
-- Crab steering control added
-
-Changelog V1.1.0.1:
-- Fixed an rare issue with implements not working as expected
-
-ChangeLog V1.1.1.0:
-- If cruise control is active when headland management is activated, it will be reactivated when headland management is deactivated again
-
-ChangeLog V1.1.1.1:
-- HOTFIX: Fixes game crash if FS19_towBar or FS19_towBarWeight is active
-
-ChangeLog V1.1.2.0:
-- Crab steering now also works with machines that are designed as articulated steering systems
-
-ChangeLog V1.2.0.0:
-- Added rear trigger for headland automatic
-- Fixed lua error when using ridge marker switching on some DLC implements. Note: These implements can't be switched by this mod, because they are not addressable by script.
-- Changed gui layout to work better on high resolutions
-
-ChangeLog V2.0.0.0: (Work in progress!)
+ChangeLog V2.0.0.0:
 - Ready for Farming Simulator 22
 
 Many thanks to team Agrarplay and the project LU Wohnzimmer for the extensive test-support!
@@ -91,48 +65,22 @@ Enthaltene Funktionen:
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
-Geplant bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
+Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
+- Auslösen der Wendefunktion
 
-Geplant bei vorhandenem Guidance Steering Mod (FS22_guidanceSteering):
+Geplant sobald Guidance Steering (FS22_guidanceSteering?) verfügbar ist:
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Automatische Aktivierung des Vorgewendemanagements, wenn das Vorgewende erreicht wird
 
-Geplant bei vorhandenem SpeedControl Mod (FS22_zzzSpeedControl):
+Geplant sobald SpeedControl (FS22_zzzSpeedControl?) verfügbar ist:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
-ACHTUNG: Dieser Mod ist nicht kompatibel mit FS19_towBar oder FS19_towBarWeight
+Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
 
-Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS19_HeadlandManagement entgegengenommen
-
-Changelog V1.0.1.0:
-- Spanische Übersetzung ergänzt (vielen Dank an Vanquish081)
-- Unterstützung für Ifkos JohnDeerePack hinzugefügt
-- Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
-
-Changelog V1.1.0.0:
-- Seitenwechsel bei Hundegang ergänzt
-
-Changelog V1.1.0.1:
-- Problem behoben, bei dem Anbaugeräte nicht wie erwartet ausgehoben oder abgesenkt wurden
-
-Changelog V1.1.1.0:
-- Ist der Tempomat aktiv, wenn das Vorgewendemanagement aktiviert wird, so wird er reaktiviert, wenn das Vorgewendemanagement wieder deaktiviert wird
-
-ChangeLog V1.1.1.1:
-- HOTFIX: Behebt Spielabsturz wenn FS19_towBar oder FS19_towBarWeight aktiv ist
-
-ChangeLog V1.1.2.0:
-- Hundegangsteuerung funktioniert nun auch mit Maschinen, die als Knicklenker ausgeführt sind
-
-ChangeLog V1.2.0.0:
-- Auslöser für das hintere Fahrzeugende zur Vorgewendeautomatik hinzugefügt
-- Lua-Fehler bei der Verwendung der Spurreißer-Umschaltung bei einigen DLC-Geräten behoben. Hinweis: Diese Geräte können von diesem Mod nicht geschaltet werden, da sie nicht per Skript adressierbar sind.
-- Das Layout der Benutzeroberfläche wurde geändert, um bei hohen Auflösungen besser zu funktionieren.
-
-ChangeLog V2.0.0.0: (Noch in Arbeit!)
-- Bereits für den Landwirtschaftssimulator 22
+ChangeLog V2.0.0.0:
+- Bereit für den Landwirtschaftssimulator 22
 
 Vielen Dank an das Team Agrarplay und das Projekt LU Wohnzimmer für die umfangreiche Testunterstützung!
 
@@ -156,44 +104,22 @@ Fonctions incluses :
 - Désengager et réengager la ou les prises de force et le système hydraulique.
 - Bip lorsque la gestion des tournières est activée
 
-En outre, si le VCA Mod (FS19_VehicleControlAddon) est présent :
+En présence du VCA Mod (FS22_VehicleControlAddon) :
 - Désactiver et réactiver le guidage par trace GPS
 - Désengager et réengager les blocages de différentiel actif
+- Déclenchement de la fonction de retournement
 
-De plus, si le Guidance Steering Mod (FS19_guidanceSteering) est disponible :
+Prévu dès que Guidance Steering (FS22_guidanceSteering ?) sera disponible :
 - Désactiver et réactiver le guidage GPS
 - Gestion automatique des tournières : activation automatique de la gestion des tournières lorsque la tournière est atteinte
 
-En plus pour le SpeedControl Mod (FS19_zzzSpeedControl) existant :
+Prévu dès que SpeedControl (FS22_zzzSpeedControl ?) sera disponible :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
-
-ATTENTION : Ce mod n'est pas compatible avec FS19_towBar ou FS19_towBarWeight.
 
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
-Changelog V1.0.1.0 :
-- Ajout de la traduction espagnole (merci à Vanquish081).
-- Automatique en bout de champ : lorsque vous utilisez la direction assistée, la gestion des bouts de champ peut être activée automatiquement lorsque le bout de champ est atteint
-
-Changelog V1.1.0.0 :
-- Ajout d'un changement de côté pour la conduite en crabe
-
-Changelog V1.1.0.1 :
-- Problème résolu lorsque les pièces jointes ne pouvaient pas être retirées dans de rares cas
-
-Changelog V1.1.1.0 :
-- Si le régulateur de vitesse est actif lorsque la gestion des manœuvres en bout de champ est activée, il est réactivé lorsque la gestion des manœuvres en bout de champ est à nouveau désactivée.
-
-ChangeLog V1.1.1.1 :
-- HOTFIX : Correction du plantage du jeu si FS19_towBar ou FS19_towBarWeight est actif
-
-ChangeLog V1.1.2.0 :
-- La marche en crabe fonctionne désormais aussi avec les machines conçues comme des dirigeables articulés
-
-ChangeLog V1.2.0.0 :
-- Ajout d'une gâchette arrière pour l'automatique en bout de champ
-- Correction d'une erreur lua lors de l'utilisation de la commutation de marqueur de crête sur certains outils DLC. Note : Ces outils ne peuvent pas être changés par ce mod, car ils ne sont pas adressables par le script
-- Modification de la disposition de l'interface pour un meilleur fonctionnement en haute résolution
+Changelog V2.0.0.0:
+- Prêt pour le FS22
 
 Un grand merci à l'équipe d'Agrarplay et au projet LU Wohnzimmer pour leur soutien important en matière de tests !
 
