@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.1.8
+-- Version 1.9.1.9
 --
 -- TODO:
 -- Hundegangwechsel auf dem DediServer prüfen
@@ -103,8 +103,9 @@ function HeadlandManagement.initSpecialization()
 	
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
+    schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#beepVol", "Audible alert volume", 5)
 	
-	schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
+	schemaSavegame:register(XMLValueType.FLOAT,"vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useSpeedControl", "Change speed in headlands", true)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useModSpeedControl", "use mod SpeedControl", false)
 	
@@ -156,6 +157,7 @@ function HeadlandManagement:onLoad(savegame)
 	
 	spec.timer = 0
 	spec.beep = true
+	spec.beepVol = 5
 	
 	spec.normSpeed = 20
 	spec.turnSpeed = 5
@@ -256,6 +258,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
 		if spec.exists then
 			spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
+			spec.beepVol = xmlFile:getValue(key.."#beepVol", spec.beepVol)
 			spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
 			spec.useSpeedControl = xmlFile:getValue(key.."#useSpeedControl", spec.useSpeedControl)
 			spec.useModSpeedControl = xmlFile:getValue(key.."#useModSpeedControl", spec.useModSpeedControl)
@@ -299,6 +302,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 	xmlFile:setValue(key.."#configured", spec.exists)
 	if spec.exists then	
 		xmlFile:setValue(key.."#beep", spec.beep)
+		xmlFile:setValue(key.."#beepVol", spec.beepVol)
 		xmlFile:setValue(key.."#turnSpeed", spec.turnSpeed)
 		xmlFile:setValue(key.."#useSpeedControl", spec.useSpeedControl)
 		xmlFile:setValue(key.."#useModSpeedControl", spec.useModSpeedControl)
@@ -327,6 +331,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	spec.exists = streamReadBool(streamId, connection)
 	if spec.exists then
 		spec.beep = streamReadBool(streamId)
+		spec.beepVol = streamReadInt8(streamId)
 		spec.turnSpeed = streamReadFloat32(streamId)
 		spec.useSpeedControl = streamReadBool(streamId)
 		spec.useModSpeedControl = streamReadBool(streamId)
@@ -353,6 +358,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	streamWriteBool(streamId, spec.exists)
 	if spec.exists then
 		streamWriteBool(streamId, spec.beep)
+		streamWriteInt8(streamId, spec.beepVol)
 		streamWriteFloat32(streamId, spec.turnSpeed)
 		streamWriteBool(streamId, spec.useSpeedControl)
 		streamWriteBool(streamId, spec.useModSpeedControl)
@@ -381,6 +387,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			spec.exists = streamReadBool(streamId)
 			if spec.exists then
 				spec.beep = streamReadBool(streamId)
+				spec.beepVol = streamReadInt8(streamId)
 				spec.turnSpeed = streamReadFloat32(streamId)
 				spec.useSpeedControl = streamReadBool(streamId)
 				spec.useModSpeedControl = streamReadBool(streamId)
@@ -412,6 +419,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			streamWriteBool(streamId, spec.exists)
 			if spec.exists then
 				streamWriteBool(streamId, spec.beep)
+				streamWriteInt8(streamId, spec.beepVol)
 				streamWriteFloat32(streamId, spec.turnSpeed)
 				streamWriteBool(streamId, spec.useSpeedControl)
 				streamWriteBool(streamId, spec.useModSpeedControl)
@@ -485,6 +493,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
 	dbgprint_r(spec, 4, 2)
+	print(spec.beepVol)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	HeadlandManagementGui.setData(
 		hlmGui.target,
@@ -508,6 +517,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useGuidanceSteeringOffset,
 		spec.useDiffLock,
 		spec.beep,
+		spec.beepVol,
 		spec.modSpeedControlFound,
 		spec.modGuidanceSteeringFound and gsConfigured,
 		spec.modVCAFound,
@@ -533,7 +543,8 @@ function HeadlandManagement:guiCallback(
 		useGuidanceSteeringTrigger, 
 		useGuidanceSteeringOffset,
 		useDiffLock, 
-		beep
+		beep,
+		beepVol
 	)
 	dbgprint("guiCallback", 2)
 	local spec = self.spec_HeadlandManagement
@@ -555,6 +566,7 @@ function HeadlandManagement:guiCallback(
 	spec.useGuidanceSteeringOffset = useGuidanceSteeringOffset
 	spec.useDiffLock = useDiffLock
 	spec.beep = beep
+	spec.beepVol = beepVol
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
@@ -573,7 +585,7 @@ function HeadlandManagement:onUpdate(dt)
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.isActive then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
-			playSample(HeadlandManagement.BEEPSOUND, 1, 0.5, 0, 0, 0)
+			playSample(HeadlandManagement.BEEPSOUND, 1, spec.beepVol / 10, 0, 0, 0)
 			dbgprint("Beep: "..self:getName(), 4)
 			spec.timer = 0
 		end	

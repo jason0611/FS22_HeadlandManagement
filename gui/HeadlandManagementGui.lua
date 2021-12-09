@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.1.8
+-- Version 1.9.1.9
 --
 
 HeadlandManagementGui = {}
@@ -34,6 +34,9 @@ HeadlandManagementGui.CONTROLS = {
 	"alarmTitle",
 	"alarmSetting",
 	"alarmTT",
+	"alarmVolumeTitle",
+	"alarmVolumeSetting",
+	"alarmVolumeTT",
 		
 	"sectionImplementControl",
 	"implementControl",
@@ -108,6 +111,7 @@ function HeadlandManagementGui.setData(
 	-- useVCA, 
 	useDiffLock, 
 	beep, 
+	beepVol,
 	modSpeedControlFound, 
 	modGuidanceSteeringFound, 
 	modVCAFound, 
@@ -169,11 +173,19 @@ function HeadlandManagementGui.setData(
 	-- AlertMode
 	self.alarmControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmControl"))
 	self.alarmTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_beep"))
+	self.alarmSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.alarmSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.alarmSetting:setState(beep and 1 or 2)
+	
+	self.alarmVolumeTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_beepVol"))
+	local values={}
+	for i=1,10 do values[i] = tostring(i*10).." %" end 
+	self.alarmVolumeSetting:setTexts(values)
+	self.alarmVolumeSetting:setState(beepVol)
+	self.alarmVolumeSetting:setDisabled(not beep)
 	
 	-- Implement control
 	self.implementControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_implementControl"))
@@ -341,6 +353,7 @@ function HeadlandManagementGui.setData(
 	
 	-- Set ToolTip-Texts
 	self.alarmTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmTT"))
+	self.alarmVolumeTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_beepVolTT"))
 	self.raiseTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_raiseTT"))
 	self.plowTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plowTT"))
 	self.ptoTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_ptoTT"))
@@ -360,6 +373,10 @@ end
 -- check logical dependencies
 function HeadlandManagementGui:logicalCheck()
 	dbgprint("HeadlandManagementGui: logicalCheck", 3)
+	
+	local useBeep = self.alarmSetting:getState() == 1
+	self.alarmVolumeSetting:setDisabled(not useBeep)
+	
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.modSpeedControlFound) 
 	
@@ -425,6 +442,7 @@ function HeadlandManagementGui:onClickOk()
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	-- beep
 	local beep = self.alarmSetting:getState() == 1
+	local beepVol = self.alarmVolumeSetting:getState()
 
 	dbgprint("gpsSetting (GUI): "..tostring(gpsSetting), 3)
 	self:close()
@@ -447,7 +465,8 @@ function HeadlandManagementGui:onClickOk()
 		useGuidanceSteeringTrigger, 
 		useGuidanceSteeringOffset,
 		useDiffLock, 
-		beep
+		beep,
+		beepVol
 	)
 end
 
