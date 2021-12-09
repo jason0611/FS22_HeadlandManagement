@@ -6,6 +6,7 @@
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
 		<fr>Gestion Des Promontoires</fr>
+		<cz>Souvraťový management</cz>
     </title>
     <description>
 		<en>
@@ -125,7 +126,7 @@ Un grand merci à l'équipe d'Agrarplay et au projet LU Wohnzimmer pour leur sou
 
 ]]>
 		</fr>
-		<en>
+		<cz>
 <![CDATA[
 Správa souvratí pro traktory, polní postřikovače, sekačky a kombajny.
 
@@ -163,7 +164,7 @@ ChangeLog V2.0.0.0:
 Mnohokrát děkujeme týmu Agrarplay a projektu LU Wohnzimmer za rozsáhlou testovací podporu!
 
 ]]>
-		</en>
+		</cz>
 	    
  	</description>	
     <multiplayer supported="true"/>
