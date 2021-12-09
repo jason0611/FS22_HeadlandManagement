@@ -32,9 +32,6 @@ HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
-HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
-HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
-
 HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
 HeadlandManagement.guiIconFieldR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_right.dds")
 HeadlandManagement.guiIconFieldL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_left.dds")
