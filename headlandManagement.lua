@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.2.0
+-- Version 1.9.2.1
 --
 -- TODO:
 -- Hundegangwechsel auf dem DediServer prüfen
@@ -759,7 +759,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 			end
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
-			self:setCruiseControlMaxSpeed(spec.turnSpeed)
+			self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.turnSpeed
 				dbgprint("reduceSpeed: SpeedControl adjusted")
@@ -778,7 +778,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 			end
 		else
 			spec.turnSpeed = self:getCruiseControlSpeed()
-			self:setCruiseControlMaxSpeed(spec.normSpeed)
+			self:setCruiseControlMaxSpeed(spec.normSpeed, spec.normSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.normSpeed
 				dbgprint("reduceSpeed: SpeedControl adjusted")
