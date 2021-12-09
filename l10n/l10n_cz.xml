@@ -46,8 +46,8 @@
 		<text name="hlmgui_gps_auto" text="detekovat automaticky"/>
 		<text name="hlmgui_gps_gs" text="pouze navádění řízení"/>
 		<text name="hlmgui_gps_vca" text="pouze VCA"/>
-		<text name="hlmgui_gps_vcaL" text="poue VCA: Automatické otočení vlevo"/>
-		<text name="hlmgui_gps_vcaR" text="pouze VCA: Automatické otočení vpravo"/>
+		<text name="hlmgui_gps_vcaL" text="poue VCA: Aut. otočení vlevo"/>
+		<text name="hlmgui_gps_vcaR" text="pouze VCA: Aut. otočení vpravo"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatické souvratě"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>
 		
