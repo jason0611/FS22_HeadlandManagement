@@ -43,6 +43,10 @@ HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."
 HeadlandManagement.guiIconHeadlandR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_right.dds")
 HeadlandManagement.guiIconHeadlandL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_left.dds")
 
+-- Filteres implements
+HeadlandManagement.filterList = {}
+HeadlandManagement.filterList[1] = "DRIVE-LANER"
+
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
 HeadlandManagement.kbGS = true
@@ -849,8 +853,13 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
 		if actImplement ~= nil and actImplement.getAllowsLowering ~= nil then
-			dbgprint("raiseImplements : actImplement: "..actImplement:getName())
-			if actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil then
+			local implName = actImplement:getName()
+			dbgprint("raiseImplements : actImplement: "..implName)
+			local filtered = false
+			for _,filterName in pairs(HeadlandManagement.filterList) do
+				if implName == filterName then filtered = true end
+			end
+			if not filtered and (actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil) then
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") allows lowering, is PickUp or is foldable", 3)
 				local jointDescIndex = 1 -- Joint #1 will always exist
 				local actVehicle = actImplement:getAttacherVehicle()
@@ -986,7 +995,11 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 					end
 				end
 		 	else
-		 		dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") don't allows lowering, is no PickUp and is not foldable", 3)
+		 		if filtered then
+		 			dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") was filtered.", 1)
+		 		else
+		 			dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") don't allows lowering, is no PickUp and is not foldable", 3)
+		 		end
 		 	end
 		else
 			if actImplement ~= nil then
@@ -1022,60 +1035,71 @@ function HeadlandManagement.stopPTO(self, stopPTO)
 	for index,actImplement in pairs(allImplements) do
 		-- stop or start implement
 		if actImplement ~= nil and actImplement.getAttacherVehicle ~= nil then
-			dbgprint("stopPTO : actImplement: "..actImplement:getName())
-			local jointDescIndex = 1 -- Joint #1 will always exist
-			local actVehicle = actImplement:getAttacherVehicle()
-			local frontPTO = false
-			local backPTO = false
-				
-			-- find corresponding jointDescIndex and decide if front or back
-			if actVehicle ~= nil then
-				for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
-					if impl.object == actImplement then
-						jointDescIndex = impl.jointDescIndex
-						break
-					end
-				end
-					
-				local jointDesc = actVehicle.spec_attacherJoints.attacherJoints[jointDescIndex]
-				local wx, wy, wz = getWorldTranslation(jointDesc.jointTransform)
-				local lx, ly, lz = worldToLocal(actVehicle.steeringAxleNode, wx, wy, wz)
-				
-				if lz > 0 then 
-					frontPTO = true 
-					dbgprint("stopPTO: Front PTO")
-				else 
-					backPTO = true
-					dbgprint("stopPTO: Back PTO")
-				end 
-			else 
-				print("HeadlandManagement :: stopPTO : AttacherVehicle not set: Function restricted to all or nothing")
-				frontPTO = true
-				backPTO = true
+			local implName = actImplement:getName()
+			dbgprint("stopPTO : actImplement: "..implName)
+			local filtered = false
+			for _,filterName in pairs(HeadlandManagement.filterList) do
+				if implName == filterName then filtered = true end
 			end
 			
-			dbgprint("stopPTO : actImplement: "..actImplement:getName())
-			if (frontPTO and spec.useStopPTOF) or (backPTO and spec.useStopPTOB) then
-				if stopPTO then
-					local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
-					spec.implementPTOTable[index] = active
-					if active and actImplement.setIsTurnedOn ~= nil then 
-						actImplement:setIsTurnedOn(false)
-						dbgprint("stopPTO : implement PTO stopped by setIsTurnedOn")
-					elseif active and actImplement.deactivate ~= nil then
-						actImplement:deactivate()
-						dbgprint("stopPTO : implement PTO stopped by deactivate")
+			if not filtered then
+			
+				local jointDescIndex = 1 -- Joint #1 will always exist
+				local actVehicle = actImplement:getAttacherVehicle()
+				local frontPTO = false
+				local backPTO = false
+				
+				-- find corresponding jointDescIndex and decide if front or back
+				if actVehicle ~= nil then
+					for _,impl in pairs(actVehicle.spec_attacherJoints.attachedImplements) do
+						if impl.object == actImplement then
+							jointDescIndex = impl.jointDescIndex
+							break
+						end
 					end
-				else
-					local active = spec.implementPTOTable[index]
-					if active and actImplement.setIsTurnedOn ~= nil then 
-						actImplement:setIsTurnedOn(true) 
-						dbgprint("stopPTO : implement PTO started by setIsTurnedOn")
-					elseif active and actImplement.activate ~= nil then
-						actImplement:activate()
-						dbgprint("stopPTO : implement PTO started by activate")
+					
+					local jointDesc = actVehicle.spec_attacherJoints.attacherJoints[jointDescIndex]
+					local wx, wy, wz = getWorldTranslation(jointDesc.jointTransform)
+					local lx, ly, lz = worldToLocal(actVehicle.steeringAxleNode, wx, wy, wz)
+				
+					if lz > 0 then 
+						frontPTO = true 
+						dbgprint("stopPTO: Front PTO")
+					else 
+						backPTO = true
+						dbgprint("stopPTO: Back PTO")
+					end 
+				else 
+					print("HeadlandManagement :: stopPTO : AttacherVehicle not set: Function restricted to all or nothing")
+					frontPTO = true
+					backPTO = true
+				end
+			
+				dbgprint("stopPTO : actImplement: "..actImplement:getName())
+				if (frontPTO and spec.useStopPTOF) or (backPTO and spec.useStopPTOB) then
+					if stopPTO then
+						local active = actImplement.getIsPowerTakeOffActive ~= nil and actImplement:getIsPowerTakeOffActive()
+						spec.implementPTOTable[index] = active
+						if active and actImplement.setIsTurnedOn ~= nil then 
+							actImplement:setIsTurnedOn(false)
+							dbgprint("stopPTO : implement PTO stopped by setIsTurnedOn")
+						elseif active and actImplement.deactivate ~= nil then
+							actImplement:deactivate()
+							dbgprint("stopPTO : implement PTO stopped by deactivate")
+						end
+					else
+						local active = spec.implementPTOTable[index]
+						if active and actImplement.setIsTurnedOn ~= nil then 
+							actImplement:setIsTurnedOn(true) 
+							dbgprint("stopPTO : implement PTO started by setIsTurnedOn")
+						elseif active and actImplement.activate ~= nil then
+							actImplement:activate()
+							dbgprint("stopPTO : implement PTO started by activate")
+						end
 					end
 				end
+			else
+				dbgprint("stopPTO : implement #"..tostring(index).." ("..actImplement:getName()..") was filtered.", 1)
 			end
 		end
 	end
