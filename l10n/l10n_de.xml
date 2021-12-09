@@ -28,6 +28,8 @@
 		
 		<text name="hlmgui_alarmControl" text="Generelle Einstellungen"/>
 		<text name="hlmgui_beep" text="Warnton bei aktiviertem Management"/>
+		<text name="hlmgui_beepVol" text="Lautstärke"/>
+		<text name="hlmgui_beepVolTT" text="Lautstärke des Warntons" />
 
 		<text name="hlmgui_implementControl" text="Steuerung der Anbaugeräte"/>
 		<text name="hlmgui_raise" text="Anbaugeräte ausheben"/>

@@ -34,6 +34,14 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="alarmTT"/>
 			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="alarmVolumeSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="alarmVolumeTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="alarmVolumeTT"/>
+			</GuiElement>	
 			
 		<!-- ImplementControl -->
 			<GuiElement type="text" profile="dialogHeaderText"/>

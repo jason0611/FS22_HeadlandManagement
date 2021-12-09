@@ -28,6 +28,8 @@
 
 		<text name="hlmgui_alarmControl" text="Paramètres généraux"/>
 		<text name="hlmgui_beep" text="Tonalité d'avertissement lorsque la gestion est activée"/>
+		<text name="hlmgui_beepVol" text="Volume"/>
+		<text name="hlmgui_beepVolTT" text="Volume de l'alerte sonore" />
 
 		<text name="hlmgui_implementControl" text="Contrôle de l'équipement"/>
 		<text name="hlmgui_raise" text="Lever les équipements"/>
