@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+	<texts>
+    	<text name="input_HLM_TOGGLESTATE" text="Souvraťový režim / režim pole"/>	
+    	<text name="input_HLM_SWITCHON" text="Souvraťový režim" />
+    	<text name="input_HLM_SWITCHOFF" text="Režim pole" />	
+    	<text name="input_HLM_SHOWGUI" text="Souvratě: Nastavení" />
+		
+		<text name="text_HLM_isActive" text="Souvratě: Mod aktivní"/>
+		<text name="text_HLM_configuration" text="Headlandmanagement"/>
+		<text name="text_HLM_installed" text="Souvraťový management nainstalován"/>
+		<text name="text_HLM_notInstalled" text="Souvraťový management není nainstalován"/>
+		<text name="text_HLM_installed_short" text="Instalováno"/>
+		<text name="text_HLM_notInstalled_short" text="Není Instalováno"/>
+
+		<text name="hlmgui_title" text="Souvraťový management: Nastavení pro "/>
+		<text name="hlmgui_on" text="Zap."/>
+		<text name="hlmgui_off" text="Vyp."/>
+		<text name="hlmgui_both" text="přední a zadní"/>
+		<text name="hlmgui_front" text="přední"/>
+		<text name="hlmgui_back" text="zadní"/>
+		<text name="hlmgui_default" text="výchozí"/>
+		
+		<text name="hlmgui_speedControl" text="Nastavení kontroly rychlosti"/>
+		<text name="hlmgui_speedControlMod" text="Použít kontrolu rychlosti"/>
+		<text name="hlmgui_speedSetting" text="Pracovní rychlost na souvratích"/>
+		<text name="hlmgui_speedControlModSetting" text="Úroveň regulace rychlosti na souvratích"/>
+	
+		<text name="hlmgui_alarmControl" text="Hlavní nastavení"/>
+		<text name="hlmgui_beep" text="Zvukové upozornění při aktivaci"/>
+		
+		<text name="hlmgui_implementControl" text="Implementace nářadí"/>
+		<text name="hlmgui_raise" text="Zvednout nářadí"/>
+		<text name="hlmgui_plow" text="Otočit pluh"/>
+		<text name="hlmgui_plowFull" text="Plné otočení"/>
+		<text name="hlmgui_plowCenter" text="Otočení ve dvou krocích"/>
+		<text name="hlmgui_plowOff" text="Neotáčet"/>
+		<text name="hlmgui_pto" text="Zastavte vývodový hřídel a hydraulické zařízení"/>
+		<text name="hlmgui_ridgeMarker" text="Vyměnte značkovač"/>
+		
+		<text name="hlmgui_gpsControl" text="kontrola GPS"/>
+		<text name="hlmgui_gpsSetting" text="nastav řízení GPS"/>
+		<text name="hlmgui_gpsType" text="Použij GPS-Mod"/>
+		<text name="hlmgui_gps_auto" text="detekovat automaticky"/>
+		<text name="hlmgui_gps_gs" text="pouze navádění řízení"/>
+		<text name="hlmgui_gps_vca" text="pouze VCA"/>
+		<text name="hlmgui_gps_vcaL" text="poue VCA: Automatické otočení vlevo"/>
+		<text name="hlmgui_gps_vcaR" text="pouze VCA: Automatické otočení vpravo"/>
+		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatické souvratě"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>
+		
+		<text name="hlmgui_vehicleControl" text="Kontrola stroje"/>
+		<text name="hlmgui_diffLock" text="Odemkni diferenciály"/>	
+		<text name="hlmgui_crabSteering" text="Krabí řízení"/>
+		<text name="hlmgui_csDirect" text="směr"/>
+		<text name="hlmgui_csTwoStep" text="prostřednictvím normálního"/>
+		
+		<text name="hlmgui_speedControlTT" text="Na souvrati lze nastavení tempomatu změnit na nastavitelnou hodnotu a poté jej resetovat."/>
+		<text name="hlmgui_speedControlModTT" text="Je-li k dispozici, lze pro nastavení tempomatu použít modul „SpeedControl“."/>
+		<text name="hlmgui_speedSettingTT" text="Požadované nastavení tempomatu na souvrati."/>
+		<text name="hlmgui_speedControlModSettingTT" text="Použijte tempomat 1, 2 nebo 3 na souvrati."/>
+		<text name="hlmgui_alarmTT" text="Při aktivovaném řízení na souvrati se ozve pravidelný varovný tón."/>
+		<text name="hlmgui_raiseTT" text="Na souvrati lze spuštěné nářadí zvednout a poté opět spustit. Volitelně nastavitelné pro všechny, pouze přední nebo pouze zadní nářadí."/>
+		<text name="hlmgui_plowTT" text="Po zvednutí lze pluhy otočit. Buď úplně, nebo zpočátku jen do středu a poté úplně při spouštění. Poznámka: V druhém případě je důležité dobré načasování. Proto se doporučuje na konci souvrati krátce zastavit, aby se pluh otočil a spustil."/>
+		<text name="hlmgui_ptoTT" text="Na souvrati lze aktivované nářadí vypnout a znovu zapnout. Volitelně nastavitelné pro všechny, pouze přední nebo pouze zadní nářadí."/>
+		<text name="hlmgui_ridgeMarkerTT" text="Při zvedání lze značkovač přepnout na opačnou stranu."/>
+		<text name="hlmgui_gpsTT" text="Sledování GPS je na souvrati pozastaveno a poté obnoveno."/>
+		<text name="hlmgui_gpsTypeTT" text="Funkci lze omezit na navádění řízení nebo VCA nebo automaticky pozastavit aktuálně aktivní systém."/>
+		<text name="hlmgui_gpsAutoTriggerTT" text="Ve spojení s naváděcím řízením lze řízení souvratě aktivovat automaticky při dosažení souvrati."/>
+		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardně se správa souvrati aktivuje, když přední část vozidla dosáhne souvrati. To lze přepnout na zadní část vozidla."/>
+		<text name="hlmgui_diffLockTT" text="Na souvrati se aktivní uzávěrky diferenciálu uvolní a poté znovu nastaví."/>
+		<text name="hlmgui_csTT" text="Po dosažení souvrati lze přepnout aktivní krabí řízení. Buď přímo, nebo nejprve v normální či couvací poloze a pak na konci souvrati úplně."/>
+	</texts>
+</l10n>
