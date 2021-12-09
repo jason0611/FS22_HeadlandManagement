@@ -45,7 +45,7 @@ HeadlandManagement.guiIconHeadlandL = createImageOverlay(g_currentModDirectory..
 
 -- Filteres implements
 HeadlandManagement.filterList = {}
-HeadlandManagement.filterList[1] = "DRIVE-LANER"
+HeadlandManagement.filterList[1] = "E-DriveLaner"
 
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
