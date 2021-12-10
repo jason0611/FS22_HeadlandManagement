@@ -9,7 +9,7 @@
 
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName)
+GMSDebug:init(g_currentModName, true, 3)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -46,7 +46,7 @@ HeadlandManagement.filterList[1] = "E-DriveLaner"
 
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
-HeadlandManagement.kbGS = true
+HeadlandManagement.kbGS = false
 HeadlandManagement.kbSC = true
 
 -- set configuration 
