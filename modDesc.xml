@@ -31,11 +31,11 @@ If VCA Mod (FS22_VehicleControlAddon) is present:
 - Disengage and re-engage active differential locks
 - Trigger VCA's turn function
 
-Planned, once if Guidance Steering Mod (FS22_guidanceSteering) is available: 
+Prepared and provided with one of the following updates when Guidance Steering (FS22_guidanceSteering?) is available: 
 - Deactivate and reactivate GPS guidance
 - Headland automatic: Activate headland management automatically when headland is reached
 
-Planned, once if SpeedControl Mod (FS22_zzzSpeedControl) is available:
+Prepared and provided with one of the following updates when SpeedControl Mod (FS22_zzzSpeedControl) is available:
 - Speed adjustment also possible by changing the cruise control level
 
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
@@ -70,11 +70,11 @@ Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 - Aktive Differentialsperren lösen und wieder setzen
 - Auslösen der Wendefunktion
 
-Geplant sobald Guidance Steering (FS22_guidanceSteering?) verfügbar ist:
+Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald Guidance Steering (FS22_guidanceSteering?) verfügbar ist:
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Automatische Aktivierung des Vorgewendemanagements, wenn das Vorgewende erreicht wird
 
-Geplant sobald SpeedControl (FS22_zzzSpeedControl?) verfügbar ist:
+Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedControl (FS22_zzzSpeedControl?) verfügbar ist:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
@@ -109,11 +109,11 @@ En présence du VCA Mod (FS22_VehicleControlAddon) :
 - Désengager et réengager les blocages de différentiel actif
 - Déclenchement de la fonction de retournement
 
-Prévu dès que Guidance Steering (FS22_guidanceSteering ?) sera disponible :
+Préparé et mis à disposition avec une des mises à jour suivantes, dès que Guidance Steering (FS22_guidanceSteering ?) sera disponible :
 - Désactiver et réactiver le guidage GPS
 - Gestion automatique des tournières : activation automatique de la gestion des tournières lorsque la tournière est atteinte
 
-Prévu dès que SpeedControl (FS22_zzzSpeedControl ?) sera disponible :
+Préparé et mis à disposition avec l'une des mises à jour suivantes, dès que SpeedControl (FS22_zzzSpeedControl ?) sera disponible :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
 
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
