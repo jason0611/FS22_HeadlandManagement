@@ -46,7 +46,7 @@ HeadlandManagement.filterList[1] = "E-DriveLaner"
 
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
-HeadlandManagement.kbGS = true
+HeadlandManagement.kbGS = false
 HeadlandManagement.kbSC = true
 
 -- set configuration 

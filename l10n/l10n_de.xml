@@ -62,7 +62,7 @@
 		<text name="hlmgui_speedControlModTT" text="Wenn vorhanden, kann die Mod 'SpeedControl' für die Tempomatregelung genutzt werden."/>
 		<text name="hlmgui_speedSettingTT" text="Gewünschte Tempomateinstellung im Vorgewende."/>
 		<text name="hlmgui_speedControlModSettingTT" text="Nutze Tempomat 1, 2, oder 3 im Vorgewende."/>
-		<text name="hlmgui_alarmTT" text="Bei aktiviertem Vorgewende-Management wird ein regelmäßiger Warnton ausgegeben."/>
+		<text name="hlmgui_alarmTT" text="Im Vorgewende-Modus wird ein regelmäßiger Warnton ausgegeben."/>
 		<text name="hlmgui_raiseTT" text="Im Vorgewende können abgesenkte Anbaugeräte ausgehoben und anschließend wieder abgesenkt werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_plowTT" text="Nach dem Ausheben können Pflüge gedreht werden. Entweder sofort vollständig, oder zunächst nur zur Mitte und erst beim Absenken vollständig. Hinweis: In letzterem Fall ist ein gutes Timing wichtig. Es wird daher empfohlen, zum Drehen und Absenken des Pflugs kurz anzuhalten."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Mit dem Ausheben kann der Spurreißer auf die gegenüberliegende Seite umgeschaltet werden."/>
@@ -70,7 +70,7 @@
 		<text name="hlmgui_gpsTT" text="Im Vorgewende wird die GPS-Spurführung pausiert und anschließend fortgesetzt."/>
 		<text name="hlmgui_gpsTypeTT" text="Die Funktion kann auf Guidance Steering oder VCA eingeschränkt werden, oder automatisch das jeweils gerade aktive System pausieren."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="In Verbindung mit Guidance Steering kann das Vorgewende-Management bei Erreichen des Vorgewendes automatisch aktiviert werden."/>
-		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardmäßig aktiviert die Automatik das Vorgewende-Management, wenn die Front des Fahrzeugs das Vorgewende erreicht. Das kann auf das Heck des Fahrzeugs umgeschaltet werden."/>
+		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardmäßig aktiviert die Automatik das Vorgewende-Management, wenn die Front des Fahrzeugs das Vorgewende erreicht. Das kann auf das Heck des Fahrzeugs umgeschaltet werden. Wichtig: Diese Funktion ist nur schaltbar, wenn die Spurführung von GS nicht aktiv ist!"/>
 		<text name="hlmgui_diffLockTT" text="Im Vorgewende werden aktive Differentialsperren gelöst und anschließend wieder gesetzt."/>
 		<text name="hlmgui_csTT" text="Bei Erreichen des Vorgewendes kann eine aktive Hundegangstellung umgeschaltet werden. Entweder direkt, oder zunächst in Normalstellung und erst am Ende des Vorgewendes vollständig."/>
 	</texts>

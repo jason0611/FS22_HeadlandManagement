@@ -32,7 +32,7 @@ If VCA Mod (FS22_VehicleControlAddon) is present:
 - Disengage and re-engage active differential locks
 - Trigger VCA's turn function
 
-Prepared and provided with one of the following updates when Guidance Steering (FS22_guidanceSteering?) is available: 
+If Guidance Steering (FS22_guidanceSteering) is present: 
 - Deactivate and reactivate GPS guidance
 - Headland automatic: Activate headland management automatically when headland is reached
 
@@ -43,8 +43,9 @@ Further ideas or wishes are welcome at https://github.com/jason0611/FS22_Headlan
 
 ChangeLog V2.0.0.0:
 - Ready for Farming Simulator 22
+- Many thanks to Kynuska for the czech translation
 
-Many thanks to team Agrarplay and the project LU Wohnzimmer for the extensive test-support!
+And many thanks to team Agrarplay and the project LU Wohnzimmer for the extensive test-support!
 
 ]]>
 		</en>	
@@ -71,7 +72,7 @@ Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 - Aktive Differentialsperren lösen und wieder setzen
 - Auslösen der Wendefunktion
 
-Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald Guidance Steering (FS22_guidanceSteering?) verfügbar ist:
+Bei vorhandenem Guidance Steering (FS22_guidanceSteering):
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Automatische Aktivierung des Vorgewendemanagements, wenn das Vorgewende erreicht wird
 
@@ -82,8 +83,9 @@ Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22
 
 ChangeLog V2.0.0.0:
 - Bereit für den Landwirtschaftssimulator 22
+- Vielen Dank an Kynuska für die tschechische Übersetzung
 
-Vielen Dank an das Team Agrarplay und das Projekt LU Wohnzimmer für die umfangreiche Testunterstützung!
+Vielen Dank auch an das Team Agrarplay und das Projekt LU Wohnzimmer für die umfangreiche Testunterstützung!
 
 ]]>
 		</de>
@@ -105,12 +107,12 @@ Fonctions incluses :
 - Désengager et réengager la ou les prises de force et le système hydraulique.
 - Bip lorsque la gestion des tournières est activée
 
-En présence du VCA Mod (FS22_VehicleControlAddon) :
+Si le VCA Mod (FS22_VehicleControlAddon) est présent :
 - Désactiver et réactiver le guidage par trace GPS
 - Désengager et réengager les blocages de différentiel actif
 - Déclenchement de la fonction de retournement
 
-Préparé et mis à disposition avec une des mises à jour suivantes, dès que Guidance Steering (FS22_guidanceSteering ?) sera disponible :
+Si la fonction Guidance Steering (FS22_guidanceSteering) est présente : 
 - Désactiver et réactiver le guidage GPS
 - Gestion automatique des tournières : activation automatique de la gestion des tournières lorsque la tournière est atteinte
 
@@ -121,6 +123,7 @@ D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/j
 
 Changelog V2.0.0.0:
 - Prêt pour le FS22
+- Merci beaucoup à Kynuska pour la traduction en tchèque
 
 Un grand merci à l'équipe d'Agrarplay et au projet LU Wohnzimmer pour leur soutien important en matière de tests !
 
@@ -149,7 +152,7 @@ Pokud je přítomen VCA Mod (FS22_VehicleControlAddon):
 - Vypněte a znovu zapněte aktivní uzávěrky diferenciálů
 - Spusťte funkci otáčení VCA
 
-Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k dispozici navádění řízení (FS22_guidanceSteering?):
+Pokud je přítomno Naváděcí řízení (FS22_guidanceSteering): 
 - Deaktivujte a znovu aktivujte navádění GPS
 - Souvraťová automatika: Aktivace souvraťového řízení automaticky při dosažení souvrati
 
@@ -160,6 +163,7 @@ Další nápady nebo přání jsou vítány na https://github.com/jason0611/FS22
 
 ChangeLog V2.0.0.0:
 - Připraveno pro Farming Simulator 22
+- Děkujeme Kynuskovi za český překlad
 
 Mnohokrát děkujeme týmu Agrarplay a projektu LU Wohnzimmer za rozsáhlou testovací podporu!
 
