@@ -2,14 +2,14 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.2.0
+-- Version 2.0.0.0
 --
 -- TODO:
 -- Hundegangwechsel auf dem DediServer prüfen
 
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 2)
+GMSDebug:init(g_currentModName)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -31,9 +31,6 @@ HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
-
-HeadlandManagement.guiIcon = createImageOverlay(g_currentModDirectory.."gui/hlm_gui.dds")
-HeadlandManagement.guiAuto = createImageOverlay(g_currentModDirectory.."gui/hlm_auto.dds")
 
 HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
 HeadlandManagement.guiIconFieldR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_right.dds")
@@ -497,7 +494,6 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
 	dbgprint_r(spec, 4, 2)
-	print(spec.beepVol)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	HeadlandManagementGui.setData(
 		hlmGui.target,
@@ -762,7 +758,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 			end
 		else
 			spec.normSpeed = self:getCruiseControlSpeed()
-			self:setCruiseControlMaxSpeed(spec.turnSpeed)
+			self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.turnSpeed
 				dbgprint("reduceSpeed: SpeedControl adjusted")
@@ -781,7 +777,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 			end
 		else
 			spec.turnSpeed = self:getCruiseControlSpeed()
-			self:setCruiseControlMaxSpeed(spec.normSpeed)
+			self:setCruiseControlMaxSpeed(spec.normSpeed, spec.normSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.normSpeed
 				dbgprint("reduceSpeed: SpeedControl adjusted")
