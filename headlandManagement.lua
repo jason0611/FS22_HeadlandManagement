@@ -2,14 +2,14 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 1.9.2.1
+-- Version 2.0.0.0
 --
 -- TODO:
 -- Hundegangwechsel auf dem DediServer prüfen
 
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(g_currentModName, true, 1)
+GMSDebug:init(g_currentModName)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
