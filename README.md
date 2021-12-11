@@ -30,8 +30,11 @@ Additionally, once if Guidance Steering is available:
 Additionally, once if SpeedControl will be available :
 - Speed adjustment also possible by changing the cruise control level
 
+ToDos:
+- Raising even with full harvesters, such as the Grimme potato harvester. This requires a different control routine.
+
 Ideas for subsequent versions (without guarantee):
-- Separate lifting of front and rear devices, each when reaching the headland
+- Separate lifting of front and rear devices, e.g. each when reaching the headland, or similar
 
 ===
 
@@ -63,6 +66,9 @@ Zusätzlich, wenn Guidance Steering verfügbar ist:
 Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
+Zu erledigen:
+- Ausheben auch bei Vollerntern, wie z.B. dem Grimme Kartoffelroder, ermöglichen. Dies erforderte eine andere Steuerungsroutine.
+
 Ideen für Folgeversionen (ohne Gewähr):
-- Separates Ausheben von vorderen und hinteren Geräten, jeweils bei Erreichen des Vorgewendes
+- Separates Ausheben von vorderen und hinteren Geräten, z.B. jeweils bei Erreichen des Vorgewendes, o.ä.
 
