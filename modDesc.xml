@@ -135,29 +135,29 @@ Správa souvratí pro traktory, polní postřikovače, sekačky a kombajny.
 
 Díky řízení na souvrati lze funkce vozidel kombinovat a aktivovat společně stisknutím tlačítka pro zjednodušení manévrů při otáčení při práci na poli. Všechny funkce lze aktivovat a deaktivovat individuálně pro každé vozidlo prostřednictvím grafického uživatelského rozhraní, aby bylo dosaženo ideálního přizpůsobení prováděné práci.
 
-Systém souvraťového managementu musí být před použitím jednou přidán do příslušného vozidla v dílně nebo v dílně jako konfigurace. Cena za to je 3000,-.
-Ve vozidle ji lze aktivovat a deaktivovat pomocí Shift-X. Alternativně lze nakonfigurovat různá tlačítka pro aktivaci a deaktivaci. GUI se standardně vyvolává pomocí Shift+Ctrl+X.
+Systém souvraťového managementu musí být před použitím jednou přidán do příslušného vozidla v obchodě nebo v dílně jako konfigurace. Cena za to je 3000 €.
+Ve vozidle ji lze aktivovat a deaktivovat pomocí Shift-X. Alternativně lze nakonfigurovat různá tlačítka pro aktivaci a deaktivaci. Nastavení se standardně vyvolává pomocí Shift+Ctrl+X.
 
 Zahrnuté funkce:
-- Snižte rychlost (tempomat) a znovu ji zvyšte, znovu aktivujte tempomat, pokud byl dříve aktivní
-- Zvedněte spuštěné nářadí a znovu je spusťte
-- Otočný pluh, jednostupňový nebo dvoustupňový (přes středovou polohu)
-- Zvedněte a vyměňte znamenáky
+- Snížení rychlosti (tempomatu) a opakovaná aktivace, pokud byl dříve aktivní
+- Zvednutí nářadí a opětovné spuštění
+- Otočení pluhu, v jednom nebo dvou krocích (přes středovou polohu)
+- Zvednutí a výměna znamenáků
 - Ovládání krabího řízení
-- Odpojte a znovu zapněte diferenciál(y) a hydrauliku
-- Pípnutí při aktivaci řízení na souvrati
+- Odpojení a zpětné zapojení diferenciálu(ů) a hydraulik
+- Možnost zvukové signalizace při aktivním otáčení na souvrati
 
 Pokud je přítomen VCA Mod (FS22_VehicleControlAddon):
-- Deaktivujte a znovu aktivujte navádění trasy GPS
-- Vypněte a znovu zapněte aktivní uzávěrky diferenciálů
-- Spusťte funkci otáčení VCA
+- Deaktivuje a opětovně aktivuje naváděnou trasu GPS
+- Vypne a znovu zapne uzávěrky diferenciálů
+- Spusťí vloženou funkci otáčení VCA
 
-Pokud je přítomno Naváděcí řízení (FS22_guidanceSteering): 
-- Deaktivujte a znovu aktivujte navádění GPS
+Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k dispozici navádění řízení (FS22_guidanceSteering?):
+- Deaktivuje a znovu aktivuje navádění GPS
 - Souvraťová automatika: Aktivace souvraťového řízení automaticky při dosažení souvrati
 
-Připraveno a poskytnuto s jednou z následujících aktualizací, když je k dispozici SpeedControl Mod (FS22_zzzSpeedControl):
-- Nastavení rychlosti je také možné změnou úrovně tempomatu
+Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k dispozici SpeedControl Mod (FS22_zzzSpeedControl):
+- Nastaví rychlost dle úrovní tempomatu
 
 Další nápady nebo přání jsou vítány na https://github.com/jason0611/FS22_HeadlandManagement
 
