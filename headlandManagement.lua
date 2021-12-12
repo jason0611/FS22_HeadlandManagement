@@ -887,9 +887,9 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 					end 
 					
 					local moveTime = actVehicle.spec_attacherJoints.attacherJoints[jointDescIndex].moveTime or 0
-					if actImplement.spec_plow == nil then
-						moveTime = 0
-					end
+					-- if actImplement.spec_plow == nil then
+					--	moveTime = 0
+					-- end
 					waitTime = math.max(waitTime, moveTime)
 				else 
 					print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: Function restricted to first attacher joint")
