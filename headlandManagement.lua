@@ -943,9 +943,9 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 							actImplement:setRotationMax(spec.plowRotationMaxNew)
 							spec.plowRotationMaxNew = nil
 							dbgprint("raiseImplements : plow is turned")
-							if not centerPlow then
-								waitTime = 0
-							end
+							-- if not centerPlow then
+							--	 waitTime = 0
+							-- end
 						end
 						if round == 1 and wasLowered and self.setJointMoveDown ~= nil then
 							self:setJointMoveDown(jointDescIndex, true)
