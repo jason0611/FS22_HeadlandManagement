@@ -172,7 +172,7 @@ Mnohokrát děkujeme týmu Agrarplay a projektu LU Wohnzimmer za rozsáhlou test
 	    
  	</description>	
     <multiplayer supported="true"/>
-	<iconFilename>icon.dds</iconFilename>
+	<iconFilename>modIcon.dds</iconFilename>
 	<extraSourceFiles>
     	<sourceFile filename="headlandManagementRegister.lua" />
     </extraSourceFiles>
