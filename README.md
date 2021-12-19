@@ -5,6 +5,9 @@ Headland management for tractors, field sprayers, mowers and harvesters.
 
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
 
+*Attention: This version is a developer version! It can and will contain bugs, produce debug information and in the worst case, even if unlikely, destroy a savegame.*
+*Those who can't handle it are urged to wait for the ModHub version, which is already submitted.*
+
 The headland management system must be added once to the respective vehicle as a configuration before it can be used in the shop or in the workshop. The cost for this is 3000,-.
 It can be activated and deactivated in the vehicle with Shift-X. Alternatively, two different buttons for activation and deactivation can be configured.
 
@@ -39,6 +42,9 @@ Ideas for subsequent versions (without guarantee):
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
+
+*Achtung: Diese Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
+*Wer damit nicht umgehen kann, wird dringend gebeten, auf die ModHub-Version zu warten, die bereits eingereicht ist.*
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
 
