@@ -3,10 +3,10 @@
 
 Headland management for tractors, field sprayers, mowers and harvesters.
 
-With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
-
 *Attention: This version is a developer version! It can and will contain bugs, produce debug information and in the worst case, even if unlikely, destroy a savegame.*
 *Those who can't handle it are urged to wait for the ModHub version, which is already submitted.*
+
+With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
 
 The headland management system must be added once to the respective vehicle as a configuration before it can be used in the shop or in the workshop. The cost for this is 3000,-.
 It can be activated and deactivated in the vehicle with Shift-X. Alternatively, two different buttons for activation and deactivation can be configured.
