@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
 	<texts>
-    	<text name="input_HLM_TOGGLESTATE" text="Режим Разворотной полосы / Режим поля"/>	
-    	<text name="input_HLM_SWITCHON" text="Режим Разворотной полосы" />
-    	<text name="input_HLM_SWITCHOFF" text="Режим поля" />	
-    	<text name="input_HLM_SHOWGUI" text="Headland: Настройки" />
+		<text name="input_HLM_TOGGLESTATE" text="Режим Разворотная полоса / Режим Поле"/>
+		<text name="input_HLM_SWITCHON" text="Режим Разворотная полоса" />
+		<text name="input_HLM_SWITCHOFF" text="Режим Поле" />
+		<text name="input_HLM_SHOWGUI" text="Разворотная полоса: Настройки" />
 		
 		<text name="text_HLM_isActive" text="Режим Разворотной полосы активен"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
@@ -48,8 +48,9 @@
 		<text name="hlmgui_gps_vca" text="только VCA"/>
 		<text name="hlmgui_gps_vcaL" text="только VCA: автоповорот налево"/>
 		<text name="hlmgui_gps_vcaR" text="только VCA: автоповорот направо"/>
-		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
-		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger for automatic"/>
+		
+		<text name="hlmgui_gpsAutoTriggerSetting" text="Автоматизация разворотной полосы"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>
 		
 		<text name="hlmgui_vehicleControl" text="Управление трактором"/>
 		<text name="hlmgui_diffLock" text="Разблокировать дифференциалы"/>	
@@ -66,9 +67,9 @@
 		<text name="hlmgui_plowTT" text="После подъёма плуги могут быть повернуты, либо полностью, либо изначально только в верхнее положение, а затем полностью при опускании. В последнем случае необходимо достаточно времени. Поэтому рекомендуется приостановиться в конце разворотной полосы, чтобы повернуть и опустить плуг."/>
 		<text name="hlmgui_ptoTT" text="На разворотной полосе, активированное орудие можно отключить, а затем снова включить. Опционально можно выбрать: для всех, только передние или только задние орудие."/>
 		<text name="hlmgui_ridgeMarkerTT" text="При подъёме оборудования, маркер может быть переключён на противоположную сторону."/>
-		<text name="hlmgui_gpsTT" text="GPS отслеживание приостанавливается на разворотной полосе, а затем возобновляется."/>
+		<text name="hlmgui_gpsTT" text="GPS отслеживание приостанавливается на разворотной полосе, а затем возобновляется на основной части поля."/>
 		<text name="hlmgui_gpsTypeTT" text="Функция может быть ограничена на Guidance Steering или VCA или автоматически приостановить текущую активную систему."/>
-		<text name="hlmgui_gpsAutoTriggerTT" text="В сочетании с Guidance Steering, Headlandmanagement может быть активирована автоматически, когда достигнута разворотная полоса."/>
+		<text name="hlmgui_gpsAutoTriggerTT" text="При совместной работе с Guidance Steering, режим разворотной полосы может активироватся автоматически, при её достижении."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="По умолчанию Headlandmanagement активируется, когда передняя часть трактора достигает разворотной полосы. Его можно переключить на заднюю часть трактора. ВАЖНО: эта функция может быть переключена только в том случае, если в данный момент Guidance Steering не ведёт по треку!"/>
 		<text name="hlmgui_diffLockTT" text="На разворотной полосе дифференциалы разблокируются, а затем снова заблокируются."/>
 		<text name="hlmgui_csTT" text="Когда достигнута разворотная полоса, активный крабовый ход может быть включен. Либо на обычный ход, либо сначала в обычный или реверсивный крабовое положении, а затем в конце разворотной полосы полностью в необходимое положение."/>
