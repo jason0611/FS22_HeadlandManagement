@@ -67,7 +67,7 @@ Zusätzlich bei vorhandenem Vehicle Control Addon (VCA):
 Zusätzlich, wenn Guidance Steering verfügbar ist:
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
-- Erittlung eines Offsets für Guidance Steering, um die Automatik passend für am Heck befestigte Geräte zu aktivieren
+- Ermittlung eines Offsets für Guidance Steering, um die Automatik passend für am Heck befestigte Geräte zu aktivieren
 
 Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
