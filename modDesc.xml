@@ -7,6 +7,7 @@
 		<de>Vorgewende Management</de>
 		<fr>Gestion Des Promontoires</fr>
 		<cz>Souvraťový Management</cz>
+		<it>Gestione Capezzagna</it>
     </title>
     <description>
 		<en>
@@ -169,6 +170,46 @@ Mnohokrát děkujeme týmu Agrarplay a projektu LU Wohnzimmer za rozsáhlou test
 
 ]]>
 		</cz>
+		<it>
+<![CDATA[
+Gestione Capezzagna per trattori, atomizzatori, falciatrici e mietitrici.
+
+Con la gestione della capezzagna, le funzioni dei veicoli possono essere combinate e attivate insieme con il semplice tocco di un pulsante per semplificare le manovre di svolta durante il lavoro sul campo. Tutte le funzioni possono essere attivate e disattivate singolarmente per ogni veicolo tramite una GUI per ottenere un adattamento ideale al lavoro svolto.
+
+Il sistema di gestione della capezzagna deve essere aggiunto una volta al rispettivo veicolo in officina o in officina come configurazione prima di poter essere utilizzato. Il costo per questo è 3000,-.
+Può essere attivato e disattivato nel veicolo con Shift-X. In alternativa è possibile configurare diversi pulsanti per l'attivazione e la disattivazione. La GUI viene richiamata di default con Shift+Ctrl+X.
+
+Funzioni incluse:
+- Ridurre la velocità (cruise control (regolazione automatica della velocità)) e aumentare nuovamente, riattivare il cruise control (regolazione automatica della velocità) se precedentemente attivo
+- Sollevare gli attrezzi abbassati e riabbassarli
+- Girare l'aratro, monostadio o bistadio (tramite posizione centrale)
+- Solleva e cambia il marcatore
+- Controlla lo sterzo a granchio
+- Disinserire e reinserire la/e presa/e di forza e l'impianto idraulico
+- Segnale acustico quando è attivata la gestione della capezzagna
+
+Se è presente la Mod VCA (FS22_VehicleControlAddon):
+- Disattiva e riattiva la guida della traccia GPS
+- Disinserire e reinserire i bloccaggi differenziali attivi
+- Attiva la funzione di svolta di VCA
+
+Se è presente il sistema di guida (Guidance Steering) (FS22_guidanceSteering):
+- Disattiva e riattiva la guida GPS
+- Capezzagna automatica: attiva automaticamente la gestione della capezzagna quando viene raggiunta la capezzagna
+
+Preparato e dotato di uno dei seguenti aggiornamenti quando è disponibile SpeedControl Mod (FS22_zzzSpeedControl):
+- Regolazione della velocità possibile anche modificando il livello del cruise control
+
+Ulteriori idee o desideri sono i benvenuti su https://github.com/jason0611/FS22_HeadlandManagement
+
+ChangeLog:
+V2.0.0.0
+- Pronto per Farming Simulator 22
+- Molte grazie a Kynuska per la traduzione in ceco
+
+E molte grazie al team Agrarplay e al progetto LU Wohnzimmer per l'ampio supporto di test!
+]]>
+		</it>
 	    
  	</description>	
     <multiplayer supported="true"/>
