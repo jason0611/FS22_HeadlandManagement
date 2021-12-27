@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.1.1
+-- Version 2.9.1.2
 --
 -- TODO:
 -- Hundegangwechsel auf dem DediServer prüfen
@@ -583,7 +583,7 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- play warning sound if headland management is active
-	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.isActive then
+	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.actStep==HeadlandManagement.MAXSTEP then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
 			playSample(HeadlandManagement.BEEPSOUND, 1, spec.beepVol / 10, 0, 0, 0)
