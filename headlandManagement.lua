@@ -5,7 +5,7 @@
 -- Version 2.9.1.2
 --
 -- TODO:
--- Hundegangwechsel auf dem DediServer prüfen
+-- Kartoffelroder
 
 HeadlandManagement = {}
 
