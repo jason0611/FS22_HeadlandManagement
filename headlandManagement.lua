@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.0
+-- Version 2.9.2.1
 --
 -- TODO:
 -- Kartoffelroder
@@ -1005,19 +1005,23 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 			if actImplement ~= nil then
 				-- Possible potato harvester with fixed cutter? Raise and lower anyways...
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 3)
-				if raise then
-					for _, implement in pairs(actImplement:getAttachedAIImplements()) do
-					dbgprint("raiseImplements : aiImplementEndLine")
-        			implement.object:aiImplementEndLine()
-    				end
-    				actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
-    			else
-    				for _, implement in pairs(actImplement:getAttachedAIImplements()) do
-    					dbgprint("raiseImplements : aiImplementStartLine")
-        				implement.object:aiImplementStartLine()
-    				end
-    				actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
-    			end
+				if actImplement.getAttachedAIImplements ~= nil then
+					if raise then
+						for _, implement in pairs(actImplement:getAttachedAIImplements()) do
+						dbgprint("raiseImplements : aiImplementEndLine")
+						implement.object:aiImplementEndLine()
+						end
+						actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
+					else
+						for _, implement in pairs(actImplement:getAttachedAIImplements()) do
+							dbgprint("raiseImplements : aiImplementStartLine")
+							implement.object:aiImplementStartLine()
+						end
+						actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
+					end
+				else
+					dbgprint("raiseImplements : actImplement has no aiImplements", 3)
+				end
 			else
 				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 3)
 			end
