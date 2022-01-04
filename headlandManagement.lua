@@ -1044,7 +1044,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
     		end
     		--self:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
     	end
-	
+	end
 	return waitTime
 end
 
