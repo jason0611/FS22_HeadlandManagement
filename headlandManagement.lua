@@ -1042,10 +1042,6 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 			end
 		end
 	end
-	-- No implements? Possible harvester with integrated cutter...
-	if allImplements == {} then
-		
-	end
 	return waitTime
 end
 
