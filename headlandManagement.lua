@@ -1030,7 +1030,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		end
 	end
 	-- No implements? Possible harvester with integrated cutter...
-	if allImplements == nil then
+	if allImplements == {} then
 		if raise then
 			for _, implement in pairs(self:getAttachedAIImplements()) do
 				dbgprint("raiseImplements : aiImplementStartLine")
