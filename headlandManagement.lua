@@ -17,26 +17,6 @@ GMSDebug:enableConsoleCommands("hlmDebug")
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
 g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
--- Testmodule
-addConsoleCommand("hlmtestDown", "Implement down", "testDown", HeadlandManagement)
-function HeadlandManagement:testDown()
-	local vehicle = g_currentMission.controlledVehicle
-	for _, implement in pairs(vehicle:getAttachedAIImplements()) do
-        implement.object:aiImplementStartLine()
-    end
-    --vehicle:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
-end
-
-addConsoleCommand("hlmtestUp", "Implement up", "testUp", HeadlandManagement)
-function HeadlandManagement:testUp()
-	local vehicle = g_currentMission.controlledVehicle
-	for _, implement in pairs(vehicle:getAttachedAIImplements()) do
-        implement.object:aiImplementEndLine()
-    end
-    --vehicle:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
-end
--- Testmodule ENDE
-
 HeadlandManagement.REDUCESPEED = 1
 HeadlandManagement.WAITTIME1 = 2
 HeadlandManagement.CRABSTEERING = 3
@@ -1023,19 +1003,20 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		 	end
 		else
 			if actImplement ~= nil then
+				-- Possible potato harvester with fixed cutter? Raise and lower anyways...
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 3)
 				if raise then
 					for _, implement in pairs(actImplement:getAttachedAIImplements()) do
-					dbgprint("raiseImplements : aiImplementStartLine")
-        			implement.object:aiImplementStartLine()
+					dbgprint("raiseImplements : aiImplementEndLine")
+        			implement.object:aiImplementEndLine()
     				end
-    				--actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
+    				actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
     			else
     				for _, implement in pairs(actImplement:getAttachedAIImplements()) do
-    					dbgprint("raiseImplements : aiImplementEndLine")
-        				implement.object:aiImplementEndLine()
+    					dbgprint("raiseImplements : aiImplementStartLine")
+        				implement.object:aiImplementStartLine()
     				end
-    				--actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
+    				actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
     			end
 			else
 				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 3)
