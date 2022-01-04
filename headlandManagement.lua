@@ -1024,6 +1024,19 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		else
 			if actImplement ~= nil then
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 3)
+				if raise then
+					for _, implement in pairs(actImplement:getAttachedAIImplements()) do
+					dbgprint("raiseImplements : aiImplementStartLine")
+        			implement.object:aiImplementStartLine()
+    				end
+    				--actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
+    			else
+    				for _, implement in pairs(actImplement:getAttachedAIImplements()) do
+    					dbgprint("raiseImplements : aiImplementEndLine")
+        				implement.object:aiImplementEndLine()
+    				end
+    				--actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
+    			end
 			else
 				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 3)
 			end
@@ -1031,19 +1044,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 	end
 	-- No implements? Possible harvester with integrated cutter...
 	if allImplements == {} then
-		if raise then
-			for _, implement in pairs(self:getAttachedAIImplements()) do
-				dbgprint("raiseImplements : aiImplementStartLine")
-        		implement.object:aiImplementStartLine()
-    		end
-    		--self:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
-    	else
-    		for _, implement in pairs(self:getAttachedAIImplements()) do
-    			dbgprint("raiseImplements : aiImplementEndLine")
-        		implement.object:aiImplementEndLine()
-    		end
-    		--self:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
-    	end
+		
 	end
 	return waitTime
 end
