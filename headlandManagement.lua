@@ -17,6 +17,26 @@ GMSDebug:enableConsoleCommands("hlmDebug")
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
 g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
+-- Testmodule
+addConsoleCommand("hlmtestDown", "Implement down", "testDown", HeadlandManagement)
+function HeadlandManagement:testDown()
+	local vehicle = g_currentMission.controlledVehicle
+	for _, implement in pairs(vehicle:getAttachedAIImplements()) do
+        implement.object:aiImplementStartLine()
+    end
+    --vehicle:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
+end
+
+addConsoleCommand("hlmtestUp", "Implement up", "testUp", HeadlandManagement)
+function HeadlandManagement:testUp()
+	local vehicle = g_currentMission.controlledVehicle
+	for _, implement in pairs(vehicle:getAttachedAIImplements()) do
+        implement.object:aiImplementEndLine()
+    end
+    --vehicle:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
+end
+-- Testmodule ENDE
+
 HeadlandManagement.REDUCESPEED = 1
 HeadlandManagement.WAITTIME1 = 2
 HeadlandManagement.CRABSTEERING = 3
