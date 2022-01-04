@@ -5,7 +5,7 @@
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
-		<fr>Gestion Des Promontoires</fr>
+		<fr>Gestion Des Fourrières</fr>
 		<cz>Souvraťový Management</cz>
 		<it>Gestione Capezzagna</it>
     </title>
@@ -92,35 +92,35 @@ Vielen Dank auch an das Team Agrarplay und das Projekt LU Wohnzimmer für die um
 		</de>
 		<fr>
 <![CDATA[
-Gestion des fourrières pour tracteurs, pulvérisateurs, faucheuses et moissonneuses.
+Gestion automatisée des fourrières pour tracteurs, pulvérisateurs, faucheuses et moissonneuses.
 
-Grâce à la gestion des manœuvres en bout de champ, les fonctions peuvent être combinées dans le véhicule et activées ensemble par simple pression sur un bouton afin de simplifier les manœuvres de virage lors des travaux dans les champs. Toutes les fonctions peuvent être activées et désactivées individuellement pour chaque véhicule via une interface graphique afin de s'adapter parfaitement au travail effectué.
+Grâce à la programmation des manœuvres en bout de champ, plusieurs fonctions peuvent être combinées et activées ensemble à l'aide d'une seule touche. Cela simplifie grandement les manœuvres en bout de rangs lors de vos travaux dans les champs. Toutes les fonctions peuvent être activées et désactivées individuellement pour chaque véhicule via une interface graphique afin de s'adapter parfaitement au travail effectué.
 
-Le système de gestion des manœuvres en bout de champ doit être ajouté une fois au véhicule concerné en tant que configuration avant de pouvoir être utilisé dans le magasin ou dans l'atelier. Le coût de cette opération est de 3 000 euros.
-Il peut être activé et désactivé dans le véhicule avec le levier de vitesse (gauche) Shift-X. Boutons différents peuvent également être configurés pour l'activation et la désactivation. L'interface graphique est appelée par défaut avec Shift+Ctrl+X.
+Avant de pouvoir être utilisé, le système de programmation des manœuvres en bout de champ doit être ajouté une fois au véhicule concerné depuis le magasin ou l'atelier. Il apparaitra en tant qu'une configuration possible. Le coût de cette opération est de 3 000 euros.
+Par défaut, il peut être activé et désactivé dans le véhicule avec la touche SHIFT(gauche) + X. D'autres raccourcis clavier peuvent être choisis pour l'activation et la désactivation. L'interface graphique est appelée par défaut avec Shift+Ctrl+X.
 
 Fonctions incluses :
-- Réduire la vitesse (régulateur de vitesse) et remonter, réactiver le régulateur de vitesse s'il était précédemment actif.
-- Relever les outils abaissés et les abaisser à nouveau.
-- Charrue de retournement, à une ou deux étapes (via la position centrale)
-- Relever et changer les rippers de voie
-- Changement de côté avec la marche en crabe activée
-- Désengager et réengager la ou les prises de force et le système hydraulique.
-- Bip lorsque la gestion des tournières est activée
+- Réduire la vitesse (régulateur de vitesse) et remonter les outils, réactiver le régulateur de vitesse s'il était précédemment actif.
+- Relever les outils et les abaisser à nouveau.
+- Retourner la charrue, en une ou deux étapes (via la position centrale)
+- Relever et changer de côté les traceurs des semoirs
+- Contrôle automatique de la marche en crabe lors des allers-retours
+- Désengager et réengager la ou les prises de force et le système hydraulique
+- Bip sonore lorsque la gestion des fourrières est activée
 
 Si le VCA Mod (FS22_VehicleControlAddon) est présent :
-- Désactiver et réactiver le guidage par trace GPS
+- Désactiver et réactiver le guidage par traces GPS
 - Désengager et réengager les blocages de différentiel actif
 - Déclenchement de la fonction de retournement
 
 Si la fonction Guidance Steering (FS22_guidanceSteering) est présente : 
 - Désactiver et réactiver le guidage GPS
-- Gestion automatique des tournières : activation automatique de la gestion des tournières lorsque la tournière est atteinte
+- Gestion automatique des fourrières : activation automatique de la gestion des fourrières lorsqu'elles sont atteintes
 
 Préparé et mis à disposition avec l'une des mises à jour suivantes, dès que SpeedControl (FS22_zzzSpeedControl ?) sera disponible :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
 
-D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
+D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS22_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
 Changelog V2.0.0.0:
 - Prêt pour le FS22
