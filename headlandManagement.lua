@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.1.2
+-- Version 2.9.2.0
 --
 -- TODO:
 -- Kartoffelroder
@@ -1029,6 +1029,22 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 			end
 		end
 	end
+	-- No implements? Possible harvester with integrated cutter...
+	if allImplements == nil then
+		if raise then
+			for _, implement in pairs(self:getAttachedAIImplements()) do
+				dbgprint("raiseImplements : aiImplementStartLine")
+        		implement.object:aiImplementStartLine()
+    		end
+    		--self:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
+    	else
+    		for _, implement in pairs(self:getAttachedAIImplements()) do
+    			dbgprint("raiseImplements : aiImplementEndLine")
+        		implement.object:aiImplementEndLine()
+    		end
+    		--self:raiseStateChange(Vehicle.STATE_CHANGE_AI_END_LINE)
+    	end
+	
 	return waitTime
 end
 
