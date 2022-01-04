@@ -7,11 +7,11 @@
     	<text name="input_HLM_SHOWGUI" text="Fourrière : Paramètres" />
 		
 		<text name="text_HLM_isActive" text="Mode fourrière actif"/>
-		<text name="text_HLM_configuration" text="Gestion des fourrière"/>
-		<text name="text_HLM_installed" text="Gestion des tournières intégrée"/>
-		<text name="text_HLM_notInstalled" text="Pas de gestion des tournières intégrée"/>
-		<text name="text_HLM_installed_short" text="Installé"/>
-		<text name="text_HLM_notInstalled_short" text="Non installé"/>
+		<text name="text_HLM_configuration" text="Gestion des fourrières"/>
+		<text name="text_HLM_installed" text="Avec gestion des fourrières"/>
+		<text name="text_HLM_notInstalled" text="Sans gestion des tournières"/>
+		<text name="text_HLM_installed_short" text="Installée"/>
+		<text name="text_HLM_notInstalled_short" text="Non installée"/>
 
 		<text name="hlmgui_title" text="Gestion des fourrières : configuration pour "/>
 		<text name="hlmgui_on" text="activé"/>
@@ -23,8 +23,8 @@
 		
 		<text name="hlmgui_speedControl" text="Régler le régulateur de vitesse"/>
 		<text name="hlmgui_speedControlMod" text="Utiliser Mod SpeedControl"/>
-		<text name="hlmgui_speedSetting" text="Vitesse de travail sur le promontoire"/>
-		<text name="hlmgui_speedControlModSetting" text="Étape du régulateur de vitesse sur le promontoire"/>
+		<text name="hlmgui_speedSetting" text="Vitesse de travail en bord de champ"/>
+		<text name="hlmgui_speedControlModSetting" text="Étape du régulateur de vitesse en bord de champ"/>
 
 		<text name="hlmgui_alarmControl" text="Paramètres généraux"/>
 		<text name="hlmgui_beep" text="Tonalité d'avertissement lorsque la gestion est activée"/>
@@ -53,24 +53,24 @@
 		
 		<text name="hlmgui_vehicleControl" text="Paramètres du véhicule"/>
 		<text name="hlmgui_diffLock" text="Déblocage des différentiels"/>
-		<text name="hlmgui_crabSteering" text="Tourner la direction des crabes"/>
+		<text name="hlmgui_crabSteering" text="Tourner les roues (marche en crabe)"/>
 		<text name="hlmgui_csDirect" text="direct"/>
 		<text name="hlmgui_csTwoStep" text="via normal"/>
 		
 		<text name="hlmgui_speedControlTT" text="En bout de champ, le réglage du régulateur de vitesse peut être modifié sur une valeur réglable, puis réinitialisé."/>
 		<text name="hlmgui_speedControlModTT" text="Si disponible, le mod 'SpeedControl' peut être utilisé pour la régulation du régulateur de vitesse."/>
 		<text name="hlmgui_speedSettingTT" text="Réglage souhaité du régulateur de vitesse en bout de champ."/>
-		<text name="hlmgui_speedControlModSettingTT" text="Utilise le régulateur de vitesse 1, 2 ou 3 dans les tournières."/>
+		<text name="hlmgui_speedControlModSettingTT" text="Utilise le régulateur de vitesse 1, 2 ou 3 dans les fourrières."/>
 		<text name="hlmgui_alarmTT" text="En mode fourrière, un avertissement sonore régulier retentit."/>
 		<text name="hlmgui_raiseTT" text="En bout de champ, les outils portés abaissés peuvent être relevés puis redescendus. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
 		<text name="hlmgui_plowTT" text="Avec le relevage, les charrues peuvent être retournées. Soit directement, soit d'abord seulement vers le centre et seulement complètement lors de l'abaissement."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Le relevage permet de commuter le traceur sur le côté opposé."/>
 		<text name="hlmgui_ptoTT" text="En bout de champ, les outils portés activés peuvent être désactivés puis réactivés. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
-		<text name="hlmgui_gpsTT" text="Dans les tournières, le guidage GPS est mis en pause, puis repris."/>
+		<text name="hlmgui_gpsTT" text="Dans les fourrières, le guidage GPS est mis en pause, puis repris."/>
 		<text name="hlmgui_gpsTypeTT" text="La fonction peut être limitée à Guidance Steering ou VCA, ou mettre automatiquement en pause le système actuellement actif."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="En combinaison avec Guidance Steering, la gestion des fourrières peut être activée automatiquement lorsque la fourrière est atteinte."/>
-		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Par défaut, le système automatique active la gestion des fourrières lorsque l'avant du véhicule atteint la fourrière. Cela peut être commuté sur l'arrière du véhicule. Important : cette fonction ne peut être activée que si le guidage de GS n'est pas actif !"/>
-		<text name="hlmgui_diffLockTT" text="Dans les tournières, les blocages de différentiel actifs sont relâchés puis remis en place."/>
+		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Par défaut, le système automatique active la gestion des fourrières lorsque l'avant du véhicule atteint la fourrière. Cela peut être commuté sur l'arrière du véhicule. Important : cette fonction ne peut être activée que si le guidage de GPS n'est pas actif !"/>
+		<text name="hlmgui_diffLockTT" text="Dans les fourrières, les blocages de différentiel actifs sont relâchés puis remis en place."/>
 		<text name="hlmgui_csTT" text="Lorsque la fourrière est atteinte, il est possible de passer à une position de marche en crabe active. Soit directement, soit d'abord en position normale et seulement complètement à la fin de la tournière. Remarque : dans ce dernier cas, un bon timing est important. Il est donc recommandé de s'arrêter brièvement pour tourner et abaisser la charrue à la fin de la tournière."/>
 	</texts>
 </l10n>
