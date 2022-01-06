@@ -577,6 +577,8 @@ end
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
+	-- self.actionEventUpdateRequested = true -- restore of actionBindings
+	
 	-- debug output
 	if spec.actStep == 1 then
 		dbgprint("onUpdate : spec_HeadlandManagement:", 3)
