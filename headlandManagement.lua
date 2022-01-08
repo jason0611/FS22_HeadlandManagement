@@ -1202,10 +1202,8 @@ function HeadlandManagement.stopGPS(self, enable)
 	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 4 or spec.gpsSetting == 5) and not enable and spec.vcaDirSwitch then
 		if spec.gpsSetting == 4 then 
 			spec.gpsSetting = 5
-			print("Switch 1")
 		else
 			spec.gpsSetting = 4
-			print("Switch 2")
 		end
 	end
 end
