@@ -35,10 +35,13 @@ Additionally, once if SpeedControl will be available :
 
 ToDos:
 - Raising even with full harvesters, such as the Grimme potato harvester. This requires a different control routine.
-- Support of Enhanced Vehicle Mod
 
 Ideas for subsequent versions (without guarantee):
 - Separate lifting of front and rear devices, e.g. each when reaching the headland, or similar
+- Support of Enhanced Vehicle Mod
+- Turn per VCA: Right/Left change as an option
+- Turn per VCA: Right/Left change per hotkey 
+- Headland Management configured into mission vehicles
 
 ===
 
@@ -75,8 +78,11 @@ Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 
 Zu erledigen:
 - Ausheben auch bei Vollerntern, wie z.B. dem Grimme Kartoffelroder, ermöglichen. Dies erforderte eine andere Steuerungsroutine.
-- Unterstützung des Enhanced Vehicle Mod
 
 Ideen für Folgeversionen (ohne Gewähr):
 - Separates Ausheben von vorderen und hinteren Geräten, z.B. jeweils bei Erreichen des Vorgewendes, o.ä.
+- Unterstützung des Enhanced Vehicle Mod
+- Bei Wende per VCA: Rechts-/Links-Wechsel optional
+- VCA-Wende: Rechts/Links-Wechsel per Hotkey 
+- Vorgewende Management bei Missions-Fahrzeugen konfiguriert
 
