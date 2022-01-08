@@ -70,6 +70,9 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsAutoTriggerOffsetTitle",
 	"gpsAutoTriggerOffsetSetting",
 	"gpsAutoTriggerOffsetTT",
+	"gpsEnableDirSwitchSetting",
+	"gpsDisableDirSwitchTitle",
+	"gpsDirSwitchTT",
 	
 	"sectionDiffControl",
 	"vehicleControl",
@@ -109,7 +112,8 @@ function HeadlandManagementGui.setData(
 	useGuidanceSteeringTrigger, 
 	useGuidanceSteeringOffset, 
 	-- useVCA, 
-	useDiffLock, 
+	useDiffLock,
+	vcaDirSwitch, 
 	beep, 
 	beepVol,
 	modSpeedControlFound, 
@@ -254,6 +258,15 @@ function HeadlandManagementGui.setData(
 		
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
+
+	self.gpsDisableDirSwitchTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vcaDirSiwtch"))
+	self.gpsEnableDirSwitchSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.gpsEnableDirSwitchSetting:setState(vcaDirSwitch and 1 or 2)
+	self.gpsEnableDirSwitchSetting:setDisabled(not modVCAFound)
+	self.gpsEnableDirSwitchSetting:setVisible(modVCAFound)
 	
 	self.showGPS = true
 	-- gpsSetting: 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
@@ -368,6 +381,7 @@ function HeadlandManagementGui.setData(
 	self.speedControlModTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModTT"))
 	self.speedSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSettingTT"))
 	self.speedControlModSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModSettingTT"))
+	self.gpsDirSwitchTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_VCADirSwitchTT"))
 end
 
 -- check logical dependencies
@@ -438,6 +452,8 @@ function HeadlandManagementGui:onClickOk()
 	-- gps trigger
 	local useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
 	local useGuidanceSteeringOffset = self.gpsAutoTriggerOffsetSetting:getState() == 1
+	-- VCA dir siwtch
+	local vcaDirSwitch = self.gpsEnableDirSwitchSetting:getState() == 1
 	-- diffs
 	local useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	-- beep
@@ -464,7 +480,8 @@ function HeadlandManagementGui:onClickOk()
 		gpsSetting, 
 		useGuidanceSteeringTrigger, 
 		useGuidanceSteeringOffset,
-		useDiffLock, 
+		useDiffLock,
+		vcaDirSwitch,
 		beep,
 		beepVol
 	)

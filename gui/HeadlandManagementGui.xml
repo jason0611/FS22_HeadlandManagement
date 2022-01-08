@@ -136,6 +136,14 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerOffsetTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerOffsetTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsEnableDirSwitchSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsDisableDirSwitchTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsDirSwitchTT"/>
 			</GuiElement>	
 		
 		<!-- SpeedControl -->
