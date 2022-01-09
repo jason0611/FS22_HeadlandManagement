@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.1
+-- Version 2.9.2.2
 --
 -- TODO:
 -- Kartoffelroder
@@ -1007,7 +1007,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 			if actImplement ~= nil then
 				-- Possible potato harvester with fixed cutter? Raise and lower anyways...
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 3)
-				if actImplement.getAttachedAIImplements ~= nil then
+				if actImplement.getAttachedAIImplements ~= nil and actImplement.spec_combine ~= nil then
 					if raise then
 						for _, implement in pairs(actImplement:getAttachedAIImplements()) do
 						dbgprint("raiseImplements : aiImplementEndLine")
@@ -1022,7 +1022,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
 					end
 				else
-					dbgprint("raiseImplements : actImplement has no aiImplements", 3)
+					dbgprint("raiseImplements : actImplement is no combine or has no aiImplements", 3)
 				end
 			else
 				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 3)
