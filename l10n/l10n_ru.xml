@@ -2,8 +2,8 @@
 <l10n>
 	<texts>
 		<text name="input_HLM_TOGGLESTATE" text="Режим Разворотная полоса / Режим Поле"/>
-		<text name="input_HLM_SWITCHON" text="Режим Разворотная полоса" />
-		<text name="input_HLM_SWITCHOFF" text="Режим Поле" />
+		<text name="input_HLM_SWITCHON" text="Режим - Разворотная полоса" />
+		<text name="input_HLM_SWITCHOFF" text="Режим - Поле" />
 		<text name="input_HLM_SHOWGUI" text="Разворотная полоса: Настройки" />
 		
 		<text name="text_HLM_isActive" text="Режим Разворотной полосы активен"/>
@@ -21,10 +21,10 @@
 		<text name="hlmgui_back" text="заднее"/>
 		<text name="hlmgui_default" text="по умолчанию"/>
 		
-		<text name="hlmgui_speedControl" text="Настройки Speed-Control"/>
+		<text name="hlmgui_speedControl" text="Настройки скорости"/>
 		<text name="hlmgui_speedControlMod" text="Использовать мод SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Рабочая скорость на разворотной полосе"/>
-		<text name="hlmgui_speedControlModSetting" text="Уровень Speed-Control на разворотной полосе"/>
+		<text name="hlmgui_speedControlModSetting" text="Скорость на разворотной полосе"/>
 	
 		<text name="hlmgui_alarmControl" text="Общие настройки"/>
 		<text name="hlmgui_beep" text="Звуковое оповещение"/>
@@ -58,7 +58,7 @@
 		<text name="hlmgui_csDirect" text="прямой"/>
 		<text name="hlmgui_csTwoStep" text="через обычный"/>
 		
-		<text name="hlmgui_speedControlTT" text="На разворотной полосе настройка круиз-контроля может быть установлена на указанное значение, и позже сброшена."/>
+		<text name="hlmgui_speedControlTT" text="Настройки скорости круиз-контроля на разворотной полосе могут быть установлены на указанное значение, а позже сброшены."/>
 		<text name="hlmgui_speedControlModTT" text="Если доступен мод SpeedControl его можно использовать для регулировки скорости круиз-контроля."/>
 		<text name="hlmgui_speedSettingTT" text="Желаемые настройки круиз-контроля на разворотной полосе."/>
 		<text name="hlmgui_speedControlModSettingTT" text="Используйте круиз-контроль 1, 2 или 3 на разворотной полосе."/>
