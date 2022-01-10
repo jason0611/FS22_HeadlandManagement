@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
+	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA</contributors >
 	<version>2.0.0.0</version>
 	<title>
 		<en>Headland Management</en>
@@ -42,12 +43,6 @@ Prepared and provided with one of the following updates when SpeedControl Mod (F
 
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
-ChangeLog V2.0.0.0:
-- Ready for Farming Simulator 22
-- Many thanks to Kynuska for the czech translation
-
-And many thanks to team Agrarplay and the project LU Wohnzimmer for the extensive test-support!
-
 ]]>
 		</en>	
 		<de>
@@ -81,12 +76,6 @@ Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedCont
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
-
-ChangeLog V2.0.0.0:
-- Bereit für den Landwirtschaftssimulator 22
-- Vielen Dank an Kynuska für die tschechische Übersetzung
-
-Vielen Dank auch an das Team Agrarplay und das Projekt LU Wohnzimmer für die umfangreiche Testunterstützung!
 
 ]]>
 		</de>
@@ -122,12 +111,6 @@ Préparé et mis à disposition avec l'une des mises à jour suivantes, dès que
 
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS22_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
-Changelog V2.0.0.0:
-- Prêt pour le FS22
-- Merci beaucoup à Kynuska pour la traduction en tchèque
-
-Un grand merci à l'équipe d'Agrarplay et au projet LU Wohnzimmer pour leur soutien important en matière de tests !
-
 ]]>
 		</fr>
 		<cz>
@@ -161,12 +144,6 @@ Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k 
 - Nastaví rychlost dle úrovní tempomatu
 
 Další nápady nebo přání jsou vítány na https://github.com/jason0611/FS22_HeadlandManagement
-
-ChangeLog V2.0.0.0:
-- Připraveno pro Farming Simulator 22
-- Děkujeme Kynuskovi za český překlad
-
-Mnohokrát děkujeme týmu Agrarplay a projektu LU Wohnzimmer za rozsáhlou testovací podporu!
 
 ]]>
 		</cz>
@@ -202,12 +179,6 @@ Preparato e dotato di uno dei seguenti aggiornamenti quando è disponibile Speed
 
 Ulteriori idee o desideri sono i benvenuti su https://github.com/jason0611/FS22_HeadlandManagement
 
-ChangeLog:
-V2.0.0.0
-- Pronto per Farming Simulator 22
-- Molte grazie a Kynuska per la traduzione in ceco
-
-E molte grazie al team Agrarplay e al progetto LU Wohnzimmer per l'ampio supporto di test!
 ]]>
 		</it>
 	    
