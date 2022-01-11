@@ -51,7 +51,7 @@
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatické souvratě"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>
 		
-		<text name= "hlmgui_vcaDirSiwtch" text="VCA automatické přepínání směru"/>
+		<text name= "hlmgui_vcaDirSwitch" text="VCA automatické přepínání směru"/>
 		
 		<text name="hlmgui_vehicleControl" text="Kontrola stroje"/>
 		<text name="hlmgui_diffLock" text="Odemkni diferenciály"/>	
