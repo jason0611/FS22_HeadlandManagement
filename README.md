@@ -3,6 +3,9 @@
 
 Headland management for tractors, field sprayers, mowers and harvesters.
 
+*Attention: This version is a developer version! It can and will contain bugs, produce debug information and in the worst case, even if unlikely, destroy a savegame.*
+*Those who can't handle it are urged to wait for the ModHub version, which is already submitted.*
+
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
 
 The headland management system must be added once to the respective vehicle as a configuration before it can be used in the shop or in the workshop. The cost for this is 3000,-.
@@ -35,10 +38,17 @@ ToDos:
 
 Ideas for subsequent versions (without guarantee):
 - Separate lifting of front and rear devices, e.g. each when reaching the headland, or similar
+- Support of Enhanced Vehicle Mod
+- Turn per VCA: Right/Left change as an option
+- Turn per VCA: Right/Left change per hotkey 
+- Headland Management configured into mission vehicles
 
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
+
+*Achtung: Diese Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
+*Wer damit nicht umgehen kann, wird dringend gebeten, auf die ModHub-Version zu warten, die bereits eingereicht ist.*
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
 
@@ -61,7 +71,7 @@ Zusätzlich bei vorhandenem Vehicle Control Addon (VCA):
 Zusätzlich, wenn Guidance Steering verfügbar ist:
 - GPS Spurführung deaktivieren und reaktivieren
 - Vorgewendeautomatik: Bei Nutzung von Guidance Steering kann das Vorgewendemanagement automatisch aktiviert werden, wenn das Vorgewende erreicht wird
-- Erittlung eines Offsets für Guidance Steering, um die Automatik passend für am Heck befestigte Geräte zu aktivieren
+- Ermittlung eines Offsets für Guidance Steering, um die Automatik passend für am Heck befestigte Geräte zu aktivieren
 
 Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
@@ -71,4 +81,8 @@ Zu erledigen:
 
 Ideen für Folgeversionen (ohne Gewähr):
 - Separates Ausheben von vorderen und hinteren Geräten, z.B. jeweils bei Erreichen des Vorgewendes, o.ä.
+- Unterstützung des Enhanced Vehicle Mod
+- Bei Wende per VCA: Rechts-/Links-Wechsel optional
+- VCA-Wende: Rechts/Links-Wechsel per Hotkey 
+- Vorgewende Management bei Missions-Fahrzeugen konfiguriert
 

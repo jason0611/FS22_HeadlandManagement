@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="62">
+<modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
 	<version>2.9.2.2</version>
+	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA</contributors >
+
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
-		<fr>Gestion Des Promontoires</fr>
+		<fr>Gestion Des Fourrières</fr>
 		<cz>Souvraťový Management</cz>
+		<it>Gestione Capezzagna</it>
     </title>
     <description>
 		<en>
@@ -41,11 +44,10 @@ Prepared and provided with one of the following updates when SpeedControl Mod (F
 
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
-ChangeLog V2.0.0.0:
-- Ready for Farming Simulator 22
-- Many thanks to Kynuska for the czech translation
-
-And many thanks to team Agrarplay and the project LU Wohnzimmer for the extensive test-support!
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
 
 ]]>
 		</en>	
@@ -81,51 +83,49 @@ Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedCont
 
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
 
-ChangeLog V2.0.0.0:
-- Bereit für den Landwirtschaftssimulator 22
-- Vielen Dank an Kynuska für die tschechische Übersetzung
-
-Vielen Dank auch an das Team Agrarplay und das Projekt LU Wohnzimmer für die umfangreiche Testunterstützung!
+ChangeLog:
+V2.x.x.x: 
+- Verbessertes Timing der einzelnen Arbeitsschritte
+- Verbesserte Steuerung von Kartoffelrodern und ähnlichen Fahrzeugen
 
 ]]>
 		</de>
 		<fr>
 <![CDATA[
-Gestion des fourrières pour tracteurs, pulvérisateurs, faucheuses et moissonneuses.
+Gestion automatisée des fourrières pour tracteurs, pulvérisateurs, faucheuses et moissonneuses.
 
-Grâce à la gestion des manœuvres en bout de champ, les fonctions peuvent être combinées dans le véhicule et activées ensemble par simple pression sur un bouton afin de simplifier les manœuvres de virage lors des travaux dans les champs. Toutes les fonctions peuvent être activées et désactivées individuellement pour chaque véhicule via une interface graphique afin de s'adapter parfaitement au travail effectué.
+Grâce à la programmation des manœuvres en bout de champ, plusieurs fonctions peuvent être combinées et activées ensemble à l'aide d'une seule touche. Cela simplifie grandement les manœuvres en bout de rangs lors de vos travaux dans les champs. Toutes les fonctions peuvent être activées et désactivées individuellement pour chaque véhicule via une interface graphique afin de s'adapter parfaitement au travail effectué.
 
-Le système de gestion des manœuvres en bout de champ doit être ajouté une fois au véhicule concerné en tant que configuration avant de pouvoir être utilisé dans le magasin ou dans l'atelier. Le coût de cette opération est de 3 000 euros.
-Il peut être activé et désactivé dans le véhicule avec le levier de vitesse (gauche) Shift-X. Boutons différents peuvent également être configurés pour l'activation et la désactivation. L'interface graphique est appelée par défaut avec Shift+Ctrl+X.
+Avant de pouvoir être utilisé, le système de programmation des manœuvres en bout de champ doit être ajouté une fois au véhicule concerné depuis le magasin ou l'atelier. Il apparaitra en tant qu'une configuration possible. Le coût de cette opération est de 3 000 euros.
+Par défaut, il peut être activé et désactivé dans le véhicule avec la touche SHIFT(gauche) + X. D'autres raccourcis clavier peuvent être choisis pour l'activation et la désactivation. L'interface graphique est appelée par défaut avec Shift+Ctrl+X.
 
 Fonctions incluses :
-- Réduire la vitesse (régulateur de vitesse) et remonter, réactiver le régulateur de vitesse s'il était précédemment actif.
-- Relever les outils abaissés et les abaisser à nouveau.
-- Charrue de retournement, à une ou deux étapes (via la position centrale)
-- Relever et changer les rippers de voie
-- Changement de côté avec la marche en crabe activée
-- Désengager et réengager la ou les prises de force et le système hydraulique.
-- Bip lorsque la gestion des tournières est activée
+- Réduire la vitesse (régulateur de vitesse) et remonter les outils, réactiver le régulateur de vitesse s'il était précédemment actif.
+- Relever les outils et les abaisser à nouveau.
+- Retourner la charrue, en une ou deux étapes (via la position centrale)
+- Relever et changer de côté les traceurs des semoirs
+- Contrôle automatique de la marche en crabe lors des allers-retours
+- Désengager et réengager la ou les prises de force et le système hydraulique
+- Bip sonore lorsque la gestion des fourrières est activée
 
 Si le VCA Mod (FS22_VehicleControlAddon) est présent :
-- Désactiver et réactiver le guidage par trace GPS
+- Désactiver et réactiver le guidage par traces GPS
 - Désengager et réengager les blocages de différentiel actif
 - Déclenchement de la fonction de retournement
 
 Si la fonction Guidance Steering (FS22_guidanceSteering) est présente : 
 - Désactiver et réactiver le guidage GPS
-- Gestion automatique des tournières : activation automatique de la gestion des tournières lorsque la tournière est atteinte
+- Gestion automatique des fourrières : activation automatique de la gestion des fourrières lorsqu'elles sont atteintes
 
 Préparé et mis à disposition avec l'une des mises à jour suivantes, dès que SpeedControl (FS22_zzzSpeedControl ?) sera disponible :
 - Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
 
-D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS19_HeadlandManagement, veuillez écrire en allemand ou en anglais
+D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS22_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
-Changelog V2.0.0.0:
-- Prêt pour le FS22
-- Merci beaucoup à Kynuska pour la traduction en tchèque
-
-Un grand merci à l'équipe d'Agrarplay et au projet LU Wohnzimmer pour leur soutien important en matière de tests !
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
 
 ]]>
 		</fr>
@@ -161,14 +161,52 @@ Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k 
 
 Další nápady nebo přání jsou vítány na https://github.com/jason0611/FS22_HeadlandManagement
 
-ChangeLog V2.0.0.0:
-- Připraveno pro Farming Simulator 22
-- Děkujeme Kynuskovi za český překlad
-
-Mnohokrát děkujeme týmu Agrarplay a projektu LU Wohnzimmer za rozsáhlou testovací podporu!
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
 
 ]]>
 		</cz>
+		<it>
+<![CDATA[
+Gestione Capezzagna per trattori, atomizzatori, falciatrici e mietitrici.
+
+Con la gestione della capezzagna, le funzioni dei veicoli possono essere combinate e attivate insieme con il semplice tocco di un pulsante per semplificare le manovre di svolta durante il lavoro sul campo. Tutte le funzioni possono essere attivate e disattivate singolarmente per ogni veicolo tramite una GUI per ottenere un adattamento ideale al lavoro svolto.
+
+Il sistema di gestione della capezzagna deve essere aggiunto una volta al rispettivo veicolo in officina o in officina come configurazione prima di poter essere utilizzato. Il costo per questo è 3000,-.
+Può essere attivato e disattivato nel veicolo con Shift-X. In alternativa è possibile configurare diversi pulsanti per l'attivazione e la disattivazione. La GUI viene richiamata di default con Shift+Ctrl+X.
+
+Funzioni incluse:
+- Ridurre la velocità (cruise control (regolazione automatica della velocità)) e aumentare nuovamente, riattivare il cruise control (regolazione automatica della velocità) se precedentemente attivo
+- Sollevare gli attrezzi abbassati e riabbassarli
+- Girare l'aratro, monostadio o bistadio (tramite posizione centrale)
+- Solleva e cambia il marcatore
+- Controlla lo sterzo a granchio
+- Disinserire e reinserire la/e presa/e di forza e l'impianto idraulico
+- Segnale acustico quando è attivata la gestione della capezzagna
+
+Se è presente la Mod VCA (FS22_VehicleControlAddon):
+- Disattiva e riattiva la guida della traccia GPS
+- Disinserire e reinserire i bloccaggi differenziali attivi
+- Attiva la funzione di svolta di VCA
+
+Se è presente il sistema di guida (Guidance Steering) (FS22_guidanceSteering):
+- Disattiva e riattiva la guida GPS
+- Capezzagna automatica: attiva automaticamente la gestione della capezzagna quando viene raggiunta la capezzagna
+
+Preparato e dotato di uno dei seguenti aggiornamenti quando è disponibile SpeedControl Mod (FS22_zzzSpeedControl):
+- Regolazione della velocità possibile anche modificando il livello del cruise control
+
+Ulteriori idee o desideri sono i benvenuti su https://github.com/jason0611/FS22_HeadlandManagement
+
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
+
+]]>
+		</it>
 	    
  	</description>	
     <multiplayer supported="true"/>
