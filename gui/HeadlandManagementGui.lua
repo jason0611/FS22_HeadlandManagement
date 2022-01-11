@@ -262,6 +262,7 @@ function HeadlandManagementGui.setData(
 	self.showGPS = true
 	
 	-- gpsSetting: 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
+	local lastGPSSetting = gpsSetting
 	if not modGuidanceSteeringFound and gpsSetting > 1 then gpsSetting = gpsSetting - 1 end
 	
 	if modGuidanceSteeringFound and modVCAFound then
@@ -314,7 +315,7 @@ function HeadlandManagementGui.setData(
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.gpsEnableDirSwitchSetting:setState(vcaDirSwitch and 1 or 2)
-	self.gpsEnableDirSwitchSetting:setDisabled(not modVCAFound or gpsSetting == 2)
+	self.gpsEnableDirSwitchSetting:setDisabled(not modVCAFound or lastGPSSetting < 4)
 	self.gpsEnableDirSwitchSetting:setVisible(modVCAFound)
 	
 	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
