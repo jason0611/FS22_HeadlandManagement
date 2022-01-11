@@ -1,4 +1,6 @@
 # FS22_HeadlandManagement
+https://farming-simulator.com/mod.php?mod_id=228759
+
 !!! Work in progress !!!
 
 Headland management for tractors, field sprayers, mowers and harvesters.
@@ -43,6 +45,7 @@ Ideas for subsequent versions (without guarantee):
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
+https://farming-simulator.com/mod.php?mod_id=228759
 
 *Achtung: Diese Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen auf dem Bildschirm oder im Logfile produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
 *Wer damit nicht umgehen kann, wird dringend gebeten, auf die ModHub-Version zu warten, die bereits eingereicht ist.*
