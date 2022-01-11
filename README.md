@@ -3,7 +3,7 @@
 
 Headland management for tractors, field sprayers, mowers and harvesters.
 
-*Attention: This version is a developer version! It can and will contain bugs, produce debug information and in the worst case, even if unlikely, destroy a savegame.*
+*Attention: This version is a developer version! It can and will contain bugs, produce debug information (on-screen or logged) and in the worst case, even if unlikely, destroy a savegame.*
 *Those who can't handle it are urged to wait for the ModHub version, which is already submitted.*
 
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
@@ -33,21 +33,18 @@ Additionally, once if Guidance Steering is available:
 Additionally, once if SpeedControl will be available :
 - Speed adjustment also possible by changing the cruise control level
 
-ToDos:
-- Raising even with full harvesters, such as the Grimme potato harvester. This requires a different control routine.
-
 Ideas for subsequent versions (without guarantee):
 - Separate lifting of front and rear devices, e.g. each when reaching the headland, or similar
 - Support of Enhanced Vehicle Mod
-- Turn per VCA: Right/Left change as an option
-- Turn per VCA: Right/Left change per hotkey 
+- Turn per VCA: Automatic right/reft change as option
+- Turn per VCA: Automatic right/reft change per hotkey 
 - Headland Management configured into mission vehicles
 
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
 
-*Achtung: Diese Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
+*Achtung: Diese Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen auf dem Bildschirm oder im Logfile produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
 *Wer damit nicht umgehen kann, wird dringend gebeten, auf die ModHub-Version zu warten, die bereits eingereicht ist.*
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
@@ -76,13 +73,9 @@ Zusätzlich, wenn Guidance Steering verfügbar ist:
 Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
-Zu erledigen:
-- Ausheben auch bei Vollerntern, wie z.B. dem Grimme Kartoffelroder, ermöglichen. Dies erforderte eine andere Steuerungsroutine.
-
 Ideen für Folgeversionen (ohne Gewähr):
 - Separates Ausheben von vorderen und hinteren Geräten, z.B. jeweils bei Erreichen des Vorgewendes, o.ä.
 - Unterstützung des Enhanced Vehicle Mod
-- Bei Wende per VCA: Rechts-/Links-Wechsel optional
-- VCA-Wende: Rechts/Links-Wechsel per Hotkey 
+- Bei Wende per VCA: Umschaltung zwischen Rechts-/Links-Wechsel optional
+- VCA-Wende: Umschaltung Rechts/Links-Wechsel per Hotkey 
 - Vorgewende Management bei Missions-Fahrzeugen konfiguriert
-
