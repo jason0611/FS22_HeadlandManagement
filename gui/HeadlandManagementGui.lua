@@ -258,19 +258,10 @@ function HeadlandManagementGui.setData(
 		
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
-
-	self.gpsDisableDirSwitchTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vcaDirSiwtch"))
-	self.gpsEnableDirSwitchSetting:setTexts({
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
-	})
-	self.gpsEnableDirSwitchSetting:setState(vcaDirSwitch and 1 or 2)
-	self.gpsEnableDirSwitchSetting:setDisabled(not modVCAFound)
-	self.gpsEnableDirSwitchSetting:setVisible(modVCAFound)
 	
 	self.showGPS = true
-	-- gpsSetting: 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
 	
+	-- gpsSetting: 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
 	if not modGuidanceSteeringFound and gpsSetting > 1 then gpsSetting = gpsSetting - 1 end
 	
 	if modGuidanceSteeringFound and modVCAFound then
@@ -315,6 +306,16 @@ function HeadlandManagementGui.setData(
 	end
 	self.gpsSetting:setDisabled(gpsDisabled or not self.showGPS)
 	self.gpsSetting:setVisible(modGuidanceSteeringFound or modVCAFound)
+	
+	-- VCA direction switching
+	self.gpsDisableDirSwitchTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vcaDirSwitch"))
+	self.gpsEnableDirSwitchSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.gpsEnableDirSwitchSetting:setState(vcaDirSwitch and 1 or 2)
+	self.gpsEnableDirSwitchSetting:setDisabled(not modVCAFound or gpsSetting == 2)
+	self.gpsEnableDirSwitchSetting:setVisible(modVCAFound)
 	
 	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -404,9 +405,16 @@ function HeadlandManagementGui:logicalCheck()
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	self.gpsOnOffSetting:setDisabled(not self.modGuidanceSteeringFound and not self.modVCAFound)
+	
+	local gpsSetting = self.gpsSetting:getState()
+	if not self.modGuidanceSteeringFound and gpsSetting > 1 then
+		gpsSetting = gpsSetting + 1
+	end
+	print(gpsSetting)
 	self.gpsSetting:setDisabled(not useGPS or not self.showGPS)
-	self.gpsAutoTriggerSetting:setDisabled(not self.modGuidanceSteeringFound or not useGPS or self.gpsSetting:getState() == 3)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(not self.modGuidanceSteeringFound or self.gpsEnabled or self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() == 3)
+	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.modVCAFound or gpsSetting == 2)
+	self.gpsAutoTriggerSetting:setDisabled(not self.modGuidanceSteeringFound or not useGPS or self.gpsSetting:getState() >= 3)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(not self.modGuidanceSteeringFound or self.gpsEnabled or self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() >= 3)
 end
 
 -- close gui and send new values to callback

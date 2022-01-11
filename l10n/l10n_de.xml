@@ -49,7 +49,7 @@
 		<text name="hlmgui_gps_vcaL" text="nur VCA: Automatische Wende links"/>
 		<text name="hlmgui_gps_vcaR" text="nur VCA: Automatische Wende rechts"/>
 
-		<text name= "hlmgui_vcaDirSiwtch" text="VCA Auto Wende Wechsel"/>
+		<text name= "hlmgui_vcaDirSwitch" text="VCA: Wenderichtung umschalten"/>
 		
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
@@ -75,6 +75,6 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardmäßig aktiviert die Automatik das Vorgewende-Management, wenn die Front des Fahrzeugs das Vorgewende erreicht. Das kann auf das Heck des Fahrzeugs umgeschaltet werden. Wichtig: Diese Funktion ist nur schaltbar, wenn die Spurführung von GS nicht aktiv ist!"/>
 		<text name="hlmgui_diffLockTT" text="Im Vorgewende werden aktive Differentialsperren gelöst und anschließend wieder gesetzt."/>
 		<text name="hlmgui_csTT" text="Bei Erreichen des Vorgewendes kann eine aktive Hundegangstellung umgeschaltet werden. Entweder direkt, oder zunächst in Normalstellung und erst am Ende des Vorgewendes vollständig."/>
-		<text name="hlmgui_VCADirSwitchTT" text="Deaktiviert das automatische Wechseln der Wende Richtung, wenn verwendet. Hilfreich wenn in VCA der Reihenübersprung verschiedene Zahlen enthält."/>
+		<text name="hlmgui_VCADirSwitchTT" text="Deaktiviert das automatische Wechseln der Wenderichtung. Hilfreich wenn in VCA der Reihenübersprung für rechts und links verschiedene Zahlen enthält."/>
 	</texts>
 </l10n>

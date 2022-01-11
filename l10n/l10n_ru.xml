@@ -52,6 +52,8 @@
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Автоматизация разворотной полосы"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>
 		
+		<text name= "hlmgui_vcaDirSwitch" text="VCA: Switch turn direction automatically"/>
+		
 		<text name="hlmgui_vehicleControl" text="Управление трактором"/>
 		<text name="hlmgui_diffLock" text="Разблокировать дифференциалы"/>	
 		<text name="hlmgui_crabSteering" text="Переключить крабовый ход."/>
@@ -73,5 +75,6 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="По умолчанию Headlandmanagement активируется, когда передняя часть трактора достигает разворотной полосы. Его можно переключить на заднюю часть трактора. ВАЖНО: эта функция может быть переключена только в том случае, если в данный момент Guidance Steering не ведёт по треку!"/>
 		<text name="hlmgui_diffLockTT" text="На разворотной полосе дифференциалы разблокируются, а затем снова заблокируются."/>
 		<text name="hlmgui_csTT" text="Когда достигнута разворотная полоса, активный крабовый ход может быть включен. Либо на обычный ход, либо сначала в обычный или реверсивный крабовое положении, а затем в конце разворотной полосы полностью в необходимое положение."/>
+		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
 	</texts>
 </l10n>

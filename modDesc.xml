@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.9.2.2</version>
-	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA</contributors >
+	<version>2.9.2.3</version>
+	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
 		<en>Headland Management</en>
@@ -33,7 +33,7 @@ Included functions:
 If VCA Mod (FS22_VehicleControlAddon) is present:
 - Deactivate and reactivate GPS track guidance
 - Disengage and re-engage active differential locks
-- Trigger VCA's turn function
+- Trigger VCA's turn function, switch turn direction optionally
 
 If Guidance Steering (FS22_guidanceSteering) is present: 
 - Deactivate and reactivate GPS guidance
@@ -72,7 +72,7 @@ Enthaltene Funktionen:
 Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
-- Auslösen der Wendefunktion
+- Auslösen der Wendefunktion und Wechsel der Wenderichtung (optional)
 
 Bei vorhandenem Guidance Steering (FS22_guidanceSteering):
 - GPS Spurführung deaktivieren und reaktivieren
