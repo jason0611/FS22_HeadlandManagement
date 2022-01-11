@@ -7,7 +7,7 @@
     	<text name="input_HLM_SHOWGUI" text="Souvratě: Nastavení" />
 		
 		<text name="text_HLM_isActive" text="Souvratě: Mod aktivní"/>
-		<text name="text_HLM_configuration" text="Headlandmanagement"/>
+		<text name="text_HLM_configuration" text="Souvraťový management"/>
 		<text name="text_HLM_installed" text="Souvraťový management nainstalován"/>
 		<text name="text_HLM_notInstalled" text="Souvraťový management není nainstalován"/>
 		<text name="text_HLM_installed_short" text="Instalováno"/>
