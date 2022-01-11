@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.4
+-- Version 2.9.2.5
 --
 
 HeadlandManagement = {}
@@ -126,6 +126,7 @@ function HeadlandManagement.initSpecialization()
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
 	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#gpsSetting", "GPS-Mode", 1)
+	schemaSavegame:register(XMLValueType.BOOL, "Vehicles.vehicle(?).HeadlandManagement#switchDirVCA", "Switch vca-turn", true)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
 	
