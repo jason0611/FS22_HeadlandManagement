@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
+	<version>2.9.2.2</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA</contributors >
-	<version>2.0.0.0</version>
+
 	<title>
 		<en>Headland Management</en>
 		<de>Vorgewende Management</de>
@@ -43,6 +44,11 @@ Prepared and provided with one of the following updates when SpeedControl Mod (F
 
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
+
 ]]>
 		</en>	
 		<de>
@@ -76,6 +82,11 @@ Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedCont
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
+
+ChangeLog:
+V2.x.x.x: 
+- Verbessertes Timing der einzelnen Arbeitsschritte
+- Verbesserte Steuerung von Kartoffelrodern und ähnlichen Fahrzeugen
 
 ]]>
 		</de>
@@ -111,6 +122,11 @@ Préparé et mis à disposition avec l'une des mises à jour suivantes, dès que
 
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS22_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
+
 ]]>
 		</fr>
 		<cz>
@@ -145,6 +161,11 @@ Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k 
 
 Další nápady nebo přání jsou vítány na https://github.com/jason0611/FS22_HeadlandManagement
 
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
+
 ]]>
 		</cz>
 		<it>
@@ -178,6 +199,11 @@ Preparato e dotato di uno dei seguenti aggiornamenti quando è disponibile Speed
 - Regolazione della velocità possibile anche modificando il livello del cruise control
 
 Ulteriori idee o desideri sono i benvenuti su https://github.com/jason0611/FS22_HeadlandManagement
+
+ChangeLog:
+V2.x.x.x: 
+- Improved timing of the individual work steps
+- Improved control of potato harvesters and similar vehicles
 
 ]]>
 		</it>
