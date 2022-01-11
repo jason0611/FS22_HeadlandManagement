@@ -4,7 +4,7 @@ https://farming-simulator.com/mod.php?mod_id=228759
 Headland management for tractors, field sprayers, mowers and harvesters.
 
 *Attention: The GitHub version is a developer version! It can and will contain bugs, produce debug information (on-screen or logged) and in the worst case, even if unlikely, destroy a savegame.*
-*Those who can't handle it are urged to wait for the ModHub version, which is already submitted.*
+*Those who can't handle it are urged to use the ModHub version.*
 
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
 
@@ -46,7 +46,7 @@ Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
 https://farming-simulator.com/mod.php?mod_id=228759
 
 *Achtung: Die GitHub-Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen auf dem Bildschirm oder im Logfile produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
-*Wer damit nicht umgehen kann, wird dringend gebeten, auf die ModHub-Version zu warten, die bereits eingereicht ist.*
+*Wer damit nicht umgehen kann, wird dringend gebeten, die ModHub-Version zu nutzen.*
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
 
