@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.1.0
+-- Version 2.9.2.4
 --
 
 HeadlandManagementGui = {}
@@ -412,7 +412,7 @@ function HeadlandManagementGui:logicalCheck()
 	end
 	print(gpsSetting)
 	self.gpsSetting:setDisabled(not useGPS or not self.showGPS)
-	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.modVCAFound or gpsSetting == 2)
+	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.modVCAFound or gpsSetting < 4)
 	self.gpsAutoTriggerSetting:setDisabled(not self.modGuidanceSteeringFound or not useGPS or self.gpsSetting:getState() >= 3)
 	self.gpsAutoTriggerOffsetSetting:setDisabled(not self.modGuidanceSteeringFound or self.gpsEnabled or self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() >= 3)
 end
