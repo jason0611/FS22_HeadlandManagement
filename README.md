@@ -43,7 +43,6 @@ Ideas for subsequent versions (without guarantee):
 ===
 
 Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
-https://farming-simulator.com/mod.php?mod_id=228759
 
 *Achtung: Die GitHub-Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen auf dem Bildschirm oder im Logfile produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
 *Wer damit nicht umgehen kann, wird dringend gebeten, die ModHub-Version zu nutzen.*
