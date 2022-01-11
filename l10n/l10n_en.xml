@@ -50,6 +50,8 @@
 		<text name="hlmgui_gps_vcaR" text="only VCA: Automatic turn right"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger for automatic"/>
+
+		<text name= "hlmgui_vcaDirSiwtch" text="VCA Auto Direction Switch"/>
 		
 		<text name="hlmgui_vehicleControl" text="Vehicle control"/>
 		<text name="hlmgui_diffLock" text="Unlock differentials"/>	
@@ -72,5 +74,6 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="By default, headland management is activated when the front of the vehicle reaches the headland. This can be switched to the rear of the vehicle. Important: This function can only be switched if the track guidance of GS is not active!"/>
 		<text name="hlmgui_diffLockTT" text="At the headland, active differential locks are released and then set again."/>
 		<text name="hlmgui_csTT" text="When the headland is reached, an active crab steering can be switched over. Either directly, or first in normal or reversing position and then at the end of the headland completely."/>
+		<text name="hlmgui_VCADirSwitchTT" text="Disables autmatic turn direction switch, if used. Usefull when VCA has different numbers for Lanes Skipped."/>
 	</texts>
 </l10n>

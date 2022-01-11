@@ -204,6 +204,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.GSStatus = false
 	spec.modVCAFound = false
 	spec.vcaStatus = false
+	spec.vcaDirSwitch = true
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -322,6 +323,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
 		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
+		xmlFile:setValue(key.."#switchDirVCA", spec.vcaDirSwitch)
 		dbgprint("saveToXMLFile : saving whole data", 2)
 	end
 	dbgprint("saveToXMLFile : saving data finished", 2)
@@ -351,6 +353,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
 		spec.useDiffLock = streamReadBool(streamId)
+		spec.vcaDirSwitch = streamReadBool(streamId)
 	end
 end
 
@@ -378,6 +381,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
 		streamWriteBool(streamId, spec.useDiffLock)
+		streamWriteBool(streamId, spec.vcaDirSwitch)
 	end
 end
 	
@@ -408,6 +412,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
 				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
 				spec.useDiffLock = streamReadBool(streamId)
+				spec.vcaDirSwitch = streamReadBool(streamId)
 			end
 		end
 	end
@@ -440,6 +445,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
 				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
 				streamWriteBool(streamId, spec.useDiffLock)
+				streamWriteBool(streamId, spec.vcaDirSwitch)
 			end
 		end
 	end
@@ -517,6 +523,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 		spec.useGuidanceSteeringTrigger,
 		spec.useGuidanceSteeringOffset,
 		spec.useDiffLock,
+		spec.vcaDirSwitch,
 		spec.beep,
 		spec.beepVol,
 		spec.modSpeedControlFound,
@@ -543,7 +550,8 @@ function HeadlandManagement:guiCallback(
 		gpsSetting, 
 		useGuidanceSteeringTrigger, 
 		useGuidanceSteeringOffset,
-		useDiffLock, 
+		useDiffLock,
+		vcaDirSwitch, 
 		beep,
 		beepVol
 	)
@@ -566,6 +574,7 @@ function HeadlandManagement:guiCallback(
 	spec.useGuidanceSteeringTrigger = useGuidanceSteeringTrigger
 	spec.useGuidanceSteeringOffset = useGuidanceSteeringOffset
 	spec.useDiffLock = useDiffLock
+	spec.vcaDirSwitch = vcaDirSwitch
 	spec.beep = beep
 	spec.beepVol = beepVol
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -1214,7 +1223,7 @@ function HeadlandManagement.stopGPS(self, enable)
 			spec.wasGPSAutomatic = false
 		end
 	end
-	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 4 or spec.gpsSetting == 5) and not enable then
+	if spec.modVCAFound and spec.vcaStatus and (spec.gpsSetting == 4 or spec.gpsSetting == 5) and not enable and spec.vcaDirSwitch then
 		if spec.gpsSetting == 4 then 
 			spec.gpsSetting = 5
 		else
