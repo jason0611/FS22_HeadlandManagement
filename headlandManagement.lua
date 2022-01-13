@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.5
+-- Version 2.9.2.6
 --
 
 HeadlandManagement = {}
@@ -184,6 +184,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useTurnPlow = true
 	spec.useCenterPlow = true
 	spec.plowRotationMaxNew = nil
+	spec.vehicleLength = 0
 	
 	spec.useRidgeMarker = true
 	spec.ridgeMarkerState = 0
@@ -231,20 +232,28 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil and not HeadlandManagement.kbGS
 	
-	-- Calculate front and back offset for GuidanceSteering
+	-- Calculate vehicle length from front and back attacherJoints
 	local spec_at = self.spec_attacherJoints
-	if spec.modGuidanceSteeringFound and spec_at ~= nil then
-		local distFront, distBack = 0, 0
+	if spec_at ~= nil then
+		local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0
+		local frontNode, backNode
 		for _,joint in pairs(spec_at.attacherJoints) do
 			local wx, wy, wz = getWorldTranslation(joint.jointTransform)
 			local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
-			distFront = math.max(distFront, lz)
-			distBack = math.min(distBack, lz)
+			lastFront, lastBack = distFront, distBack
+			distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
+			if lastFront ~= distFront then frontNode = joint.jointTransform end
+			if lastBack ~= distBack then backNode = joint.jointTransform end
 		end
-		spec.guidanceSteeringOffset = math.ceil(math.abs(distFront)) + math.ceil(math.abs(distBack))
-		dbgprint("onPostLoad : distFront:"..tostring(distFront))
-		dbgprint("onPostLoad : distBack:"..tostring(distBack))
-		dbgprint("onPostLoad : offset:"..tostring(spec.guidanceSteeringOffset))
+		spec.vehicleLength = math.ceil(math.abs(distFront)) + math.ceil(math.abs(distBack))
+		spec.guidanceSteeringOffset = spec.vehicleLength
+		spec.frontNode = frontNode
+		spec.backNode = backNode
+		dbgprint("onPostLoad : distFront: "..tostring(distFront))
+		dbgprint("onPostLoad : distBack: "..tostring(distBack))
+		dbgprint("onPostLoad : length: "..tostring(spec.vehicleLength))
+		dbgprint("onPostLoad : frontNode: "..tostring(spec.frontNode))
+		dbgprint("onPostLoad : backNode: "..tostring(spec.backNode))
 	end
 
 	-- Check if Mod VCA exists
@@ -580,6 +589,24 @@ function HeadlandManagement:guiCallback(
 	dbgprint_r(spec, 4, 2)
 end
 
+-- Research part
+function HeadlandManagement.onUpdateResearch(self)
+	local spec = self.spec_HeadlandManagement
+	if spec == nil or not self:getIsActive() or self ~= g_currentMission.controlledVehicle then return end
+	
+	dbgprint("onUpdateResearch")
+	local fx, fz, bx, bz = 0, 0, 0, 0
+	if spec.frontNode ~= nil then fx, _, fz = getWorldTranslation(spec.frontNode) end
+	if spec.backNode ~= nil then bx, _, bz = getWorldTranslation(spec.backNode) end
+	dbgrender("fx: "..tostring(fx), 1, 2)
+	dbgrender("fz: "..tostring(fz), 2, 2)
+	dbgrender("bx: "..tostring(bx), 3, 2)
+	dbgrender("bz: "..tostring(bz), 4, 2)
+	
+	local fieldMode = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx, 0, fz) ~= 0
+	dbgrender("fieldMode: "..tostring(fieldMode), 5, 2)
+end
+
 -- Main part
 
 function HeadlandManagement:onUpdate(dt)
@@ -591,6 +618,9 @@ function HeadlandManagement:onUpdate(dt)
 	if spec.actStep == 1 then
 		dbgprint("onUpdate : spec_HeadlandManagement:", 3)
 	end
+	
+	-- research output
+	HeadlandManagement.onUpdateResearch(self)
 	
 	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.actStep==HeadlandManagement.MAXSTEP then
