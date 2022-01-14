@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.4
+-- Version 2.9.2.6
 --
 
 HeadlandManagementGui = {}
@@ -93,6 +93,8 @@ end
 function HeadlandManagementGui.setData(
 	self,
 	vehicleName, 
+	maxTurningRadius,
+	vehicleLength,
 	useSpeedControl, 
 	useModSpeedControl, 
 	crabSteeringFound, 
