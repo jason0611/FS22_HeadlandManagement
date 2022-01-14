@@ -4,6 +4,17 @@
 -- Jason06 / Glowins Modschmiede
 -- Version 2.9.2.6
 --
+-- Goal: Make Headland Detection independent from other mods like GS
+
+--[[
+Ideas:
+- Two nodes: front node + back node
+- Possible to adapt front/back nodes, if implement is being attached?
+- Separate raising of front and back implement, each when reaching headland
+
+Is there a way to detect, if VCA's turn has ended? --> Headland Management with automatic field mode?
+ 
+--]]
 
 HeadlandManagement = {}
 
@@ -605,6 +616,7 @@ function HeadlandManagement.onUpdateResearch(self)
 	
 	local fieldMode = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx, 0, fz) ~= 0
 	dbgrender("fieldMode: "..tostring(fieldMode), 5, 2)
+	
 end
 
 -- Main part
