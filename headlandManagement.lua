@@ -616,7 +616,8 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("bx: "..tostring(bx), 3, 2)
 	dbgrender("bz: "..tostring(bz), 4, 2)
 	
-	local fieldMode = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx, 0, fz) ~= 0
+	local headlandDistance = 3
+	local fieldMode = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + headlandDistance, 0, fz) ~= 0
 	dbgrender("fieldMode: "..tostring(fieldMode), 5, 2)
 	
 	local x, _, z = self:getVehicleWorldDirection()
