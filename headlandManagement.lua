@@ -11,8 +11,6 @@ Ideas:
 - Two nodes: front node + back node
 - Possible to adapt front/back nodes, if implement is being attached?
 - Separate raising of front and back implement, each when reaching headland
-- Use maxTurningRadius to support settings?
-- getVehicleWorldDirection
 
 
 Is there a way to detect, if VCA's turn has ended? --> Headland Management with automatic field mode?
@@ -188,6 +186,14 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modSpeedControlFound = false
 	spec.useModSpeedControl = false
 	
+	spec.useHLMTriggerF = true -- needs config settings
+	spec.useHLMTriggerB = true -- needs config settings
+	spec.headlandDistance = 9 -- needs config settings
+	spec.headlandF = false
+	spec.headlandB = false
+	spec.lastHeadlandF = false
+	spec.lastHeadlandB = false
+	
 	spec.useRaiseImplementF = true
 	spec.useRaiseImplementB = true
 	spec.implementStatusTable = {}
@@ -219,6 +225,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modVCAFound = false
 	spec.vcaStatus = false
 	spec.vcaDirSwitch = true
+	spec.vcaAutoResume = true -- Needs config setting
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -274,7 +281,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
 
 	-- HLM configured?
-	spec.exists = self.configurations["HeadlandManagement"] == 2
+	spec.exists = self.configurations["HeadlandManagement"] ~= nil and self.configurations["HeadlandManagement"] > 1
 	
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
@@ -309,7 +316,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	if spec.gpsSetting == 2 and not spec.modGuidanceSteeringFound then spec.gpsSetting = 1 end
 	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
 	
-	-- HLM now configured?
+	-- Set HLM configuration if set by savegame
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
 	dbgprint_r(self.configurations, 4, 2)
@@ -527,6 +534,8 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	HeadlandManagementGui.setData(
 		hlmGui.target,
 		self:getFullName(),
+		self.maxTurningRadius,
+		spec.vehicleLength,
 		spec.useSpeedControl,
 		spec.useModSpeedControl,
 		spec.crabSteeringFound,
@@ -608,24 +617,15 @@ function HeadlandManagement.onUpdateResearch(self)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil or not self:getIsActive() or self ~= g_currentMission.controlledVehicle then return end
 	
-	local fx, fz, bx, bz = 0, 0, 0, 0
-	if spec.frontNode ~= nil then fx, _, fz = getWorldTranslation(spec.frontNode) end
-	if spec.backNode ~= nil then bx, _, bz = getWorldTranslation(spec.backNode) end
-	dbgrender("fx: "..tostring(fx), 1, 2)
-	dbgrender("fz: "..tostring(fz), 2, 2)
-	dbgrender("bx: "..tostring(bx), 3, 2)
-	dbgrender("bz: "..tostring(bz), 4, 2)
+	local radius = self.maxTurningRadius
 	
-	local headlandDistance = 3
-	local fieldMode = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + headlandDistance, 0, fz) ~= 0
-	dbgrender("fieldMode: "..tostring(fieldMode), 5, 2)
+	dbgrender("radius: "..tostring(radius), 3, 2)
 	
-	local x, _, z = self:getVehicleWorldDirection()
-	dbgrender("dir x: "..tostring(x), 7, 2)
-	dbgrender("dir z: "..tostring(z), 8, 2)
-	local dir = math.atan2(x, z)
-	dir = 180 - (180 / math.pi) * dir
-	dbgrender("direction: "..tostring(math.floor(dir)), 9, 2)
+	dbgrender("fieldModeF: "..tostring(spec.headlandF), 5, 2)
+	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 2)
+
+	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 2)
+	
 end
 
 -- Main part
@@ -639,10 +639,35 @@ function HeadlandManagement:onUpdate(dt)
 	if spec.actStep == 1 then
 		dbgprint("onUpdate : spec_HeadlandManagement:", 3)
 	end
+		
+	-- calculate position, direction and field mode
+	local fx, fz, bx, bz
+	local dx, _, dz = self:getVehicleWorldDirection()
+	
+	if spec.frontNode ~= nil then 
+		fx, _, fz = getWorldTranslation(spec.frontNode) 
+		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
+	else
+		spec.headlandF = false
+	end
+
+	if spec.backNode ~= nil then 
+		bx, _, bz = getWorldTranslation(spec.backNode) 
+		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
+	else
+		spec.headlandB = false
+	end
+	
+	if not spec.headlandF then spec.lastHeadlandF = false end
+	if not spec.headlandB then spec.lastHeadlandB = false end
+	
+	-- vehicle's heading
+	local heading = math.atan2(dx, dz)
+	spec.heading = math.floor(180 - (180 / math.pi) * heading)
 	
 	-- research output
 	HeadlandManagement.onUpdateResearch(self)
-	
+
 	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.actStep==HeadlandManagement.MAXSTEP then
 		spec.timer = spec.timer + dt
@@ -656,12 +681,19 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- activate headland management at headland in auto-mode
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and spec.useHLMTriggerF and spec.headlandF and not spec.lastHeadlandF then
+		spec.isActive = true
+		spec.lastHeadlandF = true
+	end
+
+	-- activate headland management at headland in auto-mode triggered by Guidance Steering
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning then
 			spec.isActive = true
 		end
 	end
+
 	
 	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<HeadlandManagement.MAXSTEP then
@@ -748,6 +780,12 @@ function HeadlandManagement:onUpdate(dt)
 			spec_gs.stateMachine:requestStateUpdate()
 			dbgprint("onUpdate: (remote) adapted GS distance to "..tostring(spec.setServerHeadlandActDistance), 2)
 		end
+	end
+	
+	-- VCA auto resume
+	if spec.vcaAutoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.vcaTurnHeading then
+		spec.actStep = -spec.actStep
+		spec.vcaTurnHeading = nil
 	end
 end
 
@@ -1252,12 +1290,14 @@ function HeadlandManagement.stopGPS(self, enable)
 				if spec.gpsSetting == 4 then 
 					if self.vcaSnapReverseLeft ~= nil then 
 						self:vcaSnapReverseLeft()
-						dbgprint("stopGPS : VCA-GPS turn left")
+						spec.vcaTurnHeading = (spec.heading + 180) % 360
+						dbgprint("stopGPS : VCA-GPS turn left to "..tostring(spec.vcaTurnHeading))
 					end
 				else
 					if self.vcaSnapReverseRight ~= nil then 
 						self:vcaSnapReverseRight() 
-						dbgprint("stopGPS : VCA-GPS turn right")
+						spec.vcaTurnHeading = (spec.heading + 180) % 360
+						dbgprint("stopGPS : VCA-GPS turn right to "..tostring(spec.vcaTurnHeading))
 					end
 				end
 			end
