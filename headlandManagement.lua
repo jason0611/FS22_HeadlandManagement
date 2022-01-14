@@ -11,6 +11,9 @@ Ideas:
 - Two nodes: front node + back node
 - Possible to adapt front/back nodes, if implement is being attached?
 - Separate raising of front and back implement, each when reaching headland
+- Use maxTurningRadius to support settings?
+- getVehicleWorldDirection
+
 
 Is there a way to detect, if VCA's turn has ended? --> Headland Management with automatic field mode?
  
@@ -605,7 +608,6 @@ function HeadlandManagement.onUpdateResearch(self)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil or not self:getIsActive() or self ~= g_currentMission.controlledVehicle then return end
 	
-	dbgprint("onUpdateResearch")
 	local fx, fz, bx, bz = 0, 0, 0, 0
 	if spec.frontNode ~= nil then fx, _, fz = getWorldTranslation(spec.frontNode) end
 	if spec.backNode ~= nil then bx, _, bz = getWorldTranslation(spec.backNode) end
@@ -617,6 +619,12 @@ function HeadlandManagement.onUpdateResearch(self)
 	local fieldMode = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx, 0, fz) ~= 0
 	dbgrender("fieldMode: "..tostring(fieldMode), 5, 2)
 	
+	local x, _, z = self:getVehicleWorldDirection()
+	dbgrender("dir x: "..tostring(x), 7, 2)
+	dbgrender("dir z: "..tostring(z), 8, 2)
+	local dir = math.atan2(x, z)
+	dir = 180 - (180 / math.pi) * dir
+	dbgrender("direction: "..tostring(math.floor(dir)), 9, 2)
 end
 
 -- Main part
