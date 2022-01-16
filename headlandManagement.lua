@@ -157,6 +157,8 @@ function HeadlandManagement.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onPostAttachImplement", HeadlandManagement) 
+	SpecializationUtil.registerEventListener(vehicleType, "onPreDetachImplement", HeadlandManagement) 
 end
 
 function HeadlandManagement:onLoad(savegame)
@@ -233,7 +235,7 @@ function HeadlandManagement:onLoad(savegame)
 end
 
 function HeadlandManagement:onPostLoad(savegame)
-	dbgprint("onPostLoad", 2)
+	dbgprint("onPostLoad: "..self:getFullName(), 2)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil then return end
 	
@@ -612,6 +614,20 @@ function HeadlandManagement:guiCallback(
 	dbgprint_r(spec, 4, 2)
 end
 
+-- Calculate implement reference node
+function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
+	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName())
+	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex))
+	if implement ~= nil then dbgprint("onPostAttachImplement : implement: "..implement:getFullName()) end
+end
+
+function HeadlandManagement.onPreDetachImplement(vehicle, implement, jointDescIndex)
+	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName())
+	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex))
+	dbgprint("onPreDetachImplement : implement: "..implement.object:getFullName())
+	--dbgprint_r(implement, 1, 1)
+end
+
 -- Research part
 function HeadlandManagement.onUpdateResearch(self)
 	local spec = self.spec_HeadlandManagement
@@ -643,17 +659,19 @@ function HeadlandManagement:onUpdate(dt)
 	-- calculate position, direction and field mode
 	local fx, fz, bx, bz
 	local dx, _, dz = self:getVehicleWorldDirection()
+	local vx, _, vz = getWorldTranslation(self.rootNode)
+	local onField = getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
 	
 	if spec.frontNode ~= nil then 
 		fx, _, fz = getWorldTranslation(spec.frontNode) 
-		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
+		spec.headlandF = onField and getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandF = false
 	end
 
 	if spec.backNode ~= nil then 
 		bx, _, bz = getWorldTranslation(spec.backNode) 
-		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
+		spec.headlandB = onField and getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandB = false
 	end
