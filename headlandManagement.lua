@@ -242,6 +242,13 @@ local function vehicleMeasurement(self, excludedImplement)
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
 	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements))
+
+	-- the to-be-detached implement is still connected, so we have to exclude it and it's children from calculation of vehicle's length
+	local excludedChilds = {}
+	if excludedImplement ~= nil and excludedImplement.getFullName ~= nil then 
+		dbgprint("vehicleMeasurement : excludedImplement: "..excludedImplement:getFullName())
+		if excludedImplement.getChildVehicles ~= nil then excludedChilds = excludedImplement:getChildVehicles() end
+	end
 	
 	for _,implement in pairs(allImplements) do
 		if implement ~= nil then 
@@ -251,6 +258,9 @@ local function vehicleMeasurement(self, excludedImplement)
 				if implement.getName ~= nil and implement:getName() == filterName then filtered = true end
 			end
 			if implement == excludedImplement then filtered = true end
+			for _,excludedChild in pairs(excludedChilds) do 
+				if implement == excludedChild then filtered = true end
+			end
 			
 			local spec_at = implement.spec_attacherJoints
 			
@@ -691,6 +701,7 @@ end
 
 -- Calculate implement reference node
 function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
+	local spec = vehicle.spec_HeadlandManagement
 	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName())
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex))
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName())
@@ -702,11 +713,12 @@ function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescI
 	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode))
 end
 
-function HeadlandManagement.onPreDetachImplement(vehicle, implement, jointDescIndex)
+function HeadlandManagement.onPreDetachImplement(vehicle, implement)
+	local spec = vehicle.spec_HeadlandManagement
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName())
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex))
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle, implement)
+	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength))
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode))
@@ -726,6 +738,9 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 2)
 
 	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 2)
+
+	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 2)
+	dbgrender("backNode:  "..tostring(spec.backNode), 11, 2)
 	
 	ShowNodeF = DebugCube.new()
 	ShowNodeB = DebugCube.new()
