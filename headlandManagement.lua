@@ -158,7 +158,7 @@ function HeadlandManagement.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onPostAttachImplement", HeadlandManagement) 
-	SpecializationUtil.registerEventListener(vehicleType, "onPostDetachImplement", HeadlandManagement) 
+	SpecializationUtil.registerEventListener(vehicleType, "onPreDetachImplement", HeadlandManagement) 
 end
 
 function HeadlandManagement:onLoad(savegame)
@@ -235,13 +235,12 @@ function HeadlandManagement:onLoad(savegame)
 end
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
-local function vehicleMeasurement(self)
+local function vehicleMeasurement(self, excludedImplement)
 	local frontNode, backNode, vehicleLength
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
 	local tmpLen = 0
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
-	--table.insert(allImplements, self)
 	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements))
 	
 	for _,implement in pairs(allImplements) do
@@ -251,6 +250,7 @@ local function vehicleMeasurement(self)
 			for _,filterName in pairs(HeadlandManagement.filterList) do
 				if implement.getName ~= nil and implement:getName() == filterName then filtered = true end
 			end
+			if implement == excludedImplement then filtered = true end
 			
 			local spec_at = implement.spec_attacherJoints
 			
@@ -694,9 +694,6 @@ function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescI
 	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName())
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex))
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName())
-	if implement.spec_workArea ~= nil then
-		--dbgprint_r(implement.spec_workArea, 1, 2)
-	end
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle)
 	spec.guidanceSteeringOffset = spec.vehicleLength
@@ -705,15 +702,15 @@ function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescI
 	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode))
 end
 
-function HeadlandManagement.onPostDetachImplement(vehicle, jointDescIndex)
-	dbgprint("onPostDetachImplement : vehicle: "..vehicle:getFullName())
-	dbgprint("onPostDetachImplement : jointDescIndex: "..tostring(jointDescIndex))
+function HeadlandManagement.onPreDetachImplement(vehicle, implement, jointDescIndex)
+	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName())
+	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex))
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle)
+	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle, implement)
 	spec.guidanceSteeringOffset = spec.vehicleLength
-	dbgprint("onPostDetachImplement : length: "..tostring(spec.vehicleLength))
-	dbgprint("onPostDetachImplement : frontNode: "..tostring(spec.frontNode))
-	dbgprint("onPostDetachImplement : backNode: "..tostring(spec.backNode))
+	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength))
+	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode))
+	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode))
 end
 
 -- Research part
