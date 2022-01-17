@@ -238,15 +238,22 @@ end
 local function vehicleMeasurement(self)
 	local frontNode, backNode, vehicleLength
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
+	local tmpLen = 0
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
 	table.insert(allImplements, self)
 	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements))
 	
-	for index,implement in pairs(allImplements) do
+	for _,implement in pairs(allImplements) do
 		if implement ~= nil then 
+			
+			local filtered = false
+			for _,filterName in pairs(HeadlandManagement.filterList) do
+				if implement.getName ~= nil and implement:getName() == filterName then filtered = true end
+			end
+			
 			local spec_at = implement.spec_attacherJoints
-			if spec_at ~= nil then
+			if not filtered and spec_at ~= nil then
 				for index,joint in pairs(spec_at.attacherJoints) do
 					local wx, wy, wz = getWorldTranslation(joint.jointTransform)
 					local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
@@ -254,22 +261,18 @@ local function vehicleMeasurement(self)
 					dbgprint(lz, 3)
 					lastFront, lastBack = distFront, distBack
 					distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
-					if lastFront ~= distFront then frontNode = joint.jointTransform; dbgprint("New frontNode set", 3) end
-					if lastBack ~= distBack then backNode = joint.jointTransform; dbgprint("New backNode set", 3) end
+					if distFront ~= lastFront then frontNode = joint.jointTransform; dbgprint("New frontNode set", 3) end
+					if distBack ~= lastBack then backNode = joint.jointTransform; dbgprint("New backNode set", 3) end
 			
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
-					dbgprint("vehicleMeasurement 1 "..tostring(index)..": distFront: "..tostring(distFront))
-					dbgprint("vehicleMeasurement 1 "..tostring(index)..": distBack: "..tostring(distBack))
-					dbgprint("vehicleMeasurement 1 "..tostring(index)..": vehicleLength: "..tostring(tmpLen))
+					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distFront: "..tostring(distFront))
+					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distBack: "..tostring(distBack))
+					dbgprint("vehicleMeasurement joint "..tostring(index)..": new vehicleLength: "..tostring(tmpLen))
 				end
+			else
+				dbgprint("vehicleMeasurement: filtered or no attacherJoint")
 			end
 
-			
-			local filtered = false
-			for _,filterName in pairs(HeadlandManagement.filterList) do
-				if implement.getName ~= nil and implement:getName() == filterName then filtered = true end
-			end
-			
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
 				for index, workArea in pairs(spec_wa.workAreas) do
@@ -285,12 +288,11 @@ local function vehicleMeasurement(self)
 						if lastFront ~= distFront then frontNode = testNode; dbgprint("New frontNode set", 3) end
 						if lastBack ~= distBack then backNode = testNode; dbgprint("New backNode set", 3) end
 					end
+					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront))
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack))
+					dbgprint("vehicleMeasurement workArea2 "..tostring(index)..": new vehicleLength: "..tostring(tmpLen))
 				end
-				
-				tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
-				dbgprint("vehicleMeasurement 2 "..tostring(index)..": distFront: "..tostring(distFront))
-				dbgprint("vehicleMeasurement 2 "..tostring(index)..": distBack: "..tostring(distBack))
-				dbgprint("vehicleMeasurement 2 "..tostring(index)..": vehicleLength: "..tostring(tmpLen))
 			else
 				dbgprint("vehicleMeasurement: filtered or no workArea")
 			end
@@ -691,7 +693,6 @@ end
 function HeadlandManagement.onPostDetachImplement(vehicle, jointDescIndex)
 	dbgprint("onPostDetachImplement : vehicle: "..vehicle:getFullName())
 	dbgprint("onPostDetachImplement : jointDescIndex: "..tostring(jointDescIndex))
-	--dbgprint_r(implement, 1, 1)
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle)
 	spec.guidanceSteeringOffset = spec.vehicleLength
