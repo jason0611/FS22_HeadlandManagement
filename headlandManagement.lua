@@ -188,8 +188,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modSpeedControlFound = false
 	spec.useModSpeedControl = false
 	
-	spec.useHLMTriggerF = true -- needs config settings
-	spec.useHLMTriggerB = true -- needs config settings
+	spec.useHLMTriggerF = false -- needs config settings
+	spec.useHLMTriggerB = false -- needs config settings
 	spec.headlandDistance = 9 -- needs config settings
 	spec.headlandF = false
 	spec.headlandB = false
