@@ -22,7 +22,7 @@
 		<text name="hlmgui_default" text="Predefinito"/>
 		
 		<text name="hlmgui_speedControl" text="Impostazioni di controllo della velocità"/>
-		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
+		<text name="hlmgui_speedControlMod" text="Usa mod SpeedControl"/>
 		<text name="hlmgui_speedSetting" text="Velocità di lavoro in capezzagna"/>
 		<text name="hlmgui_speedControlModSetting" text="Livello di controllo della velocità in capezzagna"/>
 	
@@ -52,7 +52,7 @@
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatico a fine campo"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger per automatico"/>
 		
-		<text name= "hlmgui_vcaDirSwitch" text="VCA: Switch turn direction automatically"/>
+		<text name= "hlmgui_vcaDirSwitch" text="VCA: Cambia automaticamente la direzione di svolta"/>
 		
 		<text name="hlmgui_vehicleControl" text="Impostazioni del veicolo"/>
 		<text name="hlmgui_diffLock" text="Sblocca i bloccaggi differenziali"/>	
@@ -75,6 +75,6 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Di serie, il sistema automatico attiva la gestione della capezzagna quando la parte anteriore del veicolo raggiunge la capezzagna. Questo può essere spostato nella parte posteriore del veicolo. Importante: questa funzione può essere commutata solo se la guida di corsia Guidance Steering non è attiva!"/>
 		<text name="hlmgui_diffLockTT" text="In capezzagna, i bloccaggi differenziali attivi vengono rilasciati e quindi reimpostati."/>
 		<text name="hlmgui_csTT" text="Quando si raggiunge la capezzagna, è possibile commutare lo sterzo attivo a granchio. O direttamente, oppure prima in posizione normale o in retromarcia e poi a fine campo completamente."/>
-		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
+		<text name="hlmgui_VCADirSwitchTT" text="Abilita o disabilita automaticamente la commutazione della direzione di svolta. Utile quando VCA ha numeri diversi per saltare le corsie a sinistra/destra."/>
   </texts>
 </l10n>
