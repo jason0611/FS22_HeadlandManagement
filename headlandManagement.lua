@@ -264,8 +264,14 @@ local function vehicleMeasurement(self)
 					dbgprint(lz, 3)
 					lastFront, lastBack = distFront, distBack
 					distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
-					if distFront ~= lastFront then frontNode = joint.jointTransform; dbgprint("New frontNode set") end
-					if distBack ~= lastBack then backNode = joint.jointTransform; dbgprint("New backNode set") end
+					if distFront ~= lastFront then 
+						frontNode = joint.jointTransform
+						dbgprint("vehicleMeasurement joint "..tostring(index)..": New frontNode set") 
+					end
+					if distBack ~= lastBack then 
+						backNode = joint.jointTransform 
+						dbgprint("vehicleMeasurement joint "..tostring(index)..": New backNode set") 
+					end
 			
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
 					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distFront: "..tostring(distFront))
@@ -279,8 +285,8 @@ local function vehicleMeasurement(self)
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
 				for index, workArea in pairs(spec_wa.workAreas) do
-					local testNode = workArea.start
-					if workArea.start ~= nil and workArea.width ~= nil then
+					if workArea.start ~= nil then
+						local testNode = workArea.start
 						local wx, wy, wz = getWorldTranslation(testNode)
 						local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
 						dbgprint("workAreaRootNode wz/lz:", 3)
@@ -288,8 +294,14 @@ local function vehicleMeasurement(self)
 						dbgprint(lz, 3)
 						lastFront, lastBack = distFront, distBack
 						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
-						if lastFront ~= distFront then frontNode = testNode; dbgprint("New frontNode set", 3) end
-						if lastBack ~= distBack then backNode = testNode; dbgprint("New backNode set", 3) end
+						if lastFront ~= distFront then 
+							frontNode = testNode; 
+							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set") 
+						end
+						if lastBack ~= distBack then 
+							backNode = testNode; 
+							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set") 
+						end
 					end
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront))
