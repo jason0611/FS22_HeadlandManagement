@@ -241,7 +241,7 @@ local function vehicleMeasurement(self)
 	local tmpLen = 0
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
-	table.insert(allImplements, self)
+	--table.insert(allImplements, self)
 	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements))
 	
 	for _,implement in pairs(allImplements) do
@@ -253,6 +253,9 @@ local function vehicleMeasurement(self)
 			end
 			
 			local spec_at = implement.spec_attacherJoints
+			
+			if implement.getName ~= nil then dbgprint("vehicleMeasurement : implement: "..implement:getName()) end
+			
 			if not filtered and spec_at ~= nil then
 				for index,joint in pairs(spec_at.attacherJoints) do
 					local wx, wy, wz = getWorldTranslation(joint.jointTransform)
@@ -261,8 +264,8 @@ local function vehicleMeasurement(self)
 					dbgprint(lz, 3)
 					lastFront, lastBack = distFront, distBack
 					distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
-					if distFront ~= lastFront then frontNode = joint.jointTransform; dbgprint("New frontNode set", 3) end
-					if distBack ~= lastBack then backNode = joint.jointTransform; dbgprint("New backNode set", 3) end
+					if distFront ~= lastFront then frontNode = joint.jointTransform; dbgprint("New frontNode set") end
+					if distBack ~= lastBack then backNode = joint.jointTransform; dbgprint("New backNode set") end
 			
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
 					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distFront: "..tostring(distFront))
@@ -291,7 +294,7 @@ local function vehicleMeasurement(self)
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront))
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack))
-					dbgprint("vehicleMeasurement workArea2 "..tostring(index)..": new vehicleLength: "..tostring(tmpLen))
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen))
 				end
 			else
 				dbgprint("vehicleMeasurement: filtered or no workArea")
