@@ -745,7 +745,7 @@ function HeadlandManagement.onUpdateResearch(self)
 	end
 	
 	if spec ~= nil then 
-		dbgrenderTable(spec, 1, 3)
+		--dbgrenderTable(spec, 1, 3)
 	end
 end
 
