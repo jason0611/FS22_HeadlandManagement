@@ -6,6 +6,8 @@ Headland management for tractors, field sprayers, mowers and harvesters.
 *Attention: The GitHub version is a developer version! It can and will contain bugs, produce debug information (on-screen or logged) and in the worst case, even if unlikely, destroy a savegame.*
 *Those who can't handle it are urged to use the ModHub version.*
 
+**This development version is not permited to be published to other sites, the only permitted location is here at GitHub!**
+
 With headland management, functions of vehicles can be combined and activated together at the touch of a button to simplify turning manoeuvres when working in the field. All functions can be activated and deactivated individually for each vehicle via a GUI to achieve ideal adaptation to the work being carried out.
 
 The headland management system must be added once to the respective vehicle as a configuration before it can be used in the shop or in the workshop. The cost for this is 3000,-.
@@ -51,6 +53,8 @@ Vorgewende-Management für Schlepper, Feldspritzen, Mäher und Erntemaschinen
 
 *Achtung: Die GitHub-Version ist eine Entwickler-Version! Sie kann und wird Fehler enthalten, Debug-Informationen auf dem Bildschirm oder im Logfile produzieren und schlimmstenfalls, auch wenn unwahrscheinlich, einen Spielstand zerstören.*
 *Wer damit nicht umgehen kann, wird dringend gebeten, die ModHub-Version zu nutzen.*
+
+**Diese Entwicklungsversion darf nicht auf anderen Seiten veröffentlicht werden, der einzige erlaubte Ort ist hier auf GitHub!**
 
 Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und gemeinsam per Knopfdruck aktiviert werden, um Wendemanöver bei der Feldarbeit zu vereinfachen. Alle Funktionen sind je Fahrzeug über eine GUI einzeln aktivierbar und deaktivierbar, um eine ideale Anpassung an die durchgeführten Arbeiten zu erreichen.
 
