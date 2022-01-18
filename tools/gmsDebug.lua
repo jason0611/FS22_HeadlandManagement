@@ -1,8 +1,13 @@
 --
 -- Glowins Modschmiede: Debug-Tool
 -- Author: Jason06 / Glowins Mod-Schmiede
--- V1.5.0.1
+-- V1.5.1.0
 --
+-- debug level
+-- 1 : default
+-- 2 : verbose
+-- 3 : onScreen
+-- 4 : very verbose / table prints to log
 
 GMSDebug = {}
 GMSDebug.modName = "Unknown Mod"
@@ -41,7 +46,7 @@ function GMSDebug:print_r(table, prio, level)
 end
 
 function GMSDebug:render(text, pos, prio)
-	if prio == nil then prio = 1; end
+	if prio == nil then prio = 3; end
 	if not GMSDebug.state or prio > GMSDebug.level then return; end
 	if pos == nil then pos = 1; end
 	setTextAlignment(RenderText.ALIGN_LEFT)
@@ -49,7 +54,7 @@ function GMSDebug:render(text, pos, prio)
 end
 
 function GMSDebug:renderTable(data, pos, prio)
-	if prio == nil then prio = 1; end
+	if prio == nil then prio = 3; end
 	if not GMSDebug.state or prio > GMSDebug.level then return; end
 	if pos == nil then pos = 1; end
 	local n = 0
@@ -62,8 +67,8 @@ function GMSDebug:renderTable(data, pos, prio)
 end
 
 function GMSDebug:toggleDebug(prio)
-	local level = tonumber(prio) or 1
-	if level == GMSDebug.level then
+	local level = tonumber(prio)
+	if level == nil or level == GMSDebug.level then
 		GMSDebug.state = not GMSDebug.state
 	else
 		GMSDebug.level = level
