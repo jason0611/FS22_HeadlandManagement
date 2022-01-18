@@ -33,8 +33,13 @@ Additionally, once if Guidance Steering is available:
 Additionally, once if SpeedControl will be available :
 - Speed adjustment also possible by changing the cruise control level
 
-Ideas for subsequent versions (without guarantee):
+Just work in progress:
+- Headland detection independent from other mods (e.e. GS)
+- Frontnode and backnode for exact raising on headland
 - Separate lifting of front and rear devices, e.g. each when reaching the headland, or similar
+- Headland automatic: Switch back to fieldmode automatically, after finished turn
+
+Plans for subsequent versions (without guarantee):
 - Support of Enhanced Vehicle Mod
 - Turn per VCA: Automatic right/reft change as option
 - Turn per VCA: Automatic right/reft change per hotkey 
@@ -73,8 +78,13 @@ Zusätzlich, wenn Guidance Steering verfügbar ist:
 Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
-Ideen für Folgeversionen (ohne Gewähr):
+Derzeit in Arbeit:
+- Erkennung des Vorgewendes unabhängig von anderen Mods wie z.B. GS
+- Frontnode und backnode und Gerätevermessung für exaktes Geräteausheben 
 - Separates Ausheben von vorderen und hinteren Geräten, z.B. jeweils bei Erreichen des Vorgewendes, o.ä.
+- Vorgewende-Automatik: Automatisches Umschalten in den Feldmodus nach durchgeführter Wende
+
+Ideen für Folgeversionen (ohne Gewähr):
 - Unterstützung des Enhanced Vehicle Mod
 - Bei Wende per VCA: Umschaltung zwischen Rechts-/Links-Wechsel optional
 - VCA-Wende: Umschaltung Rechts/Links-Wechsel per Hotkey 
