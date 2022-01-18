@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.7
+-- Version 2.9.2.8
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -11,6 +11,7 @@
 
 -- Further ideas:
 -- Separate raising of front and back implement, each when reaching headland
+-- Enable manual override of trigger controlled actions
  
 HeadlandManagement = {}
 
@@ -22,20 +23,19 @@ GMSDebug:enableConsoleCommands("hlmDebug")
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
 g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
-HeadlandManagement.INITIALIZATION = 1
-HeadlandManagement.REDUCESPEED = 2
-HeadlandManagement.WAITTIME1 = 3
-HeadlandManagement.CRABSTEERING = 4
-HeadlandManagement.DIFFLOCK = 5
-HeadlandManagement.RAISEFRONTIMPLEMENT = 6
-HeadlandManagement.WAITONTRIGGER = 7
-HeadlandManagement.RAISEBACKIMPLEMENT = 8
-HeadlandManagement.WAITTIME2 = 9
-HeadlandManagement.WAITTIME3 = 9
-HeadlandManagement.TURNPLOW = 10
-HeadlandManagement.STOPPTO = 11
-HeadlandManagement.STOPGPS = 12
-HeadlandManagement.MAXSTEP = 13
+HeadlandManagement.REDUCESPEED = 1
+HeadlandManagement.WAITTIME1 = 2
+HeadlandManagement.CRABSTEERING = 3
+HeadlandManagement.DIFFLOCK = 4
+HeadlandManagement.RAISEIMPLEMENT1 = 5
+HeadlandManagement.WAITONTRIGGER = 6
+HeadlandManagement.RAISEIMPLEMENT2 = 7
+HeadlandManagement.WAITTIME2 = 8
+HeadlandManagement.WAITTIME3 = 8
+HeadlandManagement.TURNPLOW = 9
+HeadlandManagement.STOPPTO = 10
+HeadlandManagement.STOPGPS = 11
+HeadlandManagement.MAXSTEP = 12
 
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
@@ -165,58 +165,57 @@ function HeadlandManagement:onLoad(savegame)
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
 	spec.actionEventOn = nil
-	spec.actionEventOn = nil
 	
-	spec.exists = false
+	spec.exists = false		-- Headland Management is configured into vehicle
 	
-	spec.timer = 0
-	spec.beep = true
-	spec.beepVol = 5
+	spec.timer = 0			-- Timer for waiting actions
+	spec.beep = true		-- Beep on or off
+	spec.beepVol = 5		-- Beep volume setting
 	
-	spec.normSpeed = 20
-	spec.turnSpeed = 5
+	spec.normSpeed = 20		-- working speed on field
+	spec.turnSpeed = 5		-- working speed on headland
 
-	spec.actStep = 0
+	spec.actStep = 0		-- actual step in process chain
 	
-	spec.isActive = false
-	spec.action = {}
+	spec.isActive = false	-- Headland Management in headland mode (active) or field mode (inactive)
+	spec.action = {}		-- switches for process chain
 	spec.action[0] =false
 	
-	spec.useSpeedControl = true
-	spec.modSpeedControlFound = false
-	spec.useModSpeedControl = false
+	spec.useSpeedControl = true		-- change working speed n headland
+	spec.modSpeedControlFound = false	-- is mod 'FS22_zzzSpeedControl' existing?
+	spec.useModSpeedControl = false		-- use mod 'FS22_xxxSpeedControl'
 	
-	spec.useHLMTriggerF = false -- needs config settings
-	spec.useHLMTriggerB = false -- needs config settings
-	spec.headlandDistance = 9 -- needs config settings
-	spec.headlandF = false
-	spec.headlandB = false
-	spec.lastHeadlandF = false
-	spec.lastHeadlandB = false
+	spec.useHLMTriggerF = false -- needs config settings -- use vehicle's front node as trigger
+	spec.useHLMTriggerB = false -- needs config settings -- use vehicle's back node as trigger
+	spec.headlandDistance = 9 -- needs config settings	 -- headland width (distance to field border)
+	spec.headlandF = false	-- front node over headland?
+	spec.headlandB = false 	-- back node over headland?
+	spec.lastHeadlandF = false	-- was front node already over headland?
+	spec.lastHeadlandB = false	-- was back node already over headland?
 	
-	spec.useRaiseImplementF = true
-	spec.useRaiseImplementB = true
-	spec.implementStatusTable = {}
-	spec.implementPTOTable = {}
-	spec.useStopPTOF = true
-	spec.useStopPTOB = true
-	spec.waitTime = 0
-	spec.waitOnTrigger = true -- needs config settings
-	spec.useTurnPlow = true
-	spec.useCenterPlow = true
-	spec.plowRotationMaxNew = nil
-	spec.vehicleLength = 0
+	spec.useRaiseImplementF = true	-- raise front implements in headland mode
+	spec.useRaiseImplementB = true	-- raise back implements in headland mode
+	spec.implementStatusTable = {}	-- table of implement's state (lowered on field?)
+	spec.implementPTOTable = {}		-- table of implement's pto state on field
+	spec.useStopPTOF = true			-- stop front pto in headland mode
+	spec.useStopPTOB = true			-- stop back pto in headland mode
+	spec.waitTime = 0				-- time to wait for animations to finish
+	spec.waitOnTrigger = true -- needs config settings -- wait until vehicle has moved to trigger point before raising back implements
+	spec.useTurnPlow = true			-- turn plow in headland mode
+	spec.useCenterPlow = true		-- turn plow in two steps
+	spec.plowRotationMaxNew = nil	-- plow state while turning
+	spec.vehicleLength = 0			-- calculated vehicle's length
 	
-	spec.useRidgeMarker = true
-	spec.ridgeMarkerState = 0
+	spec.useRidgeMarker = true		-- switch ridge markers in headland mode
+	spec.ridgeMarkerState = 0		-- state of ridge markers on field
 	
-	spec.crabSteeringFound = false
-	spec.useCrabSteering = true
-	spec.useCrabSteeringTwoStep = true
+	spec.crabSteeringFound = false	-- vehicle has crab steering feature
+	spec.useCrabSteering = true		-- change crab steering in headland mode
+	spec.useCrabSteeringTwoStep = true -- change crab steering to AI driver position in headland mode
 	
-	spec.useGPS = true
-	spec.gpsSetting = 1 -- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
-	spec.wasGPSAutomatic = false
+	spec.useGPS = true				-- control gps in headland mode
+	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
+	spec.wasGPSAutomatic = false	-- was headland automatic active on field?
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteeringTrigger = false	
 	spec.useGuidanceSteeringOffset = false
@@ -564,7 +563,7 @@ end
 -- inputBindings / inputActions
 	
 function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
-	dbgprint("onRegisterActionEvents", 2)
+	dbgprint("onRegisterActionEvents", 4)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
@@ -813,6 +812,10 @@ function HeadlandManagement:onUpdate(dt)
 		spec.isActive = true
 		spec.lastHeadlandF = true
 	end
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and spec.useHLMTriggerB and spec.headlandB and not spec.lastHeadlandB then
+		spec.isActive = true
+		spec.lastHeadlandF = true
+	end
 
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
@@ -825,14 +828,13 @@ function HeadlandManagement:onUpdate(dt)
 	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<HeadlandManagement.MAXSTEP then
 		-- Set management actions
-		spec.action[HeadlandManagement.INITIALIZATION] = true
 		spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 		spec.action[HeadlandManagement.WAITTIME1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 		spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
-		spec.action[HeadlandManagement.RAISEFRONTIMPLEMENT] = spec.useRaiseImplementF
+		spec.action[HeadlandManagement.RAISEIMPLEMENT1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.WAITONTRIGGER] = spec.waitOnTrigger
-		spec.action[HeadlandManagement.RAISEBACKIMPLEMENT] = spec.useRaiseImplementB
+		spec.action[HeadlandManagement.RAISEIMPLEMENT2] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.WAITTIME2] = spec.useTurnPlow and (spec.useRaiseImplementF or spec.useRaiseImplementB)
 		spec.action[HeadlandManagement.WAITTIME3] = spec.useTurnPlow and spec.useCenterPlow and self.spec_plow ~= nil and (spec.useRaiseImplementF or spec.useRaiseImplementB)
 		spec.action[HeadlandManagement.TURNPLOW] = spec.useTurnPlow and (spec.useRaiseImplementF or spec.useRaiseImplementB)
@@ -843,25 +845,24 @@ function HeadlandManagement:onUpdate(dt)
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep), 2)
 			dbgprint("onUpdate : waitTime: "..tostring(spec.waitTime), 4)
 			-- Activation
-			if spec.actStep == HeadlandManagement.INITIALIZATION then HeadlandManagement.initialization(self, false) end
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, true); end
 			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, true, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, true); end
-			if spec.actStep == HeadlandManagement.RAISEFRONTIMPLEMENT and spec.action[HeadlandManagement.RAISEFRONTIMPLEMENT] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
-			if spec.actStep == HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self); end
-			if spec.actStep == HeadlandManagement.RAISEBACKIMPLEMENT and spec.action[HeadlandManagement.RAISEBACKIMPLEMENT] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
+			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
+			if spec.actStep == HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, spec.useHLMTriggerB); end
+			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
 			if spec.actStep == HeadlandManagement.WAITTIME2 and spec.action[HeadlandManagement.WAITTIME2] then HeadlandManagement.wait(self, spec.waitTime, dt); end
-			if spec.actStep == HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 2); end
+			if spec.actStep == HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 2, true, true); end
 			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, true); end
 			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, true); end
 			-- Deactivation
 			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, false); end
 			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, false); end
-			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2); end
+			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2, true, true); end
 			if spec.actStep == -HeadlandManagement.WAITTIME3 and spec.action[HeadlandManagement.WAITTIME3] then HeadlandManagement.wait(self, spec.waitTime, dt); end
-			if spec.actStep == -HeadlandManagement.RAISEFRONTIMPLEMENT and spec.action[HeadlandManagement.RAISEFRONTIMPLEMENT] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
-			if spec.actStep == -HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self); end
-			if spec.actStep == -HeadlandManagement.RAISEBACKIMPLEMENT and spec.action[HeadlandManagement.RAISEBACKIMPLEMENT] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
+			if spec.actStep == -HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, false); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
 			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false); end
 			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, false, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == -HeadlandManagement.WAITTIME1 and spec.action[HeadlandManagement.WAITTIME1] then HeadlandManagement.wait(self, spec.waitTime, dt); end
@@ -974,18 +975,49 @@ function HeadlandManagement:onDraw(dt)
 	end
 end
 	
-function HeadlandManagement.initialization(self, activeHeadlandAutomatic)
+function HeadlandManagement.waitOnTrigger(self, automatic)
 	local spec = self.spec_HeadlandManagement
-	dbgprint("initialization : activeHeadlandAutomatic: "..tostring(activeHeadlandAutomatic), 2)
-	if not activeHeadlandAutomatic then
-		spec.measureNode = spec.frontNode
-		spec.triggerNode = spec.backNode
-		if spec.measureNode == nil then spec.measureNode = self.rootNode end
-		if spec.triggerNode == nil then spec.triggerNode = self.rootNode end
-		local wx, wy, wz = getWorldTranslation(spec.triggerNode)
-		spec.triggerNodeX = wx
-		spec.triggerNodeY = wy
-		spec.triggerNodeZ = wz
+	dbgprint("waitOnTrigger : automatic: "..tostring(automatic), 2)
+	
+	if automatic then
+		if not spec.headlandB then 
+			spec.actStep = spec.actStep - 1
+		end
+	else
+		if spec.triggerPos == nil then
+			spec.triggerNode = spec.frontNode
+			spec.measureNode = spec.backNode
+			if spec.measureNode == nil then spec.measureNode = self.rootNode end
+			if spec.triggerNode == nil then spec.triggerNode = self.rootNode end
+			spec.triggerPos = {}
+			spec.triggerPos.x, _, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
+		end
+		local _, _, tz = worldToLocal(self.rootNode, spec.triggerPos.x, 0, spec.triggerPos.z)
+	
+		local wx, _, wz = getWorldTranslation(spec.measureNode)
+		local _, _, mz = worldToLocal(self.rootNode, wx, 0, wz)
+		local dist = math.abs(tz - mz)
+		dbgprint("waitOnTrigger : dist: "..tostring(dist), 4)
+	
+		if dist > 0.1 then 
+			spec.actStep = spec.actStep - 1
+		else 
+			spec.triggerPos = nil
+		end
+	end
+end
+
+function HeadlandManagement.wait(self, waitTime, dt)
+	local spec = self.spec_HeadlandManagement
+	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
+	if spec.waitCounter == nil then
+		spec.waitCounter = 0
+	end
+	spec.waitCounter = spec.waitCounter + dt
+	if spec.waitCounter < waitTime then
+		spec.actStep = spec.actStep - 1
+	else
+		spec.waitCounter = nil
 	end
 end
 
@@ -1088,7 +1120,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 	-- round 1: raise/lower implement
 	-- round 2: turn plow
 	local spec = self.spec_HeadlandManagement
-    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
+    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / round: "..tostring(round).." / front: "..tostring(front).." / back: "..tostring(back))
     
     local waitTime = 0
 	local allImplements = self:getRootVehicle():getChildVehicles()
@@ -1248,9 +1280,9 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		 	end
 		else
 			if actImplement ~= nil and front then
-				-- Possible potato harvester with fixed cutter? Raise and lower anyways...
+				-- Possible potato harvester with fixed cutter or mower like BigM? Raise and lower anyways...
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 2)
-				if actImplement.getAttachedAIImplements ~= nil and actImplement.spec_combine ~= nil then
+				if actImplement.getAttachedAIImplements ~= nil and (actImplement.spec_combine ~= nil or actImplement.spec_mower ~= nil) then
 					if raise then
 						for _, implement in pairs(actImplement:getAttachedAIImplements()) do
 						dbgprint("raiseImplements : aiImplementEndLine")
@@ -1265,7 +1297,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
 					end
 				else
-					dbgprint("raiseImplements : actImplement is no combine or has no aiImplements", 2)
+					dbgprint("raiseImplements : actImplement is no combine and no mower or has no aiImplements", 2)
 				end
 			else
 				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 2)
@@ -1273,27 +1305,6 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		end
 	end
 	return waitTime
-end
-
-function HeadlandManagement.wait(self, waitTime, dt)
-	local spec = self.spec_HeadlandManagement
-	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
-	if spec.waitCounter == nil then
-		spec.waitCounter = 0
-	end
-	spec.waitCounter = spec.waitCounter + dt
-	if spec.waitCounter < waitTime then
-		spec.actStep = spec.actStep - 1
-	else
-		spec.waitCounter = nil
-	end
-end
-
-function HeadlandManagement.waitOnTrigger(self)
-	local spec = self.spec_HeadlandManagement
-	local lx, ly, lz = worldToLocal(spec.measureNode, spec.triggerNodeX, spec.triggerNodeY, spec.triggerNodeZ)
-	if math.abs(lz) > 0.1 then spec.actStep = spec.actStep - 1 end
-	dbgprint("waitOnTrigger : lz: "..tostring(lz), 2)
 end
 
 function HeadlandManagement.stopPTO(self, stopPTO)
