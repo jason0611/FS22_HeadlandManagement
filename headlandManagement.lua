@@ -2,26 +2,21 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.6
+-- Version 2.9.2.7
 --
--- Goal: Make Headland Detection independent from other mods like GS
+-- Make Headland Detection independent from other mods like GS
+-- Two nodes: front node + back node
+-- Adapt front/back nodes, if implement is being attached or detached
+-- Detect, if turn has ended --> Headland Management with automatic field mode
 
---[[
-Ideas:
-- Two nodes: front node + back node
-- Possible to adapt front/back nodes, if implement is being attached?
-- Separate raising of front and back implement, each when reaching headland
-
-
-Is there a way to detect, if VCA's turn has ended? --> Headland Management with automatic field mode?
+-- Further ideas:
+-- Separate raising of front and back implement, each when reaching headland
  
---]]
-
 HeadlandManagement = {}
 
 if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_currentModName end
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 3)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -91,7 +86,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
         	{name = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_installed_short"), index = 2, isDefault = false, isSelectable = true, price = 3000, dailyUpkeep = 0, desc = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_installed")}
     	}
     	dbgprint("addHLMconfig : Configuration HeadlandManagement added", 2)
-    	dbgprint_r(configurations["HeadlandManagement"], 3)
+    	dbgprint_r(configurations["HeadlandManagement"], 4)
 	end
 	
     return configurations, defaultConfigurationIds
@@ -112,7 +107,7 @@ function HeadlandManagement.initSpecialization()
 	dbgprint("initSpecialization : Configuration initialized", 1)
 	
     local schemaSavegame = Vehicle.xmlSchemaSavegame
-	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process")
+	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process", 1)
 	
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
@@ -143,7 +138,7 @@ function HeadlandManagement.initSpecialization()
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
-	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process")
+	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
 end
 
 function HeadlandManagement.registerEventListeners(vehicleType)
@@ -241,12 +236,12 @@ local function vehicleMeasurement(self, excludedImplement)
 	local tmpLen = 0
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
-	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements))
+	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements), 2)
 
 	-- the to-be-detached implement is still connected, so we have to exclude it and it's children from calculation of vehicle's length
 	local excludedChilds = {}
 	if excludedImplement ~= nil and excludedImplement.getFullName ~= nil then 
-		dbgprint("vehicleMeasurement : excludedImplement: "..excludedImplement:getFullName())
+		dbgprint("vehicleMeasurement : excludedImplement: "..excludedImplement:getFullName(), 2)
 		if excludedImplement.getChildVehicles ~= nil then excludedChilds = excludedImplement:getChildVehicles() end
 	end
 	
@@ -270,26 +265,24 @@ local function vehicleMeasurement(self, excludedImplement)
 				for index,joint in pairs(spec_at.attacherJoints) do
 					local wx, wy, wz = getWorldTranslation(joint.jointTransform)
 					local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
-					dbgprint(wz, 3)
-					dbgprint(lz, 3)
 					lastFront, lastBack = distFront, distBack
 					distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 					if distFront ~= lastFront then 
 						frontNode = joint.jointTransform
-						dbgprint("vehicleMeasurement joint "..tostring(index)..": New frontNode set") 
+						dbgprint("vehicleMeasurement joint "..tostring(index)..": New frontNode set", 2) 
 					end
 					if distBack ~= lastBack then 
 						backNode = joint.jointTransform 
-						dbgprint("vehicleMeasurement joint "..tostring(index)..": New backNode set") 
+						dbgprint("vehicleMeasurement joint "..tostring(index)..": New backNode set", 2) 
 					end
 			
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
-					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distFront: "..tostring(distFront))
-					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distBack: "..tostring(distBack))
-					dbgprint("vehicleMeasurement joint "..tostring(index)..": new vehicleLength: "..tostring(tmpLen))
+					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distFront: "..tostring(distFront), 2)
+					dbgprint("vehicleMeasurement joint "..tostring(index)..": new distBack: "..tostring(distBack), 2)
+					dbgprint("vehicleMeasurement joint "..tostring(index)..": new vehicleLength: "..tostring(tmpLen), 2)
 				end
 			else
-				dbgprint("vehicleMeasurement: filtered or no attacherJoint")
+				dbgprint("vehicleMeasurement: filtered or no attacherJoint", 2)
 			end
 
 			local spec_wa = implement.spec_workArea
@@ -299,36 +292,33 @@ local function vehicleMeasurement(self, excludedImplement)
 						local testNode = workArea.start
 						local wx, wy, wz = getWorldTranslation(testNode)
 						local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
-						dbgprint("workAreaRootNode wz/lz:", 3)
-						dbgprint(wz, 3)
-						dbgprint(lz, 3)
 						lastFront, lastBack = distFront, distBack
 						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 						if lastFront ~= distFront then 
 							frontNode = testNode; 
-							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set") 
+							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
 						end
 						if lastBack ~= distBack then 
 							backNode = testNode; 
-							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set") 
+							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
 						end
 					end
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
-					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront))
-					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack))
-					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen))
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront), 2)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack), 2)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen), 2)
 				end
 			else
-				dbgprint("vehicleMeasurement: filtered or no workArea")
+				dbgprint("vehicleMeasurement: filtered or no workArea", 2)
 			end
 		else
-			dbgprint("vehicleMeasurement: implement == nil")
+			dbgprint("vehicleMeasurement: implement == nil", 2)
 		end
 	end	
 	vehicleLength = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
-	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront))
-	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack))
-	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength))
+	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
+	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
+	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
 	return frontNode, backNode, vehicleLength
 end
 
@@ -340,7 +330,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if vehicle supports CrabSteering
 	local csSpec = self.spec_crabSteering
 	spec.crabSteeringFound = csSpec ~= nil and csSpec.stateMax ~= nil and csSpec.stateMax > 0
-	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound))
+	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound), 1)
 	
 	-- Check if Mod SpeedControl exists
 	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
@@ -360,9 +350,9 @@ function HeadlandManagement:onPostLoad(savegame)
 		dbgprint_r(self.spec_workArea, 1, 2)
 	end
 	
-	dbgprint("onPostLoad : length: "..tostring(spec.vehicleLength))
-	dbgprint("onPostLoad : frontNode: "..tostring(spec.frontNode))
-	dbgprint("onPostLoad : backNode: "..tostring(spec.backNode))
+	dbgprint("onPostLoad : length: "..tostring(spec.vehicleLength), 1)
+	dbgprint("onPostLoad : frontNode: "..tostring(spec.frontNode), 2)
+	dbgprint("onPostLoad : backNode: "..tostring(spec.backNode), 2)
 
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
@@ -505,7 +495,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 	if not connection:getIsServer() then
 		local spec = self.spec_HeadlandManagement
 		if streamReadBool(streamId) then
-			dbgprint("onReadUpdateStream: receiving data...", 3)
+			dbgprint("onReadUpdateStream: receiving data...", 4)
 			spec.exists = streamReadBool(streamId)
 			if spec.exists then
 				spec.beep = streamReadBool(streamId)
@@ -538,7 +528,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 	if connection:getIsServer() then
 		local spec = self.spec_HeadlandManagement
 		if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
-			dbgprint("onWriteUpdateStream: sending data...", 3)
+			dbgprint("onWriteUpdateStream: sending data...", 4)
 			streamWriteBool(streamId, spec.exists)
 			if spec.exists then
 				streamWriteBool(streamId, spec.beep)
@@ -570,7 +560,7 @@ end
 -- inputBindings / inputActions
 	
 function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
-	dbgprint("onRegisterActionEvents", 3)
+	dbgprint("onRegisterActionEvents", 2)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
@@ -594,7 +584,7 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 end
 
 function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
-	dbgprint("TOGGLESTATE", 3)
+	dbgprint("TOGGLESTATE", 4)
 	local spec = self.spec_HeadlandManagement
 	dbgprint_r(spec, 4)
 	-- anschalten nur wenn inaktiv
@@ -610,7 +600,7 @@ end
 -- GUI
 
 function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
-	dbgprint("SHOWGUI", 3)
+	dbgprint("SHOWGUI", 4)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
@@ -673,7 +663,7 @@ function HeadlandManagement:guiCallback(
 		beep,
 		beepVol
 	)
-	dbgprint("guiCallback", 2)
+	dbgprint("guiCallback", 4)
 	local spec = self.spec_HeadlandManagement
 	spec.useSpeedControl = useSpeedControl
 	spec.useModSpeedControl = useModSpeedControl
@@ -702,27 +692,27 @@ end
 -- Calculate implement reference node
 function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
 	local spec = vehicle.spec_HeadlandManagement
-	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName())
-	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex))
-	dbgprint("onPostAttachImplement : implement: "..implement:getFullName())
+	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName(),2 )
+	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
+	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle)
 	spec.guidanceSteeringOffset = spec.vehicleLength
-	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength))
-	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode))
-	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode))
+	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
+	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
+	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
 end
 
 function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	local spec = vehicle.spec_HeadlandManagement
-	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName())
-	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex))
+	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
+	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
-	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength))
-	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode))
-	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode))
+	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
+	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
+	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
 end
 
 -- Research part
@@ -732,15 +722,15 @@ function HeadlandManagement.onUpdateResearch(self)
 	
 	local radius = self.maxTurningRadius
 	
-	dbgrender("radius: "..tostring(radius), 3, 2)
+	dbgrender("radius: "..tostring(radius), 3, 3)
 	
-	dbgrender("fieldModeF: "..tostring(spec.headlandF), 5, 2)
-	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 2)
+	dbgrender("fieldModeF: "..tostring(spec.headlandF), 5, 3)
+	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 3)
 
-	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 2)
+	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 3)
 
-	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 2)
-	dbgrender("backNode:  "..tostring(spec.backNode), 11, 2)
+	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 3)
+	dbgrender("backNode:  "..tostring(spec.backNode), 11, 3)
 	
 	ShowNodeF = DebugCube.new()
 	ShowNodeB = DebugCube.new()
@@ -753,6 +743,11 @@ function HeadlandManagement.onUpdateResearch(self)
 		ShowNodeB:createWithNode(spec.backNode, 0.5, 0.5, 0.5)
 		ShowNodeB:draw() 
 	end
+	
+	local spec_gs = self.spec_globalPositioningSystem
+	if spec_gs ~= nil then 
+		-- dbgrenderTable(spec_gs, 1, 3)
+	end
 end
 
 -- Main part
@@ -764,7 +759,7 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- debug output
 	if spec.actStep == 1 then
-		dbgprint("onUpdate : spec_HeadlandManagement:", 3)
+		dbgprint("onUpdate : spec_HeadlandManagement:", 2)
 	end
 		
 	-- calculate position, direction and field mode
@@ -839,8 +834,8 @@ function HeadlandManagement:onUpdate(dt)
 		spec.action[HeadlandManagement.STOPGPS] = spec.useGPS and (spec.modGuidanceSteeringFound or spec.modVCAFound)
 		
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
-			dbgprint("onUpdate : actStep: "..tostring(spec.actStep))
-			dbgprint("onUpdate : waitTime: "..tostring(spec.waitTime), 3)
+			dbgprint("onUpdate : actStep: "..tostring(spec.actStep), 2)
+			dbgprint("onUpdate : waitTime: "..tostring(spec.waitTime), 4)
 			-- Activation
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, true); end
 			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, true, spec.useCrabSteeringTwoStep); end
@@ -968,10 +963,6 @@ function HeadlandManagement:onDraw(dt)
 	end
 	
 	dbgrenderTable(spec, 1, 3)
-	local spec_gs = self.spec_globalPositioningSystem
-	if spec_gs ~= nil then 
-		-- dbgrenderTable(spec_gs, 1, 3)
-	end
 end
 	
 function HeadlandManagement.reduceSpeed(self, enable)	
@@ -1076,7 +1067,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
     local waitTime = 0
 	local allImplements = self:getRootVehicle():getChildVehicles()
 	
-	dbgprint("raiseImplements : #allImplements = "..tostring(#allImplements), 3)
+	dbgprint("raiseImplements : #allImplements = "..tostring(#allImplements), 2)
     
 	for index,actImplement in pairs(allImplements) do
 		-- raise or lower implement and turn plow
@@ -1088,7 +1079,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 				if implName == filterName then filtered = true end
 			end
 			if not filtered and (actImplement:getAllowsLowering() or actImplement.spec_pickup ~= nil or actImplement.spec_foldable ~= nil) then
-				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") allows lowering, is PickUp or is foldable", 3)
+				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") allows lowering, is PickUp or is foldable", 2)
 				local jointDescIndex = 1 -- Joint #1 will always exist
 				local actVehicle = actImplement:getAttacherVehicle()
 				local frontImpl = false
@@ -1226,13 +1217,13 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		 		if filtered then
 		 			dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") was filtered.", 1)
 		 		else
-		 			dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") don't allows lowering, is no PickUp and is not foldable", 3)
+		 			dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName()..") don't allows lowering, is no PickUp and is not foldable", 2)
 		 		end
 		 	end
 		else
 			if actImplement ~= nil then
 				-- Possible potato harvester with fixed cutter? Raise and lower anyways...
-				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 3)
+				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 2)
 				if actImplement.getAttachedAIImplements ~= nil and actImplement.spec_combine ~= nil then
 					if raise then
 						for _, implement in pairs(actImplement:getAttachedAIImplements()) do
@@ -1248,10 +1239,10 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
 					end
 				else
-					dbgprint("raiseImplements : actImplement is no combine or has no aiImplements", 3)
+					dbgprint("raiseImplements : actImplement is no combine or has no aiImplements", 2)
 				end
 			else
-				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 3)
+				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 2)
 			end
 		end
 	end
