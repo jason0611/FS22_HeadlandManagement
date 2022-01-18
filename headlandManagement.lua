@@ -744,9 +744,8 @@ function HeadlandManagement.onUpdateResearch(self)
 		ShowNodeB:draw() 
 	end
 	
-	local spec_gs = self.spec_globalPositioningSystem
-	if spec_gs ~= nil then 
-		-- dbgrenderTable(spec_gs, 1, 3)
+	if spec ~= nil then 
+		dbgrenderTable(spec, 1, 3)
 	end
 end
 
@@ -961,8 +960,6 @@ function HeadlandManagement:onDraw(dt)
 		
 		renderOverlay(guiIcon, x, y, w, h)
 	end
-	
-	dbgrenderTable(spec, 1, 3)
 end
 	
 function HeadlandManagement.reduceSpeed(self, enable)	
