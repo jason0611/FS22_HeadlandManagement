@@ -17,6 +17,7 @@
 		<text name="hlmgui_on" text="Zap."/>
 		<text name="hlmgui_off" text="Vyp."/>
 		<text name="hlmgui_both" text="přední a zadní"/>
+		<text name="hlmgui_seq" text="front first, back after"/>
 		<text name="hlmgui_front" text="přední"/>
 		<text name="hlmgui_back" text="zadní"/>
 		<text name="hlmgui_default" text="výchozí"/>
@@ -52,6 +53,7 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>
 		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA automatické přepínání směru"/>
+		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
 		<text name="hlmgui_vehicleControl" text="Kontrola stroje"/>
 		<text name="hlmgui_diffLock" text="Odemkni diferenciály"/>	
@@ -75,5 +77,6 @@
 		<text name="hlmgui_diffLockTT" text="Na souvrati se aktivní uzávěrky diferenciálu uvolní a poté znovu nastaví."/>
 		<text name="hlmgui_csTT" text="Po dosažení souvrati lze přepnout aktivní krabí řízení. Buď přímo, nebo nejprve v normální či couvací poloze a pak na konci souvrati úplně."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Deaktivuje automatický přepínač směru otáčení, pokud je používán. Užitečné, když má VCA různá čísla pro vynechané pruhy."/>		
+		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
 	</texts>
 </l10n>

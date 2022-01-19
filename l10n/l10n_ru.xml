@@ -17,6 +17,7 @@
 		<text name="hlmgui_on" text="вкл"/>
 		<text name="hlmgui_off" text="выкл"/>
 		<text name="hlmgui_both" text="переднее и заднее"/>
+		<text name="hlmgui_seq" text="front first, back after"/>
 		<text name="hlmgui_front" text="переднее"/>
 		<text name="hlmgui_back" text="заднее"/>
 		<text name="hlmgui_default" text="по умолчанию"/>
@@ -53,6 +54,7 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>
 		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Switch turn direction automatically"/>
+		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
 		<text name="hlmgui_vehicleControl" text="Управление трактором"/>
 		<text name="hlmgui_diffLock" text="Разблокировать дифференциалы"/>	
@@ -76,5 +78,6 @@
 		<text name="hlmgui_diffLockTT" text="На разворотной полосе дифференциалы разблокируются, а затем снова заблокируются."/>
 		<text name="hlmgui_csTT" text="Когда достигнута разворотная полоса, активный крабовый ход может быть включен. Либо на обычный ход, либо сначала в обычный или реверсивный крабовое положении, а затем в конце разворотной полосы полностью в необходимое положение."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
+		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
 	</texts>
 </l10n>

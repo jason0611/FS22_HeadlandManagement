@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.9
+-- Version 2.9.2.10
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -125,6 +125,7 @@ function HeadlandManagement.initSpecialization()
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementF", "Raise front attachements in headlands", true)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementB", "Raise back attahements in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#waitOnTrigger", "Raise back attachements when reaching position of front implement's raise", false)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOF", "Stop front PTO in headlands", true)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOB", "Stop back PTO in headlands", true)
@@ -136,9 +137,15 @@ function HeadlandManagement.initSpecialization()
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
 	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#gpsSetting", "GPS-Mode", 1)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchDirVCA", "Switch vca-turn", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#vcaDirSwitch", "Switch vca-turn", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#autoResume", "Auto resume field mode after turn", false)
+	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerF", "Use HLM trigger with front node", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerB", "Use HLM trigger with back node", false)
+	schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?).HeadlandManagement#headlandDistance", "Distance to headland", 9)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
 	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
@@ -166,32 +173,32 @@ function HeadlandManagement:onLoad(savegame)
 	
 	spec.actionEventOn = nil
 	
-	spec.exists = false		-- Headland Management is configured into vehicle
+	spec.exists = false				-- Headland Management is configured into vehicle
 	
-	spec.timer = 0			-- Timer for waiting actions
-	spec.beep = true		-- Beep on or off
-	spec.beepVol = 5		-- Beep volume setting
+	spec.timer = 0					-- Timer for waiting actions
+	spec.beep = true				-- Beep on or off
+	spec.beepVol = 5				-- Beep volume setting
 	
-	spec.normSpeed = 20		-- working speed on field
-	spec.turnSpeed = 5		-- working speed on headland
+	spec.normSpeed = 20				-- working speed on field
+	spec.turnSpeed = 5				-- working speed on headland
 
-	spec.actStep = 0		-- actual step in process chain
+	spec.actStep = 0				-- actual step in process chain
 	
-	spec.isActive = false	-- Headland Management in headland mode (active) or field mode (inactive)
-	spec.action = {}		-- switches for process chain
+	spec.isActive = false			-- Headland Management in headland mode (active) or field mode (inactive)
+	spec.action = {}				-- switches for process chain
 	spec.action[0] =false
 	
 	spec.useSpeedControl = true		-- change working speed n headland
 	spec.modSpeedControlFound = false	-- is mod 'FS22_zzzSpeedControl' existing?
-	spec.useModSpeedControl = false		-- use mod 'FS22_xxxSpeedControl'
+	spec.useModSpeedControl = false	-- use mod 'FS22_xxxSpeedControl'
 	
-	spec.useHLMTriggerF = false -- needs config settings -- use vehicle's front node as trigger
-	spec.useHLMTriggerB = false -- needs config settings -- use vehicle's back node as trigger
-	spec.headlandDistance = 9 -- needs config settings	 -- headland width (distance to field border)
-	spec.headlandF = false	-- front node over headland?
-	spec.headlandB = false 	-- back node over headland?
-	spec.lastHeadlandF = false	-- was front node already over headland?
-	spec.lastHeadlandB = false	-- was back node already over headland?
+	spec.useHLMTriggerF = false 	-- use vehicle's front node as trigger
+	spec.useHLMTriggerB = false 	-- use vehicle's back node as trigger
+	spec.headlandDistance = 9 		-- headland width (distance to field border)	-- needs config settings	 
+	spec.headlandF = false			-- front node over headland?
+	spec.headlandB = false 			-- back node over headland?
+	spec.lastHeadlandF = false		-- was front node already over headland?
+	spec.lastHeadlandB = false		-- was back node already over headland?
 	
 	spec.useRaiseImplementF = true	-- raise front implements in headland mode
 	spec.useRaiseImplementB = true	-- raise back implements in headland mode
@@ -200,7 +207,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useStopPTOF = true			-- stop front pto in headland mode
 	spec.useStopPTOB = true			-- stop back pto in headland mode
 	spec.waitTime = 0				-- time to wait for animations to finish
-	spec.waitOnTrigger = false -- needs config settings -- wait until vehicle has moved to trigger point before raising back implements
+	spec.waitOnTrigger = false 		-- wait until vehicle has moved to trigger point before raising back implements
 	spec.useTurnPlow = true			-- turn plow in headland mode
 	spec.useCenterPlow = true		-- turn plow in two steps
 	spec.plowRotationMaxNew = nil	-- plow state while turning
@@ -225,7 +232,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modVCAFound = false
 	spec.vcaStatus = false
 	spec.vcaDirSwitch = true
-	spec.vcaAutoResume = true -- Needs config setting
+	spec.autoResume = false 
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -378,6 +385,7 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
 			spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
 			spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+			spec.waitOnTrigger = xmlFile:getValue(key.."#waitOnTrigger", spec.waitOnTrigger)
 			spec.useStopPTOF = xmlFile:getValue(key.."#useStopPTOF", spec.useStopPTOF)
 			spec.useStopPTOB = xmlFile:getValue(key.."#useStopPTOB", spec.useStopPTOB)
 			spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
@@ -387,6 +395,11 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.gpsSetting = xmlFile:getValue(key.."#gpsSetting", spec.gpsSetting)
 			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+			spec.useHLMTriggerF = xmlFile:getValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
+			spec.useHLMTriggerB = xmlFile:getValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
+			spec.headlandDistance = xmlFile:getValue(key.."#headlandDistance", spec.headlandDistance)
+			spec.vcaDirSwitch = xmlFile:getValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
+			spec.autoResume = xmlFile:getValue(key.."#autoResume", spec.autoResume)	
 			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
 			dbgprint("onPostLoad : Loaded whole data set", 2)
 		end
@@ -422,6 +435,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
 		xmlFile:setValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
 		xmlFile:setValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		xmlFile:setValue(key.."#waitOnTrigger", spec.waitOnTrigger)
 		xmlFile:setValue(key.."#useStopPTOF", spec.useStopPTOF)
 		xmlFile:setValue(key.."#useStopPTOB", spec.useStopPTOB)
 		xmlFile:setValue(key.."#turnPlow", spec.useTurnPlow)
@@ -431,8 +445,13 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#gpsSetting", spec.gpsSetting)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		xmlFile:setValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
+		xmlFile:setValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
+		xmlFile:setValue(key.."#headlandDistance", spec.headlandDistance)
+		xmlFile:setValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
+		xmlFile:setValue(key.."#autoResume", spec.autoResume)
 		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
-		xmlFile:setValue(key.."#switchDirVCA", spec.vcaDirSwitch)
+		
 		dbgprint("saveToXMLFile : saving whole data", 2)
 	end
 	dbgprint("saveToXMLFile : saving data finished", 2)
@@ -452,6 +471,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.useCrabSteeringTwoStep = streamReadBool(streamId)
 		spec.useRaiseImplementF = streamReadBool(streamId)
 		spec.useRaiseImplementB = streamReadBool(streamId)
+		spec.waitOnTrigger = streamReadBool(streamId)
 		spec.useStopPTOF = streamReadBool(streamId)
 		spec.useStopPTOB = streamReadBool(streamId)
 		spec.useTurnPlow = streamReadBool(streamId)
@@ -461,8 +481,12 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.gpsSetting = streamReadInt8(streamId)
 		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
-		spec.useDiffLock = streamReadBool(streamId)
+		spec.useHLMTriggerF = streamReadBool(streamId)
+		spec.useHLMTriggerB = streamReadBool(streamId)
+		spec.headlandDistance = streamReadInt8(streamId)
 		spec.vcaDirSwitch = streamReadBool(streamId)
+		spec.autoResume = streamReadBool(streamId)
+		spec.useDiffLock = streamReadBool(streamId)
 	end
 end
 
@@ -480,6 +504,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
 		streamWriteBool(streamId, spec.useRaiseImplementF)
 		streamWriteBool(streamId, spec.useRaiseImplementB)
+		streamWriteBool(streamId, spec.waitOnTrigger)
 		streamWriteBool(streamId, spec.useStopPTOF)
 		streamWriteBool(streamId, spec.useStopPTOB)
 		streamWriteBool(streamId, spec.useTurnPlow)
@@ -489,8 +514,12 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteInt8(streamId, spec.gpsSetting)
 		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
-		streamWriteBool(streamId, spec.useDiffLock)
+		streamWriteBool(streamId, spec.useHLMTriggerF)
+		streamWriteBool(streamId, spec.useHLMTriggerB)
+		streamWriteInt8(streamId, spec.headlandDistance)
 		streamWriteBool(streamId, spec.vcaDirSwitch)
+		streamWriteBool(streamId, spec.autoResume)
+		streamWriteBool(streamId, spec.useDiffLock)
 	end
 end
 	
@@ -510,6 +539,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.useCrabSteeringTwoStep = streamReadBool(streamId)
 				spec.useRaiseImplementF = streamReadBool(streamId)
 				spec.useRaiseImplementB = streamReadBool(streamId)
+				spec.waitOnTrigger = streamReadBool(streamId)
 				spec.useStopPTOF = streamReadBool(streamId)
 				spec.useStopPTOB = streamReadBool(streamId)
 				spec.useTurnPlow = streamReadBool(streamId)
@@ -519,9 +549,13 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.gpsSetting = streamReadInt8(streamId)
 				spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+				spec.useHLMTriggerF = streamReadBool(streamId)
+				spec.useHLMTriggerB = streamReadBool(streamId)
+				spec.headlandDistance = streamReadInt8(streamId)
 				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
-				spec.useDiffLock = streamReadBool(streamId)
 				spec.vcaDirSwitch = streamReadBool(streamId)
+				spec.autoResume = streamReadBool(streamId)
+				spec.useDiffLock = streamReadBool(streamId)
 			end
 		end
 	end
@@ -543,6 +577,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
 				streamWriteBool(streamId, spec.useRaiseImplementF)
 				streamWriteBool(streamId, spec.useRaiseImplementB)
+				streamWriteBool(streamId, spec.waitOnTrigger)
 				streamWriteBool(streamId, spec.useStopPTOF)
 				streamWriteBool(streamId, spec.useStopPTOB)
 				streamWriteBool(streamId, spec.useTurnPlow)
@@ -552,9 +587,13 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteInt8(streamId, spec.gpsSetting)
 				streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+				streamWriteBool(streamId, spec.useHLMTriggerF)
+				streamWriteBool(streamId, spec.useHLMTriggerB)
+				streamWriteInt8(streamId, spec.headlandDistance)
 				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
-				streamWriteBool(streamId, spec.useDiffLock)
 				streamWriteBool(streamId, spec.vcaDirSwitch)
+				streamWriteBool(streamId, spec.autoResume)
+				streamWriteBool(streamId, spec.useDiffLock)
 			end
 		end
 	end
@@ -607,16 +646,16 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
-	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec)
+	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled)
 end
 
 function HeadlandManagement:guiCallback(changes)
-	dbgprint("guiCallback", 4)
 	self.spec_HeadlandManagement = changes
+	local spec = self.spec_HeadlandManagement
+	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
@@ -848,7 +887,7 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- VCA auto resume
-	if spec.vcaAutoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.vcaTurnHeading then
+	if spec.autoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.vcaTurnHeading then
 		spec.actStep = -spec.actStep
 		spec.vcaTurnHeading = nil
 	end

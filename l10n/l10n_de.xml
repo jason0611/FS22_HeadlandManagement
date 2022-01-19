@@ -17,6 +17,7 @@
 		<text name="hlmgui_on" text="an"/>
 		<text name="hlmgui_off" text="aus"/>
 		<text name="hlmgui_both" text="vorne und hinten"/>
+		<text name="hlmgui_seq" text="erst vorne dann hinten"/>
 		<text name="hlmgui_front" text="vorne"/>
 		<text name="hlmgui_back" text="hinten"/>
 		<text name="hlmgui_default" text="Standardeinstellung"/>
@@ -50,6 +51,7 @@
 		<text name="hlmgui_gps_vcaR" text="nur VCA: Automatische Wende rechts"/>
 
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Wenderichtung umschalten"/>
+		<text name= "hlmgui_autoResume" text="Automatischer Feldmodus"/>
 		
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
@@ -76,5 +78,6 @@
 		<text name="hlmgui_diffLockTT" text="Im Vorgewende werden aktive Differentialsperren gelöst und anschließend wieder gesetzt."/>
 		<text name="hlmgui_csTT" text="Bei Erreichen des Vorgewendes kann eine aktive Hundegangstellung umgeschaltet werden. Entweder direkt, oder zunächst in Normalstellung und erst am Ende des Vorgewendes vollständig."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Deaktiviert das automatische Wechseln der Wenderichtung. Hilfreich wenn in VCA der Reihenübersprung für rechts und links verschiedene Zahlen enthält."/>
+		<text name="hlmgui_gpsAutoResumeTT" text="Wechselt in den Feldmodus zurück, sobald das Fahrzeug den Kurs um 180° geändert hat"/>
 	</texts>
 </l10n>

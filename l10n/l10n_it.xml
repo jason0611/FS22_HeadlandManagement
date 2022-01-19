@@ -17,6 +17,7 @@
 		<text name="hlmgui_on" text="ON"/>
 		<text name="hlmgui_off" text="OFF"/>
 		<text name="hlmgui_both" text="Davanti e dietro"/>
+		<text name="hlmgui_seq" text="front first, back after"/>
 		<text name="hlmgui_front" text="Davanti"/>
 		<text name="hlmgui_back" text="Dietro"/>
 		<text name="hlmgui_default" text="Predefinito"/>
@@ -53,6 +54,7 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger per automatico"/>
 		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Cambia automaticamente la direzione di svolta"/>
+		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
 		<text name="hlmgui_vehicleControl" text="Impostazioni del veicolo"/>
 		<text name="hlmgui_diffLock" text="Sblocca i bloccaggi differenziali"/>	
@@ -76,5 +78,6 @@
 		<text name="hlmgui_diffLockTT" text="In capezzagna, i bloccaggi differenziali attivi vengono rilasciati e quindi reimpostati."/>
 		<text name="hlmgui_csTT" text="Quando si raggiunge la capezzagna, è possibile commutare lo sterzo attivo a granchio. O direttamente, oppure prima in posizione normale o in retromarcia e poi a fine campo completamente."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Abilita o disabilita automaticamente la commutazione della direzione di svolta. Utile quando VCA ha numeri diversi per saltare le corsie a sinistra/destra."/>
+  		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
   </texts>
 </l10n>

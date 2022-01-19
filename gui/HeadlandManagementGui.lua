@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.9
+-- Version 2.9.2.10
 --
 
 HeadlandManagementGui = {}
@@ -64,6 +64,8 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsSettingTitle",
 	"gpsSetting",
 	"gpsTypeTT",
+	
+	"gpsAutoTrigger",
 	"gpsAutoTriggerTitle",
 	"gpsAutoTriggerSetting",
 	"gpsAutoTriggerTT",
@@ -73,6 +75,9 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsEnableDirSwitchSetting",
 	"gpsDisableDirSwitchTitle",
 	"gpsDirSwitchTT",
+	"gpsResumeTitle",
+	"gpsResumeSetting",
+	"gpsResumeTT",
 	
 	"sectionDiffControl",
 	"vehicleControl",
@@ -90,13 +95,10 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui.setData(
-	self,
-	vehicleName, 
-	spec
-)
+function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled)
 	dbgprint("HeadlandManagementGui: setData", 2)
 	self.spec = spec
+	self.gpsEnabled = gpsEnabled
 	
 	dbgprint_r(self.spec)
 		
@@ -172,14 +174,16 @@ function HeadlandManagementGui.setData(
 	self.raiseSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.raiseSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_both"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_seq"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
-	local raiseState = 4
-	if self.spec.useRaiseImplementF and self.spec.useRaiseImplementB then raiseState = 1; end
-	if self.spec.useRaiseImplementF and not self.spec.useRaiseImplementB then raiseState = 2; end
-	if not self.spec.useRaiseImplementF and self.spec.useRaiseImplementB then raiseState = 3; end
+	local raiseState = 5
+	if self.spec.useRaiseImplementF and self.spec.useRaiseImplementB then raiseState = 1 end
+	if self.spec.useRaiseImplementF and self.spec.useRaiseImplementB and self.spec.waitOnTrigger then raiseState = 2 end
+	if self.spec.useRaiseImplementF and not self.spec.useRaiseImplementB then raiseState = 3 end
+	if not self.spec.useRaiseImplementF and self.spec.useRaiseImplementB then raiseState = 4 end
 	self.raiseSetting:setState(raiseState)
 	
 	self.turnPlowTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_plow"))
@@ -291,25 +295,46 @@ function HeadlandManagementGui.setData(
 	self.gpsEnableDirSwitchSetting:setDisabled(not self.spec.modVCAFound or lastGPSSetting < 4)
 	self.gpsEnableDirSwitchSetting:setVisible(self.spec.modVCAFound)
 	
+	-- Headland automatic
+	self.gpsAutoTrigger:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerSetting.onClickCallback = HeadlandManagementGui.logicalCheck
-	self.gpsAutoTriggerSetting:setTexts({
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	local triggerTexts = ({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on")
 	})
-	self.gpsAutoTriggerSetting:setState(self.spec.useGuidanceSteeringTrigger and 1 or 2)
-	self.gpsAutoTriggerSetting:setDisabled(not self.spec.modGuidanceSteeringFound)
-	self.gpsAutoTriggerSetting:setVisible(self.spec.modGuidanceSteeringFound)
+	if self.spec.modGuidanceSteeringFound then triggerTexts[3] = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs") end
+	self.gpsAutoTriggerSetting:setTexts(triggerTexts)
+	
+	local triggerSetting = 1
+	if self.spec.useHLMTriggerF or self.spec.useHLMTriggerB then 
+		triggerSetting = 2
+	elseif self.spec.modGuidanceSteeringFound and self.spec.useGuidanceSteeringTrigger then 
+		triggerSetting = 3 
+	end
+	self.gpsAutoTriggerSetting:setState(triggerSetting)
 	
 	self.gpsAutoTriggerOffsetTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetSetting"))
 	self.gpsAutoTriggerOffsetSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.gpsAutoTriggerOffsetSetting:setTexts({
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_front"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back")
 	})	
-	self.gpsAutoTriggerOffsetSetting:setState(self.spec.useGuidanceSteeringOffset and 1 or 2)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(not self.spec.modGuidanceSteeringFound or not self.spec.useGuidanceSteeringTrigger or not self.spec.useGPS or self.gpsSetting:getState() == 3)
-	self.gpsAutoTriggerOffsetSetting:setVisible(self.spec.modGuidanceSteeringFound)
+	local offsetSetting = 1
+	if triggerSetting == 3 and self.spec.useGuidanceSteeringOffset then 
+		offsetSetting = 2 
+	elseif triggerSetting == 2 and self.spec.useHLMTriggerB then 
+		offsetSetting = 2
+	end
+	self.gpsAutoTriggerOffsetSetting:setState(offsetSetting)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
+	
+	self.gpsResumeTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_autoResume"))
+	self.gpsResumeSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.gpsResumeSetting:setState(self.spec.autoResume and 1 or 2)
 	
 	-- Vehicle control
 	self.vehicleControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vehicleControl"))
@@ -357,6 +382,7 @@ function HeadlandManagementGui.setData(
 	self.speedSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSettingTT"))
 	self.speedControlModSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModSettingTT"))
 	self.gpsDirSwitchTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_VCADirSwitchTT"))
+	self.gpsResumeTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoResumeTT"))
 end
 
 -- check logical dependencies
@@ -386,8 +412,8 @@ function HeadlandManagementGui:logicalCheck()
 	end
 	self.gpsSetting:setDisabled(not useGPS or not self.showGPS)
 	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.spec.modVCAFound or gpsSetting < 4)
-	self.gpsAutoTriggerSetting:setDisabled(not self.spec.modGuidanceSteeringFound or not useGPS or self.gpsSetting:getState() >= 3)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(not self.spec.modGuidanceSteeringFound or self.gpsAutoTriggerSetting:getState() == 2 or not useGPS or self.gpsSetting:getState() >= 3)
+	local triggerSetting = self.gpsAutoTriggerSetting:getState()
+	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
 end
 
 -- close gui and send new values to callback
@@ -404,10 +430,11 @@ function HeadlandManagementGui:onClickOk()
 	end
 	-- raise
 	local raiseState = self.raiseSetting:getState()
-	if raiseState == 1 then self.spec.useRaiseImplementF = true; self.spec.useRaiseImplementB = true; end
-	if raiseState == 2 then self.spec.useRaiseImplementF = true; self.spec.useRaiseImplementB = false; end
-	if raiseState == 3 then self.spec.useRaiseImplementF = false; self.spec.useRaiseImplementB = true; end
-	if raiseState == 4 then self.spec.useRaiseImplementF = false; self.spec.useRaiseImplementB = false; end
+	if raiseState == 1 then self.spec.useRaiseImplementF = true; self.spec.useRaiseImplementB = true; self.spec.waitOnTrigger = false; end
+	if raiseState == 2 then self.spec.useRaiseImplementF = true; self.spec.useRaiseImplementB = true; self.spec.waitOnTrigger = true; end
+	if raiseState == 3 then self.spec.useRaiseImplementF = true; self.spec.useRaiseImplementB = false; self.spec.waitOnTrigger = false; end
+	if raiseState == 4 then self.spec.useRaiseImplementF = false; self.spec.useRaiseImplementB = true; self.spec.waitOnTrigger = false; end
+	if raiseState == 5 then self.spec.useRaiseImplementF = false; self.spec.useRaiseImplementB = false; self.spec.waitOnTrigger = false; end
 	-- pto
 	self.spec.useStopPTOF = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 2)
 	self.spec.useStopPTOB = (self.stopPtoSetting:getState() == 1 or self.stopPtoSetting:getState() == 3)
@@ -428,11 +455,39 @@ function HeadlandManagementGui:onClickOk()
 	if self.spec.gpsSetting > 1 and not self.spec.modGuidanceSteeringFound then
 		self.spec.gpsSetting = self.spec.gpsSetting + 1
 	end
-	-- gps trigger
-	self.spec.useGuidanceSteeringTrigger = self.gpsAutoTriggerSetting:getState() == 1
-	self.spec.useGuidanceSteeringOffset = self.gpsAutoTriggerOffsetSetting:getState() == 1
+	-- headland automatic
+	local triggerSetting = self.gpsAutoTriggerSetting:getState()
+	local offsetSetting = self.gpsAutoTriggerOffsetSetting:getState()
+	if triggerSetting == 1 then
+		self.spec.useGuidanceSteeringTrigger = false
+		self.spec.useGuidanceSteeringOffset = false
+		self.spec.useHLMTriggerF = false
+		self.spec.useHLMTriggerB = false
+	elseif triggerSetting == 2 and offsetSetting == 1 then
+		self.spec.useGuidanceSteeringTrigger = false
+		self.spec.useGuidanceSteeringOffset = false
+		self.spec.useHLMTriggerF = true
+		self.spec.useHLMTriggerB = false
+	elseif triggerSetting == 2 and offsetSetting == 2 then
+		self.spec.useGuidanceSteeringTrigger = false
+		self.spec.useGuidanceSteeringOffset = false
+		self.spec.useHLMTriggerF = false
+		self.spec.useHLMTriggerB = true
+	elseif triggerSetting == 3 and offsetSetting == 1 then
+		self.spec.useGuidanceSteeringTrigger = true
+		self.spec.useGuidanceSteeringOffset = false
+		self.spec.useHLMTriggerF = false
+		self.spec.useHLMTriggerB = false
+	elseif triggerSetting == 3 and offsetSetting == 2 then
+		self.spec.useGuidanceSteeringTrigger = true
+		self.spec.useGuidanceSteeringOffset = true
+		self.spec.useHLMTriggerF = false
+		self.spec.useHLMTriggerB = false
+	end
 	-- VCA dir siwtch
 	self.spec.vcaDirSwitch = self.gpsEnableDirSwitchSetting:getState() == 1
+	-- Autoresume
+	self.spec.autoResume = self.gpsResumeSetting:getState() == 1
 	-- diffs
 	self.spec.useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	-- beep
@@ -441,32 +496,7 @@ function HeadlandManagementGui:onClickOk()
 
 	dbgprint("gpsSetting (GUI): "..tostring(self.spec.gpsSetting), 3)
 	self:close()
-	self.callbackFunc(
-		self.target, 
-		self.spec
-	--[[
-		useSpeedControl, 
-		useModSpeedControl, 
-		useCrabSteering, 
-		useCrabSteeringTwoStep, 
-		turnSpeed, 
-		useRaiseImplementF, 
-		useRaiseImplementB, 
-		useStopPTOF, 
-		useStopPTOB, 
-		useTurnPlow, 
-		useCenterPlow, 
-		useRidgeMarker, 
-		useGPS, 
-		gpsSetting, 
-		useGuidanceSteeringTrigger, 
-		useGuidanceSteeringOffset,
-		useDiffLock,
-		vcaDirSwitch,
-		beep,
-		beepVol
-	--]]
-	)
+	self.callbackFunc(self.target, self.spec)
 end
 
 -- just close gui
