@@ -789,7 +789,7 @@ function HeadlandManagement:onUpdate(dt)
 	spec.heading = math.floor(180 - (180 / math.pi) * heading)
 	
 	-- research output
-	HeadlandManagement.onUpdateResearch(self)
+	--HeadlandManagement.onUpdateResearch(self)
 
 	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.actStep==HeadlandManagement.MAXSTEP then
