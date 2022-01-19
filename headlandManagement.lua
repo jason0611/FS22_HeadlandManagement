@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.8
+-- Version 2.9.2.9
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -200,7 +200,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useStopPTOF = true			-- stop front pto in headland mode
 	spec.useStopPTOB = true			-- stop back pto in headland mode
 	spec.waitTime = 0				-- time to wait for animations to finish
-	spec.waitOnTrigger = true -- needs config settings -- wait until vehicle has moved to trigger point before raising back implements
+	spec.waitOnTrigger = false -- needs config settings -- wait until vehicle has moved to trigger point before raising back implements
 	spec.useTurnPlow = true			-- turn plow in headland mode
 	spec.useCenterPlow = true		-- turn plow in two steps
 	spec.plowRotationMaxNew = nil	-- plow state while turning
@@ -611,83 +611,12 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	HeadlandManagementGui.setData(
-		hlmGui.target,
-		self:getFullName(),
-		self.maxTurningRadius,
-		spec.vehicleLength,
-		spec.useSpeedControl,
-		spec.useModSpeedControl,
-		spec.crabSteeringFound,
-		spec.useCrabSteering,
-		spec.useCrabSteeringTwoStep,
-		spec.turnSpeed,
-		spec.useRaiseImplementF,
-		spec.useRaiseImplementB,
-		spec.useStopPTOF,
-		spec.useStopPTOB,
-		spec.useTurnPlow,
-		spec.useCenterPlow,
-		spec.useRidgeMarker,
-		spec.useGPS,
-		spec.gpsSetting,
-		spec.useGuidanceSteeringTrigger,
-		spec.useGuidanceSteeringOffset,
-		spec.useDiffLock,
-		spec.vcaDirSwitch,
-		spec.beep,
-		spec.beepVol,
-		spec.modSpeedControlFound,
-		spec.modGuidanceSteeringFound and gsConfigured,
-		spec.modVCAFound,
-		gpsEnabled
-	)
+	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec)
 end
 
-function HeadlandManagement:guiCallback(
-		useSpeedControl, 
-		useModSpeedControl, 
-		useCrabSteering, 
-		useCrabSteeringTwoStep, 
-		turnSpeed, 
-		useRaiseImplementF, 
-		useRaiseImplementB, 
-		useStopPTOF, 
-		useStopPTOB, 
-		useTurnPlow, 
-		useCenterPlow, 
-		useRidgeMarker, 
-		useGPS, 
-		gpsSetting, 
-		useGuidanceSteeringTrigger, 
-		useGuidanceSteeringOffset,
-		useDiffLock,
-		vcaDirSwitch, 
-		beep,
-		beepVol
-	)
+function HeadlandManagement:guiCallback(changes)
 	dbgprint("guiCallback", 4)
-	local spec = self.spec_HeadlandManagement
-	spec.useSpeedControl = useSpeedControl
-	spec.useModSpeedControl = useModSpeedControl
-	spec.useCrabSteering = useCrabSteering
-	spec.useCrabSteeringTwoStep = useCrabSteeringTwoStep
-	spec.turnSpeed = turnSpeed
-	spec.useRaiseImplementF = useRaiseImplementF
-	spec.useRaiseImplementB = useRaiseImplementB
-	spec.useStopPTOF = useStopPTOF
-	spec.useStopPTOB = useStopPTOB
-	spec.useTurnPlow = useTurnPlow
-	spec.useCenterPlow = useCenterPlow
-	spec.useRidgeMarker = useRidgeMarker
-	spec.useGPS = useGPS
-	spec.gpsSetting = gpsSetting
-	spec.useGuidanceSteeringTrigger = useGuidanceSteeringTrigger
-	spec.useGuidanceSteeringOffset = useGuidanceSteeringOffset
-	spec.useDiffLock = useDiffLock
-	spec.vcaDirSwitch = vcaDirSwitch
-	spec.beep = beep
-	spec.beepVol = beepVol
+	self.spec_HeadlandManagement = changes
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
