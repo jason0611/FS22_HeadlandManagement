@@ -195,9 +195,30 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlModSettingTT"/>
 			</GuiElement>	
+			<!-- Debug -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="debug"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="debugSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="debugTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="debugTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="debugFlagSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="debugFlagTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="debugFlagTT"/>
+			</GuiElement>	
 			<GuiElement type="text" profile="dialogHeaderText"/>
 		</GuiElement>
-	
+		
+		
 		<!-- footer -->
 		<GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">
 			<GuiElement type="button" profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>

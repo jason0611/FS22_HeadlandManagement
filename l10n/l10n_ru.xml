@@ -49,7 +49,6 @@
 		<text name="hlmgui_gps_vca" text="только VCA"/>
 		<text name="hlmgui_gps_vcaL" text="только VCA: автоповорот налево"/>
 		<text name="hlmgui_gps_vcaR" text="только VCA: автоповорот направо"/>
-		
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Автоматизация разворотной полосы"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>
 		
@@ -61,6 +60,10 @@
 		<text name="hlmgui_crabSteering" text="Переключить крабовый ход."/>
 		<text name="hlmgui_csDirect" text="прямой"/>
 		<text name="hlmgui_csTwoStep" text="через обычный"/>
+		
+		<text name="hlmgui_debug" text="Debug-Settings"/>
+		<text name="hlmgui_debugTitle" text="Make vehicle nodes visible (global)"/>
+		<text name="hlmgui_debugFlagTitle" text="Make trigger nodes visible"/>
 		
 		<text name="hlmgui_speedControlTT" text="Настройки скорости круиз-контроля на разворотной полосе могут быть установлены на указанное значение, а позже сброшены."/>
 		<text name="hlmgui_speedControlModTT" text="Если доступен мод SpeedControl его можно использовать для регулировки скорости круиз-контроля."/>
@@ -79,5 +82,7 @@
 		<text name="hlmgui_csTT" text="Когда достигнута разворотная полоса, активный крабовый ход может быть включен. Либо на обычный ход, либо сначала в обычный или реверсивный крабовое положении, а затем в конце разворотной полосы полностью в необходимое положение."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
 		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
+		<text name="hlmgui_debugTT" text="Displays a marker at the front and rear vehicle node" />
+		<text name="hlmgui_debugFlagTT" text="Displays two flags marking the destination trigger (green) and the vehicle trigger (red) in the 'first front, then rear' setting in headland mode" />
 	</texts>
 </l10n>

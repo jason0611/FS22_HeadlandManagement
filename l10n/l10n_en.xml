@@ -51,7 +51,7 @@
 		<text name="hlmgui_gps_vcaR" text="only VCA: Automatic turn right"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger for automatic"/>
-
+		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Switch turn direction automatically"/>
 		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
@@ -60,6 +60,10 @@
 		<text name="hlmgui_crabSteering" text="Turn crabsteering"/>
 		<text name="hlmgui_csDirect" text="direct"/>
 		<text name="hlmgui_csTwoStep" text="via normal"/>
+		
+		<text name="hlmgui_debug" text="Debug-Settings"/>
+		<text name="hlmgui_debugTitle" text="Make vehicle nodes visible (global)"/>
+		<text name="hlmgui_debugFlagTitle" text="Make trigger nodes visible"/>
 		
 		<text name="hlmgui_speedControlTT" text="On the headland, the cruise control setting can be changed to an adjustable value and then reset afterwards."/>
 		<text name="hlmgui_speedControlModTT" text="If available, the mod 'SpeedControl' can be used for adjusting cruise control."/>
@@ -78,5 +82,7 @@
 		<text name="hlmgui_csTT" text="When the headland is reached, an active crab steering can be switched over. Either directly, or first in normal or reversing position and then at the end of the headland completely."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
 		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
+		<text name="hlmgui_debugTT" text="Displays a marker at the front and rear vehicle node" />
+		<text name="hlmgui_debugFlagTT" text="Displays two flags marking the destination trigger (green) and the vehicle trigger (red) in the 'first front, then rear' setting in headland mode" />
 	</texts>
 </l10n>

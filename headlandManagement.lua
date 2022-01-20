@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.10
+-- Version 2.9.3.0
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -36,6 +36,8 @@ HeadlandManagement.TURNPLOW = 9
 HeadlandManagement.STOPPTO = 10
 HeadlandManagement.STOPGPS = 11
 HeadlandManagement.MAXSTEP = 12
+
+HeadlandManagement.debug = false
 
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
@@ -237,6 +239,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useDiffLock = true
 	spec.diffStateF = false
 	spec.diffStateB = false
+	
+	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
@@ -634,7 +638,13 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 		spec.isActive = true
 	-- abschalten nur wenn aktiv
 	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
+		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
+	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
+		spec.override = true
+		spec.actStep = -HeadlandManagement.MAXSTEP
+	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == -HeadlandManagement.WAITONTRIGGER then
+		spec.override = true
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
@@ -649,11 +659,12 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled)
+	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug)
 end
 
-function HeadlandManagement:guiCallback(changes)
+function HeadlandManagement:guiCallback(changes, debug)
 	self.spec_HeadlandManagement = changes
+	HeadlandManagement.debug = debug
 	local spec = self.spec_HeadlandManagement
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -703,17 +714,6 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 3)
 	dbgrender("backNode:  "..tostring(spec.backNode), 11, 3)
 	
-	ShowNodeF = DebugCube.new()
-	ShowNodeB = DebugCube.new()
-	
-	if spec.frontNode ~= nil then 
-		ShowNodeF:createWithNode(spec.frontNode, 0.5, 0.5, 0.5) 
-		ShowNodeF:draw()
-	end
-	if spec.backNode ~= nil then 
-		ShowNodeB:createWithNode(spec.backNode, 0.5, 0.5, 0.5)
-		ShowNodeB:draw() 
-	end
 	
 	if spec ~= nil then 
 		--dbgrenderTable(spec, 1, 3)
@@ -839,6 +839,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = spec.actStep + 1
 		if spec.actStep == 0 then 
 			spec.isActive = false
+			spec.override = false
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
@@ -940,6 +941,19 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		renderOverlay(guiIcon, x, y, w, h)
+		
+		if HeadlandManagement.debug then
+			ShowNodeF = DebugCube.new()
+			ShowNodeB = DebugCube.new()
+			if spec.frontNode ~= nil then 
+				ShowNodeF:createWithNode(spec.frontNode, 0.3, 0.3, 0.3) 
+				ShowNodeF:draw()
+			end
+			if spec.backNode ~= nil then 
+				ShowNodeB:createWithNode(spec.backNode, 0.3, 0.3, 0.3)
+				ShowNodeB:draw() 
+			end
+		end
 	end
 end
 	
@@ -958,19 +972,34 @@ function HeadlandManagement.waitOnTrigger(self, automatic)
 			if spec.measureNode == nil then spec.measureNode = self.rootNode end
 			if spec.triggerNode == nil then spec.triggerNode = self.rootNode end
 			spec.triggerPos = {}
-			spec.triggerPos.x, _, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
+			spec.triggerPos.x, spec.triggerPos.y, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
 		end
-		local _, _, tz = worldToLocal(self.rootNode, spec.triggerPos.x, 0, spec.triggerPos.z)
+		
+		local triggerFlag = DebugFlag.new(1,0,0)
+		local measureFlag = DebugFlag.new(0,1,0)
+		
+		local tx, _, tz = worldToLocal(self.rootNode, spec.triggerPos.x, 0, spec.triggerPos.z)
+		
+		if spec.debugFlag then
+			triggerFlag:create(spec.triggerPos.x, spec.triggerPos.y, spec.triggerPos.z, tx * 0.3, tz * 0.3)
+			triggerFlag:draw()
+		end
 	
-		local wx, _, wz = getWorldTranslation(spec.measureNode)
-		local _, _, mz = worldToLocal(self.rootNode, wx, 0, wz)
+		local wx, wy, wz = getWorldTranslation(spec.measureNode)
+		local mx, _, mz = worldToLocal(self.rootNode, wx, 0, wz)
+		
+		if spec.debugFlag then
+			measureFlag:create(wx, wy, wz, mx * 0.3, mz * 0.3)
+			measureFlag:draw()
+		end
+		
 		local dist = math.abs(tz - mz)
 		dbgprint("waitOnTrigger : dist: "..tostring(dist), 4)
 	
-		if dist > 0.1 then 
-			spec.actStep = spec.actStep - 1
-		else 
+		if dist <= 0.1 or spec.override then 
 			spec.triggerPos = nil
+		else 
+			spec.actStep = spec.actStep - 1
 		end
 	end
 end

@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.10
+-- Version 2.9.3.0
 --
 
 HeadlandManagementGui = {}
@@ -83,7 +83,15 @@ HeadlandManagementGui.CONTROLS = {
 	"vehicleControl",
 	"diffControlOnOffTitle",
 	"diffControlOnOffSetting",
-	"diffLockTT"
+	"diffLockTT",
+	
+	"debug",
+	"debugTitle",
+	"debugSetting",
+	"debugTT",
+	"debugFlagTitle",
+	"debugFlagSetting",
+	"debugFlagTT"
 }
 
 -- constructor
@@ -95,7 +103,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled)
+function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debug)
 	dbgprint("HeadlandManagementGui: setData", 2)
 	self.spec = spec
 	self.gpsEnabled = gpsEnabled
@@ -364,6 +372,24 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled)
 	self.crabSteeringSetting:setDisabled(not self.spec.crabSteeringFound)
 	self.crabSteeringSetting:setVisible(self.spec.crabSteeringFound)
 	
+	-- Debug
+	self.debug:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_debug"))
+	self.debugTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_debugTitle"))
+	self.debugSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.debugSetting:setState(debug and 1 or 2)
+	
+	self.debugFlagTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_debugFlagTitle"))
+	self.debugFlagSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.debugFlagSetting.onClickCallback = HeadlandManagementGui.logicalCheck
+	self.debugFlagSetting:setState(self.spec.debugFlag and 1 or 2)
+	self.debugFlagSetting:setDisabled(raiseState ~= 2)
+	
 	-- Set ToolTip-Texts
 	self.alarmTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmTT"))
 	self.alarmVolumeTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_beepVolTT"))
@@ -383,6 +409,8 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled)
 	self.speedControlModSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModSettingTT"))
 	self.gpsDirSwitchTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_VCADirSwitchTT"))
 	self.gpsResumeTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoResumeTT"))
+	self.debugTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_debugTT"))
+	self.debugFlagTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_debugFlagTT"))
 end
 
 -- check logical dependencies
@@ -414,6 +442,8 @@ function HeadlandManagementGui:logicalCheck()
 	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.spec.modVCAFound or gpsSetting < 4)
 	local triggerSetting = self.gpsAutoTriggerSetting:getState()
 	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
+	
+	self.debugFlagSetting:setDisabled(self.raiseSetting:getState() ~= 2)
 end
 
 -- close gui and send new values to callback
@@ -493,10 +523,13 @@ function HeadlandManagementGui:onClickOk()
 	-- beep
 	self.spec.beep = self.alarmSetting:getState() == 1
 	self.spec.beepVol = self.alarmVolumeSetting:getState()
+	-- debug
+	local debug = self.debugSetting:getState() == 1
+	self.spec.debugFlag = self.debugFlagSetting:getState() == 1
 
 	dbgprint("gpsSetting (GUI): "..tostring(self.spec.gpsSetting), 3)
 	self:close()
-	self.callbackFunc(self.target, self.spec)
+	self.callbackFunc(self.target, self.spec, debug)
 end
 
 -- just close gui
