@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
-<!--
-	<GuiElement type="bitmap" profile="dialogFullscreenBg"/>
-	<GuiElement type="bitmap" profile="siloDialogBg" id="dialogElement" size="1600px 900px">
--->
 
 	<GuiElement type="empty" profile="newLayer" />
 	<GuiElement type="bitmap" profile="dialogFullscreenBg"/>
 	<GuiElement type="bitmap" profile="bgVignette"/>
 	<GuiElement type="bitmap" profile="bgGlowDialog" id="dialogElement" size="1600px 900px"/>
-	
 	
 	<GuiElement type="empty" profile="ingameMenuCenterBox" id="settingsContainer">
 		<GuiElement type="bitmap" profile="topScrollClipper" name="topClipper" />
@@ -150,6 +145,12 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerOffsetTT"/>
 			</GuiElement>
+			<GuiElement type="empty" profile="ingameMenuGameSettingsTextInputWrapper">
+				<GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="gpsAutoTriggerOffsetWidthInput" imeKeyboardType="normal"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerOffsetWidthTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerOffsetWidthTT"/>
+			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsResumeSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
@@ -217,7 +218,6 @@
 			</GuiElement>	
 			<GuiElement type="text" profile="dialogHeaderText"/>
 		</GuiElement>
-		
 		
 		<!-- footer -->
 		<GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">

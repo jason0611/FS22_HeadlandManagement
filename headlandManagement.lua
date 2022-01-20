@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.3.0
+-- Version 2.9.3.1
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -214,6 +214,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCenterPlow = true		-- turn plow in two steps
 	spec.plowRotationMaxNew = nil	-- plow state while turning
 	spec.vehicleLength = 0			-- calculated vehicle's length
+	spec.maxTurningRadius = 0		-- vehicle's turn radius
 	
 	spec.useRidgeMarker = true		-- switch ridge markers in headland mode
 	spec.ridgeMarkerState = 0		-- state of ridge markers on field
@@ -360,6 +361,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Detect frontNode, backNode and calculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
+	spec.maxTurningRadius = self.maxTurningRadius
 	if self.spec_workArea ~= nil then
 		dbgprint_r(self.spec_workArea, 1, 2)
 	end
@@ -702,9 +704,7 @@ function HeadlandManagement.onUpdateResearch(self)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil or not self:getIsActive() or self ~= g_currentMission.controlledVehicle then return end
 	
-	local radius = self.maxTurningRadius
-	
-	dbgrender("radius: "..tostring(radius), 3, 3)
+	dbgrender("radius: "..tostring(spec.maxTurningRadius), 3, 3)
 	
 	dbgrender("fieldModeF: "..tostring(spec.headlandF), 5, 3)
 	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 3)
@@ -972,7 +972,8 @@ function HeadlandManagement.waitOnTrigger(self, automatic)
 			if spec.measureNode == nil then spec.measureNode = self.rootNode end
 			if spec.triggerNode == nil then spec.triggerNode = self.rootNode end
 			spec.triggerPos = {}
-			spec.triggerPos.x, spec.triggerPos.y, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
+			_ , spec.triggerPos.y, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
+			spec.triggerPos.x, _, _ = getWorldTranslation(self.rootNode)
 		end
 		
 		local triggerFlag = DebugFlag.new(1,0,0)
@@ -985,7 +986,8 @@ function HeadlandManagement.waitOnTrigger(self, automatic)
 			triggerFlag:draw()
 		end
 	
-		local wx, wy, wz = getWorldTranslation(spec.measureNode)
+		local  _, wy, wz = getWorldTranslation(spec.measureNode)
+		local wx,  _,  _ = getWorldTranslation(self.rootNode)
 		local mx, _, mz = worldToLocal(self.rootNode, wx, 0, wz)
 		
 		if spec.debugFlag then

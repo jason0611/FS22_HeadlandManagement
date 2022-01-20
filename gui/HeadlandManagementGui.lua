@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.3.0
+-- Version 2.9.3.1
 --
 
 HeadlandManagementGui = {}
@@ -72,6 +72,10 @@ HeadlandManagementGui.CONTROLS = {
 	"gpsAutoTriggerOffsetTitle",
 	"gpsAutoTriggerOffsetSetting",
 	"gpsAutoTriggerOffsetTT",
+	"gpsAutoTriggerOffsetWidth",
+	"gpsAutoTriggerOffsetWidthTitle",
+	"gpsAutoTriggerOffsetWidthInput",
+	"gpsAutoTriggerOffsetWidthTT",
 	"gpsEnableDirSwitchSetting",
 	"gpsDisableDirSwitchTitle",
 	"gpsDirSwitchTT",
@@ -337,6 +341,11 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.gpsAutoTriggerOffsetSetting:setState(offsetSetting)
 	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
 	
+	self.gpsAutoTriggerOffsetWidthTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetWidth"))
+	self.gpsAutoTriggerOffsetWidthInput:setText(tostring(self.spec.headlandDistance))
+	self.gpsAutoTriggerOffsetWidthInput.onEnterPressedCallback = HeadlandManagementGui.onWidthInput
+	self.gpsAutoTriggerOffsetWidthInput:setDisabled(triggerSetting ~= 2)
+	
 	self.gpsResumeTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_autoResume"))
 	self.gpsResumeSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
@@ -403,6 +412,10 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.gpsTypeTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsTypeTT"))
 	self.gpsAutoTriggerTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerTT"))
 	self.gpsAutoTriggerOffsetTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetTT"))
+	
+	self.gpsAutoTriggerOffsetWidthTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetWidthTT"))
+	self.gpsAutoTriggerOffsetWidthTT:setText(string.format(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetWidthTT"),self.spec.maxTurningRadius,self.spec.vehicleLength))
+	
 	self.speedControlTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlTT"))
 	self.speedControlModTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModTT"))
 	self.speedSettingTT:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSettingTT"))
@@ -442,8 +455,17 @@ function HeadlandManagementGui:logicalCheck()
 	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.spec.modVCAFound or gpsSetting < 4)
 	local triggerSetting = self.gpsAutoTriggerSetting:getState()
 	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
+	self.gpsAutoTriggerOffsetWidthInput:setDisabled(triggerSetting ~= 2)
 	
 	self.debugFlagSetting:setDisabled(self.raiseSetting:getState() ~= 2)
+end
+
+-- get width input
+function HeadlandManagementGui:onWidthInput()
+	dbgprint("onWidthInput : "..self.gpsAutoTriggerOffsetWidthInput:getText())
+	local inputValue = tonumber(self.gpsAutoTriggerOffsetWidthInput:getText())
+	if inputValue ~= nil then self.spec.headlandDistance = inputValue end
+	dbgprint("onWidthInput : spec.headlandDistance: "..tostring(self.spec.headlandDistance), 2)
 end
 
 -- close gui and send new values to callback

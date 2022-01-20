@@ -52,6 +52,7 @@
 			<text name="hlmgui_gps_vcaR" text="Solo VCA: Svolta automatica a destra"/>
 			<text name="hlmgui_gpsAutoTriggerSetting" text="Automatico a fine campo"/>
 			<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger per automatico"/>
+			<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		
 			<text name= "hlmgui_vcaDirSwitch" text="VCA: Cambia automaticamente la direzione di svolta"/>
 			<text name= "hlmgui_autoResume" text="Automatic field mode"/>
@@ -79,6 +80,7 @@
 			<text name="hlmgui_gpsTypeTT" text="La funzione può essere limitata a Guidance Steering o VCA, oppure mettere automaticamente in pausa il sistema attualmente attivo."/>
 			<text name="hlmgui_gpsAutoTriggerTT" text="In combinazione con Guidance Steering, la gestione della capezzagna può essere attivata automaticamente quando viene raggiunta la capezzagna."/>
 			<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Di serie, il sistema automatico attiva la gestione della capezzagna quando la parte anteriore del veicolo raggiunge la capezzagna. Questo può essere spostato nella parte posteriore del veicolo. Importante: questa funzione può essere commutata solo se la guida di corsia Guidance Steering non è attiva!"/>
+			<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
 			<text name="hlmgui_diffLockTT" text="In capezzagna, i bloccaggi differenziali attivi vengono rilasciati e quindi reimpostati."/>
 			<text name="hlmgui_csTT" text="Quando si raggiunge la capezzagna, è possibile commutare lo sterzo attivo a granchio. O direttamente, oppure prima in posizione normale o in retromarcia e poi a fine campo completamente."/>
 			<text name="hlmgui_VCADirSwitchTT" text="Abilita o disabilita automaticamente la commutazione della direzione di svolta. Utile quando VCA ha numeri diversi per saltare le corsie a sinistra/destra."/>

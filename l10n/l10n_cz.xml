@@ -51,6 +51,7 @@
 		<text name="hlmgui_gps_vcaR" text="pouze VCA: Aut. otočení vpravo"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatické souvratě"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA automatické přepínání směru"/>
 		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
@@ -78,6 +79,7 @@
 		<text name="hlmgui_gpsTypeTT" text="Funkci lze omezit na navádění řízení nebo VCA nebo automaticky pozastavit aktuálně aktivní systém."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="Ve spojení s naváděcím řízením lze řízení souvratě aktivovat automaticky při dosažení souvrati."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardně se správa souvrati aktivuje, když přední část vozidla dosáhne souvrati. To lze přepnout na zadní část vozidla. Důležité: Tuto funkci lze přepnout pouze v případě, že navádění po trati GS není aktivní!"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
 		<text name="hlmgui_diffLockTT" text="Na souvrati se aktivní uzávěrky diferenciálu uvolní a poté znovu nastaví."/>
 		<text name="hlmgui_csTT" text="Po dosažení souvrati lze přepnout aktivní krabí řízení. Buď přímo, nebo nejprve v normální či couvací poloze a pak na konci souvrati úplně."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Deaktivuje automatický přepínač směru otáčení, pokud je používán. Užitečné, když má VCA různá čísla pro vynechané pruhy."/>		
