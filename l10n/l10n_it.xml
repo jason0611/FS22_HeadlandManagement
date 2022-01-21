@@ -51,6 +51,7 @@
 			<text name="hlmgui_gps_vcaL" text="Solo VCA: Svolta automatica a sinistra"/>
 			<text name="hlmgui_gps_vcaR" text="Solo VCA: Svolta automatica a destra"/>
 			<text name="hlmgui_gpsAutoTriggerSetting" text="Automatico a fine campo"/>
+			<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
 			<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger per automatico"/>
 			<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		

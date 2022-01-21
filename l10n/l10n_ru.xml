@@ -50,6 +50,7 @@
 		<text name="hlmgui_gps_vcaL" text="только VCA: автоповорот налево"/>
 		<text name="hlmgui_gps_vcaR" text="только VCA: автоповорот направо"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Автоматизация разворотной полосы"/>
+		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		

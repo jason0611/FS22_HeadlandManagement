@@ -50,6 +50,7 @@
 		<text name="hlmgui_gps_vcaL" text="poue VCA: Aut. otočení vlevo"/>
 		<text name="hlmgui_gps_vcaR" text="pouze VCA: Aut. otočení vpravo"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatické souvratě"/>
+		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		
