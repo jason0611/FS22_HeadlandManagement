@@ -214,6 +214,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCenterPlow = true		-- turn plow in two steps
 	spec.plowRotationMaxNew = nil	-- plow state while turning
 	spec.vehicleLength = 0			-- calculated vehicle's length
+	spec.vehicleWidth = 0			-- vehicle's width
 	spec.maxTurningRadius = 0		-- vehicle's turn radius
 	
 	spec.useRidgeMarker = true		-- switch ridge markers in headland mode
@@ -246,9 +247,11 @@ end
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
 local function vehicleMeasurement(self, excludedImplement)
-	local frontNode, backNode, vehicleLength
+	local frontNode, backNode
+	local vehicleLength, vehicleWidth = 0, 0
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
-	local tmpLen = 0
+	local frontExists, backExists
+	local lengthBackup, tmpLen = 0, 0
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
 	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements), 2)
@@ -275,6 +278,12 @@ local function vehicleMeasurement(self, excludedImplement)
 			local spec_at = implement.spec_attacherJoints
 			
 			if implement.getName ~= nil then dbgprint("vehicleMeasurement : implement: "..implement:getName()) end
+			if implement.size ~= nil then 
+				dbgprint("vehicleMeasurement : width: "..tostring(implement.size.width))
+				dbgprint("vehicleMeasurement : length: "..tostring(implement.size.length)) 
+				lengthBackup = lengthBackup + implement.size.length
+				vehicleWidth = math.max(vehicleWidth, implement.size.width)
+			end
 			
 			if not filtered and spec_at ~= nil then
 				for index,joint in pairs(spec_at.attacherJoints) do
@@ -283,10 +292,12 @@ local function vehicleMeasurement(self, excludedImplement)
 					lastFront, lastBack = distFront, distBack
 					distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 					if distFront ~= lastFront then 
+						frontExists = true
 						frontNode = joint.jointTransform
 						dbgprint("vehicleMeasurement joint "..tostring(index)..": New frontNode set", 2) 
 					end
 					if distBack ~= lastBack then 
+						backExists = true
 						backNode = joint.jointTransform 
 						dbgprint("vehicleMeasurement joint "..tostring(index)..": New backNode set", 2) 
 					end
@@ -302,18 +313,28 @@ local function vehicleMeasurement(self, excludedImplement)
 
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
+				local waWidth = 0
 				for index, workArea in pairs(spec_wa.workAreas) do
 					if workArea.start ~= nil then
 						local testNode = workArea.start
+						local widthNode = workArea.width
 						local wx, wy, wz = getWorldTranslation(testNode)
 						local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
+		
+						local wwx, wwy, wwz = getWorldTranslation(widthNode)
+						local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
+						waWidth = waWidth + math.abs(lwx - lx)
+						print(math.abs(lwx - lx))
+						print(waWidth)
 						lastFront, lastBack = distFront, distBack
 						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 						if lastFront ~= distFront then 
+							frontExists = true
 							frontNode = testNode; 
 							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
 						end
-						if lastBack ~= distBack then 
+						if lastBack ~= distBack then
+							backExists = true 
 							backNode = testNode; 
 							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
 						end
@@ -323,6 +344,8 @@ local function vehicleMeasurement(self, excludedImplement)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen), 2)
 				end
+				vehicleWidth = math.max(vehicleWidth, waWidth)
+				dbgprint("vehicleMeasurement workArea: new vehicleWidth: "..tostring(vehicleWidth), 2)
 			else
 				dbgprint("vehicleMeasurement: filtered or no workArea", 2)
 			end
@@ -330,11 +353,16 @@ local function vehicleMeasurement(self, excludedImplement)
 			dbgprint("vehicleMeasurement: implement == nil", 2)
 		end
 	end	
-	vehicleLength = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+	if frontExists and backExists then
+		vehicleLength = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+	else
+		vehicleLength = lengthBackup
+	end
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
-	return frontNode, backNode, vehicleLength
+	dbgprint("vehicleMeasurement : vehicleWidth: "..tostring(vehicleWidth), 1)
+	return frontNode, backNode, vehicleLength, vehicleWidth
 end
 
 function HeadlandManagement:onPostLoad(savegame)
@@ -358,8 +386,8 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil and not HeadlandManagement.kbGS
 	
-	-- Detect frontNode, backNode and calculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(self)
+	-- Detect frontNode, backNode and calculate vehicle length and width
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	spec.maxTurningRadius = self.maxTurningRadius
 	if self.spec_workArea ~= nil then
@@ -659,6 +687,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug)
@@ -680,7 +709,7 @@ function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescI
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(vehicle)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
@@ -692,7 +721,7 @@ function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle, implement.object)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(vehicle, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
@@ -713,6 +742,11 @@ function HeadlandManagement.onUpdateResearch(self)
 
 	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 3)
 	dbgrender("backNode:  "..tostring(spec.backNode), 11, 3)
+	
+	dbgrender("vehicleLength: "..tostring(spec.vehicleLength), 13, 3)
+	dbgrender("vehicleWidth: "..tostring(spec.vehicleWidth), 14, 3)
+	
+	dbgrenderTable(self.size, 1, 3)
 	
 	
 	if spec ~= nil then 
