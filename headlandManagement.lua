@@ -8,8 +8,6 @@
 -- Two nodes: front node + back node
 -- Adapt front/back nodes, if implement is being attached or detached
 -- Detect, if turn has ended --> Headland Management with automatic field mode
-
--- Further ideas:
 -- Separate raising of front and back implement, each when reaching headland
 -- Enable manual override of trigger controlled actions
  
@@ -733,6 +731,14 @@ function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
 end
 
+local function getHeading(self)
+	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 0)
+	local x2, y2, z2 = localToWorld(self.rootNode, 0, 0, 1)
+	local dx, dz = x2 - x1, z2 - z1
+	local heading = math.floor(180 - (180 / math.pi) * math.atan2(dx, dz))
+	return heading, dx, dz
+end	
+
 -- Research part
 function HeadlandManagement.onUpdateResearch(self)
 	local spec = self.spec_HeadlandManagement
@@ -742,25 +748,15 @@ function HeadlandManagement.onUpdateResearch(self)
 	
 	dbgrender("onHeadlandF: "..tostring(spec.headlandF), 5, 3)
 	dbgrender("onHeadlandB: "..tostring(spec.headlandB), 6, 3)
+	
+	dbgrender("lastOnHeadlandF: "..tostring(spec.lastHeadlandF), 7, 3)
+	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 8, 3)
 
-	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 3)
+	dbgrender("direction: "..tostring(math.floor(spec.heading)), 10, 3)
 	local turnTarget
-	if spec.vcaHeading ~= nil then turnTarget=math.floor(spec.vcaHeading) else turnTarget = nil end
-	dbgrender("turnTarget:"..tostring(turnTarget), 9, 3)
-
-	dbgrender("frontNode: "..tostring(spec.frontNode), 11, 3)
-	dbgrender("backNode:  "..tostring(spec.backNode), 12, 3)
-	
-	dbgrender("vehicleLength: "..tostring(spec.vehicleLength), 15, 3)
-	dbgrender("vehicleWidth: "..tostring(spec.vehicleWidth), 16, 3)
-	
-	local dx, _, dz = self:getVehicleWorldDirection()
-	dbgrender("dx: "..tostring(dx), 18,3)
-	dbgrender("dz: "..tostring(dz), 19,3)
-	
-	dbgrenderTable(self.size, 1, 3)
-	
-	
+	if spec.vcaTurnHeading ~= nil then turnTarget=math.floor(spec.vcaTurnHeading) else turnTarget = nil end
+	dbgrender("turnTarget:"..tostring(turnTarget), 11, 3)
+		
 	if spec ~= nil then 
 		--dbgrenderTable(spec, 1, 3)
 	end
@@ -771,8 +767,8 @@ end
 local function isOnField(node)
 	local vx, _, vz = getWorldTranslation(node)
 	return getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
-end
-
+end	
+	
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
@@ -784,28 +780,26 @@ function HeadlandManagement:onUpdate(dt)
 		dbgprint_r("spec", 4)
 	end
 		
-	-- calculate position, direction and field mode
-	local fx, fz, bx, bz
-	local dx, _, dz = self:getVehicleWorldDirection()
-	local vx, _, vz = getWorldTranslation(self.rootNode)
-	local onField = getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
+	-- calculate position, direction, field mode and vehicle's heading
+	local fx, fz, bx, bz, dx, dz
+	spec.heading, dx, dz = getHeading(self)
 	
 	if spec.frontNode ~= nil then 
 		fx, _, fz = getWorldTranslation(spec.frontNode) 
-		spec.headlandF = isOnField(self.rootNode) and getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
+		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandF = false
 	end
 
 	if spec.backNode ~= nil then 
 		bx, _, bz = getWorldTranslation(spec.backNode) 
-		spec.headlandB = isOnField(self.rootNode) and getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
+		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandB = false
 	end
 	
-	if not spec.headlandF then spec.lastHeadlandF = false end
-	if not spec.headlandB then spec.lastHeadlandB = false end
+	if not spec.headlandF and isOnField(self.rootNode) then spec.lastHeadlandF = false end
+	if not spec.headlandB and isOnField(self.rootNode) then spec.lastHeadlandB = false end
 	
 	-- vehicle's heading
 	local heading = math.atan2(dx, dz)
@@ -833,7 +827,7 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and spec.useHLMTriggerB and spec.headlandB and not spec.lastHeadlandB then
 		spec.isActive = true
-		spec.lastHeadlandF = true
+		spec.lastHeadlandB = true
 	end
 
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
