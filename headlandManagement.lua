@@ -735,16 +735,19 @@ function HeadlandManagement.onUpdateResearch(self)
 	
 	dbgrender("radius: "..tostring(spec.maxTurningRadius), 3, 3)
 	
-	dbgrender("fieldModeF: "..tostring(spec.headlandF), 5, 3)
-	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 3)
+	dbgrender("onHeadlandF: "..tostring(spec.headlandF), 5, 3)
+	dbgrender("onHeadlandB: "..tostring(spec.headlandB), 6, 3)
 
 	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 3)
+	local turnTarget
+	if spec.vcaHeading ~= nil then turnTarget=math.floor(spec.vcaHeading) else turnTarget = nil end
+	dbgrender("turnTarget:"..tostring(turnTarget), 9, 3)
 
-	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 3)
-	dbgrender("backNode:  "..tostring(spec.backNode), 11, 3)
+	dbgrender("frontNode: "..tostring(spec.frontNode), 11, 3)
+	dbgrender("backNode:  "..tostring(spec.backNode), 12, 3)
 	
-	dbgrender("vehicleLength: "..tostring(spec.vehicleLength), 13, 3)
-	dbgrender("vehicleWidth: "..tostring(spec.vehicleWidth), 14, 3)
+	dbgrender("vehicleLength: "..tostring(spec.vehicleLength), 15, 3)
+	dbgrender("vehicleWidth: "..tostring(spec.vehicleWidth), 16, 3)
 	
 	dbgrenderTable(self.size, 1, 3)
 	
@@ -755,6 +758,11 @@ function HeadlandManagement.onUpdateResearch(self)
 end
 
 -- Main part
+
+local function isOnField(node)
+	local vx, _, vz = getWorldTranslation(node)
+	return getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
+end
 
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
@@ -775,14 +783,14 @@ function HeadlandManagement:onUpdate(dt)
 	
 	if spec.frontNode ~= nil then 
 		fx, _, fz = getWorldTranslation(spec.frontNode) 
-		spec.headlandF = onField and getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
+		spec.headlandF = isOnField(self.rootNode) and getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandF = false
 	end
 
 	if spec.backNode ~= nil then 
 		bx, _, bz = getWorldTranslation(spec.backNode) 
-		spec.headlandB = onField and getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
+		spec.headlandB = isOnField(self.rootNode) and getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandB = false
 	end
