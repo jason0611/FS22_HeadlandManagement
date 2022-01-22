@@ -248,7 +248,7 @@ end
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
 local function vehicleMeasurement(self, excludedImplement)
 	local frontNode, backNode
-	local vehicleLength, vehicleWidth = 0, 0
+	local vehicleLength, vehicleWidth, maxTurningRadius = 0, 0, 0
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
 	local frontExists, backExists
 	local lengthBackup, tmpLen = 0, 0
@@ -278,6 +278,11 @@ local function vehicleMeasurement(self, excludedImplement)
 			local spec_at = implement.spec_attacherJoints
 			
 			if implement.getName ~= nil then dbgprint("vehicleMeasurement : implement: "..implement:getName()) end
+			
+			local implTurningRadius = implement.maxTurningRadius
+			if implTurningRadius ~= nil then maxTurningRadius = math.max(maxTurningRadius, implTurningRadius) end
+			dbgprint("vehicleMeasurement : maxTurningRadius: "..tostring(maxTurningRadius), 2)
+			
 			if implement.size ~= nil then 
 				dbgprint("vehicleMeasurement : width: "..tostring(implement.size.width))
 				dbgprint("vehicleMeasurement : length: "..tostring(implement.size.length)) 
@@ -362,7 +367,7 @@ local function vehicleMeasurement(self, excludedImplement)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
 	dbgprint("vehicleMeasurement : vehicleWidth: "..tostring(vehicleWidth), 1)
-	return frontNode, backNode, vehicleLength, vehicleWidth
+	return frontNode, backNode, vehicleLength, vehicleWidth, maxTurningRadius
 end
 
 function HeadlandManagement:onPostLoad(savegame)
@@ -387,9 +392,9 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil and not HeadlandManagement.kbGS
 	
 	-- Detect frontNode, backNode and calculate vehicle length and width
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
-	spec.maxTurningRadius = self.maxTurningRadius
+	--spec.maxTurningRadius = self.maxTurningRadius
 	if self.spec_workArea ~= nil then
 		dbgprint_r(self.spec_workArea, 1, 2)
 	end
@@ -709,7 +714,7 @@ function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescI
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(vehicle)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(vehicle)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
@@ -721,7 +726,7 @@ function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(vehicle, implement.object)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(vehicle, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
@@ -748,6 +753,10 @@ function HeadlandManagement.onUpdateResearch(self)
 	
 	dbgrender("vehicleLength: "..tostring(spec.vehicleLength), 15, 3)
 	dbgrender("vehicleWidth: "..tostring(spec.vehicleWidth), 16, 3)
+	
+	local dx, _, dz = self:getVehicleWorldDirection()
+	dbgrender("dx: "..tostring(dx), 18,3)
+	dbgrender("dz: "..tostring(dz), 19,3)
 	
 	dbgrenderTable(self.size, 1, 3)
 	
