@@ -786,14 +786,20 @@ function HeadlandManagement:onUpdate(dt)
 	spec.heading, dx, dz = getHeading(self)
 	
 	if spec.frontNode ~= nil then 
-		fx, _, fz = getWorldTranslation(spec.frontNode) 
+		-- transform to center position
+		local nx, ny, nz = getWorldTranslation(spec.frontNode)
+		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
+		local fx, _, fz = localToWorld(self.rootNode, 0, 0, lz)
 		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandF = false
 	end
 
 	if spec.backNode ~= nil then 
-		bx, _, bz = getWorldTranslation(spec.backNode) 
+		-- transform to center position
+		local nx, ny, nz = getWorldTranslation(spec.backNode)
+		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
+		local bx, _, bz = localToWorld(self.rootNode, 0, 0, lz)
 		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandB = false
