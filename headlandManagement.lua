@@ -327,8 +327,6 @@ local function vehicleMeasurement(self, excludedImplement)
 						local wwx, wwy, wwz = getWorldTranslation(widthNode)
 						local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
 						waWidth = waWidth + math.abs(lwx - lx)
-						print(math.abs(lwx - lx))
-						print(waWidth)
 						lastFront, lastBack = distFront, distBack
 						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 						if lastFront ~= distFront then 
