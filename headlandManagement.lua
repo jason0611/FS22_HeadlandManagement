@@ -317,6 +317,7 @@ local function vehicleMeasurement(self, excludedImplement)
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
 				local waWidth = 0
+				local maxX, minX = 0, 0
 				for index, workArea in pairs(spec_wa.workAreas) do
 					if workArea.start ~= nil then
 						local testNode = workArea.start
@@ -326,7 +327,9 @@ local function vehicleMeasurement(self, excludedImplement)
 		
 						local wwx, wwy, wwz = getWorldTranslation(widthNode)
 						local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
-						waWidth = waWidth + math.abs(lwx - lx)
+						maxX = math.max(maxX, math.max(lwx, lx))
+						minX = math.min(minX, math.min(lwx, lx))
+						waWidth = math.abs(maxX - minX)
 						lastFront, lastBack = distFront, distBack
 						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 						if lastFront ~= distFront then 
