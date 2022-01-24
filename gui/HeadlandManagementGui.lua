@@ -210,7 +210,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	if self.spec.useTurnPlow and self.spec.useCenterPlow then plowState = 2; end
 	if not self.spec.useTurnPlow then plowState = 3; end
 	self.turnPlowSetting:setState(plowState)
-	self.turnPlowSetting:setDisabled(raiseState == 4)
+	self.turnPlowSetting:setDisabled(raiseState == 5)
 
 	self.stopPtoTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_pto"))
 	self.stopPtoSetting:setTexts({
@@ -232,7 +232,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.ridgeMarkerSetting:setState(self.spec.useRidgeMarker and 1 or 2)
-	self.ridgeMarkerSetting:setDisabled(raiseState == 4)
+	self.ridgeMarkerSetting:setDisabled(raiseState == 5)
 	
 	-- GPS control
 	self.gpsControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsControl"))
@@ -439,7 +439,7 @@ function HeadlandManagementGui:logicalCheck()
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
 	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.spec.modSpeedControlFound or not useSpeedControl)
 	
-	local useRaiseImplement = self.raiseSetting:getState() ~= 4	
+	local useRaiseImplement = self.raiseSetting:getState() ~= 5	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
 	self.ridgeMarkerSetting:setDisabled(not useRaiseImplement)
 
