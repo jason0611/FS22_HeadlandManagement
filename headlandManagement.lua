@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.3.3
+-- Version 2.9.3.4
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -42,13 +42,21 @@ HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
+HeadlandManagement.guiIconOff = createImageOverlay(g_currentModDirectory.."gui/hlm_off.dds")
 HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
 HeadlandManagement.guiIconFieldR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_right.dds")
 HeadlandManagement.guiIconFieldL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_left.dds")
-HeadlandManagement.guiIconStandby = createImageOverlay(g_currentModDirectory.."gui/hlm_standby.dds")
+HeadlandManagement.guiIconFieldA = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_normal.dds")
+HeadlandManagement.guiIconFieldAR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_right.dds")
+HeadlandManagement.guiIconFieldAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_left.dds")
+HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
 HeadlandManagement.guiIconHeadlandR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_right.dds")
 HeadlandManagement.guiIconHeadlandL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_left.dds")
+HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
+HeadlandManagement.guiIconHeadlandAR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_right.dds")
+HeadlandManagement.guiIconHeadlandAL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_left.dds")
+HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
 
 -- Filteres implements
 HeadlandManagement.filterList = {}
@@ -948,9 +956,9 @@ end
 
 function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
+	if self:getIsActive() and spec.exists then
 
-	-- show icon if active
-	if self:getIsActive() and spec.exists then 
+		-- keybindings 
 		if spec.isActive then
 			g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
 			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHOFF"))
@@ -958,42 +966,90 @@ function HeadlandManagement:onDraw(dt)
 			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHON"))
 		end
 		
+		-- gui icon
 		local scale = g_gameSettings.uiScale
 		
 		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX * 0.9
 		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY * 0.92
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
-		local guiIcon = HeadlandManagement.guiIconField
+		local guiIcon = HeadlandManagement.guiIconOff
 		
-		if spec.isActive then 
-			guiIcon = HeadlandManagement.guiIconHeadland
-		end
 
-		if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn")then
-			if not spec.isActive then 
-				guiIcon = HeadlandManagement.guiIconFieldL
-			else
-				guiIcon = HeadlandManagement.guiIconHeadlandL
+		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
+		local headlandAutomatic	= spec.useHLMTriggerF or spec.useHLMTriggerB
+				
+		-- field mode
+		if headlandAutomatic and not spec.isActive then 
+			guiIcon = HeadlandManagement.guiIconFieldA
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldAL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldAR 
 			end
 		end
-		if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then
-			if not spec.isActive then 
-				guiIcon = HeadlandManagement.guiIconFieldR
-			else
-				guiIcon = HeadlandManagement.guiIconHeadlandR
+		
+		if not headlandAutomatic and not spec.isActive then 
+			guiIcon = HeadlandManagement.guiIconField
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldR 
 			end
 		end
-		if not spec.isActive and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+		
+		if headlandAutomaticGS and not spec.isActive then
 			local spec_gs = self.spec_globalPositioningSystem 
 			local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
-				guiIcon = HeadlandManagement.guiIconStandby
+				guiIcon = HeadlandManagement.guiIconFieldA
 			end
 		end
+	
+		-- headland mode			
+		if spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+			guiIcon = HeadlandManagement.guiIconHeadlandA
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconHeadlandAL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconHeadlandAR 
+			end	
+		end
+		
+		if not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+			guiIcon = HeadlandManagement.guiIconHeadland
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconHeadlandL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconHeadlandR 
+			end
+		end	
+		
+		-- Working Mode
+		if spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
+			guiIcon = HeadlandManagement.guiIconFieldW
+		end
+		if spec.isActive and spec.actStep < 0 then
+			guiIcon = HeadlandManagement.guiIconHeadlandW
+		end
+
+		if not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+			guiIcon = HeadlandManagement.guiIconHeadland
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconHeadlandL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconHeadlandR 
+			end
+		end	
 		
 		renderOverlay(guiIcon, x, y, w, h)
 		
+		-- debug: show frontnode and backnode
 		if HeadlandManagement.debug then
 			ShowNodeF = DebugCube.new()
 			ShowNodeB = DebugCube.new()
