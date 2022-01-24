@@ -51,11 +51,7 @@ HeadlandManagement.guiIconFieldAR = createImageOverlay(g_currentModDirectory.."g
 HeadlandManagement.guiIconFieldAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_left.dds")
 HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
-HeadlandManagement.guiIconHeadlandR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_right.dds")
-HeadlandManagement.guiIconHeadlandL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_left.dds")
 HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
-HeadlandManagement.guiIconHeadlandAR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_right.dds")
-HeadlandManagement.guiIconHeadlandAL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_left.dds")
 HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
 
 -- Filteres implements
@@ -1011,22 +1007,10 @@ function HeadlandManagement:onDraw(dt)
 		-- headland mode			
 		if spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
 			guiIcon = HeadlandManagement.guiIconHeadlandA
-			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
-				guiIcon = HeadlandManagement.guiIconHeadlandAL 
-			end
-			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
-				guiIcon = HeadlandManagement.guiIconHeadlandAR 
-			end	
 		end
 		
 		if not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
 			guiIcon = HeadlandManagement.guiIconHeadland
-			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
-				guiIcon = HeadlandManagement.guiIconHeadlandL 
-			end
-			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
-				guiIcon = HeadlandManagement.guiIconHeadlandR 
-			end
 		end	
 		
 		-- Working Mode
@@ -1036,16 +1020,6 @@ function HeadlandManagement:onDraw(dt)
 		if spec.isActive and spec.actStep < 0 then
 			guiIcon = HeadlandManagement.guiIconHeadlandW
 		end
-
-		if not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
-			guiIcon = HeadlandManagement.guiIconHeadland
-			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
-				guiIcon = HeadlandManagement.guiIconHeadlandL 
-			end
-			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
-				guiIcon = HeadlandManagement.guiIconHeadlandR 
-			end
-		end	
 		
 		renderOverlay(guiIcon, x, y, w, h)
 		
