@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.3.4
+-- Version 2.9.3.5
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -1015,10 +1015,10 @@ function HeadlandManagement:onDraw(dt)
 		
 		-- Working Mode
 		if spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
-			guiIcon = HeadlandManagement.guiIconFieldW
+			guiIcon = HeadlandManagement.guiIconHeadlandW
 		end
 		if spec.isActive and spec.actStep < 0 then
-			guiIcon = HeadlandManagement.guiIconHeadlandW
+			guiIcon = HeadlandManagement.guiIconFieldW
 		end
 		
 		renderOverlay(guiIcon, x, y, w, h)
