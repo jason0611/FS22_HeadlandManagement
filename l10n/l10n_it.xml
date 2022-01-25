@@ -6,6 +6,7 @@
 		<text name="input_HLM_SWITCHON" text="Modalità capezzagna" />
 		<text name="input_HLM_SWITCHOFF" text="Modalità campo" />	
 		<text name="input_HLM_SHOWGUI" text="Capezzagna: Impostazioni" />
+		<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 	
 		<text name="text_HLM_isActive" text="Modalità capezzagna attiva"/>
 			<text name="text_HLM_configuration" text="Gestione Capezzagna"/>

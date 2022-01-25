@@ -5,6 +5,7 @@
     	<text name="input_HLM_SWITCHON" text="Headland-Mode" />
     	<text name="input_HLM_SWITCHOFF" text="Field-Mode" />	
     	<text name="input_HLM_SHOWGUI" text="Headland: Settings" />
+    	<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 		
 		<text name="text_HLM_isActive" text="Headland-Mode active"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
@@ -13,7 +14,7 @@
 		<text name="text_HLM_installed_short" text="Installed"/>
 		<text name="text_HLM_notInstalled_short" text="Not installed"/>
 
-		<text name="hlmgui_title" text="Headlandmanagement: Settings for "/>
+		<text name="hlmgui_title" text="Headlandmanagement (HLM): Settings for "/>
 		<text name="hlmgui_on" text="on"/>
 		<text name="hlmgui_off" text="off"/>
 		<text name="hlmgui_both" text="front and back"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.9.3.5</version>
+	<version>2.9.3.6</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -220,6 +220,7 @@ V2.x.x.x:
 		<action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SHOWGUI" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_MAINSWITCH" categorie="VEHICLE" ignoseComboMask="false" />
 	</actions>
 	<inputBinding>	
 		<actionBinding action="HLM_TOGGLESTATE">
@@ -227,6 +228,9 @@ V2.x.x.x:
 		</actionBinding>
 		<actionBinding action="HLM_SHOWGUI">
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_lctrl KEY_x" neutralInput="0" index="1" />
+		</actionBinding>
+		<actionBinding action="HLM_MAINSWITCH">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lshift KEY_lalt KEY_x" neutralInput="0" index="1" />
 		</actionBinding>
 	</inputBinding>
 </modDesc>

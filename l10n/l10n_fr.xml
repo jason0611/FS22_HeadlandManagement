@@ -5,6 +5,7 @@
     	<text name="input_HLM_SWITCHON" text="Mode fourrière" />
     	<text name="input_HLM_SWITCHOFF" text="Mode champ" />	
     	<text name="input_HLM_SHOWGUI" text="Fourrière : Paramètres" />
+    	<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 		
 		<text name="text_HLM_isActive" text="Mode fourrière actif"/>
 		<text name="text_HLM_configuration" text="Gestion des fourrières"/>

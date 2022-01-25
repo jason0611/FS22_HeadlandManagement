@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.3.5
+-- Version 2.9.3.6
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -10,6 +10,7 @@
 -- Detect, if turn has ended --> Headland Management with automatic field mode
 -- Separate raising of front and back implement, each when reaching headland
 -- Enable manual override of trigger controlled actions
+-- Turn Headland Management on/off
  
 HeadlandManagement = {}
 
@@ -117,6 +118,8 @@ function HeadlandManagement.initSpecialization()
 	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process", 1)
 	
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#isOn", "HLM is turned on", false)
+    
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
     schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#beepVol", "Audible alert volume", 5)
 	
@@ -178,6 +181,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.actionEventOn = nil
 	
 	spec.exists = false				-- Headland Management is configured into vehicle
+	spec.isOn = false				-- Headland Management is switched on
 	
 	spec.timer = 0					-- Timer for waiting actions
 	spec.beep = true				-- Beep on or off
@@ -201,8 +205,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.headlandDistance = 9 		-- headland width (distance to field border)	-- needs config settings	 
 	spec.headlandF = false			-- front node over headland?
 	spec.headlandB = false 			-- back node over headland?
-	spec.lastHeadlandF = false		-- was front node already over headland?
-	spec.lastHeadlandB = false		-- was back node already over headland?
+	spec.lastHeadlandF = true		-- was front node already over headland?
+	spec.lastHeadlandB = true		-- was back node already over headland?
 	
 	spec.useRaiseImplementF = true	-- raise front implements in headland mode
 	spec.useRaiseImplementB = true	-- raise back implements in headland mode
@@ -418,6 +422,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		local key = savegame.key .. ".HeadlandManagement"
 		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
 		if spec.exists then
+			spec.isOn = xmlFile:getValue(key.."#isOn", spec.isOn)
 			spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
 			spec.beepVol = xmlFile:getValue(key.."#beepVol", spec.beepVol)
 			spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
@@ -468,6 +473,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		
 	xmlFile:setValue(key.."#configured", spec.exists)
 	if spec.exists then	
+		xmlFile:setValue(key.."#isOn", spec.isOn)
 		xmlFile:setValue(key.."#beep", spec.beep)
 		xmlFile:setValue(key.."#beepVol", spec.beepVol)
 		xmlFile:setValue(key.."#turnSpeed", spec.turnSpeed)
@@ -504,6 +510,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	spec.exists = streamReadBool(streamId, connection)
 	if spec.exists then
+		spec.isOn = streamReadBool(streamId)
 		spec.beep = streamReadBool(streamId)
 		spec.beepVol = streamReadInt8(streamId)
 		spec.turnSpeed = streamReadFloat32(streamId)
@@ -537,6 +544,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.exists)
 	if spec.exists then
+		streamWriteBool(streamId, spec.isOn)
 		streamWriteBool(streamId, spec.beep)
 		streamWriteInt8(streamId, spec.beepVol)
 		streamWriteFloat32(streamId, spec.turnSpeed)
@@ -572,6 +580,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			dbgprint("onReadUpdateStream: receiving data...", 4)
 			spec.exists = streamReadBool(streamId)
 			if spec.exists then
+				spec.isOn = streamReadBool(streamId)
 				spec.beep = streamReadBool(streamId)
 				spec.beepVol = streamReadInt8(streamId)
 				spec.turnSpeed = streamReadFloat32(streamId)
@@ -610,6 +619,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			dbgprint("onWriteUpdateStream: sending data...", 4)
 			streamWriteBool(streamId, spec.exists)
 			if spec.exists then
+				streamWriteBool(streamId, spec.isOn)
 				streamWriteBool(streamId, spec.beep)
 				streamWriteInt8(streamId, spec.beepVol)
 				streamWriteFloat32(streamId, spec.turnSpeed)
@@ -649,16 +659,21 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
 		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
+			local prio = GS_PRIO_HIGH; if spec.isOn then prio = GS_PRIO_NORMAL end
+			_, spec.actionEventMainSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_MAINSWITCH', self, HeadlandManagement.MAINSWITCH, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventMainSwitch, prio)
+			
 			_, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
 			
 			_, spec.actionEventOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOn, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn)
 			
 			_, spec.actionEventOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
 			
 			local actionEventId
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
@@ -672,20 +687,40 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	dbgprint_r(spec, 4)
 	-- anschalten nur wenn inaktiv
-	if not spec.isActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
+	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
 	-- abschalten nur wenn aktiv
-	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
+	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
-	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
+	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 		spec.actStep = -HeadlandManagement.MAXSTEP
-	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == -HeadlandManagement.WAITONTRIGGER then
+	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == -HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
+
+function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
+	dbgprint("MAINSWITCH", 4)
+	local spec = self.spec_HeadlandManagement
+	if spec.isOn then
+		spec.isActive = false
+		spec.actStep = 0
+		spec.isOn = false
+	else
+		spec.lastHeadlandF = true
+		spec.lastHeadlandB = true
+		spec.isOn = true
+	end
+	local prio = GS_PRIO_HIGH; if spec.isOn then prio = GS_PRIO_NORMAL end
+	g_inputBinding:setActionEventTextPriority(spec.actionEventMainSwitch, prio)
+	g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
+	g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn)
+	g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
+	spec:raiseDirtyFlags(spec.dirtyFlag)
+end	
 
 -- GUI
 
@@ -778,6 +813,8 @@ function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
 	-- self.actionEventUpdateRequested = true -- restore of actionBindings
+	
+	if not spec.isOn then return end
 	
 	-- debug output
 	if spec.actStep == 1 then
@@ -971,12 +1008,11 @@ function HeadlandManagement:onDraw(dt)
 		local h = w * g_screenAspectRatio
 		local guiIcon = HeadlandManagement.guiIconOff
 		
-
 		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
 		local headlandAutomatic	= spec.useHLMTriggerF or spec.useHLMTriggerB
 				
 		-- field mode
-		if headlandAutomatic and not spec.isActive then 
+		if spec.isOn and headlandAutomatic and not spec.isActive then 
 			guiIcon = HeadlandManagement.guiIconFieldA
 			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
 				guiIcon = HeadlandManagement.guiIconFieldAL 
@@ -986,7 +1022,7 @@ function HeadlandManagement:onDraw(dt)
 			end
 		end
 		
-		if not headlandAutomatic and not spec.isActive then 
+		if spec.isOn and not headlandAutomatic and not spec.isActive then 
 			guiIcon = HeadlandManagement.guiIconField
 			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
 				guiIcon = HeadlandManagement.guiIconFieldL 
@@ -996,7 +1032,7 @@ function HeadlandManagement:onDraw(dt)
 			end
 		end
 		
-		if headlandAutomaticGS and not spec.isActive then
+		if spec.isOn and headlandAutomaticGS and not spec.isActive then
 			local spec_gs = self.spec_globalPositioningSystem 
 			local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
@@ -1005,19 +1041,19 @@ function HeadlandManagement:onDraw(dt)
 		end
 	
 		-- headland mode			
-		if spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+		if spec.isOn and spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
 			guiIcon = HeadlandManagement.guiIconHeadlandA
 		end
 		
-		if not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+		if spec.isOn and not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
 			guiIcon = HeadlandManagement.guiIconHeadland
 		end	
 		
 		-- Working Mode
-		if spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
+		if spec.isOn and spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
 			guiIcon = HeadlandManagement.guiIconHeadlandW
 		end
-		if spec.isActive and spec.actStep < 0 then
+		if spec.isOn and spec.isActive and spec.actStep < 0 then
 			guiIcon = HeadlandManagement.guiIconFieldW
 		end
 		

@@ -5,6 +5,7 @@
 		<text name="input_HLM_SWITCHON" text="Режим - Разворотная полоса" />
 		<text name="input_HLM_SWITCHOFF" text="Режим - Поле" />
 		<text name="input_HLM_SHOWGUI" text="Разворотная полоса: Настройки" />
+		<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 		
 		<text name="text_HLM_isActive" text="Режим Разворотной полосы активен"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>

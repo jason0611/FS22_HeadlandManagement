@@ -5,6 +5,7 @@
     	<text name="input_HLM_SWITCHON" text="Souvraťový režim" />
     	<text name="input_HLM_SWITCHOFF" text="Režim pole" />	
     	<text name="input_HLM_SHOWGUI" text="Souvratě: Nastavení" />
+    	<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 		
 		<text name="text_HLM_isActive" text="Souvratě: Mod aktivní"/>
 		<text name="text_HLM_configuration" text="Souvraťový management"/>

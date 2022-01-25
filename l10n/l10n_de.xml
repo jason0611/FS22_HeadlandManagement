@@ -4,8 +4,9 @@
     	<text name="input_HLM_TOGGLESTATE" text="Vorgewende-Modus / Feld-Modus"/>	
     	<text name="input_HLM_SWITCHON" text="Vorgewende-Modus" />
     	<text name="input_HLM_SWITCHOFF" text="Feld-Modus" />	
-    	<text name="input_HLM_SHOWGUI" text="Vorgewende: Einstellungen" />
-		
+    	<text name="input_HLM_SHOWGUI" text="HLM: Einstellungen" />
+    	<text name="input_HLM_MAINSWITCH" text="HLM: An-/ Ausschalten"/>
+
 		<text name="text_HLM_isActive" text="Vorgewende-Modus aktiv"/>
 		<text name="text_HLM_configuration" text="Vorgewende-Management"/>
 		<text name="text_HLM_installed" text="Vorgewende-Management eingebaut"/>
@@ -13,7 +14,7 @@
 		<text name="text_HLM_installed_short" text="Eingebaut"/>
 		<text name="text_HLM_notInstalled_short" text="Nicht eingebaut"/>
 
-		<text name="hlmgui_title" text="Vorgewende-Management: Konfiguration für "/>
+		<text name="hlmgui_title" text="Vorgewende-Management (HLM): Konfiguration für "/>
 		<text name="hlmgui_on" text="an"/>
 		<text name="hlmgui_off" text="aus"/>
 		<text name="hlmgui_both" text="vorne und hinten"/>
