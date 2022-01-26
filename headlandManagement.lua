@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.3.6
+-- Version 2.9.3.7
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -815,7 +815,7 @@ function HeadlandManagement:onUpdate(dt)
 	-- self.actionEventUpdateRequested = true -- restore of actionBindings
 	
 	if not spec.isOn then return end
-	
+
 	-- debug output
 	if spec.actStep == 1 then
 		dbgprint("onUpdate : spec_HeadlandManagement:", 4)
@@ -825,6 +825,10 @@ function HeadlandManagement:onUpdate(dt)
 	-- calculate position, direction, field mode and vehicle's heading
 	local fx, fz, bx, bz, dx, dz
 	spec.heading, dx, dz = getHeading(self)
+	
+	if spec.isActive and spec.turnHeading == nil then
+		spec.turnHeading = (spec.heading + 180) % 360
+	end
 	
 	if spec.frontNode ~= nil then 
 		-- transform to center position
@@ -848,10 +852,6 @@ function HeadlandManagement:onUpdate(dt)
 	
 	if not spec.headlandF and isOnField(self.rootNode) then spec.lastHeadlandF = false end
 	if not spec.headlandB and isOnField(self.rootNode) then spec.lastHeadlandB = false end
-	
-	-- vehicle's heading
-	local heading = math.atan2(dx, dz)
-	spec.heading = math.floor(180 - (180 / math.pi) * heading)
 	
 	-- research output
 	HeadlandManagement.onUpdateResearch(self)
@@ -933,6 +933,7 @@ function HeadlandManagement:onUpdate(dt)
 		if spec.actStep == 0 then 
 			spec.isActive = false
 			spec.override = false
+			spec.turnHeading = nil
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
@@ -981,9 +982,9 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- VCA auto resume
-	if spec.autoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.vcaTurnHeading then
+	if spec.autoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.turnHeading then
 		spec.actStep = -spec.actStep
-		spec.vcaTurnHeading = nil
+		spec.turnHeading = nil
 	end
 end
 
@@ -1571,13 +1572,13 @@ function HeadlandManagement.stopGPS(self, enable)
 				if spec.gpsSetting == 4 then 
 					if self.vcaSnapReverseLeft ~= nil then 
 						self:vcaSnapReverseLeft()
-						spec.vcaTurnHeading = (spec.heading + 180) % 360
+						--spec.vcaTurnHeading = (spec.heading + 180) % 360
 						dbgprint("stopGPS : VCA-GPS turn left to "..tostring(spec.vcaTurnHeading))
 					end
 				else
 					if self.vcaSnapReverseRight ~= nil then 
 						self:vcaSnapReverseRight() 
-						spec.vcaTurnHeading = (spec.heading + 180) % 360
+						--spec.vcaTurnHeading = (spec.heading + 180) % 360
 						dbgprint("stopGPS : VCA-GPS turn right to "..tostring(spec.vcaTurnHeading))
 					end
 				end
