@@ -43,6 +43,7 @@ Just work in progress:
 
 Plans for subsequent versions (without guarantee):
 - Support of Enhanced Vehicle Mod
+- Suppress automatic unloading of bales on headland
 - Turn per VCA: Automatic right/reft change as option
 - Turn per VCA: Automatic right/reft change per hotkey 
 - Headland Management configured into mission vehicles
@@ -90,6 +91,7 @@ Derzeit in Arbeit:
 
 Ideen für Folgeversionen (ohne Gewähr):
 - Unterstützung des Enhanced Vehicle Mod
+- Unterdrückung des automatischen Entladens von Ballen im Vorgewende
 - Bei Wende per VCA: Umschaltung zwischen Rechts-/Links-Wechsel optional
 - VCA-Wende: Umschaltung Rechts/Links-Wechsel per Hotkey 
 - Vorgewende Management bei Missions-Fahrzeugen konfiguriert
