@@ -719,7 +719,7 @@ function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
 	g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
 	g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn)
 	g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
-	spec:raiseDirtyFlags(spec.dirtyFlag)
+	self:raiseDirtyFlags(spec.dirtyFlag)
 end	
 
 -- GUI
