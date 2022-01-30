@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.9.3.7</version>
+	<version>2.9.4.0</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -29,6 +29,8 @@ Included functions:
 - Control crab steering
 - Disengage and re-engage power take-off(s) and hydraulics
 - Beep when headland management is activated
+- On/Off switch: Headland Management can be switched on and off. This prevents accidental triggering during transfer to the target field and improves road safety.
+- Headland automatic: Activate headland mode automatically when headland is reached. Optional return to field mode after completing the 180° turn.
 
 If VCA Mod (FS22_VehicleControlAddon) is present:
 - Deactivate and reactivate GPS track guidance
@@ -37,7 +39,7 @@ If VCA Mod (FS22_VehicleControlAddon) is present:
 
 If Guidance Steering (FS22_guidanceSteering) is present: 
 - Deactivate and reactivate GPS guidance
-- Headland automatic: Activate headland management automatically when headland is reached
+
 
 Prepared and provided with one of the following updates when SpeedControl Mod (FS22_zzzSpeedControl) is available:
 - Speed adjustment also possible by changing the cruise control level
@@ -45,9 +47,14 @@ Prepared and provided with one of the following updates when SpeedControl Mod (F
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
 ChangeLog:
-V2.x.x.x: 
+V2.1.0.0: 
 - Improved timing of the individual work steps
 - Improved control of potato harvesters and similar vehicles
+- Lifting option added: first front implements, then rear implements
+- Headland automatic control now independent of Guidance Steering
+- Optional automatic return to field mode after completing a 180° turn
+- On/off switch added
+- Revised status display in vehicle HUD
 
 ]]>
 		</en>	
@@ -68,15 +75,16 @@ Enthaltene Funktionen:
 - Seitenwechsel bei aktiviertem Hundegang
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten
 - Hinweiston bei aktiviertem Vorgewendemanagement
+- An/Aus-Schalter: Das Vorgewende Management kann an- und abgeschaltet werden. Dadurch wird versehentliches Auslösen beim Transfer zum Einsatzort vermieden und die Verkehrssicherheit verbessert.
+- Vorgewendeautomatik: Automatische Aktivierung des Vorgewendemodus, wenn das Vorgewende erreicht wird. Wahlweise Rückkehr in den Feldmodus nach Abschluss der 180°-Wende.
 
 Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
-- Auslösen der Wendefunktion und Wechsel der Wenderichtung (optional)
+- Auslösen der Wendefunktion und Wechsel der Wenderichtung (jeweils optional)
 
 Bei vorhandenem Guidance Steering (FS22_guidanceSteering):
 - GPS Spurführung deaktivieren und reaktivieren
-- Vorgewendeautomatik: Automatische Aktivierung des Vorgewendemanagements, wenn das Vorgewende erreicht wird
 
 Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedControl (FS22_zzzSpeedControl?) verfügbar ist:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
@@ -84,9 +92,14 @@ Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedCont
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
 
 ChangeLog:
-V2.x.x.x: 
+V2.1.0.0: 
 - Verbessertes Timing der einzelnen Arbeitsschritte
 - Verbesserte Steuerung von Kartoffelrodern und ähnlichen Fahrzeugen
+- Aushebe-Option ergänzt: Erst vordere Geräte, dann hintere Geräte
+- Vorgewendeautomatik unabhängig von Guidance Steering
+- Wahlweise automatische Rückkehr in den Feldmodus nach Abschluss einer 180°-Wende
+- An/Aus-Schalter ergänzt
+- Überarbeitete Statusanzeige im Fahrzeug HUD
 
 ]]>
 		</de>
