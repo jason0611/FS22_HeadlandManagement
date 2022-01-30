@@ -53,7 +53,7 @@ V2.1.0.0:
 - Lifting option added: first front implements, then rear implements
 - Headland automatic control now independent of Guidance Steering
 - Optional automatic return to field mode after completing a 180° turn
-- On/off switch added
+- On/off switch added (lShift+lAlt+X)
 - Revised status display in vehicle HUD
 
 ]]>
@@ -98,7 +98,7 @@ V2.1.0.0:
 - Aushebe-Option ergänzt: Erst vordere Geräte, dann hintere Geräte
 - Vorgewendeautomatik unabhängig von Guidance Steering
 - Wahlweise automatische Rückkehr in den Feldmodus nach Abschluss einer 180°-Wende
-- An/Aus-Schalter ergänzt
+- An/Aus-Schalter ergänzt (lShift+lAlt+X)
 - Überarbeitete Statusanzeige im Fahrzeug HUD
 
 ]]>
