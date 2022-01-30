@@ -39,15 +39,9 @@ Additionally, if SpeedControl becomes available:
 
 Ideas for subsequent versions (without guarantee):
 - Support of Enhanced Vehicle Mod
-<<<<<<< Updated upstream
-- Suppress automatic unloading of bales on headland
-- Turn per VCA: Automatic right/reft change as option
-- Turn per VCA: Automatic right/reft change per hotkey 
-- Headland Management configured into mission vehicles
-=======
+- Suppression of automatic unloading of bales on the headland
 - VCA turn: Switching right/left by hotkey 
 - Headland management configured for mission vehicles
->>>>>>> Stashed changes
 
 ===
 
@@ -88,10 +82,6 @@ Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 
 Ideen für Folgeversionen (ohne Gewähr):
 - Unterstützung des Enhanced Vehicle Mod
-<<<<<<< Updated upstream
 - Unterdrückung des automatischen Entladens von Ballen im Vorgewende
-- Bei Wende per VCA: Umschaltung zwischen Rechts-/Links-Wechsel optional
-=======
->>>>>>> Stashed changes
 - VCA-Wende: Umschaltung Rechts/Links-Wechsel per Hotkey 
 - Vorgewende Management bei Missions-Fahrzeugen konfiguriert
