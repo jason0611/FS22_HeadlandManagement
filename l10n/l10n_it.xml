@@ -1,80 +1,93 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
   <translationContributors>Markus33-ITA</translationContributors>
-  <texts>
-    <text name="input_HLM_TOGGLESTATE" text="Modalità capezzagna / Modalità campo"/>	
-    <text name="input_HLM_SWITCHON" text="Modalità capezzagna" />
-    <text name="input_HLM_SWITCHOFF" text="Modalità campo" />	
-    <text name="input_HLM_SHOWGUI" text="Capezzagna: Impostazioni" />
-    <text name="text_HLM_isActive" text="Modalità capezzagna attiva"/>
-		<text name="text_HLM_configuration" text="Gestione Capezzagna"/>
-		<text name="text_HLM_installed" text="Gestione Capezzagna installata"/>
-		<text name="text_HLM_notInstalled" text="Gestione Capezzagna non è installata"/>
-		<text name="text_HLM_installed_short" text="Installato"/>
-		<text name="text_HLM_notInstalled_short" text="Non Installato"/>
-
-		<text name="hlmgui_title" text="Gestione Capezzagna: Impostazioni per "/>
-		<text name="hlmgui_on" text="ON"/>
-		<text name="hlmgui_off" text="OFF"/>
-		<text name="hlmgui_both" text="Davanti e dietro"/>
-		<text name="hlmgui_front" text="Davanti"/>
-		<text name="hlmgui_back" text="Dietro"/>
-		<text name="hlmgui_default" text="Predefinito"/>
-		
-		<text name="hlmgui_speedControl" text="Impostazioni di controllo della velocità"/>
-		<text name="hlmgui_speedControlMod" text="Usa mod SpeedControl"/>
-		<text name="hlmgui_speedSetting" text="Velocità di lavoro in capezzagna"/>
-		<text name="hlmgui_speedControlModSetting" text="Livello di controllo della velocità in capezzagna"/>
+	  <texts>
+		<text name="input_HLM_TOGGLESTATE" text="Modalità capezzagna / Modalità campo"/>	
+		<text name="input_HLM_SWITCHON" text="Modalità capezzagna" />
+		<text name="input_HLM_SWITCHOFF" text="Modalità campo" />	
+		<text name="input_HLM_SHOWGUI" text="Capezzagna: Impostazioni" />
+		<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 	
-		<text name="hlmgui_alarmControl" text="Impostazioni generali"/>
-		<text name="hlmgui_beep" text="Avviso acustico durante l'attività"/>
-		<text name="hlmgui_beepVol" text="Volume"/>
-		<text name="hlmgui_beepVolTT" text="Volume dell'avviso acustico" />
+		<text name="text_HLM_isActive" text="Modalità capezzagna attiva"/>
+			<text name="text_HLM_configuration" text="Gestione Capezzagna"/>
+			<text name="text_HLM_installed" text="Gestione Capezzagna installata"/>
+			<text name="text_HLM_notInstalled" text="Gestione Capezzagna non è installata"/>
+			<text name="text_HLM_installed_short" text="Installato"/>
+			<text name="text_HLM_notInstalled_short" text="Non Installato"/>
+
+			<text name="hlmgui_title" text="Gestione Capezzagna: Impostazioni per "/>
+			<text name="hlmgui_on" text="ON"/>
+			<text name="hlmgui_off" text="OFF"/>
+			<text name="hlmgui_both" text="Davanti e dietro"/>
+			<text name="hlmgui_seq" text="front first, back after"/>
+			<text name="hlmgui_front" text="Davanti"/>
+			<text name="hlmgui_back" text="Dietro"/>
+			<text name="hlmgui_default" text="Predefinito"/>
 		
-		<text name="hlmgui_implementControl" text="Controllo dell'attrezzo"/>
-		<text name="hlmgui_raise" text="Solleva gli attrezzi"/>
-		<text name="hlmgui_plow" text="Gira l'aratro"/>
-		<text name="hlmgui_plowFull" text="Giro completo"/>
-		<text name="hlmgui_plowCenter" text="Gira in due passaggi"/>
-		<text name="hlmgui_plowOff" text="Non gira"/>
-		<text name="hlmgui_pto" text="Arresto della presa di forza e dei dispositivi idraulici"/>
-		<text name="hlmgui_ridgeMarker" text="Cambia il marcatore"/>
+			<text name="hlmgui_speedControl" text="Impostazioni di controllo della velocità"/>
+			<text name="hlmgui_speedControlMod" text="Usa mod SpeedControl"/>
+			<text name="hlmgui_speedSetting" text="Velocità di lavoro in capezzagna"/>
+			<text name="hlmgui_speedControlModSetting" text="Livello di controllo della velocità in capezzagna"/>
+	
+			<text name="hlmgui_alarmControl" text="Impostazioni generali"/>
+			<text name="hlmgui_beep" text="Avviso acustico durante l'attività"/>
+			<text name="hlmgui_beepVol" text="Volume"/>
+			<text name="hlmgui_beepVolTT" text="Volume dell'avviso acustico" />
 		
-		<text name="hlmgui_gpsControl" text="Impostazioni GPS"/>
-		<text name="hlmgui_gpsSetting" text="Metti in pausa il GPS"/>
-		<text name="hlmgui_gpsType" text="Usa GPS-Mod"/>
-		<text name="hlmgui_gps_auto" text="Rileva automaticamente"/>
-		<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
-		<text name="hlmgui_gps_vca" text="Solo VCA"/>
-		<text name="hlmgui_gps_vcaL" text="Solo VCA: Svolta automatica a sinistra"/>
-		<text name="hlmgui_gps_vcaR" text="Solo VCA: Svolta automatica a destra"/>
+			<text name="hlmgui_implementControl" text="Controllo dell'attrezzo"/>
+			<text name="hlmgui_raise" text="Solleva gli attrezzi"/>
+			<text name="hlmgui_plow" text="Gira l'aratro"/>
+			<text name="hlmgui_plowFull" text="Giro completo"/>
+			<text name="hlmgui_plowCenter" text="Gira in due passaggi"/>
+			<text name="hlmgui_plowOff" text="Non gira"/>
+			<text name="hlmgui_pto" text="Arresto della presa di forza e dei dispositivi idraulici"/>
+			<text name="hlmgui_ridgeMarker" text="Cambia il marcatore"/>
 		
-		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatico a fine campo"/>
-		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger per automatico"/>
+			<text name="hlmgui_gpsControl" text="Impostazioni GPS"/>
+			<text name="hlmgui_gpsSetting" text="Metti in pausa il GPS"/>
+			<text name="hlmgui_gpsType" text="Usa GPS-Mod"/>
+			<text name="hlmgui_gps_auto" text="Rileva automaticamente"/>
+			<text name="hlmgui_gps_gs" text="Solo Guidance Steering"/>
+			<text name="hlmgui_gps_vca" text="Solo VCA"/>
+			<text name="hlmgui_gps_vcaL" text="Solo VCA: Svolta automatica a sinistra"/>
+			<text name="hlmgui_gps_vcaR" text="Solo VCA: Svolta automatica a destra"/>
+			<text name="hlmgui_gpsAutoTriggerSetting" text="Automatico a fine campo"/>
+			<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
+			<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger per automatico"/>
+			<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		
-		<text name= "hlmgui_vcaDirSwitch" text="VCA: Cambia automaticamente la direzione di svolta"/>
+			<text name= "hlmgui_vcaDirSwitch" text="VCA: Cambia automaticamente la direzione di svolta"/>
+			<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
-		<text name="hlmgui_vehicleControl" text="Impostazioni del veicolo"/>
-		<text name="hlmgui_diffLock" text="Sblocca i bloccaggi differenziali"/>	
-		<text name="hlmgui_crabSteering" text="Cambia sterzo a granchio"/>
-		<text name="hlmgui_csDirect" text="Diretto"/>
-		<text name="hlmgui_csTwoStep" text="Superiore al normale"/>
+			<text name="hlmgui_vehicleControl" text="Impostazioni del veicolo"/>
+			<text name="hlmgui_diffLock" text="Sblocca i bloccaggi differenziali"/>	
+			<text name="hlmgui_crabSteering" text="Cambia sterzo a granchio"/>
+			<text name="hlmgui_csDirect" text="Diretto"/>
+			<text name="hlmgui_csTwoStep" text="Superiore al normale"/>
 		
-		<text name="hlmgui_speedControlTT" text="In capezzagna, l'impostazione del regolatore di velocità può essere modificata su un valore regolabile e quindi ripristinata."/>
-		<text name="hlmgui_speedControlModTT" text="Se disponibile, la modalità 'SpeedControl' può essere utilizzata per il controllo automatico della velocità."/>
-		<text name="hlmgui_speedSettingTT" text="Impostazione del regolatore di velocità desiderata in capezzagna."/>
-		<text name="hlmgui_speedControlModSettingTT" text="Utilizzare il cruise control 1, 2 o 3 in capezzagna."/>
-		<text name="hlmgui_alarmTT" text="In modalità capezzagna viene emesso un segnale acustico regolare."/>
-		<text name="hlmgui_raiseTT" text="In capezzagna, gli accessori abbassati possono essere sollevati e poi abbassati di nuovo. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
-		<text name="hlmgui_plowTT" text="Dopo lo scavo, gli aratri possono essere girati. O completamente immediatamente, o inizialmente solo verso il centro e solo completamente durante l'abbassamento. Nota: in quest'ultimo caso, è importante un buon tempismo. Si consiglia quindi di fermarsi brevemente per girare e abbassare l'aratro."/>
-		<text name="hlmgui_ptoTT" text="In capezzagna è possibile spegnere e riaccendere gli attrezzi attivati. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
-		<text name="hlmgui_ridgeMarkerTT" text="Quando lo sollevi, il marker può essere spostato sul lato opposto."/>
-		<text name="hlmgui_gpsTT" text="In capezzagna, il tracciamento GPS viene messo in pausa e poi continuato."/>
-		<text name="hlmgui_gpsTypeTT" text="La funzione può essere limitata a Guidance Steering o VCA, oppure mettere automaticamente in pausa il sistema attualmente attivo."/>
-		<text name="hlmgui_gpsAutoTriggerTT" text="In combinazione con Guidance Steering, la gestione della capezzagna può essere attivata automaticamente quando viene raggiunta la capezzagna."/>
-		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Di serie, il sistema automatico attiva la gestione della capezzagna quando la parte anteriore del veicolo raggiunge la capezzagna. Questo può essere spostato nella parte posteriore del veicolo. Importante: questa funzione può essere commutata solo se la guida di corsia Guidance Steering non è attiva!"/>
-		<text name="hlmgui_diffLockTT" text="In capezzagna, i bloccaggi differenziali attivi vengono rilasciati e quindi reimpostati."/>
-		<text name="hlmgui_csTT" text="Quando si raggiunge la capezzagna, è possibile commutare lo sterzo attivo a granchio. O direttamente, oppure prima in posizione normale o in retromarcia e poi a fine campo completamente."/>
-		<text name="hlmgui_VCADirSwitchTT" text="Abilita o disabilita automaticamente la commutazione della direzione di svolta. Utile quando VCA ha numeri diversi per saltare le corsie a sinistra/destra."/>
-  </texts>
+			<text name="hlmgui_debug" text="Debug-Settings"/>
+			<text name="hlmgui_debugTitle" text="Make vehicle nodes visible (global)"/>
+			<text name="hlmgui_debugFlagTitle" text="Make trigger nodes visible"/>
+		
+			<text name="hlmgui_speedControlTT" text="In capezzagna, l'impostazione del regolatore di velocità può essere modificata su un valore regolabile e quindi ripristinata."/>
+			<text name="hlmgui_speedControlModTT" text="Se disponibile, la modalità 'SpeedControl' può essere utilizzata per il controllo automatico della velocità."/>
+			<text name="hlmgui_speedSettingTT" text="Impostazione del regolatore di velocità desiderata in capezzagna."/>
+			<text name="hlmgui_speedControlModSettingTT" text="Utilizzare il cruise control 1, 2 o 3 in capezzagna."/>
+			<text name="hlmgui_alarmTT" text="In modalità capezzagna viene emesso un segnale acustico regolare."/>
+			<text name="hlmgui_raiseTT" text="In capezzagna, gli accessori abbassati possono essere sollevati e poi abbassati di nuovo. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
+			<text name="hlmgui_plowTT" text="Dopo lo scavo, gli aratri possono essere girati. O completamente immediatamente, o inizialmente solo verso il centro e solo completamente durante l'abbassamento. Nota: in quest'ultimo caso, è importante un buon tempismo. Si consiglia quindi di fermarsi brevemente per girare e abbassare l'aratro."/>
+			<text name="hlmgui_ptoTT" text="In capezzagna è possibile spegnere e riaccendere gli attrezzi attivati. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
+			<text name="hlmgui_ridgeMarkerTT" text="Quando lo sollevi, il marker può essere spostato sul lato opposto."/>
+			<text name="hlmgui_gpsTT" text="In capezzagna, il tracciamento GPS viene messo in pausa e poi continuato."/>
+			<text name="hlmgui_gpsTypeTT" text="La funzione può essere limitata a Guidance Steering o VCA, oppure mettere automaticamente in pausa il sistema attualmente attivo."/>
+			<text name="hlmgui_gpsAutoTriggerTT" text="In combinazione con Guidance Steering, la gestione della capezzagna può essere attivata automaticamente quando viene raggiunta la capezzagna."/>
+			<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Di serie, il sistema automatico attiva la gestione della capezzagna quando la parte anteriore del veicolo raggiunge la capezzagna. Questo può essere spostato nella parte posteriore del veicolo. Importante: questa funzione può essere commutata solo se la guida di corsia Guidance Steering non è attiva!"/>
+			<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
+			<text name="hlmgui_diffLockTT" text="In capezzagna, i bloccaggi differenziali attivi vengono rilasciati e quindi reimpostati."/>
+			<text name="hlmgui_csTT" text="Quando si raggiunge la capezzagna, è possibile commutare lo sterzo attivo a granchio. O direttamente, oppure prima in posizione normale o in retromarcia e poi a fine campo completamente."/>
+			<text name="hlmgui_VCADirSwitchTT" text="Abilita o disabilita automaticamente la commutazione della direzione di svolta. Utile quando VCA ha numeri diversi per saltare le corsie a sinistra/destra."/>
+			<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
+			<text name="hlmgui_debugTT" text="Displays a marker at the front and rear vehicle node" />
+			<text name="hlmgui_debugFlagTT" text="Displays two flags marking the destination trigger (green) and the vehicle trigger (red) in the 'first front, then rear' setting in headland mode" />
+	  </texts>
 </l10n>

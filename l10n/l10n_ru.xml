@@ -5,6 +5,7 @@
 		<text name="input_HLM_SWITCHON" text="Режим - Разворотная полоса" />
 		<text name="input_HLM_SWITCHOFF" text="Режим - Поле" />
 		<text name="input_HLM_SHOWGUI" text="Разворотная полоса: Настройки" />
+		<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 		
 		<text name="text_HLM_isActive" text="Режим Разворотной полосы активен"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
@@ -17,6 +18,7 @@
 		<text name="hlmgui_on" text="вкл"/>
 		<text name="hlmgui_off" text="выкл"/>
 		<text name="hlmgui_both" text="переднее и заднее"/>
+		<text name="hlmgui_seq" text="front first, back after"/>
 		<text name="hlmgui_front" text="переднее"/>
 		<text name="hlmgui_back" text="заднее"/>
 		<text name="hlmgui_default" text="по умолчанию"/>
@@ -48,17 +50,23 @@
 		<text name="hlmgui_gps_vca" text="только VCA"/>
 		<text name="hlmgui_gps_vcaL" text="только VCA: автоповорот налево"/>
 		<text name="hlmgui_gps_vcaR" text="только VCA: автоповорот направо"/>
-		
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Автоматизация разворотной полосы"/>
+		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
 		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Switch turn direction automatically"/>
+		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
 		<text name="hlmgui_vehicleControl" text="Управление трактором"/>
 		<text name="hlmgui_diffLock" text="Разблокировать дифференциалы"/>	
 		<text name="hlmgui_crabSteering" text="Переключить крабовый ход."/>
 		<text name="hlmgui_csDirect" text="прямой"/>
 		<text name="hlmgui_csTwoStep" text="через обычный"/>
+		
+		<text name="hlmgui_debug" text="Debug-Settings"/>
+		<text name="hlmgui_debugTitle" text="Make vehicle nodes visible (global)"/>
+		<text name="hlmgui_debugFlagTitle" text="Make trigger nodes visible"/>
 		
 		<text name="hlmgui_speedControlTT" text="Настройки скорости круиз-контроля на разворотной полосе могут быть установлены на указанное значение, а позже сброшены."/>
 		<text name="hlmgui_speedControlModTT" text="Если доступен мод SpeedControl его можно использовать для регулировки скорости круиз-контроля."/>
@@ -73,8 +81,12 @@
 		<text name="hlmgui_gpsTypeTT" text="Функция может быть ограничена на Guidance Steering или VCA или автоматически приостановить текущую активную систему."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="При совместной работе с Guidance Steering, режим разворотной полосы может активироватся автоматически, при её достижении."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="По умолчанию Headlandmanagement активируется, когда передняя часть трактора достигает разворотной полосы. Его можно переключить на заднюю часть трактора. ВАЖНО: эта функция может быть переключена только в том случае, если в данный момент Guidance Steering не ведёт по треку!"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
 		<text name="hlmgui_diffLockTT" text="На разворотной полосе дифференциалы разблокируются, а затем снова заблокируются."/>
 		<text name="hlmgui_csTT" text="Когда достигнута разворотная полоса, активный крабовый ход может быть включен. Либо на обычный ход, либо сначала в обычный или реверсивный крабовое положении, а затем в конце разворотной полосы полностью в необходимое положение."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
+		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
+		<text name="hlmgui_debugTT" text="Displays a marker at the front and rear vehicle node" />
+		<text name="hlmgui_debugFlagTT" text="Displays two flags marking the destination trigger (green) and the vehicle trigger (red) in the 'first front, then rear' setting in headland mode" />
 	</texts>
 </l10n>

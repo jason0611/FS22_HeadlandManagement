@@ -4,8 +4,9 @@
     	<text name="input_HLM_TOGGLESTATE" text="Vorgewende-Modus / Feld-Modus"/>	
     	<text name="input_HLM_SWITCHON" text="Vorgewende-Modus" />
     	<text name="input_HLM_SWITCHOFF" text="Feld-Modus" />	
-    	<text name="input_HLM_SHOWGUI" text="Vorgewende: Einstellungen" />
-		
+    	<text name="input_HLM_SHOWGUI" text="HLM: Einstellungen" />
+    	<text name="input_HLM_MAINSWITCH" text="HLM: An-/ Ausschalten"/>
+
 		<text name="text_HLM_isActive" text="Vorgewende-Modus aktiv"/>
 		<text name="text_HLM_configuration" text="Vorgewende-Management"/>
 		<text name="text_HLM_installed" text="Vorgewende-Management eingebaut"/>
@@ -13,10 +14,11 @@
 		<text name="text_HLM_installed_short" text="Eingebaut"/>
 		<text name="text_HLM_notInstalled_short" text="Nicht eingebaut"/>
 
-		<text name="hlmgui_title" text="Vorgewende-Management: Konfiguration für "/>
+		<text name="hlmgui_title" text="Vorgewende-Management (HLM): Konfiguration für "/>
 		<text name="hlmgui_on" text="an"/>
 		<text name="hlmgui_off" text="aus"/>
 		<text name="hlmgui_both" text="vorne und hinten"/>
+		<text name="hlmgui_seq" text="erst vorne, dann hinten"/>
 		<text name="hlmgui_front" text="vorne"/>
 		<text name="hlmgui_back" text="hinten"/>
 		<text name="hlmgui_default" text="Standardeinstellung"/>
@@ -48,17 +50,23 @@
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
 		<text name="hlmgui_gps_vcaL" text="nur VCA: Automatische Wende links"/>
 		<text name="hlmgui_gps_vcaR" text="nur VCA: Automatische Wende rechts"/>
+		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
+		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Aktuelle Gespannmaße: Gesamtlänge: %2.2f m, Gesamtbreite: %2.2f m, Wenderadius: %2.2f m"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Vorgewendebreite"/>
 
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Wenderichtung umschalten"/>
+		<text name= "hlmgui_autoResume" text="Automatischer Feldmodus"/>
 		
-		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
-		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
-
 		<text name="hlmgui_vehicleControl" text="Fahrzeug-Einstellungen"/>
 		<text name="hlmgui_diffLock" text="Differentialsperren lösen"/>
 		<text name="hlmgui_crabSteering" text="Hundegang wechseln"/>
 		<text name="hlmgui_csDirect" text="direkt"/>
 		<text name="hlmgui_csTwoStep" text="über Normal"/>
+		
+		<text name="hlmgui_debug" text="Debug-Einstellungen"/>
+		<text name="hlmgui_debugTitle" text="Fahrzeug-Nodes sichtbar machen (global)"/>
+		<text name="hlmgui_debugFlagTitle" text="Trigger-Nodes sichtbar machen"/>
 	
 		<text name="hlmgui_speedControlTT" text="Im Vorgewende kann die Tempomateinstellung auf einen einstellbaren Wert geändert und anschließend zurückgestellt werden."/>
 		<text name="hlmgui_speedControlModTT" text="Wenn vorhanden, kann die Mod 'SpeedControl' für die Tempomatregelung genutzt werden."/>
@@ -73,8 +81,12 @@
 		<text name="hlmgui_gpsTypeTT" text="Die Funktion kann auf Guidance Steering oder VCA eingeschränkt werden, oder automatisch das jeweils gerade aktive System pausieren."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="In Verbindung mit Guidance Steering kann das Vorgewende-Management bei Erreichen des Vorgewendes automatisch aktiviert werden."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Standardmäßig aktiviert die Automatik das Vorgewende-Management, wenn die Front des Fahrzeugs das Vorgewende erreicht. Das kann auf das Heck des Fahrzeugs umgeschaltet werden. Wichtig: Diese Funktion ist nur schaltbar, wenn die Spurführung von GS nicht aktiv ist!"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Abstand zum Feldrand, ab dem der Vorgewende Modus aktiviert werden soll"/>
 		<text name="hlmgui_diffLockTT" text="Im Vorgewende werden aktive Differentialsperren gelöst und anschließend wieder gesetzt."/>
 		<text name="hlmgui_csTT" text="Bei Erreichen des Vorgewendes kann eine aktive Hundegangstellung umgeschaltet werden. Entweder direkt, oder zunächst in Normalstellung und erst am Ende des Vorgewendes vollständig."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Deaktiviert das automatische Wechseln der Wenderichtung. Hilfreich wenn in VCA der Reihenübersprung für rechts und links verschiedene Zahlen enthält."/>
+		<text name="hlmgui_gpsAutoResumeTT" text="Wechselt in den Feldmodus zurück, sobald das Fahrzeug den Kurs um 180° geändert hat"/>
+		<text name="hlmgui_debugTT" text="Blendet am vorderen und hinteren Fahrzeug-Node eine Markierung ein" />
+		<text name="hlmgui_debugFlagTT" text="Blendet in der Einstellung 'erst vorne, dann hinten' im Vorgewende-Modus zwei Flaggen ein, die den Auslösetrigger (grün) und den Fahrzeugtrigger (rot) markieren" />
 	</texts>
 </l10n>

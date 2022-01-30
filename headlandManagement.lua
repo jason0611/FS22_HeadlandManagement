@@ -2,15 +2,15 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.2.7
+-- Version 2.9.4.0
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
 -- Adapt front/back nodes, if implement is being attached or detached
 -- Detect, if turn has ended --> Headland Management with automatic field mode
-
--- Further ideas:
 -- Separate raising of front and back implement, each when reaching headland
+-- Enable manual override of trigger controlled actions
+-- Turn Headland Management on/off
  
 HeadlandManagement = {}
 
@@ -26,26 +26,34 @@ HeadlandManagement.REDUCESPEED = 1
 HeadlandManagement.WAITTIME1 = 2
 HeadlandManagement.CRABSTEERING = 3
 HeadlandManagement.DIFFLOCK = 4
-HeadlandManagement.RAISEIMPLEMENT = 5
-HeadlandManagement.WAITTIME2 = 6
-HeadlandManagement.WAITTIME3 = 6
-HeadlandManagement.TURNPLOW = 7
-HeadlandManagement.STOPPTO = 8
-HeadlandManagement.STOPGPS = 9
-HeadlandManagement.MAXSTEP = 10
+HeadlandManagement.RAISEIMPLEMENT1 = 5
+HeadlandManagement.WAITONTRIGGER = 6
+HeadlandManagement.RAISEIMPLEMENT2 = 7
+HeadlandManagement.WAITTIME2 = 8
+HeadlandManagement.WAITTIME3 = 8
+HeadlandManagement.TURNPLOW = 9
+HeadlandManagement.STOPPTO = 10
+HeadlandManagement.STOPGPS = 11
+HeadlandManagement.MAXSTEP = 12
+
+HeadlandManagement.debug = false
 
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
 
+HeadlandManagement.guiIconOff = createImageOverlay(g_currentModDirectory.."gui/hlm_off.dds")
 HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
 HeadlandManagement.guiIconFieldR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_right.dds")
 HeadlandManagement.guiIconFieldL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_left.dds")
-HeadlandManagement.guiIconStandby = createImageOverlay(g_currentModDirectory.."gui/hlm_standby.dds")
+HeadlandManagement.guiIconFieldA = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_normal.dds")
+HeadlandManagement.guiIconFieldAR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_right.dds")
+HeadlandManagement.guiIconFieldAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_left.dds")
+HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
-HeadlandManagement.guiIconHeadlandR = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_right.dds")
-HeadlandManagement.guiIconHeadlandL = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_left.dds")
+HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
+HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
 
 -- Filteres implements
 HeadlandManagement.filterList = {}
@@ -110,6 +118,8 @@ function HeadlandManagement.initSpecialization()
 	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process", 1)
 	
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#isOn", "HLM is turned on", false)
+    
     schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
     schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#beepVol", "Audible alert volume", 5)
 	
@@ -122,6 +132,7 @@ function HeadlandManagement.initSpecialization()
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementF", "Raise front attachements in headlands", true)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementB", "Raise back attahements in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#waitOnTrigger", "Raise back attachements when reaching position of front implement's raise", false)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOF", "Stop front PTO in headlands", true)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOB", "Stop back PTO in headlands", true)
@@ -133,9 +144,15 @@ function HeadlandManagement.initSpecialization()
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
 	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#gpsSetting", "GPS-Mode", 1)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchDirVCA", "Switch vca-turn", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#vcaDirSwitch", "Switch vca-turn", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#autoResume", "Auto resume field mode after turn", false)
+	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
+	
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerF", "Use HLM trigger with front node", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerB", "Use HLM trigger with back node", false)
+	schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?).HeadlandManagement#headlandDistance", "Distance to headland", 9)
 	
 	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
 	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
@@ -162,57 +179,60 @@ function HeadlandManagement:onLoad(savegame)
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
 	spec.actionEventOn = nil
-	spec.actionEventOn = nil
 	
-	spec.exists = false
+	spec.exists = false				-- Headland Management is configured into vehicle
+	spec.isOn = false				-- Headland Management is switched on
 	
-	spec.timer = 0
-	spec.beep = true
-	spec.beepVol = 5
+	spec.timer = 0					-- Timer for waiting actions
+	spec.beep = true				-- Beep on or off
+	spec.beepVol = 5				-- Beep volume setting
 	
-	spec.normSpeed = 20
-	spec.turnSpeed = 5
+	spec.normSpeed = 20				-- working speed on field
+	spec.turnSpeed = 5				-- working speed on headland
 
-	spec.actStep = 0
+	spec.actStep = 0				-- actual step in process chain
 	
-	spec.isActive = false
-	spec.action = {}
+	spec.isActive = false			-- Headland Management in headland mode (active) or field mode (inactive)
+	spec.action = {}				-- switches for process chain
 	spec.action[0] =false
 	
-	spec.useSpeedControl = true
-	spec.modSpeedControlFound = false
-	spec.useModSpeedControl = false
+	spec.useSpeedControl = true		-- change working speed n headland
+	spec.modSpeedControlFound = false	-- is mod 'FS22_zzzSpeedControl' existing?
+	spec.useModSpeedControl = false	-- use mod 'FS22_xxxSpeedControl'
 	
-	spec.useHLMTriggerF = false -- needs config settings
-	spec.useHLMTriggerB = false -- needs config settings
-	spec.headlandDistance = 9 -- needs config settings
-	spec.headlandF = false
-	spec.headlandB = false
-	spec.lastHeadlandF = false
-	spec.lastHeadlandB = false
+	spec.useHLMTriggerF = false 	-- use vehicle's front node as trigger
+	spec.useHLMTriggerB = false 	-- use vehicle's back node as trigger
+	spec.headlandDistance = 9 		-- headland width (distance to field border)	-- needs config settings	 
+	spec.headlandF = false			-- front node over headland?
+	spec.headlandB = false 			-- back node over headland?
+	spec.lastHeadlandF = true		-- was front node already over headland?
+	spec.lastHeadlandB = true		-- was back node already over headland?
 	
-	spec.useRaiseImplementF = true
-	spec.useRaiseImplementB = true
-	spec.implementStatusTable = {}
-	spec.implementPTOTable = {}
-	spec.useStopPTOF = true
-	spec.useStopPTOB = true
-	spec.waitTime = 0
-	spec.useTurnPlow = true
-	spec.useCenterPlow = true
-	spec.plowRotationMaxNew = nil
-	spec.vehicleLength = 0
+	spec.useRaiseImplementF = true	-- raise front implements in headland mode
+	spec.useRaiseImplementB = true	-- raise back implements in headland mode
+	spec.implementStatusTable = {}	-- table of implement's state (lowered on field?)
+	spec.implementPTOTable = {}		-- table of implement's pto state on field
+	spec.useStopPTOF = true			-- stop front pto in headland mode
+	spec.useStopPTOB = true			-- stop back pto in headland mode
+	spec.waitTime = 0				-- time to wait for animations to finish
+	spec.waitOnTrigger = false 		-- wait until vehicle has moved to trigger point before raising back implements
+	spec.useTurnPlow = true			-- turn plow in headland mode
+	spec.useCenterPlow = true		-- turn plow in two steps
+	spec.plowRotationMaxNew = nil	-- plow state while turning
+	spec.vehicleLength = 0			-- calculated vehicle's length
+	spec.vehicleWidth = 0			-- vehicle's width
+	spec.maxTurningRadius = 0		-- vehicle's turn radius
 	
-	spec.useRidgeMarker = true
-	spec.ridgeMarkerState = 0
+	spec.useRidgeMarker = true		-- switch ridge markers in headland mode
+	spec.ridgeMarkerState = 0		-- state of ridge markers on field
 	
-	spec.crabSteeringFound = false
-	spec.useCrabSteering = true
-	spec.useCrabSteeringTwoStep = true
+	spec.crabSteeringFound = false	-- vehicle has crab steering feature
+	spec.useCrabSteering = true		-- change crab steering in headland mode
+	spec.useCrabSteeringTwoStep = true -- change crab steering to AI driver position in headland mode
 	
-	spec.useGPS = true
-	spec.gpsSetting = 1 -- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
-	spec.wasGPSAutomatic = false
+	spec.useGPS = true				-- control gps in headland mode
+	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
+	spec.wasGPSAutomatic = false	-- was headland automatic active on field?
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteeringTrigger = false	
 	spec.useGuidanceSteeringOffset = false
@@ -222,18 +242,22 @@ function HeadlandManagement:onLoad(savegame)
 	spec.modVCAFound = false
 	spec.vcaStatus = false
 	spec.vcaDirSwitch = true
-	spec.vcaAutoResume = true -- Needs config setting
+	spec.autoResume = false 
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
 	spec.diffStateB = false
+	
+	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
 local function vehicleMeasurement(self, excludedImplement)
-	local frontNode, backNode, vehicleLength
+	local frontNode, backNode
+	local vehicleLength, vehicleWidth, maxTurningRadius = 0, 0, 0
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
-	local tmpLen = 0
+	local frontExists, backExists
+	local lengthBackup, tmpLen = 0, 0
 
 	local allImplements = self:getRootVehicle():getChildVehicles()
 	dbgprint("vehicleMeasurement : #allImplements = "..tostring(#allImplements), 2)
@@ -261,6 +285,17 @@ local function vehicleMeasurement(self, excludedImplement)
 			
 			if implement.getName ~= nil then dbgprint("vehicleMeasurement : implement: "..implement:getName()) end
 			
+			local implTurningRadius = implement.maxTurningRadius
+			if implTurningRadius ~= nil then maxTurningRadius = math.max(maxTurningRadius, implTurningRadius) end
+			dbgprint("vehicleMeasurement : maxTurningRadius: "..tostring(maxTurningRadius), 2)
+			
+			if implement.size ~= nil then 
+				dbgprint("vehicleMeasurement : width: "..tostring(implement.size.width))
+				dbgprint("vehicleMeasurement : length: "..tostring(implement.size.length)) 
+				lengthBackup = lengthBackup + implement.size.length
+				vehicleWidth = math.max(vehicleWidth, implement.size.width)
+			end
+			
 			if not filtered and spec_at ~= nil then
 				for index,joint in pairs(spec_at.attacherJoints) do
 					local wx, wy, wz = getWorldTranslation(joint.jointTransform)
@@ -268,10 +303,12 @@ local function vehicleMeasurement(self, excludedImplement)
 					lastFront, lastBack = distFront, distBack
 					distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 					if distFront ~= lastFront then 
+						frontExists = true
 						frontNode = joint.jointTransform
 						dbgprint("vehicleMeasurement joint "..tostring(index)..": New frontNode set", 2) 
 					end
 					if distBack ~= lastBack then 
+						backExists = true
 						backNode = joint.jointTransform 
 						dbgprint("vehicleMeasurement joint "..tostring(index)..": New backNode set", 2) 
 					end
@@ -287,18 +324,29 @@ local function vehicleMeasurement(self, excludedImplement)
 
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
+				local waWidth = 0
+				local maxX, minX = 0, 0
 				for index, workArea in pairs(spec_wa.workAreas) do
 					if workArea.start ~= nil then
 						local testNode = workArea.start
+						local widthNode = workArea.width
 						local wx, wy, wz = getWorldTranslation(testNode)
 						local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
+		
+						local wwx, wwy, wwz = getWorldTranslation(widthNode)
+						local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
+						maxX = math.max(maxX, math.max(lwx, lx))
+						minX = math.min(minX, math.min(lwx, lx))
+						waWidth = math.abs(maxX - minX)
 						lastFront, lastBack = distFront, distBack
 						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
 						if lastFront ~= distFront then 
+							frontExists = true
 							frontNode = testNode; 
 							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
 						end
-						if lastBack ~= distBack then 
+						if lastBack ~= distBack then
+							backExists = true 
 							backNode = testNode; 
 							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
 						end
@@ -308,6 +356,8 @@ local function vehicleMeasurement(self, excludedImplement)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen), 2)
 				end
+				vehicleWidth = math.max(vehicleWidth, waWidth)
+				dbgprint("vehicleMeasurement workArea: new vehicleWidth: "..tostring(vehicleWidth), 2)
 			else
 				dbgprint("vehicleMeasurement: filtered or no workArea", 2)
 			end
@@ -315,11 +365,16 @@ local function vehicleMeasurement(self, excludedImplement)
 			dbgprint("vehicleMeasurement: implement == nil", 2)
 		end
 	end	
-	vehicleLength = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+	if frontExists and backExists then
+		vehicleLength = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+	else
+		vehicleLength = lengthBackup
+	end
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
-	return frontNode, backNode, vehicleLength
+	dbgprint("vehicleMeasurement : vehicleWidth: "..tostring(vehicleWidth), 1)
+	return frontNode, backNode, vehicleLength, vehicleWidth, maxTurningRadius
 end
 
 function HeadlandManagement:onPostLoad(savegame)
@@ -343,9 +398,10 @@ function HeadlandManagement:onPostLoad(savegame)
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil and not HeadlandManagement.kbGS
 	
-	-- Detect frontNode, backNode and calculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(self)
+	-- Detect frontNode, backNode and calculate vehicle length and width
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
+	--spec.maxTurningRadius = self.maxTurningRadius
 	if self.spec_workArea ~= nil then
 		dbgprint_r(self.spec_workArea, 1, 2)
 	end
@@ -366,6 +422,7 @@ function HeadlandManagement:onPostLoad(savegame)
 		local key = savegame.key .. ".HeadlandManagement"
 		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
 		if spec.exists then
+			spec.isOn = xmlFile:getValue(key.."#isOn", spec.isOn)
 			spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
 			spec.beepVol = xmlFile:getValue(key.."#beepVol", spec.beepVol)
 			spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
@@ -375,6 +432,7 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
 			spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
 			spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+			spec.waitOnTrigger = xmlFile:getValue(key.."#waitOnTrigger", spec.waitOnTrigger)
 			spec.useStopPTOF = xmlFile:getValue(key.."#useStopPTOF", spec.useStopPTOF)
 			spec.useStopPTOB = xmlFile:getValue(key.."#useStopPTOB", spec.useStopPTOB)
 			spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
@@ -384,6 +442,11 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.gpsSetting = xmlFile:getValue(key.."#gpsSetting", spec.gpsSetting)
 			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+			spec.useHLMTriggerF = xmlFile:getValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
+			spec.useHLMTriggerB = xmlFile:getValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
+			spec.headlandDistance = xmlFile:getValue(key.."#headlandDistance", spec.headlandDistance)
+			spec.vcaDirSwitch = xmlFile:getValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
+			spec.autoResume = xmlFile:getValue(key.."#autoResume", spec.autoResume)	
 			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
 			dbgprint("onPostLoad : Loaded whole data set", 2)
 		end
@@ -410,6 +473,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		
 	xmlFile:setValue(key.."#configured", spec.exists)
 	if spec.exists then	
+		xmlFile:setValue(key.."#isOn", spec.isOn)
 		xmlFile:setValue(key.."#beep", spec.beep)
 		xmlFile:setValue(key.."#beepVol", spec.beepVol)
 		xmlFile:setValue(key.."#turnSpeed", spec.turnSpeed)
@@ -419,6 +483,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
 		xmlFile:setValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
 		xmlFile:setValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
+		xmlFile:setValue(key.."#waitOnTrigger", spec.waitOnTrigger)
 		xmlFile:setValue(key.."#useStopPTOF", spec.useStopPTOF)
 		xmlFile:setValue(key.."#useStopPTOB", spec.useStopPTOB)
 		xmlFile:setValue(key.."#turnPlow", spec.useTurnPlow)
@@ -428,8 +493,13 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#gpsSetting", spec.gpsSetting)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		xmlFile:setValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
+		xmlFile:setValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
+		xmlFile:setValue(key.."#headlandDistance", spec.headlandDistance)
+		xmlFile:setValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
+		xmlFile:setValue(key.."#autoResume", spec.autoResume)
 		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
-		xmlFile:setValue(key.."#switchDirVCA", spec.vcaDirSwitch)
+		
 		dbgprint("saveToXMLFile : saving whole data", 2)
 	end
 	dbgprint("saveToXMLFile : saving data finished", 2)
@@ -440,6 +510,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	spec.exists = streamReadBool(streamId, connection)
 	if spec.exists then
+		spec.isOn = streamReadBool(streamId)
 		spec.beep = streamReadBool(streamId)
 		spec.beepVol = streamReadInt8(streamId)
 		spec.turnSpeed = streamReadFloat32(streamId)
@@ -449,6 +520,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.useCrabSteeringTwoStep = streamReadBool(streamId)
 		spec.useRaiseImplementF = streamReadBool(streamId)
 		spec.useRaiseImplementB = streamReadBool(streamId)
+		spec.waitOnTrigger = streamReadBool(streamId)
 		spec.useStopPTOF = streamReadBool(streamId)
 		spec.useStopPTOB = streamReadBool(streamId)
 		spec.useTurnPlow = streamReadBool(streamId)
@@ -458,8 +530,12 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.gpsSetting = streamReadInt8(streamId)
 		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
-		spec.useDiffLock = streamReadBool(streamId)
+		spec.useHLMTriggerF = streamReadBool(streamId)
+		spec.useHLMTriggerB = streamReadBool(streamId)
+		spec.headlandDistance = streamReadInt8(streamId)
 		spec.vcaDirSwitch = streamReadBool(streamId)
+		spec.autoResume = streamReadBool(streamId)
+		spec.useDiffLock = streamReadBool(streamId)
 	end
 end
 
@@ -468,6 +544,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 	local spec = self.spec_HeadlandManagement
 	streamWriteBool(streamId, spec.exists)
 	if spec.exists then
+		streamWriteBool(streamId, spec.isOn)
 		streamWriteBool(streamId, spec.beep)
 		streamWriteInt8(streamId, spec.beepVol)
 		streamWriteFloat32(streamId, spec.turnSpeed)
@@ -477,6 +554,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
 		streamWriteBool(streamId, spec.useRaiseImplementF)
 		streamWriteBool(streamId, spec.useRaiseImplementB)
+		streamWriteBool(streamId, spec.waitOnTrigger)
 		streamWriteBool(streamId, spec.useStopPTOF)
 		streamWriteBool(streamId, spec.useStopPTOB)
 		streamWriteBool(streamId, spec.useTurnPlow)
@@ -486,8 +564,12 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteInt8(streamId, spec.gpsSetting)
 		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
-		streamWriteBool(streamId, spec.useDiffLock)
+		streamWriteBool(streamId, spec.useHLMTriggerF)
+		streamWriteBool(streamId, spec.useHLMTriggerB)
+		streamWriteInt8(streamId, spec.headlandDistance)
 		streamWriteBool(streamId, spec.vcaDirSwitch)
+		streamWriteBool(streamId, spec.autoResume)
+		streamWriteBool(streamId, spec.useDiffLock)
 	end
 end
 	
@@ -498,6 +580,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 			dbgprint("onReadUpdateStream: receiving data...", 4)
 			spec.exists = streamReadBool(streamId)
 			if spec.exists then
+				spec.isOn = streamReadBool(streamId)
 				spec.beep = streamReadBool(streamId)
 				spec.beepVol = streamReadInt8(streamId)
 				spec.turnSpeed = streamReadFloat32(streamId)
@@ -507,6 +590,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.useCrabSteeringTwoStep = streamReadBool(streamId)
 				spec.useRaiseImplementF = streamReadBool(streamId)
 				spec.useRaiseImplementB = streamReadBool(streamId)
+				spec.waitOnTrigger = streamReadBool(streamId)
 				spec.useStopPTOF = streamReadBool(streamId)
 				spec.useStopPTOB = streamReadBool(streamId)
 				spec.useTurnPlow = streamReadBool(streamId)
@@ -516,9 +600,13 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.gpsSetting = streamReadInt8(streamId)
 				spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+				spec.useHLMTriggerF = streamReadBool(streamId)
+				spec.useHLMTriggerB = streamReadBool(streamId)
+				spec.headlandDistance = streamReadInt8(streamId)
 				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
-				spec.useDiffLock = streamReadBool(streamId)
 				spec.vcaDirSwitch = streamReadBool(streamId)
+				spec.autoResume = streamReadBool(streamId)
+				spec.useDiffLock = streamReadBool(streamId)
 			end
 		end
 	end
@@ -531,6 +619,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 			dbgprint("onWriteUpdateStream: sending data...", 4)
 			streamWriteBool(streamId, spec.exists)
 			if spec.exists then
+				streamWriteBool(streamId, spec.isOn)
 				streamWriteBool(streamId, spec.beep)
 				streamWriteInt8(streamId, spec.beepVol)
 				streamWriteFloat32(streamId, spec.turnSpeed)
@@ -540,6 +629,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.useCrabSteeringTwoStep)
 				streamWriteBool(streamId, spec.useRaiseImplementF)
 				streamWriteBool(streamId, spec.useRaiseImplementB)
+				streamWriteBool(streamId, spec.waitOnTrigger)
 				streamWriteBool(streamId, spec.useStopPTOF)
 				streamWriteBool(streamId, spec.useStopPTOB)
 				streamWriteBool(streamId, spec.useTurnPlow)
@@ -549,9 +639,13 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteInt8(streamId, spec.gpsSetting)
 				streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+				streamWriteBool(streamId, spec.useHLMTriggerF)
+				streamWriteBool(streamId, spec.useHLMTriggerB)
+				streamWriteInt8(streamId, spec.headlandDistance)
 				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
-				streamWriteBool(streamId, spec.useDiffLock)
 				streamWriteBool(streamId, spec.vcaDirSwitch)
+				streamWriteBool(streamId, spec.autoResume)
+				streamWriteBool(streamId, spec.useDiffLock)
 			end
 		end
 	end
@@ -560,21 +654,26 @@ end
 -- inputBindings / inputActions
 	
 function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
-	dbgprint("onRegisterActionEvents", 2)
+	dbgprint("onRegisterActionEvents", 4)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
 		HeadlandManagement.actionEvents = {} 
 		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
+			local prio = GS_PRIO_HIGH; if spec.isOn then prio = GS_PRIO_NORMAL end
+			_, spec.actionEventMainSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_MAINSWITCH', self, HeadlandManagement.MAINSWITCH, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventMainSwitch, prio)
+			
 			_, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
 			
 			_, spec.actionEventOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOn, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn)
 			
 			_, spec.actionEventOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
 			
 			local actionEventId
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
@@ -588,14 +687,40 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	dbgprint_r(spec, 4)
 	-- anschalten nur wenn inaktiv
-	if not spec.isActive and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
+	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
 	-- abschalten nur wenn aktiv
-	elseif spec.isActive and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
+	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
+		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
+	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
+		spec.override = true
+		spec.actStep = -HeadlandManagement.MAXSTEP
+	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == -HeadlandManagement.WAITONTRIGGER then
+		spec.override = true
 	end
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
+
+function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
+	dbgprint("MAINSWITCH", 4)
+	local spec = self.spec_HeadlandManagement
+	if spec.isOn then
+		spec.isActive = false
+		spec.actStep = 0
+		spec.isOn = false
+	else
+		spec.lastHeadlandF = true
+		spec.lastHeadlandB = true
+		spec.isOn = true
+	end
+	local prio = GS_PRIO_HIGH; if spec.isOn then prio = GS_PRIO_NORMAL end
+	g_inputBinding:setActionEventTextPriority(spec.actionEventMainSwitch, prio)
+	g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
+	g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn)
+	g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
+	self:raiseDirtyFlags(spec.dirtyFlag)
+end	
 
 -- GUI
 
@@ -604,87 +729,18 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
-	local gsConfigured = spec_gs ~= nil and spec_gs.hasGuidanceSystem == true
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	HeadlandManagementGui.setData(
-		hlmGui.target,
-		self:getFullName(),
-		self.maxTurningRadius,
-		spec.vehicleLength,
-		spec.useSpeedControl,
-		spec.useModSpeedControl,
-		spec.crabSteeringFound,
-		spec.useCrabSteering,
-		spec.useCrabSteeringTwoStep,
-		spec.turnSpeed,
-		spec.useRaiseImplementF,
-		spec.useRaiseImplementB,
-		spec.useStopPTOF,
-		spec.useStopPTOB,
-		spec.useTurnPlow,
-		spec.useCenterPlow,
-		spec.useRidgeMarker,
-		spec.useGPS,
-		spec.gpsSetting,
-		spec.useGuidanceSteeringTrigger,
-		spec.useGuidanceSteeringOffset,
-		spec.useDiffLock,
-		spec.vcaDirSwitch,
-		spec.beep,
-		spec.beepVol,
-		spec.modSpeedControlFound,
-		spec.modGuidanceSteeringFound and gsConfigured,
-		spec.modVCAFound,
-		gpsEnabled
-	)
+	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug)
 end
 
-function HeadlandManagement:guiCallback(
-		useSpeedControl, 
-		useModSpeedControl, 
-		useCrabSteering, 
-		useCrabSteeringTwoStep, 
-		turnSpeed, 
-		useRaiseImplementF, 
-		useRaiseImplementB, 
-		useStopPTOF, 
-		useStopPTOB, 
-		useTurnPlow, 
-		useCenterPlow, 
-		useRidgeMarker, 
-		useGPS, 
-		gpsSetting, 
-		useGuidanceSteeringTrigger, 
-		useGuidanceSteeringOffset,
-		useDiffLock,
-		vcaDirSwitch, 
-		beep,
-		beepVol
-	)
-	dbgprint("guiCallback", 4)
+function HeadlandManagement:guiCallback(changes, debug)
+	self.spec_HeadlandManagement = changes
+	HeadlandManagement.debug = debug
 	local spec = self.spec_HeadlandManagement
-	spec.useSpeedControl = useSpeedControl
-	spec.useModSpeedControl = useModSpeedControl
-	spec.useCrabSteering = useCrabSteering
-	spec.useCrabSteeringTwoStep = useCrabSteeringTwoStep
-	spec.turnSpeed = turnSpeed
-	spec.useRaiseImplementF = useRaiseImplementF
-	spec.useRaiseImplementB = useRaiseImplementB
-	spec.useStopPTOF = useStopPTOF
-	spec.useStopPTOB = useStopPTOB
-	spec.useTurnPlow = useTurnPlow
-	spec.useCenterPlow = useCenterPlow
-	spec.useRidgeMarker = useRidgeMarker
-	spec.useGPS = useGPS
-	spec.gpsSetting = gpsSetting
-	spec.useGuidanceSteeringTrigger = useGuidanceSteeringTrigger
-	spec.useGuidanceSteeringOffset = useGuidanceSteeringOffset
-	spec.useDiffLock = useDiffLock
-	spec.vcaDirSwitch = vcaDirSwitch
-	spec.beep = beep
-	spec.beepVol = beepVol
+	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
@@ -696,7 +752,7 @@ function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescI
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(vehicle)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
@@ -708,42 +764,39 @@ function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength = vehicleMeasurement(vehicle, implement.object)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(vehicle, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
 end
 
+local function getHeading(self)
+	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 0)
+	local x2, y2, z2 = localToWorld(self.rootNode, 0, 0, 1)
+	local dx, dz = x2 - x1, z2 - z1
+	local heading = math.floor(180 - (180 / math.pi) * math.atan2(dx, dz))
+	return heading, dx, dz
+end	
+
 -- Research part
 function HeadlandManagement.onUpdateResearch(self)
 	local spec = self.spec_HeadlandManagement
 	if spec == nil or not self:getIsActive() or self ~= g_currentMission.controlledVehicle then return end
 	
-	local radius = self.maxTurningRadius
+	dbgrender("radius: "..tostring(spec.maxTurningRadius), 3, 3)
 	
-	dbgrender("radius: "..tostring(radius), 3, 3)
+	dbgrender("onHeadlandF: "..tostring(spec.headlandF), 5, 3)
+	dbgrender("onHeadlandB: "..tostring(spec.headlandB), 6, 3)
 	
-	dbgrender("fieldModeF: "..tostring(spec.headlandF), 5, 3)
-	dbgrender("fieldModeB: "..tostring(spec.headlandB), 6, 3)
+	dbgrender("lastOnHeadlandF: "..tostring(spec.lastHeadlandF), 7, 3)
+	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 8, 3)
 
-	dbgrender("direction: "..tostring(math.floor(spec.heading)), 8, 3)
-
-	dbgrender("frontNode: "..tostring(spec.frontNode), 10, 3)
-	dbgrender("backNode:  "..tostring(spec.backNode), 11, 3)
-	
-	ShowNodeF = DebugCube.new()
-	ShowNodeB = DebugCube.new()
-	
-	if spec.frontNode ~= nil then 
-		ShowNodeF:createWithNode(spec.frontNode, 0.5, 0.5, 0.5) 
-		ShowNodeF:draw()
-	end
-	if spec.backNode ~= nil then 
-		ShowNodeB:createWithNode(spec.backNode, 0.5, 0.5, 0.5)
-		ShowNodeB:draw() 
-	end
-	
+	dbgrender("direction: "..tostring(math.floor(spec.heading)), 10, 3)
+	local turnTarget
+	if spec.vcaTurnHeading ~= nil then turnTarget=math.floor(spec.vcaTurnHeading) else turnTarget = nil end
+	dbgrender("turnTarget:"..tostring(turnTarget), 11, 3)
+		
 	if spec ~= nil then 
 		--dbgrenderTable(spec, 1, 3)
 	end
@@ -751,42 +804,54 @@ end
 
 -- Main part
 
+local function isOnField(node)
+	local vx, _, vz = getWorldTranslation(node)
+	return getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
+end	
+	
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
 	
 	-- self.actionEventUpdateRequested = true -- restore of actionBindings
 	
+	if not spec.isOn then return end
+
 	-- debug output
 	if spec.actStep == 1 then
-		dbgprint("onUpdate : spec_HeadlandManagement:", 2)
+		dbgprint("onUpdate : spec_HeadlandManagement:", 4)
+		dbgprint_r("spec", 4)
 	end
 		
-	-- calculate position, direction and field mode
-	local fx, fz, bx, bz
-	local dx, _, dz = self:getVehicleWorldDirection()
-	local vx, _, vz = getWorldTranslation(self.rootNode)
-	local onField = getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
+	-- calculate position, direction, field mode and vehicle's heading
+	local fx, fz, bx, bz, dx, dz
+	spec.heading, dx, dz = getHeading(self)
+	
+	if spec.isActive and spec.turnHeading == nil then
+		spec.turnHeading = (spec.heading + 180) % 360
+	end
 	
 	if spec.frontNode ~= nil then 
-		fx, _, fz = getWorldTranslation(spec.frontNode) 
-		spec.headlandF = onField and getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
+		-- transform to center position
+		local nx, ny, nz = getWorldTranslation(spec.frontNode)
+		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
+		local fx, _, fz = localToWorld(self.rootNode, 0, 0, lz)
+		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandF = false
 	end
 
 	if spec.backNode ~= nil then 
-		bx, _, bz = getWorldTranslation(spec.backNode) 
-		spec.headlandB = onField and getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
+		-- transform to center position
+		local nx, ny, nz = getWorldTranslation(spec.backNode)
+		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
+		local bx, _, bz = localToWorld(self.rootNode, 0, 0, lz)
+		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
 	else
 		spec.headlandB = false
 	end
 	
-	if not spec.headlandF then spec.lastHeadlandF = false end
-	if not spec.headlandB then spec.lastHeadlandB = false end
-	
-	-- vehicle's heading
-	local heading = math.atan2(dx, dz)
-	spec.heading = math.floor(180 - (180 / math.pi) * heading)
+	if not spec.headlandF and isOnField(self.rootNode) then spec.lastHeadlandF = false end
+	if not spec.headlandB and isOnField(self.rootNode) then spec.lastHeadlandB = false end
 	
 	-- research output
 	--HeadlandManagement.onUpdateResearch(self)
@@ -808,6 +873,10 @@ function HeadlandManagement:onUpdate(dt)
 		spec.isActive = true
 		spec.lastHeadlandF = true
 	end
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and spec.useHLMTriggerB and spec.headlandB and not spec.lastHeadlandB then
+		spec.isActive = true
+		spec.lastHeadlandB = true
+	end
 
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
@@ -817,7 +886,6 @@ function HeadlandManagement:onUpdate(dt)
 		end
 	end
 
-	
 	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<HeadlandManagement.MAXSTEP then
 		-- Set management actions
@@ -825,7 +893,9 @@ function HeadlandManagement:onUpdate(dt)
 		spec.action[HeadlandManagement.WAITTIME1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
 		spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
-		spec.action[HeadlandManagement.RAISEIMPLEMENT] = spec.useRaiseImplementF or spec.useRaiseImplementB
+		spec.action[HeadlandManagement.RAISEIMPLEMENT1] = spec.useRaiseImplementF or spec.useRaiseImplementB
+		spec.action[HeadlandManagement.WAITONTRIGGER] = spec.waitOnTrigger
+		spec.action[HeadlandManagement.RAISEIMPLEMENT2] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.WAITTIME2] = spec.useTurnPlow and (spec.useRaiseImplementF or spec.useRaiseImplementB)
 		spec.action[HeadlandManagement.WAITTIME3] = spec.useTurnPlow and spec.useCenterPlow and self.spec_plow ~= nil and (spec.useRaiseImplementF or spec.useRaiseImplementB)
 		spec.action[HeadlandManagement.TURNPLOW] = spec.useTurnPlow and (spec.useRaiseImplementF or spec.useRaiseImplementB)
@@ -839,17 +909,21 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, true); end
 			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, true, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, true); end
-			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1); end
+			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
+			if spec.actStep == HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, spec.useHLMTriggerB); end
+			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
 			if spec.actStep == HeadlandManagement.WAITTIME2 and spec.action[HeadlandManagement.WAITTIME2] then HeadlandManagement.wait(self, spec.waitTime, dt); end
-			if spec.actStep == HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 2); end
+			if spec.actStep == HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 2, true, true); end
 			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, true); end
 			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, true); end
 			-- Deactivation
 			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, false); end
 			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, false); end
-			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2); end
+			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2, true, true); end
 			if spec.actStep == -HeadlandManagement.WAITTIME3 and spec.action[HeadlandManagement.WAITTIME3] then HeadlandManagement.wait(self, spec.waitTime, dt); end
-			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT and spec.action[HeadlandManagement.RAISEIMPLEMENT] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
+			if spec.actStep == -HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, false); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
 			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false); end
 			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, false, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == -HeadlandManagement.WAITTIME1 and spec.action[HeadlandManagement.WAITTIME1] then HeadlandManagement.wait(self, spec.waitTime, dt); end
@@ -858,6 +932,8 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = spec.actStep + 1
 		if spec.actStep == 0 then 
 			spec.isActive = false
+			spec.override = false
+			spec.turnHeading = nil
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
@@ -906,17 +982,17 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- VCA auto resume
-	if spec.vcaAutoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.vcaTurnHeading then
+	if spec.autoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.turnHeading then
 		spec.actStep = -spec.actStep
-		spec.vcaTurnHeading = nil
+		spec.turnHeading = nil
 	end
 end
 
 function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
+	if self:getIsActive() and spec.exists then
 
-	-- show icon if active
-	if self:getIsActive() and spec.exists then 
+		-- keybindings 
 		if spec.isActive then
 			g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
 			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHOFF"))
@@ -924,44 +1000,145 @@ function HeadlandManagement:onDraw(dt)
 			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHON"))
 		end
 		
+		-- gui icon
 		local scale = g_gameSettings.uiScale
 		
 		local x = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterX - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetX * 0.9
 		local y = g_currentMission.inGameMenu.hud.speedMeter.gaugeCenterY - g_currentMission.inGameMenu.hud.speedMeter.speedGaugeSizeValues.centerOffsetY * 0.92
 		local w = 0.015 * scale
 		local h = w * g_screenAspectRatio
-		local guiIcon = HeadlandManagement.guiIconField
+		local guiIcon = HeadlandManagement.guiIconOff
 		
-		if spec.isActive then 
-			guiIcon = HeadlandManagement.guiIconHeadland
-		end
-
-		if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn")then
-			if not spec.isActive then 
-				guiIcon = HeadlandManagement.guiIconFieldL
-			else
-				guiIcon = HeadlandManagement.guiIconHeadlandL
+		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
+		local headlandAutomatic	= spec.useHLMTriggerF or spec.useHLMTriggerB
+				
+		-- field mode
+		if spec.isOn and headlandAutomatic and not spec.isActive then 
+			guiIcon = HeadlandManagement.guiIconFieldA
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldAL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldAR 
 			end
 		end
-		if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then
-			if not spec.isActive then 
-				guiIcon = HeadlandManagement.guiIconFieldR
-			else
-				guiIcon = HeadlandManagement.guiIconHeadlandR
+		
+		if spec.isOn and not headlandAutomatic and not spec.isActive then 
+			guiIcon = HeadlandManagement.guiIconField
+			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldL 
+			end
+			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
+				guiIcon = HeadlandManagement.guiIconFieldR 
 			end
 		end
-		if not spec.isActive and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+		
+		if spec.isOn and headlandAutomaticGS and not spec.isActive then
 			local spec_gs = self.spec_globalPositioningSystem 
 			local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
-				guiIcon = HeadlandManagement.guiIconStandby
+				guiIcon = HeadlandManagement.guiIconFieldA
 			end
+		end
+	
+		-- headland mode			
+		if spec.isOn and spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+			guiIcon = HeadlandManagement.guiIconHeadlandA
+		end
+		
+		if spec.isOn and not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+			guiIcon = HeadlandManagement.guiIconHeadland
+		end	
+		
+		-- Working Mode
+		if spec.isOn and spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
+			guiIcon = HeadlandManagement.guiIconHeadlandW
+		end
+		if spec.isOn and spec.isActive and spec.actStep < 0 then
+			guiIcon = HeadlandManagement.guiIconFieldW
 		end
 		
 		renderOverlay(guiIcon, x, y, w, h)
+		
+		-- debug: show frontnode and backnode
+		if HeadlandManagement.debug then
+			ShowNodeF = DebugCube.new()
+			ShowNodeB = DebugCube.new()
+			if spec.frontNode ~= nil then 
+				ShowNodeF:createWithNode(spec.frontNode, 0.3, 0.3, 0.3) 
+				ShowNodeF:draw()
+			end
+			if spec.backNode ~= nil then 
+				ShowNodeB:createWithNode(spec.backNode, 0.3, 0.3, 0.3)
+				ShowNodeB:draw() 
+			end
+		end
 	end
 end
 	
+function HeadlandManagement.waitOnTrigger(self, automatic)
+	local spec = self.spec_HeadlandManagement
+	dbgprint("waitOnTrigger : automatic: "..tostring(automatic), 2)
+	
+	if automatic then
+		if not spec.headlandB then 
+			spec.actStep = spec.actStep - 1
+		end
+	else
+		if spec.triggerPos == nil then
+			spec.triggerNode = spec.frontNode
+			spec.measureNode = spec.backNode
+			if spec.measureNode == nil then spec.measureNode = self.rootNode end
+			if spec.triggerNode == nil then spec.triggerNode = self.rootNode end
+			spec.triggerPos = {}
+			_ , spec.triggerPos.y, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
+			spec.triggerPos.x, _, _ = getWorldTranslation(self.rootNode)
+		end
+		
+		local triggerFlag = DebugFlag.new(1,0,0)
+		local measureFlag = DebugFlag.new(0,1,0)
+		
+		local tx, _, tz = worldToLocal(self.rootNode, spec.triggerPos.x, 0, spec.triggerPos.z)
+		
+		if spec.debugFlag then
+			triggerFlag:create(spec.triggerPos.x, spec.triggerPos.y, spec.triggerPos.z, tx * 0.3, tz * 0.3)
+			triggerFlag:draw()
+		end
+	
+		local  _, wy, wz = getWorldTranslation(spec.measureNode)
+		local wx,  _,  _ = getWorldTranslation(self.rootNode)
+		local mx, _, mz = worldToLocal(self.rootNode, wx, 0, wz)
+		
+		if spec.debugFlag then
+			measureFlag:create(wx, wy, wz, mx * 0.3, mz * 0.3)
+			measureFlag:draw()
+		end
+		
+		local dist = math.abs(tz - mz)
+		dbgprint("waitOnTrigger : dist: "..tostring(dist), 4)
+	
+		if dist <= 0.1 or spec.override then 
+			spec.triggerPos = nil
+		else 
+			spec.actStep = spec.actStep - 1
+		end
+	end
+end
+
+function HeadlandManagement.wait(self, waitTime, dt)
+	local spec = self.spec_HeadlandManagement
+	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
+	if spec.waitCounter == nil then
+		spec.waitCounter = 0
+	end
+	spec.waitCounter = spec.waitCounter + dt
+	if spec.waitCounter < waitTime then
+		spec.actStep = spec.actStep - 1
+	else
+		spec.waitCounter = nil
+	end
+end
+
 function HeadlandManagement.reduceSpeed(self, enable)	
 	local spec = self.spec_HeadlandManagement
 	local spec_drv = self.spec_drivable
@@ -1057,9 +1234,11 @@ function HeadlandManagement.crabSteering(self, enable, twoSteps)
 	end
 end
 
-function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, round)
+function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, round, front, back)
+	-- round 1: raise/lower implement
+	-- round 2: turn plow
 	local spec = self.spec_HeadlandManagement
-    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow))
+    dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / round: "..tostring(round).." / front: "..tostring(front).." / back: "..tostring(back))
     
     local waitTime = 0
 	local allImplements = self:getRootVehicle():getChildVehicles()
@@ -1113,7 +1292,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 					backImpl = true
 				end
 				
-				if (frontImpl and spec.useRaiseImplementF) or (backImpl and spec.useRaiseImplementB) then
+				if (frontImpl and spec.useRaiseImplementF and front) or (backImpl and spec.useRaiseImplementB and back) then
 					if raise and round == 1 then
 						local lowered = actImplement:getIsLowered()
 						dbgprint("raiseImplements : lowered starts with "..tostring(lowered))
@@ -1182,7 +1361,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						end
 					end	
 					-- switch ridge marker
-					if round == 1 and spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
+					if round == 1 and ((frontImpl and front) or (backImpl and back)) and spec.useRidgeMarker and actImplement ~= nil and actImplement.spec_ridgeMarker ~= nil then
 						local specRM = actImplement.spec_ridgeMarker
 						dbgprint_r(specRM, 4)
 						if raise then
@@ -1218,10 +1397,10 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		 		end
 		 	end
 		else
-			if actImplement ~= nil then
-				-- Possible potato harvester with fixed cutter? Raise and lower anyways...
+			if actImplement ~= nil and front then
+				-- Possible potato harvester with fixed cutter or mower like BigM? Raise and lower anyways...
 				dbgprint("raiseImplements : implement #"..tostring(index).." ("..actImplement:getName().."): actImplement.getAllowsLowering == nil", 2)
-				if actImplement.getAttachedAIImplements ~= nil and actImplement.spec_combine ~= nil then
+				if actImplement.getAttachedAIImplements ~= nil and (actImplement.spec_combine ~= nil or actImplement.spec_mower ~= nil) then
 					if raise then
 						for _, implement in pairs(actImplement:getAttachedAIImplements()) do
 						dbgprint("raiseImplements : aiImplementEndLine")
@@ -1236,7 +1415,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						actImplement:raiseStateChange(Vehicle.STATE_CHANGE_AI_START_LINE)
 					end
 				else
-					dbgprint("raiseImplements : actImplement is no combine or has no aiImplements", 2)
+					dbgprint("raiseImplements : actImplement is no combine and no mower or has no aiImplements", 2)
 				end
 			else
 				dbgprint("raiseImplements : implement #"..tostring(index)..": actImplement == nil", 2)
@@ -1244,20 +1423,6 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 		end
 	end
 	return waitTime
-end
-
-function HeadlandManagement.wait(self, waitTime, dt)
-	local spec = self.spec_HeadlandManagement
-	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
-	if spec.waitCounter == nil then
-		spec.waitCounter = 0
-	end
-	spec.waitCounter = spec.waitCounter + dt
-	if spec.waitCounter < waitTime then
-		spec.actStep = spec.actStep - 1
-	else
-		spec.waitCounter = nil
-	end
 end
 
 function HeadlandManagement.stopPTO(self, stopPTO)
@@ -1407,13 +1572,13 @@ function HeadlandManagement.stopGPS(self, enable)
 				if spec.gpsSetting == 4 then 
 					if self.vcaSnapReverseLeft ~= nil then 
 						self:vcaSnapReverseLeft()
-						spec.vcaTurnHeading = (spec.heading + 180) % 360
+						--spec.vcaTurnHeading = (spec.heading + 180) % 360
 						dbgprint("stopGPS : VCA-GPS turn left to "..tostring(spec.vcaTurnHeading))
 					end
 				else
 					if self.vcaSnapReverseRight ~= nil then 
 						self:vcaSnapReverseRight() 
-						spec.vcaTurnHeading = (spec.heading + 180) % 360
+						--spec.vcaTurnHeading = (spec.heading + 180) % 360
 						dbgprint("stopGPS : VCA-GPS turn right to "..tostring(spec.vcaTurnHeading))
 					end
 				end

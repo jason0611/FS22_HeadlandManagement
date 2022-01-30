@@ -5,6 +5,7 @@
     	<text name="input_HLM_SWITCHON" text="Headland-Mode" />
     	<text name="input_HLM_SWITCHOFF" text="Field-Mode" />	
     	<text name="input_HLM_SHOWGUI" text="Headland: Settings" />
+    	<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
 		
 		<text name="text_HLM_isActive" text="Headland-Mode active"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
@@ -13,10 +14,11 @@
 		<text name="text_HLM_installed_short" text="Installed"/>
 		<text name="text_HLM_notInstalled_short" text="Not installed"/>
 
-		<text name="hlmgui_title" text="Headlandmanagement: Settings for "/>
+		<text name="hlmgui_title" text="Headlandmanagement (HLM): Settings for "/>
 		<text name="hlmgui_on" text="on"/>
 		<text name="hlmgui_off" text="off"/>
 		<text name="hlmgui_both" text="front and back"/>
+		<text name="hlmgui_seq" text="front first, back after"/>
 		<text name="hlmgui_front" text="front"/>
 		<text name="hlmgui_back" text="back"/>
 		<text name="hlmgui_default" text="default"/>
@@ -49,15 +51,22 @@
 		<text name="hlmgui_gps_vcaL" text="only VCA: Automatic turn left"/>
 		<text name="hlmgui_gps_vcaR" text="only VCA: Automatic turn right"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Headland automatic"/>
+		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Trigger for automatic"/>
-
+		<text name="hlmgui_gpsAutoTriggerOffsetWidth" text="Headland width"/>
+		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA: Switch turn direction automatically"/>
+		<text name= "hlmgui_autoResume" text="Automatic field mode"/>
 		
 		<text name="hlmgui_vehicleControl" text="Vehicle control"/>
 		<text name="hlmgui_diffLock" text="Unlock differentials"/>	
 		<text name="hlmgui_crabSteering" text="Turn crabsteering"/>
 		<text name="hlmgui_csDirect" text="direct"/>
 		<text name="hlmgui_csTwoStep" text="via normal"/>
+		
+		<text name="hlmgui_debug" text="Debug-Settings"/>
+		<text name="hlmgui_debugTitle" text="Make vehicle nodes visible (global)"/>
+		<text name="hlmgui_debugFlagTitle" text="Make trigger nodes visible"/>
 		
 		<text name="hlmgui_speedControlTT" text="On the headland, the cruise control setting can be changed to an adjustable value and then reset afterwards."/>
 		<text name="hlmgui_speedControlModTT" text="If available, the mod 'SpeedControl' can be used for adjusting cruise control."/>
@@ -72,8 +81,12 @@
 		<text name="hlmgui_gpsTypeTT" text="The function can be limited to Guidance Steering or VCA, or automatically pause the currently active system."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="In conjunction with Guidance Steering, headland management can be activated automatically when the headland is reached."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="By default, headland management is activated when the front of the vehicle reaches the headland. This can be switched to the rear of the vehicle. Important: This function can only be switched if the track guidance of GS is not active!"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
 		<text name="hlmgui_diffLockTT" text="At the headland, active differential locks are released and then set again."/>
 		<text name="hlmgui_csTT" text="When the headland is reached, an active crab steering can be switched over. Either directly, or first in normal or reversing position and then at the end of the headland completely."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
+		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
+		<text name="hlmgui_debugTT" text="Displays a marker at the front and rear vehicle node" />
+		<text name="hlmgui_debugFlagTT" text="Displays two flags marking the destination trigger (green) and the vehicle trigger (red) in the 'first front, then rear' setting in headland mode" />
 	</texts>
 </l10n>
