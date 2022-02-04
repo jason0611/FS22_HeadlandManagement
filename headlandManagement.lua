@@ -843,11 +843,15 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	local distance = spec.headlandDistance
-	if spec.turnHeading ~= nil and (spec.heading > (spec.turnHeading - 22.5) % 360) and (spec.heading < (spec.turnHeading + 22.5) % 360) then 
-		distance = -distance 
+	if spec.turnHeading ~= nil then 
+		local heading = (spec.turnHeading + 180) % 360
+		local bearing = (spec.heading - heading) % 360
+		distance = (spec.headlandDistance - 1) / math.cos(bearing * (2 * math.pi / 360))
 	end
 	
-	dbgrender("distance: "..tostring(distance), 16, 3)
+	dbgrender("bearing: "..tostring(bearing), 16, 3)
+	dbgrender("distance: "..tostring(distance), 17, 3)
+	
 	if spec.frontNode ~= nil then 
 		-- transform to center position
 		local nx, ny, nz = getWorldTranslation(spec.frontNode)
