@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.4.1
+-- Version 2.9.4.2
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -842,14 +842,19 @@ function HeadlandManagement:onUpdate(dt)
 		spec.turnHeading = (spec.heading + 180) % 360
 	end
 	
-	local distance = spec.headlandDistance
+	local distance = spec.headlandDistance + 1.5 -- compensate vehicle's inertia
+	local override = false
+	
 	if spec.turnHeading ~= nil then 
 		local heading = (spec.turnHeading + 180) % 360
 		local bearing = (spec.heading - heading) % 360
-		distance = (spec.headlandDistance - 1) / math.cos(bearing * (2 * math.pi / 360))
+		-- Prevent distance growing to infinite and prevent resuming too early because of not right-angular field borders
+		if bearing > 22.5 and bearing <= 135 then override = true end
+		if bearing > 225 and bearing < 375.5 then override = true end
+		dbgrender("bearing: "..tostring(bearing), 16, 3)
+		distance = (spec.headlandDistance) / math.cos(bearing * (2 * math.pi / 360))
 	end
 	
-	dbgrender("bearing: "..tostring(bearing), 16, 3)
 	dbgrender("distance: "..tostring(distance), 17, 3)
 	
 	if spec.frontNode ~= nil then 
@@ -857,7 +862,10 @@ function HeadlandManagement:onUpdate(dt)
 		local nx, ny, nz = getWorldTranslation(spec.frontNode)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local fx, _, fz = localToWorld(self.rootNode, 0, 0, lz)
-		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + distance * dx, 0, fz + distance * dz) == 0
+		spec.headlandF = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + distance * dx, 0, fz + distance * dz) == 0
+		if HeadlandManagement.debug then
+			DebugUtil.drawDebugLine(nx, ny, nz, fx + distance * dx, 0, fz + distance * dz, 0, 1, 0, nil, true)
+		end
 	else
 		spec.headlandF = false
 	end
@@ -867,7 +875,10 @@ function HeadlandManagement:onUpdate(dt)
 		local nx, ny, nz = getWorldTranslation(spec.backNode)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local bx, _, bz = localToWorld(self.rootNode, 0, 0, lz)
-		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + distance * dx, 0, bz + distance * dz) == 0
+		spec.headlandB = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + distance * dx, 0, bz + distance * dz) == 0
+		if HeadlandManagement.debug then
+			DebugUtil.drawDebugLine(nx, ny, nz, bx + distance * dx, 0, bz + distance * dz, 0, 1, 0, nil, true)
+		end
 	else
 		spec.headlandB = false
 	end

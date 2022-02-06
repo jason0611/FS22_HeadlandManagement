@@ -22,7 +22,7 @@ Included functions:
 - Switch off and switch on power take-off shaft(s) and hydraulics, optionally front only or rear only
 - Change of steering direction in crab steering
 - Headland automatic: Headland mode can be activated automatically when the headland is reached
-- Headland automatic: Automatic switchover to field mode after 180° turn has been completed
+- Headland automatic: Automatic switchover to field mode after 180° turn has been completed or after reaching the set headland width
 - Implement measurement for more precise implement lifting 
 - Audible signal when headland management is activated
 
@@ -65,7 +65,7 @@ Enthaltene Funktionen:
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten, wahlweise auch nur vorne oder nur hinten
 - Wechsel der Lenkrichtung bei Hundegang
 - Vorgewende-Automatik: Der Vorgewendemodus kann automatisch aktiviert werden, wenn das Vorgewende erreicht wird
-- Vorgewende-Automatik: Automatisches Umschalten in den Feldmodus nach durchgeführter 180°-Wende
+- Vorgewende-Automatik: Automatisches Umschalten in den Feldmodus nach durchgeführter 180°-Wende oder nach Erreichen der eingestellten Vorgewende-Breite
 - Gerätevermessung für exakteres Geräteausheben 
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
