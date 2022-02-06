@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.4.0
+-- Version 2.9.4.2
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -11,6 +11,8 @@
 -- Separate raising of front and back implement, each when reaching headland
 -- Enable manual override of trigger controlled actions
 -- Turn Headland Management on/off
+
+-- wip: Auto-Resume if trigger leaves headland area
  
 HeadlandManagement = {}
 
@@ -243,6 +245,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.vcaStatus = false
 	spec.vcaDirSwitch = true
 	spec.autoResume = false 
+	spec.autoResumeOnTrigger = false
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -456,6 +459,8 @@ function HeadlandManagement:onPostLoad(savegame)
 	if spec.gpsSetting == 2 and not spec.modGuidanceSteeringFound then spec.gpsSetting = 1 end
 	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
 	
+	spec.autoResumeOnTrigger = spec.autoResume and (spec.useHLMTriggerF or spec.useHLMTriggerB)
+	
 	-- Set HLM configuration if set by savegame
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
 	dbgprint("onPostLoad : HLM exists: "..tostring(spec.exists))
@@ -535,6 +540,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.headlandDistance = streamReadInt8(streamId)
 		spec.vcaDirSwitch = streamReadBool(streamId)
 		spec.autoResume = streamReadBool(streamId)
+		spec.autoResumeOnTrigger = streamReadBool(streamId)
 		spec.useDiffLock = streamReadBool(streamId)
 	end
 end
@@ -569,6 +575,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteInt8(streamId, spec.headlandDistance)
 		streamWriteBool(streamId, spec.vcaDirSwitch)
 		streamWriteBool(streamId, spec.autoResume)
+		streamWriteBool(streamId, spec.autoResumeOnTrigger)
 		streamWriteBool(streamId, spec.useDiffLock)
 	end
 end
@@ -606,6 +613,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.setServerHeadlandActDistance = streamReadFloat32(streamId)
 				spec.vcaDirSwitch = streamReadBool(streamId)
 				spec.autoResume = streamReadBool(streamId)
+				spec.autoResumeOnTrigger = streamReadBool(streamId)
 				spec.useDiffLock = streamReadBool(streamId)
 			end
 		end
@@ -645,6 +653,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteFloat32(streamId, spec.setServerHeadlandActDistance)
 				streamWriteBool(streamId, spec.vcaDirSwitch)
 				streamWriteBool(streamId, spec.autoResume)
+				streamWriteBool(streamId, spec.autoResumeOnTrigger)
 				streamWriteBool(streamId, spec.useDiffLock)
 			end
 		end
@@ -793,12 +802,15 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 8, 3)
 
 	dbgrender("direction: "..tostring(math.floor(spec.heading)), 10, 3)
+	
+	dbgrender("isActive: "..tostring(spec.isActive), 13, 3)
+	dbgrender("actStep: "..tostring(spec.actStep), 14, 3)
 	local turnTarget
-	if spec.vcaTurnHeading ~= nil then turnTarget=math.floor(spec.vcaTurnHeading) else turnTarget = nil end
-	dbgrender("turnTarget:"..tostring(turnTarget), 11, 3)
+	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
+	dbgrender("turnHeading:"..tostring(turnTarget), 11, 3)
 		
 	if spec ~= nil then 
-		--dbgrenderTable(spec, 1, 3)
+		dbgrenderTable(spec, 1, 4)
 	end
 end
 
@@ -830,12 +842,30 @@ function HeadlandManagement:onUpdate(dt)
 		spec.turnHeading = (spec.heading + 180) % 360
 	end
 	
+	local distance = spec.headlandDistance + 1.5 -- compensate vehicle's inertia
+	local override = false
+	
+	if spec.turnHeading ~= nil then 
+		local heading = (spec.turnHeading + 180) % 360
+		local bearing = (spec.heading - heading) % 360
+		-- Prevent distance growing to infinite and prevent resuming too early because of not right-angular field borders
+		if bearing > 22.5 and bearing <= 135 then override = true end
+		if bearing > 225 and bearing < 375.5 then override = true end
+		dbgrender("bearing: "..tostring(bearing), 16, 3)
+		distance = (spec.headlandDistance) / math.cos(bearing * (2 * math.pi / 360))
+	end
+	
+	dbgrender("distance: "..tostring(distance), 17, 3)
+	
 	if spec.frontNode ~= nil then 
 		-- transform to center position
 		local nx, ny, nz = getWorldTranslation(spec.frontNode)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local fx, _, fz = localToWorld(self.rootNode, 0, 0, lz)
-		spec.headlandF = getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + spec.headlandDistance * dx, 0, fz + spec.headlandDistance * dz) == 0
+		spec.headlandF = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + distance * dx, 0, fz + distance * dz) == 0
+		if HeadlandManagement.debug then
+			DebugUtil.drawDebugLine(nx, ny, nz, fx + distance * dx, 0, fz + distance * dz, 0, 1, 0, nil, true)
+		end
 	else
 		spec.headlandF = false
 	end
@@ -845,16 +875,16 @@ function HeadlandManagement:onUpdate(dt)
 		local nx, ny, nz = getWorldTranslation(spec.backNode)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local bx, _, bz = localToWorld(self.rootNode, 0, 0, lz)
-		spec.headlandB = getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + spec.headlandDistance * dx, 0, bz + spec.headlandDistance * dz) == 0
+		spec.headlandB = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + distance * dx, 0, bz + distance * dz) == 0
+		if HeadlandManagement.debug then
+			DebugUtil.drawDebugLine(nx, ny, nz, bx + distance * dx, 0, bz + distance * dz, 0, 1, 0, nil, true)
+		end
 	else
 		spec.headlandB = false
 	end
 	
-	if not spec.headlandF and isOnField(self.rootNode) then spec.lastHeadlandF = false end
-	if not spec.headlandB and isOnField(self.rootNode) then spec.lastHeadlandB = false end
-	
 	-- research output
-	--HeadlandManagement.onUpdateResearch(self)
+	HeadlandManagement.onUpdateResearch(self)
 
 	-- play warning sound if headland management is active
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.actStep==HeadlandManagement.MAXSTEP then
@@ -868,16 +898,22 @@ function HeadlandManagement:onUpdate(dt)
 		spec.timer = 0
 	end
 	
-	-- activate headland management at headland in auto-mode
-	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and spec.useHLMTriggerF and spec.headlandF and not spec.lastHeadlandF then
+	-- activate headland mode when reaching headland in auto-mode
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
+		and spec.useHLMTriggerF 
+		and spec.headlandF and not spec.lastHeadlandF 
+	then
 		spec.isActive = true
 		spec.lastHeadlandF = true
 	end
-	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and spec.useHLMTriggerB and spec.headlandB and not spec.lastHeadlandB then
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
+		and spec.useHLMTriggerB 
+		and spec.headlandB and not spec.lastHeadlandB 
+	then
 		spec.isActive = true
 		spec.lastHeadlandB = true
 	end
-
+	
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
@@ -981,10 +1017,31 @@ function HeadlandManagement:onUpdate(dt)
 		end
 	end
 	
-	-- VCA auto resume
-	if spec.autoResume and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and spec.heading == spec.turnHeading then
+	-- auto resume on turn (180 degrees)
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
+		and spec.autoResume and not spec.autoResumeOnTrigger and spec.heading == spec.turnHeading 
+	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
+	end
+	
+	if (not spec.autoResumeOnTrigger or not spec.isActive) and not spec.headlandF and isOnField(self.rootNode) then spec.lastHeadlandF = false end
+	if (not spec.autoResumeOnTrigger or not spec.isActive) and not spec.headlandB and isOnField(self.rootNode) then spec.lastHeadlandB = false end
+	
+	-- auto resume on trigger: activate field mode when leaving headland in auto-mode
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
+		and spec.useHLMTriggerF and spec.autoResumeOnTrigger and not spec.headlandF and spec.lastHeadlandF and isOnField(self.rootNode)
+	then
+		spec.actStep = -spec.actStep
+		spec.turnHeading = nil
+		spec.lastHeadlandF = false
+	end
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
+		and spec.useHLMTriggerB and spec.autoResumeOnTrigger and not spec.headlandB and spec.lastHeadlandB and isOnField(self.rootNode)
+	then
+		spec.actStep = -spec.actStep
+		spec.turnHeading = nil
+		spec.lastHeadlandB = false
 	end
 end
 
@@ -1088,11 +1145,12 @@ function HeadlandManagement.waitOnTrigger(self, automatic)
 		if spec.triggerPos == nil then
 			spec.triggerNode = spec.frontNode
 			spec.measureNode = spec.backNode
-			if spec.measureNode == nil then spec.measureNode = self.rootNode end
-			if spec.triggerNode == nil then spec.triggerNode = self.rootNode end
+			dbgprint(spec.triggerNode, 3)
+			dbgprint(spec.measureNode, 3)
+			if spec.measureNode == nil then dbgprint("waitOnTrigger: measureNode is nil", 3); spec.measureNode = self.rootNode end
+			if spec.triggerNode == nil then dbgprint("waitOnTrigger: triggerNode is nil", 3); spec.triggerNode = self.rootNode end
 			spec.triggerPos = {}
-			_ , spec.triggerPos.y, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
-			spec.triggerPos.x, _, _ = getWorldTranslation(self.rootNode)
+			spec.triggerPos.x, spec.triggerPos.y, spec.triggerPos.z = getWorldTranslation(spec.triggerNode)
 		end
 		
 		local triggerFlag = DebugFlag.new(1,0,0)
@@ -1105,8 +1163,7 @@ function HeadlandManagement.waitOnTrigger(self, automatic)
 			triggerFlag:draw()
 		end
 	
-		local  _, wy, wz = getWorldTranslation(spec.measureNode)
-		local wx,  _,  _ = getWorldTranslation(self.rootNode)
+		local  wx, wy, wz = getWorldTranslation(spec.measureNode)
 		local mx, _, mz = worldToLocal(self.rootNode, wx, 0, wz)
 		
 		if spec.debugFlag then
@@ -1118,6 +1175,7 @@ function HeadlandManagement.waitOnTrigger(self, automatic)
 		dbgprint("waitOnTrigger : dist: "..tostring(dist), 4)
 	
 		if dist <= 0.1 or spec.override then 
+			dbgprint("waitOnTrigger: Condition met", 3)
 			spec.triggerPos = nil
 		else 
 			spec.actStep = spec.actStep - 1

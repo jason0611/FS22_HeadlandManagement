@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.4.0
+-- Version 2.9.4.2
 --
 
 HeadlandManagementGui = {}
@@ -539,6 +539,7 @@ function HeadlandManagementGui:onClickOk()
 	self.spec.vcaDirSwitch = self.gpsEnableDirSwitchSetting:getState() == 1
 	-- Autoresume
 	self.spec.autoResume = self.gpsResumeSetting:getState() == 1
+	self.spec.autoResumeOnTrigger = self.spec.autoResume and (self.spec.useHLMTriggerF or self.spec.useHLMTriggerB)
 	-- diffs
 	self.spec.useDiffLock = self.diffControlOnOffSetting:getState() == 1
 	-- beep
