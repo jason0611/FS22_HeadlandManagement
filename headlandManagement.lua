@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.4.2
+-- Version 2.9.5.0
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
