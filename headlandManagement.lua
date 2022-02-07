@@ -759,6 +759,7 @@ end
 
 local function saveConfigWithImplement(spec, implementName)
 	--local spec = self.spec_HeadlandManagement
+	dbgprint("saveConfigWithImplement : spec: "..tostring(spec), 2)
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
@@ -800,8 +801,9 @@ local function saveConfigWithImplement(spec, implementName)
 	end
 end
 
-local function loadConfigToImplement(spec, implementName)
+local function loadConfigWithImplement(spec, implementName)
 	--local spec = self.spec_HeadlandManagement
+	dbgprint("loadConfigWithImplement : spec: "..tostring(spec), 2)
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
@@ -812,31 +814,30 @@ local function loadConfigToImplement(spec, implementName)
 		if xmlFile ~= nil then 
 			dbgprint("loadConfigToImplement : key: "..tostring(key), 2)
 
-			xmlFile:getFloat(key..".turnSpeed", spec.turnSpeed)
-			xmlFile:getBool(key..".useSpeedControl", spec.useSpeedControl)
-			xmlFile:getBool(key..".useModSpeedControl", spec.useModSpeedControl)
-			xmlFile:getBool(key..".useCrabSteering", spec.useCrabSteering)
-			xmlFile:getBool(key..".useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
-			xmlFile:getBool(key..".useRaiseImplementF", spec.useRaiseImplementF)
-			xmlFile:getBool(key..".useRaiseImplementB", spec.useRaiseImplementB)
-			xmlFile:getBool(key..".waitOnTrigger", spec.waitOnTrigger)
-			xmlFile:getBool(key..".useStopPTOF", spec.useStopPTOF)
-			xmlFile:getBool(key..".useStopPTOB", spec.useStopPTOB)
-			xmlFile:getBool(key..".turnPlow", spec.useTurnPlow)
-			xmlFile:getBool(key..".centerPlow", spec.useCenterPlow)
-			xmlFile:getBool(key..".switchRidge", spec.useRidgeMarker)
-			xmlFile:getBool(key..".useGPS", spec.useGPS)
-			xmlFile:getInt(key..".gpsSetting", spec.gpsSetting)
-			xmlFile:getBool(key..".useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
-			xmlFile:getBool(key..".useGuidanceSteeringOffget", spec.useGuidanceSteeringOffget)
-			xmlFile:getBool(key..".useHLMTriggerF", spec.useHLMTriggerF)
-			xmlFile:getBool(key..".useHLMTriggerB", spec.useHLMTriggerB)
-			xmlFile:getInt(key..".headlandDistance", spec.headlandDistance)
-			xmlFile:getBool(key..".vcaDirSwitch", spec.vcaDirSwitch)
-			xmlFile:getBool(key..".autoResume", spec.autoResume)
-			xmlFile:getBool(key..".useDiffLock", spec.useDiffLock)
+			spec.turnSpeed = xmlFile:getFloat(key..".turnSpeed")
+			spec.useSpeedControl = xmlFile:getBool(key..".useSpeedControl")
+			spec.useModSpeedControl = xmlFile:getBool(key..".useModSpeedControl")
+			spec.useCrabSteering = xmlFile:getBool(key..".useCrabSteering")
+			spec.useCrabSteeringTwoStep = xmlFile:getBool(key..".useCrabSteeringTwoStep")
+			spec.useRaiseImplementF = xmlFile:getBool(key..".useRaiseImplementF")
+			spec.useRaiseImplementB = xmlFile:getBool(key..".useRaiseImplementB")
+			spec.waitOnTrigger = xmlFile:getBool(key..".waitOnTrigger")
+			spec.useStopPTOF = xmlFile:getBool(key..".useStopPTOF")
+			spec.useStopPTOB = xmlFile:getBool(key..".useStopPTOB")
+			spec.useTurnPlow = xmlFile:getBool(key..".turnPlow")
+			spec.useCenterPlow = xmlFile:getBool(key..".centerPlow")
+			spec.useRidgeMarker = xmlFile:getBool(key..".switchRidge")
+			spec.useGPS = xmlFile:getBool(key..".useGPS")
+			spec.gpsSetting = xmlFile:getInt(key..".gpsSetting")
+			spec.useGuidanceSteeringTrigger = xmlFile:getBool(key..".useGuidanceSteeringTrigger")
+			spec.useGuidanceSteeringOffget = xmlFile:getBool(key..".useGuidanceSteeringOffget")
+			spec.useHLMTriggerF = xmlFile:getBool(key..".useHLMTriggerF")
+			spec.useHLMTriggerB = xmlFile:getBool(key..".useHLMTriggerB")
+			spec.headlandDistance = xmlFile:getInt(key..".headlandDistance")
+			spec.vcaDirSwitch = xmlFile:getBool(key..".vcaDirSwitch")
+			spec.autoResume = xmlFile:getBool(key..".autoResume")
+			spec.useDiffLock = xmlFile:getBool(key..".useDiffLock")
 			
-			xmlFile:save()
 			xmlFile:delete()
 			dbgprint("loadConfigToImplement : loading data finished", 2)
 		end
@@ -845,35 +846,32 @@ local function loadConfigToImplement(spec, implementName)
 end
 
 -- Calculate implement reference node
-function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
-	local spec = vehicle.spec_HeadlandManagement
-	
-	spec = loadConfigWithImplement(spec, implement:getFullName())
-	
-	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName(),2 )
+function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
+	local spec = self.spec_HeadlandManagement
+	dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
+	spec = loadConfigWithImplement(spec, implement:getFullName())
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(vehicle)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
+	self.spec_HeadlandManagement = spec
 end
 
-function HeadlandManagement.onPreDetachImplement(vehicle, implement)
-	local spec = vehicle.spec_HeadlandManagement
-	
+function HeadlandManagement:onPreDetachImplement(implement)
+	local spec = self.spec_HeadlandManagement
+	dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
 	saveConfigWithImplement(spec, implement.object:getFullName())
-	
-	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
-	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(vehicle, implement.object)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
+	self.spec_HeadlandManagement = spec
 end
 
 local function getHeading(self)
