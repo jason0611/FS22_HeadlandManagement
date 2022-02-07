@@ -11,12 +11,15 @@
 -- Separate raising of front and back implement, each when reaching headland
 -- Enable manual override of trigger controlled actions
 -- Turn Headland Management on/off
+-- Auto-Resume if trigger leaves headland area
 
--- wip: Auto-Resume if trigger leaves headland area
+-- WIP: Save configuration locally by implement
  
 HeadlandManagement = {}
 
 if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_currentModName end
+HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
+
 source(g_currentModDirectory.."tools/gmsDebug.lua")
 GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
@@ -754,9 +757,98 @@ function HeadlandManagement:guiCallback(changes, debug)
 	dbgprint_r(spec, 4, 2)
 end
 
+local function saveConfigToImplement(self, implement)
+	local spec = self.spec_HeadlandManagement
+	if spec ~= nil and spec.exists then
+		createFolder(HeadlandManagement.MODSETTINGSDIR)
+		
+		local filename = HeadlandManagement.MODSETTINGSDIR..implement:getFullName()
+		local key = "configSettings"
+		local xmlFile = XMLFile.create("configSettingsXML", filename, key)
+		
+		if xmlFile ~= nil then 		
+			dbgprint("saveConfigToImplement : key: "..tostring(key), 2)
+
+			xmlFile:setFloat(key..".turnSpeed", spec.turnSpeed)
+			xmlFile:setBool(key..".useSpeedControl", spec.useSpeedControl)
+			xmlFile:setBool(key..".useModSpeedControl", spec.useModSpeedControl)
+			xmlFile:setBool(key..".useCrabSteering", spec.useCrabSteering)
+			xmlFile:setBool(key..".useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+			xmlFile:setBool(key..".useRaiseImplementF", spec.useRaiseImplementF)
+			xmlFile:setBool(key..".useRaiseImplementB", spec.useRaiseImplementB)
+			xmlFile:setBool(key..".waitOnTrigger", spec.waitOnTrigger)
+			xmlFile:setBool(key..".useStopPTOF", spec.useStopPTOF)
+			xmlFile:setBool(key..".useStopPTOB", spec.useStopPTOB)
+			xmlFile:setBool(key..".turnPlow", spec.useTurnPlow)
+			xmlFile:setBool(key..".centerPlow", spec.useCenterPlow)
+			xmlFile:setBool(key..".switchRidge", spec.useRidgeMarker)
+			xmlFile:setBool(key..".useGPS", spec.useGPS)
+			xmlFile:setInt(key..".gpsSetting", spec.gpsSetting)
+			xmlFile:setBool(key..".useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+			xmlFile:setBool(key..".useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+			xmlFile:setBool(key..".useHLMTriggerF", spec.useHLMTriggerF)
+			xmlFile:setBool(key..".useHLMTriggerB", spec.useHLMTriggerB)
+			xmlFile:setInt(key..".headlandDistance", spec.headlandDistance)
+			xmlFile:setBool(key..".vcaDirSwitch", spec.vcaDirSwitch)
+			xmlFile:setBool(key..".autoResume", spec.autoResume)
+			xmlFile:setBool(key..".useDiffLock", spec.useDiffLock)
+			
+			xmlFile:save()
+			xmlFile:delete()
+			dbgprint("saveConfigToImplement : saving data finished", 2)
+		end
+	end
+end
+
+local function loadConfigToImplement(self, implement)
+	local spec = self.spec_HeadlandManagement
+	if spec ~= nil and spec.exists then
+		createFolder(HeadlandManagement.MODSETTINGSDIR)
+		
+		local filename = HeadlandManagement.MODSETTINGSDIR..implement:getFullName()
+		local key = "configSettings"
+		local xmlFile = XMLFile.loadIfExists("configSettingsXML", filename, key)
+		
+		if xmlFile ~= nil then 
+			dbgprint("loadConfigToImplement : key: "..tostring(key), 2)
+
+			xmlFile:getFloat(key..".turnSpeed", spec.turnSpeed)
+			xmlFile:getBool(key..".useSpeedControl", spec.useSpeedControl)
+			xmlFile:getBool(key..".useModSpeedControl", spec.useModSpeedControl)
+			xmlFile:getBool(key..".useCrabSteering", spec.useCrabSteering)
+			xmlFile:getBool(key..".useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+			xmlFile:getBool(key..".useRaiseImplementF", spec.useRaiseImplementF)
+			xmlFile:getBool(key..".useRaiseImplementB", spec.useRaiseImplementB)
+			xmlFile:getBool(key..".waitOnTrigger", spec.waitOnTrigger)
+			xmlFile:getBool(key..".useStopPTOF", spec.useStopPTOF)
+			xmlFile:getBool(key..".useStopPTOB", spec.useStopPTOB)
+			xmlFile:getBool(key..".turnPlow", spec.useTurnPlow)
+			xmlFile:getBool(key..".centerPlow", spec.useCenterPlow)
+			xmlFile:getBool(key..".switchRidge", spec.useRidgeMarker)
+			xmlFile:getBool(key..".useGPS", spec.useGPS)
+			xmlFile:getInt(key..".gpsSetting", spec.gpsSetting)
+			xmlFile:getBool(key..".useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
+			xmlFile:getBool(key..".useGuidanceSteeringOffget", spec.useGuidanceSteeringOffget)
+			xmlFile:getBool(key..".useHLMTriggerF", spec.useHLMTriggerF)
+			xmlFile:getBool(key..".useHLMTriggerB", spec.useHLMTriggerB)
+			xmlFile:getInt(key..".headlandDistance", spec.headlandDistance)
+			xmlFile:getBool(key..".vcaDirSwitch", spec.vcaDirSwitch)
+			xmlFile:getBool(key..".autoResume", spec.autoResume)
+			xmlFile:getBool(key..".useDiffLock", spec.useDiffLock)
+			
+			xmlFile:save()
+			xmlFile:delete()
+			dbgprint("loadConfigToImplement : loading data finished", 2)
+		end
+	end
+end
+
 -- Calculate implement reference node
 function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
 	local spec = vehicle.spec_HeadlandManagement
+	
+	loadConfigToImplement(vehicle, implement:object)
+	
 	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
@@ -770,6 +862,9 @@ end
 
 function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	local spec = vehicle.spec_HeadlandManagement
+	
+	saveConfigToImplement(vehicle, implement.object)
+	
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
