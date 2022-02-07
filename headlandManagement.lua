@@ -851,7 +851,9 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 	dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
-	spec = loadConfigWithImplement(spec, implement:getFullName())
+	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
+		spec = loadConfigWithImplement(spec, implement:getFullName())
+	end
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
@@ -859,12 +861,15 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
 	self.spec_HeadlandManagement = spec
+	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 function HeadlandManagement:onPreDetachImplement(implement)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
-	saveConfigWithImplement(spec, implement.object:getFullName())
+	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
+		saveConfigWithImplement(spec, implement.object:getFullName())
+	end
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
@@ -872,6 +877,7 @@ function HeadlandManagement:onPreDetachImplement(implement)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
 	self.spec_HeadlandManagement = spec
+	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 local function getHeading(self)
