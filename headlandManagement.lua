@@ -757,12 +757,12 @@ function HeadlandManagement:guiCallback(changes, debug)
 	dbgprint_r(spec, 4, 2)
 end
 
-local function saveConfigToImplement(self, implement)
+local function saveConfigToImplement(self, implementName)
 	local spec = self.spec_HeadlandManagement
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
-		local filename = HeadlandManagement.MODSETTINGSDIR..implement:getFullName()
+		local filename = HeadlandManagement.MODSETTINGSDIR..implementName..".xml"
 		local key = "configSettings"
 		local xmlFile = XMLFile.create("configSettingsXML", filename, key)
 		
@@ -800,12 +800,12 @@ local function saveConfigToImplement(self, implement)
 	end
 end
 
-local function loadConfigToImplement(self, implement)
+local function loadConfigToImplement(self, implementName)
 	local spec = self.spec_HeadlandManagement
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
-		local filename = HeadlandManagement.MODSETTINGSDIR..implement:getFullName()
+		local filename = HeadlandManagement.MODSETTINGSDIR..implementName..".xml"
 		local key = "configSettings"
 		local xmlFile = XMLFile.loadIfExists("configSettingsXML", filename, key)
 		
@@ -847,7 +847,7 @@ end
 function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
 	local spec = vehicle.spec_HeadlandManagement
 	
-	loadConfigToImplement(vehicle, implement:object)
+	loadConfigToImplement(vehicle, implement:getFullName())
 	
 	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
@@ -863,7 +863,7 @@ end
 function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	local spec = vehicle.spec_HeadlandManagement
 	
-	saveConfigToImplement(vehicle, implement.object)
+	saveConfigToImplement(vehicle, implement.object:getFullName())
 	
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
