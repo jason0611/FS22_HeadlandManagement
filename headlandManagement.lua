@@ -757,8 +757,8 @@ function HeadlandManagement:guiCallback(changes, debug)
 	dbgprint_r(spec, 4, 2)
 end
 
-local function saveConfigToImplement(self, implementName)
-	local spec = self.spec_HeadlandManagement
+local function saveConfigWithImplement(spec, implementName)
+	--local spec = self.spec_HeadlandManagement
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
@@ -795,13 +795,13 @@ local function saveConfigToImplement(self, implementName)
 			
 			xmlFile:save()
 			xmlFile:delete()
-			dbgprint("saveConfigToImplement : saving data finished", 2)
+			dbgprint("saveConfigWithImplement : saving data finished", 2)
 		end
 	end
 end
 
-local function loadConfigToImplement(self, implementName)
-	local spec = self.spec_HeadlandManagement
+local function loadConfigToImplement(spec, implementName)
+	--local spec = self.spec_HeadlandManagement
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
@@ -841,13 +841,14 @@ local function loadConfigToImplement(self, implementName)
 			dbgprint("loadConfigToImplement : loading data finished", 2)
 		end
 	end
+	return spec
 end
 
 -- Calculate implement reference node
 function HeadlandManagement.onPostAttachImplement(vehicle, implement, jointDescIndex)
 	local spec = vehicle.spec_HeadlandManagement
 	
-	loadConfigToImplement(vehicle, implement:getFullName())
+	spec = loadConfigWithImplement(spec, implement:getFullName())
 	
 	dbgprint("onPostAttachImplement : vehicle: "..vehicle:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
@@ -863,7 +864,7 @@ end
 function HeadlandManagement.onPreDetachImplement(vehicle, implement)
 	local spec = vehicle.spec_HeadlandManagement
 	
-	saveConfigToImplement(vehicle, implement.object:getFullName())
+	saveConfigWithImplement(spec, implement.object:getFullName())
 	
 	dbgprint("onPreDetachImplement : vehicle: "..vehicle:getFullName(), 2)
 	dbgprint("onPreDetachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
