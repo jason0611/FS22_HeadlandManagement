@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.1
+-- Version 2.9.5.2
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -48,6 +48,8 @@ HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
+
+HeadlandManagement.sideInfo = SideNotification.new(nil, "dataS/menu/hud/hud_elements.png")
 
 HeadlandManagement.guiIconOff = createImageOverlay(g_currentModDirectory.."gui/hlm_off.dds")
 HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
@@ -871,6 +873,10 @@ local function loadConfigWithImplement(spec, implementName)
 	return spec
 end
 
+local function isConfigImplement(implement)
+	return implement.spec_workArea ~= nil or implement.spec_combine ~= nil or implement.spec_forageWagon ~= nil or implement.spec_baler ~= nil
+end
+
 function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
@@ -883,9 +889,9 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
 	-- try to load headland management configuration for added implement
-	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
+	if implement~= nil and implement.getFullName ~= nil and isConfigImplement(implement) and not HeadlandManagement.isDedi then
 		spec = loadConfigWithImplement(spec, implement:getFullName())
-		local sideInfo = SideNotification.new(); sideInfo:addNotification("configuration loaded for joint #"..tostring(jointDescIndex), {0,0,1,1}, 2000)
+		dbgprint("onPreDetachImplement : configuration loaded for implement "..tostring(implement:getFullName()), 2)
 	end
 	self.spec_HeadlandManagement = spec
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -901,9 +907,9 @@ function HeadlandManagement:onPreDetachImplement(implement)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
 	-- save headland management configuration for implement to be removed
-	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
+	if implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and isConfigImplement(implement.object) and not HeadlandManagement.isDedi then
 		saveConfigWithImplement(spec, implement.object:getFullName())
-		local sideInfo = SideNotification.new(); sideInfo:addNotification("configuration saved for implement "..tostring(implement.object:getFullName()), {0,1,0,1}, 2000)
+		dbgprint("onPreDetachImplement : configuration saved for implement "..tostring(implement.object:getFullName()), 2)
 	end
 	self.spec_HeadlandManagement = spec
 	self:raiseDirtyFlags(spec.dirtyFlag)
