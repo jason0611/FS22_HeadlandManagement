@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
   <translationContributors>Markus33-ITA</translationContributors>
-	  <texts>
-		<text name="input_HLM_TOGGLESTATE" text="Modalità capezzagna / Modalità campo"/>	
-		<text name="input_HLM_SWITCHON" text="Modalità capezzagna" />
-		<text name="input_HLM_SWITCHOFF" text="Modalità campo" />	
-		<text name="input_HLM_SHOWGUI" text="Capezzagna: Impostazioni" />
-		<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
+		<texts>
+			<text name="input_HLM_TOGGLESTATE" text="Modalità capezzagna / Modalità campo"/>	
+			<text name="input_HLM_SWITCHON" text="Modalità capezzagna" />
+			<text name="input_HLM_SWITCHOFF" text="Modalità campo" />	
+			<text name="input_HLM_SHOWGUI" text="Capezzagna: Impostazioni" />
+			<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
+			<text name="input_HLM_TOGGLEAUTO" text="HLM: Toggle headland automatic"/>
+			<text name="input_HLM_AUTOON" text="HLM: Turn on headland automatic"/>
+			<text name="input_HLM_AUTOOFF" text="HLM: Turn off headland automatic"/>
 	
-		<text name="text_HLM_isActive" text="Modalità capezzagna attiva"/>
+			<text name="text_HLM_isActive" text="Modalità capezzagna attiva"/>
 			<text name="text_HLM_configuration" text="Gestione Capezzagna"/>
 			<text name="text_HLM_installed" text="Gestione Capezzagna installata"/>
 			<text name="text_HLM_notInstalled" text="Gestione Capezzagna non è installata"/>
