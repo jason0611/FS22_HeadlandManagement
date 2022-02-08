@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.0
+-- Version 2.9.5.1
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -11,6 +11,7 @@
 -- Separate raising of front and back implement, each when reaching headland
 -- Enable manual override of trigger controlled actions
 -- Turn Headland Management on/off
+-- Option to temporary disable headland automatic by key
 -- Auto-Resume if trigger leaves headland area
 
 -- WIP: Save configuration locally by implement
@@ -227,6 +228,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.vehicleLength = 0			-- calculated vehicle's length
 	spec.vehicleWidth = 0			-- vehicle's width
 	spec.maxTurningRadius = 0		-- vehicle's turn radius
+	spec.autoOverride = false		-- temporary override of headland automatic
 	
 	spec.useRidgeMarker = true		-- switch ridge markers in headland mode
 	spec.ridgeMarkerState = 0		-- state of ridge markers on field
@@ -238,6 +240,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useGPS = true				-- control gps in headland mode
 	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
 	spec.wasGPSAutomatic = false	-- was headland automatic active on field?
+	
 	spec.modGuidanceSteeringFound = false
 	spec.useGuidanceSteeringTrigger = false	
 	spec.useGuidanceSteeringOffset = false
@@ -687,6 +690,18 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
 			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
 			
+			_, spec.actionEventSwitchAuto = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLEAUTO', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitchAuto, GS_PRIO_NORMAL)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
+			
+			_, spec.actionEventAutoOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_AUTOON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventAutoOn, GS_PRIO_NORMAL)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, spec.autoOverride and spec.isOn)
+			
+			_, spec.actionEventAutoOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_AUTOOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			g_inputBinding:setActionEventTextPriority(spec.actionEventAutoOff, GS_PRIO_NORMAL)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB) and spec.isOn)
+			
 			local actionEventId
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
@@ -698,6 +713,7 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	dbgprint("TOGGLESTATE", 4)
 	local spec = self.spec_HeadlandManagement
 	dbgprint_r(spec, 4)
+	-- headland management
 	-- anschalten nur wenn inaktiv
 	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
@@ -711,6 +727,15 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == -HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 	end
+	-- headland automatic
+	-- abschalten nur wenn aktiv
+	if not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB) and spec.isOn and (actionName == "HLM_AUTOOFF" or actionName == "HLM_TOGGLEAUTO") then
+		spec.autoOverride = true
+	-- anschalten nur wenn inaktiv
+	elseif spec.autoOverride and spec.isOn and (actionName == "HLM_AUTOON" or actionName == "HLM_TOGGLEAUTO") and spec.actStep == HeadlandManagement.MAXSTEP then
+		spec.autoOverride = false
+	end
+	
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
@@ -720,6 +745,7 @@ function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
 	if spec.isOn then
 		spec.isActive = false
 		spec.actStep = 0
+		spec.autoOverride = false
 		spec.isOn = false
 	else
 		spec.lastHeadlandF = true
@@ -845,21 +871,22 @@ local function loadConfigWithImplement(spec, implementName)
 	return spec
 end
 
--- Calculate implement reference node
 function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
-	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
-		spec = loadConfigWithImplement(spec, implement:getFullName())
-	end
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
+	-- try to load headland management configuration for added implement
+	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
+		spec = loadConfigWithImplement(spec, implement:getFullName())
+		local sideInfo = SideNotification.new(); sideInfo:addNotification("configuration loaded for joint #"..tostring(jointDescIndex), {0,0,1,1}, 2000)
+	end
 	self.spec_HeadlandManagement = spec
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
@@ -867,15 +894,17 @@ end
 function HeadlandManagement:onPreDetachImplement(implement)
 	local spec = self.spec_HeadlandManagement
 	dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
-	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
-		saveConfigWithImplement(spec, implement.object:getFullName())
-	end
 	-- Detect frontNode, backNode and recalculate vehicle length
 	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self, implement.object)
 	spec.guidanceSteeringOffset = spec.vehicleLength
 	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
 	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
 	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
+	-- save headland management configuration for implement to be removed
+	if self:getIsActive() and self == g_currentMission.controlledVehicle and implement.getFullName ~= nil and not HeadlandManagement.isDedi then
+		saveConfigWithImplement(spec, implement.object:getFullName())
+		local sideInfo = SideNotification.new(); sideInfo:addNotification("configuration saved for implement "..tostring(implement.object:getFullName()), {0,1,0,1}, 2000)
+	end
 	self.spec_HeadlandManagement = spec
 	self:raiseDirtyFlags(spec.dirtyFlag)
 end
@@ -1000,14 +1029,14 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- activate headland mode when reaching headland in auto-mode
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
-		and spec.useHLMTriggerF 
+		and spec.useHLMTriggerF and not spec.autoOverride
 		and spec.headlandF and not spec.lastHeadlandF 
 	then
 		spec.isActive = true
 		spec.lastHeadlandF = true
 	end
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
-		and spec.useHLMTriggerB 
+		and spec.useHLMTriggerB and not spec.autoOverride
 		and spec.headlandB and not spec.lastHeadlandB 
 	then
 		spec.isActive = true
@@ -1130,14 +1159,14 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- auto resume on trigger: activate field mode when leaving headland in auto-mode
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
-		and spec.useHLMTriggerF and spec.autoResumeOnTrigger and not spec.headlandF and spec.lastHeadlandF and isOnField(self.rootNode)
+		and spec.useHLMTriggerF and spec.autoResumeOnTrigger and not spec.headlandF and spec.lastHeadlandF and isOnField(self.rootNode) and not spec.autoOverride
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
 		spec.lastHeadlandF = false
 	end
-	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
-		and spec.useHLMTriggerB and spec.autoResumeOnTrigger and not spec.headlandB and spec.lastHeadlandB and isOnField(self.rootNode)
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
+		and spec.useHLMTriggerB and spec.autoResumeOnTrigger and not spec.headlandB and spec.lastHeadlandB and isOnField(self.rootNode) and not spec.autoOverride
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
@@ -1167,7 +1196,7 @@ function HeadlandManagement:onDraw(dt)
 		local guiIcon = HeadlandManagement.guiIconOff
 		
 		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
-		local headlandAutomatic	= spec.useHLMTriggerF or spec.useHLMTriggerB
+		local headlandAutomatic	= not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
 				
 		-- field mode
 		if spec.isOn and headlandAutomatic and not spec.isActive then 
