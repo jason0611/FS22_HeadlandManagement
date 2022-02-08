@@ -734,7 +734,7 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	if not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB) and spec.isOn and (actionName == "HLM_AUTOOFF" or actionName == "HLM_TOGGLEAUTO") then
 		spec.autoOverride = true
 	-- anschalten nur wenn inaktiv
-	elseif spec.autoOverride and spec.isOn and (actionName == "HLM_AUTOON" or actionName == "HLM_TOGGLEAUTO") and spec.actStep == HeadlandManagement.MAXSTEP then
+	elseif spec.autoOverride and spec.isOn and (actionName == "HLM_AUTOON" or actionName == "HLM_TOGGLEAUTO") then
 		spec.autoOverride = false
 	end
 	
