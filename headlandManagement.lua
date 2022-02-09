@@ -878,6 +878,13 @@ local function isConfigImplement(implement)
 end
 
 function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
+
+	local player = g_currentMission.player
+	if player ~= nil then
+		dbgprint("onPostAttachImplement : playerdata : isOwner: "..tostring(player.isOwner), 2)
+		dbgprint("onPostAttachImplement : playerdata : isControlled: "..tostring(player.isControlled), 2)
+	end
+
 	local spec = self.spec_HeadlandManagement
 	dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
 	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
@@ -898,6 +905,13 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 end
 
 function HeadlandManagement:onPreDetachImplement(implement)
+
+	local player = g_currentMission.player
+	if player ~= nil then
+		dbgprint("onPreDetachImplement : playerdata : isOwner: "..tostring(player.isOwner), 2)
+		dbgprint("onPreDetachImplement : playerdata : isControlled: "..tostring(player.isControlled), 2)
+	end
+	
 	local spec = self.spec_HeadlandManagement
 	dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
 	-- Detect frontNode, backNode and recalculate vehicle length
