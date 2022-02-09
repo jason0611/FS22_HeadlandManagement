@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.2
+-- Version 2.9.5.3
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -45,6 +45,9 @@ HeadlandManagement.MAXSTEP = 12
 HeadlandManagement.debug = false
 
 HeadlandManagement.isDedi = g_dedicatedServerInfo ~= nil
+dbgprint("isDedi: "..tostring(HeadlandManagement.isDedi), 1)
+dbgprint("g_server: "..tostring(g_server), 2)
+dbgprint("g_currentMission: "..tostring(g_currentMission), 2)
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
@@ -116,6 +119,7 @@ end
 
 function HeadlandManagement.initSpecialization()
 	dbgprint("initSpecialization : start", 2)
+
 	if g_configurationManager.configurations["HeadlandManagement"] == nil then
 		g_configurationManager:addConfigurationType("HeadlandManagement", g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), nil, nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION)
 	end
@@ -183,6 +187,9 @@ end
 
 function HeadlandManagement:onLoad(savegame)
 	dbgprint("onLoad", 2)
+
+	HeadlandManagement.isDedi = g_server ~= nil and g_currentMission.connectedToDedicatedServer
+	
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
 	
@@ -878,55 +885,49 @@ local function isConfigImplement(implement)
 end
 
 function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
-
-	local player = g_currentMission.player
-	if player ~= nil then
-		dbgprint("onPostAttachImplement : playerdata : isOwner: "..tostring(player.isOwner), 2)
-		dbgprint("onPostAttachImplement : playerdata : isControlled: "..tostring(player.isControlled), 2)
+	if not HeadlandManagement.isDedi then
+		local spec = self.spec_HeadlandManagement
+		dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
+		dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
+		dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
+		-- Detect frontNode, backNode and recalculate vehicle length
+		spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
+		spec.guidanceSteeringOffset = spec.vehicleLength
+		dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
+		dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
+		dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
+		-- try to load headland management configuration for added implement
+		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
+		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
+		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and isConfigImplement(implement) and g_currentMission.isMissionStarted then
+			spec = loadConfigWithImplement(spec, implement:getFullName())
+			dbgprint("onPostAttachImplement : configuration loaded for implement "..tostring(implement:getFullName()), 2)
+		end
+		self.spec_HeadlandManagement = spec
+		self:raiseDirtyFlags(spec.dirtyFlag)
 	end
-
-	local spec = self.spec_HeadlandManagement
-	dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
-	dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
-	dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
-	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
-	spec.guidanceSteeringOffset = spec.vehicleLength
-	dbgprint("onPostAttachImplement : length: "..tostring(spec.vehicleLength), 2)
-	dbgprint("onPostAttachImplement : frontNode: "..tostring(spec.frontNode), 2)
-	dbgprint("onPostAttachImplement : backNode: "..tostring(spec.backNode), 2)
-	-- try to load headland management configuration for added implement
-	if implement~= nil and implement.getFullName ~= nil and isConfigImplement(implement) and not HeadlandManagement.isDedi then
-		spec = loadConfigWithImplement(spec, implement:getFullName())
-		dbgprint("onPreDetachImplement : configuration loaded for implement "..tostring(implement:getFullName()), 2)
-	end
-	self.spec_HeadlandManagement = spec
-	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 function HeadlandManagement:onPreDetachImplement(implement)
-
-	local player = g_currentMission.player
-	if player ~= nil then
-		dbgprint("onPreDetachImplement : playerdata : isOwner: "..tostring(player.isOwner), 2)
-		dbgprint("onPreDetachImplement : playerdata : isControlled: "..tostring(player.isControlled), 2)
+	if not HeadlandManagement.isDedi then
+		local spec = self.spec_HeadlandManagement
+		dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
+		-- Detect frontNode, backNode and recalculate vehicle length
+		spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self, implement.object)
+		spec.guidanceSteeringOffset = spec.vehicleLength
+		dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
+		dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
+		dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
+		-- save headland management configuration for implement to be removed 
+		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
+		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
+		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and isConfigImplement(implement.object) then
+			saveConfigWithImplement(spec, implement.object:getFullName())
+			dbgprint("onPreDetachImplement : configuration saved for implement "..tostring(implement.object:getFullName()), 2)
+		end
+		self.spec_HeadlandManagement = spec
+		self:raiseDirtyFlags(spec.dirtyFlag)
 	end
-	
-	local spec = self.spec_HeadlandManagement
-	dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
-	-- Detect frontNode, backNode and recalculate vehicle length
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self, implement.object)
-	spec.guidanceSteeringOffset = spec.vehicleLength
-	dbgprint("onPreDetachImplement : length: "..tostring(spec.vehicleLength), 2)
-	dbgprint("onPreDetachImplement : frontNode: "..tostring(spec.frontNode), 2)
-	dbgprint("onPreDetachImplement : backNode: "..tostring(spec.backNode), 2)
-	-- save headland management configuration for implement to be removed
-	if implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and isConfigImplement(implement.object) and not HeadlandManagement.isDedi then
-		saveConfigWithImplement(spec, implement.object:getFullName())
-		dbgprint("onPreDetachImplement : configuration saved for implement "..tostring(implement.object:getFullName()), 2)
-	end
-	self.spec_HeadlandManagement = spec
-	self:raiseDirtyFlags(spec.dirtyFlag)
 end
 
 local function getHeading(self)
