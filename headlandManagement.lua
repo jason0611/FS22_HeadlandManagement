@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.4
+-- Version 2.9.5.5
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -735,7 +735,7 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	end
 	-- headland automatic
 	-- abschalten nur wenn aktiv
-	if not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB) and spec.isOn and (actionName == "HLM_AUTOOFF" or actionName == "HLM_TOGGLEAUTO") then
+	if not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB or spec.useGuidanceSteeringTrigger) and spec.isOn and (actionName == "HLM_AUTOOFF" or actionName == "HLM_TOGGLEAUTO") then
 		spec.autoOverride = true
 	-- anschalten nur wenn inaktiv
 	elseif spec.autoOverride and spec.isOn and (actionName == "HLM_AUTOON" or actionName == "HLM_TOGGLEAUTO") then
@@ -1064,7 +1064,7 @@ function HeadlandManagement:onUpdate(dt)
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
-		if not spec.isActive and gsSpec.playHeadLandWarning then
+		if not spec.isActive and gsSpec.playHeadLandWarning and not spec.autoOverride then
 			spec.isActive = true
 		end
 	end
@@ -1166,7 +1166,7 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- auto resume on turn (180 degrees)
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
-		and spec.autoResume and not spec.autoResumeOnTrigger and spec.heading == spec.turnHeading 
+		and spec.autoResume and not spec.autoOverride and not spec.autoResumeOnTrigger and spec.heading == spec.turnHeading 
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
