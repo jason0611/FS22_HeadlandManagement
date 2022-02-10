@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.3
+-- Version 2.9.5.4
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -415,18 +415,6 @@ function HeadlandManagement:onPostLoad(savegame)
 	
 	-- Check if Mod GuidanceSteering exists
 	spec.modGuidanceSteeringFound = self.spec_globalPositioningSystem ~= nil and not HeadlandManagement.kbGS
-	
-	-- Detect frontNode, backNode and calculate vehicle length and width
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
-	spec.guidanceSteeringOffset = spec.vehicleLength
-	--spec.maxTurningRadius = self.maxTurningRadius
-	if self.spec_workArea ~= nil then
-		dbgprint_r(self.spec_workArea, 1, 2)
-	end
-	
-	dbgprint("onPostLoad : length: "..tostring(spec.vehicleLength), 1)
-	dbgprint("onPostLoad : frontNode: "..tostring(spec.frontNode), 2)
-	dbgprint("onPostLoad : backNode: "..tostring(spec.backNode), 2)
 
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
@@ -475,6 +463,15 @@ function HeadlandManagement:onPostLoad(savegame)
 	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
 	
 	spec.autoResumeOnTrigger = spec.autoResume and (spec.useHLMTriggerF or spec.useHLMTriggerB)
+	
+	if spec.exists then
+		-- Detect frontNode, backNode and calculate vehicle length and width
+		spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
+		spec.guidanceSteeringOffset = spec.vehicleLength
+		dbgprint("onPostLoad : length: "..tostring(spec.vehicleLength), 1)
+		dbgprint("onPostLoad : frontNode: "..tostring(spec.frontNode), 2)
+		dbgprint("onPostLoad : backNode: "..tostring(spec.backNode), 2)
+	end
 	
 	-- Set HLM configuration if set by savegame
 	self.configurations["HeadlandManagement"] = spec.exists and 2 or 1
@@ -885,8 +882,8 @@ local function isConfigImplement(implement)
 end
 
 function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
-	if not HeadlandManagement.isDedi then
-		local spec = self.spec_HeadlandManagement
+	local spec = self.spec_HeadlandManagement
+	if spec.exists and not HeadlandManagement.isDedi then
 		dbgprint("onPostAttachImplement : vehicle: "..self:getFullName(),2 )
 		dbgprint("onPostAttachImplement : jointDescIndex: "..tostring(jointDescIndex), 2)
 		dbgprint("onPostAttachImplement : implement: "..implement:getFullName(), 2)
@@ -909,8 +906,8 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 end
 
 function HeadlandManagement:onPreDetachImplement(implement)
-	if not HeadlandManagement.isDedi then
-		local spec = self.spec_HeadlandManagement
+	local spec = self.spec_HeadlandManagement
+	if spec.exists and not HeadlandManagement.isDedi then
 		dbgprint("onPreDetachImplement : vehicle: "..self:getFullName(), 2)
 		-- Detect frontNode, backNode and recalculate vehicle length
 		spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self, implement.object)
