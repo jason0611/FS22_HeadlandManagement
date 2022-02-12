@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.5
+-- Version 2.9.5.6
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -1052,6 +1052,7 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.isActive = true
 		spec.lastHeadlandF = true
+		dbgprint("onUpdate : Headland mode activated by front trigger (auto-mode)", 2)
 	end
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
 		and spec.useHLMTriggerB and not spec.autoOverride
@@ -1059,6 +1060,7 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.isActive = true
 		spec.lastHeadlandB = true
+		dbgprint("onUpdate : Headland mode activated by back trigger (auto-mode)", 2)
 	end
 	
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
@@ -1066,6 +1068,7 @@ function HeadlandManagement:onUpdate(dt)
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning and not spec.autoOverride then
 			spec.isActive = true
+			dbgprint("onUpdate : Headland mode activated by guidance steering (auto-mode)", 2)
 		end
 	end
 
@@ -1170,10 +1173,17 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
+		dbgprint("onUpdate : Field mode activated by 180°-turn", 2)
 	end
 	
-	if (not spec.autoResumeOnTrigger or not spec.isActive) and not spec.headlandF and isOnField(self.rootNode) then spec.lastHeadlandF = false end
-	if (not spec.autoResumeOnTrigger or not spec.isActive) and not spec.headlandB and isOnField(self.rootNode) then spec.lastHeadlandB = false end
+	if (not spec.autoResumeOnTrigger or not spec.isActive) and not spec.headlandF and isOnField(self.rootNode) then 
+		spec.lastHeadlandF = false 
+		dbgprint("onUpdate: reset lastHeadlandF", 2)
+		end
+	if (not spec.autoResumeOnTrigger or not spec.isActive) and not spec.headlandB and isOnField(self.rootNode) then 
+		spec.lastHeadlandB = false 
+		dbgprint("onUpdate: reset lastHeadlandB", 2)
+		end
 	
 	-- auto resume on trigger: activate field mode when leaving headland in auto-mode
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
@@ -1182,6 +1192,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
 		spec.lastHeadlandF = false
+		dbgprint("onUpdate : Field mode activated by front trigger (auto-resume)", 2)
 	end
 	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
 		and spec.useHLMTriggerB and spec.autoResumeOnTrigger and not spec.headlandB and spec.lastHeadlandB and isOnField(self.rootNode) and not spec.autoOverride
@@ -1189,6 +1200,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
 		spec.lastHeadlandB = false
+		dbgprint("onUpdate : Field mode activated by back trigger (auto-resume)", 2)
 	end
 end
 
