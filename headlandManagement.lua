@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.6
+-- Version 2.9.5.7
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -43,10 +43,6 @@ HeadlandManagement.STOPGPS = 11
 HeadlandManagement.MAXSTEP = 12
 
 HeadlandManagement.debug = false
-
-dbgprint("isDedi: "..tostring(HeadlandManagement.isDedi), 1)
-dbgprint("g_server: "..tostring(g_server), 2)
-dbgprint("g_currentMission: "..tostring(g_currentMission), 2)
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
@@ -191,8 +187,6 @@ function HeadlandManagement:onLoad(savegame)
 	
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
-	
-	spec.actionEventOn = nil
 	
 	spec.exists = false				-- Headland Management is configured into vehicle
 	spec.isOn = false				-- Headland Management is switched on
@@ -1183,7 +1177,6 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
-		--spec.lastHeadlandF = false
 		dbgprint("onUpdate : Field mode activated by front trigger (auto-resume)", 2)
 	end
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
@@ -1191,7 +1184,6 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
-		--spec.lastHeadlandB = false
 		dbgprint("onUpdate : Field mode activated by back trigger (auto-resume)", 2)
 	end
 	
