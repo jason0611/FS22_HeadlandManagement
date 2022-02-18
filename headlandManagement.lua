@@ -871,7 +871,20 @@ local function loadConfigWithImplement(spec, implementName)
 end
 
 local function isConfigImplement(implement)
-	return implement.spec_workArea ~= nil or implement.spec_combine ~= nil or implement.spec_forageWagon ~= nil or implement.spec_baler ~= nil
+	--return implement.spec_workArea ~= nil or implement.spec_combine ~= nil or implement.spec_forageWagon ~= nil or implement.spec_baler ~= nil
+	local returnType
+	
+	if implement.spec_plow ~= nil then returnType = "Plow"
+		elseif implement.spec_cultivator ~= nil then returnType = "Cultivator"
+		elseif implement.spec_roller ~= nil then returnType = "Roller"
+		elseif implement.spec_sowingMachine ~= nil then returnType = "Sowingmachine"
+		elseif implement.spec_mulcher ~= nil then returnType = "Mulcher"
+		elseif implement.spec_combine ~= nil then returnType = "Combine"
+		elseif implement.spec_forageWagon ~= nil then returnType = "Foragewagon"
+		elseif implement.spec_baler ~= nil then returnType = "Baler"
+	end
+	
+	return returnType
 end
 
 function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
@@ -889,10 +902,11 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 		-- try to load headland management configuration for added implement
 		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
-		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and isConfigImplement(implement) and g_currentMission.isMissionStarted then
-			spec = loadConfigWithImplement(spec, implement:getFullName())
-			dbgprint("onPostAttachImplement : configuration loaded for implement "..tostring(implement:getFullName()), 2)
-			g_currentMission:addGameNotification("Configuration loaded for implement "..tostring(implement:getFullName(), "", 2500)
+		local implementType = isConfigImplement(implement)
+		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
+			spec = loadConfigWithImplement(spec, implementType)
+			dbgprint("onPostAttachImplement : configuration loaded for implement type "..tostring(implementType), 2)
+			g_currentMission:addGameNotification("", "Configuration loaded for implement type "..tostring(implementType), "", 2500)
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
@@ -912,10 +926,11 @@ function HeadlandManagement:onPreDetachImplement(implement)
 		-- save headland management configuration for implement to be removed 
 		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
-		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and isConfigImplement(implement.object) then
-			saveConfigWithImplement(spec, implement.object:getFullName())
-			dbgprint("onPreDetachImplement : configuration saved for implement "..tostring(implement.object:getFullName()), 2)
-			g_currentMission:addGameNotification("Configuration saved for implement "..tostring(implement:getFullName(), "", 2500)
+		local implementType = isConfigImplement(implement.object)
+		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
+			saveConfigWithImplement(spec, implementType)
+			dbgprint("onPreDetachImplement : configuration saved for implement type "..tostring(implementType), 2)
+			g_currentMission:addGameNotification("", "Configuration saved for implement type "..tostring(implementType), "", 2500)
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
