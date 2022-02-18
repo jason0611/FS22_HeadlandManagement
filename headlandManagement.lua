@@ -892,6 +892,7 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and isConfigImplement(implement) and g_currentMission.isMissionStarted then
 			spec = loadConfigWithImplement(spec, implement:getFullName())
 			dbgprint("onPostAttachImplement : configuration loaded for implement "..tostring(implement:getFullName()), 2)
+			g_currentMission:addGameNotification("Configuration loaded for implement "..tostring(implement:getFullName(), "", 2500)
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
@@ -914,6 +915,7 @@ function HeadlandManagement:onPreDetachImplement(implement)
 		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and isConfigImplement(implement.object) then
 			saveConfigWithImplement(spec, implement.object:getFullName())
 			dbgprint("onPreDetachImplement : configuration saved for implement "..tostring(implement.object:getFullName()), 2)
+			g_currentMission:addGameNotification("Configuration saved for implement "..tostring(implement:getFullName(), "", 2500)
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
