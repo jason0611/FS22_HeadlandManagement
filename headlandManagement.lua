@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.7
+-- Version 2.9.5.8
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -906,7 +906,7 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
 			spec = loadConfigWithImplement(spec, implementType)
 			dbgprint("onPostAttachImplement : configuration loaded for implement type "..tostring(implementType), 2)
-			g_currentMission:addGameNotification("", "Configuration loaded for implement type "..tostring(implementType), "", 2500)
+			g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), "Configuration loaded for implement type "..tostring(implementType), "", 2500)
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
@@ -930,7 +930,7 @@ function HeadlandManagement:onPreDetachImplement(implement)
 		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
 			saveConfigWithImplement(spec, implementType)
 			dbgprint("onPreDetachImplement : configuration saved for implement type "..tostring(implementType), 2)
-			g_currentMission:addGameNotification("", "Configuration saved for implement type "..tostring(implementType), "", 2500)
+			g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), "Configuration saved for implement type "..tostring(implementType), "", 2500)
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)

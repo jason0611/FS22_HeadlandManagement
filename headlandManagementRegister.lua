@@ -2,7 +2,7 @@
 -- Register Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 2.9.5.7
+-- Version 2.9.5.8
 --
 
 if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
