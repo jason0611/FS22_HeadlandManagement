@@ -213,6 +213,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.headlandDistance = 9 		-- headland width (distance to field border)	-- needs config settings	 
 	spec.headlandF = false			-- front node over headland?
 	spec.headlandB = false 			-- back node over headland?
+	spec.headlandFNum = 0
+	spec.headlandBNum = 0
 	spec.lastHeadlandF = true		-- was front node already over headland?
 	spec.lastHeadlandB = true		-- was back node already over headland?
 	
@@ -955,19 +957,44 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("onHeadlandF: "..tostring(spec.headlandF), 5, 3)
 	dbgrender("onHeadlandB: "..tostring(spec.headlandB), 6, 3)
 	
-	dbgrender("lastOnHeadlandF: "..tostring(spec.lastHeadlandF), 7, 3)
-	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 8, 3)
+	dbgrender("onHeadlandFNum: "..tostring(spec.headlandFNum), 7, 3)
+	dbgrender("onHeadlandBNum: "..tostring(spec.headlandBNum), 8, 3)
+	
+	dbgrender("lastOnHeadlandF: "..tostring(spec.lastHeadlandF), 9, 3)
+	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 10, 3)
 
-	dbgrender("direction: "..tostring(math.floor(spec.heading)), 10, 3)
+	dbgrender("direction: "..tostring(math.floor(spec.heading)), 11, 3)
 	
 	dbgrender("isActive: "..tostring(spec.isActive), 13, 3)
 	dbgrender("actStep: "..tostring(spec.actStep), 14, 3)
 	local turnTarget
 	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
-	dbgrender("turnHeading:"..tostring(turnTarget), 11, 3)
-		
-	if spec ~= nil then 
-		dbgrenderTable(spec, 1, 4)
+	dbgrender("turnHeading:"..tostring(turnTarget), 15, 3)
+	
+	local vx, vy, vz = getWorldTranslation(self.rootNode)
+	
+	local fieldNum = 0
+	
+	local farmland = g_farmlandManager:getFarmlandAtWorldPosition(vx, vz)
+    if farmland ~= nil then
+        local fieldMapping = g_fieldManager.farmlandIdFieldMapping[farmland.id]
+        if fieldMapping ~= nil and fieldMapping[1] ~= nil then
+            fieldNum = fieldMapping[1].fieldId
+        end
+    end
+	
+	dbgrender("Field ID: "..tostring(fieldNum), 19, 3)
+	dbgrender("lastHeadlandFNum: "..tostring(spec.lastHeadlandFNum), 21, 3)
+	dbgrender("lastHeadlandBNum: "..tostring(spec.lastHeadlandBNum), 22, 3)
+	
+	local analyseTable = nil
+	
+	if analyseTable ~= nil then 
+		dbgrenderTable(analyseTable, 1, 4)
+		if spec.researchOutput == nil then
+			dbgprint_r(analyseTable, 3)
+			spec.researchOutput = true
+		end
 	end
 end
 
@@ -977,6 +1004,19 @@ local function isOnField(node)
 	local vx, _, vz = getWorldTranslation(node)
 	return getDensityAtWorldPos(g_currentMission.terrainDetailId, vx, 0, vz) ~= 0
 end	
+
+local function getFieldNum(node)
+	local fieldNum = 0
+	local vx, _, vz = getWorldTranslation(node)
+	local farmland = g_farmlandManager:getFarmlandAtWorldPosition(vx, vz)
+    if farmland ~= nil then
+        local field = g_fieldManager.farmlandIdFieldMapping[farmland.id]
+        if field ~= nil and field[1] ~= nil then
+            fieldNum = field[1].fieldId
+        end
+    end
+    return fieldNum
+end
 	
 function HeadlandManagement:onUpdate(dt)
 	local spec = self.spec_HeadlandManagement
@@ -1020,6 +1060,7 @@ function HeadlandManagement:onUpdate(dt)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local fx, _, fz = localToWorld(self.rootNode, 0, 0, lz)
 		spec.headlandF = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, fx + distance * dx, 0, fz + distance * dz) == 0
+		--spec.headlandFNum = getFieldNum(spec.frontNode)
 		if HeadlandManagement.debug then
 			DebugUtil.drawDebugLine(nx, ny, nz, fx + distance * dx, 0, fz + distance * dz, 0, 1, 0, nil, true)
 		end
@@ -1033,6 +1074,7 @@ function HeadlandManagement:onUpdate(dt)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local bx, _, bz = localToWorld(self.rootNode, 0, 0, lz)
 		spec.headlandB = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, bx + distance * dx, 0, bz + distance * dz) == 0
+		--spec.headlandBNum = getFieldNum(spec.backNode)
 		if HeadlandManagement.debug then
 			DebugUtil.drawDebugLine(nx, ny, nz, bx + distance * dx, 0, bz + distance * dz, 0, 1, 0, nil, true)
 		end
@@ -1062,7 +1104,8 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.isActive = true
 		spec.lastHeadlandF = true
-		dbgprint("onUpdate : Headland mode activated by front trigger (auto-mode)", 2)
+		--spec.lastHeadlandFNum = spec.headlandFNum
+		dbgprint("onUpdate : Headland mode activated by front trigger (auto-mode) on Field "..tostring(spec.lastHeadlandFNum), 2)
 	end
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
 		and spec.useHLMTriggerB and not spec.autoOverride
@@ -1070,7 +1113,8 @@ function HeadlandManagement:onUpdate(dt)
 	then
 		spec.isActive = true
 		spec.lastHeadlandB = true
-		dbgprint("onUpdate : Headland mode activated by back trigger (auto-mode)", 2)
+		--spec.lastHeadlandBNum = spec.headlandBNum
+		dbgprint("onUpdate : Headland mode activated by back trigger (auto-mode) on Field "..tostring(spec.lastHeadlandBNum), 2)
 	end
 	
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
@@ -1185,8 +1229,6 @@ function HeadlandManagement:onUpdate(dt)
 		spec.turnHeading = nil
 		dbgprint("onUpdate : Field mode activated by 180°-turn", 2)
 	end
-	
-	
 	
 	-- auto resume on trigger: activate field mode when leaving headland in auto-mode
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
