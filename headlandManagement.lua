@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.5.8
+-- Version 2.9.5.9
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -956,8 +956,9 @@ local function getFieldNum(node, x, z)
 	local fieldNum = 0
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
 	local farmland = g_farmlandManager:getFarmlandAtWorldPosition(x, z)
+    local field
     if farmland ~= nil then
-        local field = g_fieldManager.farmlandIdFieldMapping[farmland.id]
+        field = g_fieldManager.farmlandIdFieldMapping[farmland.id]
         if field ~= nil and field[1] ~= nil then
             fieldNum = field[1].fieldId
         end
@@ -990,14 +991,15 @@ function HeadlandManagement.onUpdateResearch(self)
 	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
 	dbgrender("turnHeading:"..tostring(turnTarget), 15, 3)
 	
-	dbgrender("Field ID: "..tostring(getFieldNum(self.rootNode)), 19, 3)
+	local fieldNum, field = getFieldNum(self.rootNode)
+	dbgrender("Field ID: "..tostring(fieldNum), 19, 3)
 	
 	local analyseTable = nil
 	
 	if analyseTable ~= nil then 
-		dbgrenderTable(analyseTable, 1, 4)
+		dbgrenderTable(analyseTable, 1, 3)
 		if spec.researchOutput == nil then
-			dbgprint_r(analyseTable, 3)
+			dbgprint_r(analyseTable, 3, 3)
 			spec.researchOutput = true
 		end
 	end
@@ -1024,7 +1026,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.turnHeading = (spec.heading + 180) % 360
 	end
 	
-	local distance = spec.headlandDistance + 1.5 -- compensate vehicle's inertia
+	local distance = spec.headlandDistance
 	local override = false
 	
 	if spec.turnHeading ~= nil then 
@@ -1046,7 +1048,7 @@ function HeadlandManagement:onUpdate(dt)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local fx, _, fz = localToWorld(self.rootNode, 0, 0, lz)
 		tfx, tfz = fx + distance * dx, fz + distance * dz
-		spec.headlandF = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, tx, 0, tz) == 0
+		spec.headlandF = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, tfx, 0, tfz) == 0
 		if not spec.headlandF then spec.fieldNumF = getFieldNum(spec.frontNode, tfx, tfz) end -- Update fieldNumF only, if trigger is on field
 		if HeadlandManagement.debug then
 			DebugUtil.drawDebugLine(nx, ny, nz, tfx, 0, tfz, 1, 0, 0, nil, true)
@@ -1062,11 +1064,11 @@ function HeadlandManagement:onUpdate(dt)
 		local nx, ny, nz = getWorldTranslation(spec.backNode)
 		local lx, ly, lz = worldToLocal(self.rootNode, nx, ny, nz)
 		local bx, _, bz = localToWorld(self.rootNode, 0, 0, lz)
-	 	tx, tz = bx + distance * dx, bz + distance * dz
-		spec.headlandB = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, tx, 0, tz) == 0
-		if not spec.headlandB then spec.fieldNumB = getFieldNum(spec.backNode, tx, tz) end -- Update fieldNumB only, if trigger is on field
+	 	tbx, tbz = bx + distance * dx, bz + distance * dz
+		spec.headlandB = override or getDensityAtWorldPos(g_currentMission.terrainDetailId, tbx, 0, tbz) == 0
+		if not spec.headlandB then spec.fieldNumB = getFieldNum(spec.backNode, tbx, tbz) end -- Update fieldNumB only, if trigger is on field
 		if HeadlandManagement.debug then
-			DebugUtil.drawDebugLine(nx, ny, nz, tx, 0, tz, 0, 1, 0, nil, true)
+			DebugUtil.drawDebugLine(nx, ny, nz, tbx, 0, tbz, 0, 1, 0, nil, true)
 		end
 		if spec.headlandB ~= oldValue then dbgprint("headlandB: Changed to "..tostring(spec.headlandB), 3) end
 	else
