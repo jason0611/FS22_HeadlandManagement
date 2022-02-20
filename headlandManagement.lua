@@ -957,11 +957,16 @@ local function getFieldNum(node, x, z)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
 	local farmland = g_farmlandManager:getFarmlandAtWorldPosition(x, z)
     local field
+    local dist = math.huge
     if farmland ~= nil then
-        field = g_fieldManager.farmlandIdFieldMapping[farmland.id]
-        if field ~= nil and field[1] ~= nil then
-            fieldNum = field[1].fieldId
-        end
+        local fields = g_fieldManager.farmlandIdFieldMapping[farmland.id]
+		for _, field in pairs(fields) do
+			local rx, rz = field.posX, field.posZ
+			dx, dz = rx - x, rz - z
+			rdist = math.sqrt(dx^2 + dz^2)
+			dist = math.min(dist, rdist)				
+			if rdist == dist then fieldNum = field.fieldId end
+		end
     end
     return fieldNum
 end
@@ -991,7 +996,7 @@ function HeadlandManagement.onUpdateResearch(self)
 	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
 	dbgrender("turnHeading:"..tostring(turnTarget), 15, 3)
 	
-	local fieldNum, field = getFieldNum(self.rootNode)
+	local fieldNum = getFieldNum(self.rootNode)
 	dbgrender("Field ID: "..tostring(fieldNum), 19, 3)
 	
 	local analyseTable = nil
@@ -1034,7 +1039,7 @@ function HeadlandManagement:onUpdate(dt)
 		local bearing = (spec.heading - heading) % 360
 		-- Prevent distance growing to infinite and prevent resuming too early because of not right-angular field borders
 		if bearing > 22.5 and bearing <= 135 then override = true end
-		if bearing > 225 and bearing < 375.5 then override = true end
+		if bearing > 225 and bearing < 337.5 then override = true end
 		dbgrender("bearing: "..tostring(bearing), 16, 3)
 		distance = distance / math.cos(bearing * (2 * math.pi / 360))
 	end
@@ -1227,7 +1232,7 @@ function HeadlandManagement:onUpdate(dt)
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
 		and spec.useHLMTriggerF and spec.autoResumeOnTrigger 
 		and not spec.headlandF and spec.lastHeadlandF and not spec.autoOverride 
-		and isOnField(self.rootNode) and (spec.fieldNumF == spec.lastFieldNumF)
+		and isOnField(self.rootNode) and (spec.fieldNumF == getFieldNum(self.rootNode)) --spec.lastFieldNumF)
 	then
 		spec.actStep = -spec.actStep
 		spec.lastHeadlandF = false 
@@ -1237,7 +1242,7 @@ function HeadlandManagement:onUpdate(dt)
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
 		and spec.useHLMTriggerB and spec.autoResumeOnTrigger 
 		and not spec.headlandB and spec.lastHeadlandB and not spec.autoOverride
-		and isOnField(self.rootNode) and (spec.fieldNumB == spec.lastFieldNumB)
+		and isOnField(self.rootNode) and (spec.fieldNumB == getFieldNum(self.rootNode)) --spec.lastFieldNumB)
 	then
 		spec.actStep = -spec.actStep
 		spec.lastHeadlandB = false 
