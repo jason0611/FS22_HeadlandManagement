@@ -1278,6 +1278,7 @@ function HeadlandManagement:onDraw(dt)
 		
 		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
 		local headlandAutomatic	= not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
+		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride
 				
 		-- field mode
 		if spec.isOn and headlandAutomatic and not spec.isActive then 
@@ -1309,11 +1310,11 @@ function HeadlandManagement:onDraw(dt)
 		end
 	
 		-- headland mode			
-		if spec.isOn and spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+		if spec.isOn and headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
 			guiIcon = HeadlandManagement.guiIconHeadlandA
 		end
 		
-		if spec.isOn and not spec.autoResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+		if spec.isOn and not headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
 			guiIcon = HeadlandManagement.guiIconHeadland
 		end	
 		
