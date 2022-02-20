@@ -1245,6 +1245,7 @@ function HeadlandManagement:onUpdate(dt)
 		dbgprint("onUpdate : Field mode activated by back trigger (auto-resume)", 2)
 	end
 	
+	-- reset lastHeadland if no automatic field mode is active
 	if spec.lastHeadlandF and (not spec.autoResumeOnTrigger or spec.autoOverride) and not spec.isActive and not spec.headlandF and isOnField(self.rootNode) then 
 		spec.lastHeadlandF = false 
 		dbgprint("onUpdate: reset lastHeadlandF", 2)
