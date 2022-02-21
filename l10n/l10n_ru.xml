@@ -16,6 +16,8 @@
 		<text name="text_HLM_notInstalled" text="Headlandmanagement не установлен"/>
 		<text name="text_HLM_installed_short" text="Установлен"/>
 		<text name="text_HLM_notInstalled_short" text="Не установлен"/>
+		<text name="text_HLM_implementTypeLoaded" text="Configuration loaded for implement type"/>
+		<text name="text_HLM_implementTypeSaved" text="Configuration saved for implement type"/>
 
 		<text name="text_HLM_type_Plow" text="Plow"/>
 		<text name="text_HLM_type_Cultivator" text="Cultivator"/>
