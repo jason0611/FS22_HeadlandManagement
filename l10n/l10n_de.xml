@@ -16,6 +16,17 @@
 		<text name="text_HLM_notInstalled" text="Kein Vorgewende-Management eingebaut"/>
 		<text name="text_HLM_installed_short" text="Eingebaut"/>
 		<text name="text_HLM_notInstalled_short" text="Nicht eingebaut"/>
+		<text name="text_HLM_configuration" text="Konfiguration geladen für den Gerätetyp">
+		<text name="text_HLM_configuration" text="Konfiguration gespeichert für den Gerätetyp">
+		
+		<text name="text_HLM_type_Plow" text="Pflug"/>
+		<text name="text_HLM_type_Cultivator" text="Grubber"/>
+		<text name="text_HLM_type_Roller" text="Walze"/>
+		<text name="text_HLM_type_Sowingmachine" text="Sähmaschine"/>
+		<text name="text_HLM_type_Mulcher" text="Mulcher"/>
+		<text name="text_HLM_type_Combine" text="Erntemaschine"/>
+		<text name="text_HLM_type_Foragewagon" text="Ladewagen"/>
+		<text name="text_HLM_type_Baler" text="Ballenpresse"/>
 
 		<text name="hlmgui_title" text="Vorgewende-Management (HLM): Konfiguration für "/>
 		<text name="hlmgui_on" text="an"/>

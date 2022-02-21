@@ -18,6 +18,15 @@
 			<text name="text_HLM_installed_short" text="Installato"/>
 			<text name="text_HLM_notInstalled_short" text="Non Installato"/>
 
+			<text name="text_HLM_type_Plow" text="Plow"/>
+			<text name="text_HLM_type_Cultivator" text="Cultivator"/>
+			<text name="text_HLM_type_Roller" text="Roller"/>
+			<text name="text_HLM_type_Sowingmachine" text="Sowingmachine"/>
+			<text name="text_HLM_type_Mulcher" text="Mulcher"/>
+			<text name="text_HLM_type_Combine" text="Combine"/>
+			<text name="text_HLM_type_Foragewagon" text="Foragewagon"/>
+			<text name="text_HLM_type_Baler" text="Baler"/>
+			
 			<text name="hlmgui_title" text="Gestione Capezzagna: Impostazioni per "/>
 			<text name="hlmgui_on" text="ON"/>
 			<text name="hlmgui_off" text="OFF"/>
