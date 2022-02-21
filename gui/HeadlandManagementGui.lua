@@ -497,8 +497,8 @@ function HeadlandManagementGui:onClickOk()
 	self.spec.useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
 	-- crab steering
 	self.spec.csState = self.crabSteeringSetting:getState()
-	self.spec.useCrabSteering = (csState ~= 3)
-	self.spec.useCrabSteeringTwoStep = (csState == 2)
+	self.spec.useCrabSteering = (self.spec.csState ~= 3)
+	self.spec.useCrabSteeringTwoStep = (self.spec.csState == 2)
 	-- gps
 	self.spec.useGPS = self.gpsOnOffSetting:getState() == 1
 	self.spec.gpsSetting = self.gpsSetting:getState()
