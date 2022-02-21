@@ -16,8 +16,8 @@
 		<text name="text_HLM_notInstalled" text="Kein Vorgewende-Management eingebaut"/>
 		<text name="text_HLM_installed_short" text="Eingebaut"/>
 		<text name="text_HLM_notInstalled_short" text="Nicht eingebaut"/>
-		<text name="text_HLM_configuration" text="Konfiguration geladen für den Gerätetyp">
-		<text name="text_HLM_configuration" text="Konfiguration gespeichert für den Gerätetyp">
+		<text name="text_HLM_configuration" text="Konfiguration geladen für den Gerätetyp"/>
+		<text name="text_HLM_configuration" text="Konfiguration gespeichert für den Gerätetyp"/>
 		
 		<text name="text_HLM_type_Plow" text="Pflug"/>
 		<text name="text_HLM_type_Cultivator" text="Grubber"/>
