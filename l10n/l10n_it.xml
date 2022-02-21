@@ -17,6 +17,8 @@
 			<text name="text_HLM_notInstalled" text="Gestione Capezzagna non è installata"/>
 			<text name="text_HLM_installed_short" text="Installato"/>
 			<text name="text_HLM_notInstalled_short" text="Non Installato"/>
+			<text name="text_HLM_implementTypeLoaded" text="Configuration loaded for implement type"/>
+			<text name="text_HLM_implementTypeSaved" text="Configuration saved for implement type"/>
 
 			<text name="text_HLM_type_Plow" text="Plow"/>
 			<text name="text_HLM_type_Cultivator" text="Cultivator"/>
