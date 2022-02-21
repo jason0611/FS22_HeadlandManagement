@@ -785,6 +785,7 @@ end
 local function saveConfigWithImplement(spec, implementName)
 	--local spec = self.spec_HeadlandManagement
 	dbgprint("saveConfigWithImplement : spec: "..tostring(spec), 2)
+	local saved = false
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
@@ -822,13 +823,16 @@ local function saveConfigWithImplement(spec, implementName)
 			xmlFile:save()
 			xmlFile:delete()
 			dbgprint("saveConfigWithImplement : saving data finished", 2)
+			saved = true
 		end
 	end
+	return saved
 end
 
 local function loadConfigWithImplement(spec, implementName)
 	--local spec = self.spec_HeadlandManagement
 	dbgprint("loadConfigWithImplement : spec: "..tostring(spec), 2)
+	local loaded = false
 	if spec ~= nil and spec.exists then
 		createFolder(HeadlandManagement.MODSETTINGSDIR)
 		
@@ -865,9 +869,10 @@ local function loadConfigWithImplement(spec, implementName)
 			
 			xmlFile:delete()
 			dbgprint("loadConfigToImplement : loading data finished", 2)
+			loaded = true
 		end
 	end
-	return spec
+	return spec, loaded
 end
 
 local function isConfigImplement(implement)
@@ -904,10 +909,12 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
 		local implementType = isConfigImplement(implement)
 		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
-			spec = loadConfigWithImplement(spec, implementType)
+			local loaded
+			spec, loaded = loadConfigWithImplement(spec, implementType)
 			dbgprint("onPostAttachImplement : configuration loaded for implement type "..tostring(implementType), 2)
-			g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_implementTypeLoaded").." "..g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_type_"..implementType), "", 2500)
-			--g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), "Configuration loaded for implement type "..tostring(implementType), "", 2500)
+			if loaded then
+				g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_implementTypeLoaded").." "..g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_type_"..implementType), "", 2500)
+			end
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
@@ -929,10 +936,11 @@ function HeadlandManagement:onPreDetachImplement(implement)
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
 		local implementType = isConfigImplement(implement.object)
 		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
-			saveConfigWithImplement(spec, implementType)
+			local saved = saveConfigWithImplement(spec, implementType)
 			dbgprint("onPreDetachImplement : configuration saved for implement type "..tostring(implementType), 2)
-			g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_implementTypeSaved").." "..g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_type_"..implementType), "", 2500)
-			--g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), "Configuration saved for implement type "..tostring(implementType), "", 2500)
+			if saved then
+				g_currentMission:addGameNotification(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_configuration"), g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_implementTypeSaved").." "..g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_type_"..implementType), "", 2500)
+			end
 		end
 		self.spec_HeadlandManagement = spec
 		self:raiseDirtyFlags(spec.dirtyFlag)
