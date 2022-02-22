@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.9.0
+-- Version 2.1.0.0 RC0
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -13,8 +13,7 @@
 -- Turn Headland Management on/off
 -- Option to temporary disable headland automatic by key
 -- Auto-Resume if trigger leaves headland area
-
--- WIP: Save configuration locally by implement
+-- Save configuration locally with implement-type
  
 HeadlandManagement = {}
 
