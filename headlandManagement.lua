@@ -969,12 +969,14 @@ local function getFieldNum(node, x, z)
     local dist = math.huge
     if farmland ~= nil then
         local fields = g_fieldManager.farmlandIdFieldMapping[farmland.id]
-		for _, field in pairs(fields) do
-			local rx, rz = field.posX, field.posZ
-			dx, dz = rx - x, rz - z
-			rdist = math.sqrt(dx^2 + dz^2)
-			dist = math.min(dist, rdist)				
-			if rdist == dist then fieldNum = field.fieldId end
+        if fields ~= nil then
+			for _, field in pairs(fields) do
+				local rx, rz = field.posX, field.posZ
+				dx, dz = rx - x, rz - z
+				rdist = math.sqrt(dx^2 + dz^2)
+				dist = math.min(dist, rdist)				
+				if rdist == dist then fieldNum = field.fieldId end
+			end
 		end
     end
     return fieldNum
