@@ -979,7 +979,7 @@ local function getFieldNum(node, x, z)
 			end
 		end
     end
-    return fieldNum
+    return fieldNum or 0
 end
 
 -- Research part
