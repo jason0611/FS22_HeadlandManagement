@@ -6,6 +6,9 @@
     	<text name="input_HLM_SWITCHOFF" text="Feld-Modus" />	
     	<text name="input_HLM_SHOWGUI" text="HLM: Einstellungen" />
     	<text name="input_HLM_MAINSWITCH" text="HLM: An-/ Ausschalten"/>
+		<text name="input_HLM_TOGGLEAUTO" text="HLM: Vorgewendeautomatik umschalten"/>
+		<text name="input_HLM_AUTOON" text="HLM: Vorgewendeautomatik einschalten"/>
+		<text name="input_HLM_AUTOOFF" text="HLM: Vorgewendeautomatik ausschalten"/>
 
 		<text name="text_HLM_isActive" text="Vorgewende-Modus aktiv"/>
 		<text name="text_HLM_configuration" text="Vorgewende-Management"/>
@@ -13,6 +16,17 @@
 		<text name="text_HLM_notInstalled" text="Kein Vorgewende-Management eingebaut"/>
 		<text name="text_HLM_installed_short" text="Eingebaut"/>
 		<text name="text_HLM_notInstalled_short" text="Nicht eingebaut"/>
+		<text name="text_HLM_implementTypeLoaded" text="Konfiguration geladen für den Gerätetyp"/>
+		<text name="text_HLM_implementTypeSaved" text="Konfiguration gespeichert für den Gerätetyp"/>
+		
+		<text name="text_HLM_type_Plow" text="Pflug"/>
+		<text name="text_HLM_type_Cultivator" text="Grubber"/>
+		<text name="text_HLM_type_Roller" text="Walze"/>
+		<text name="text_HLM_type_Sowingmachine" text="Sähmaschine"/>
+		<text name="text_HLM_type_Mulcher" text="Mulcher"/>
+		<text name="text_HLM_type_Combine" text="Erntemaschine"/>
+		<text name="text_HLM_type_Foragewagon" text="Ladewagen"/>
+		<text name="text_HLM_type_Baler" text="Ballenpresse"/>
 
 		<text name="hlmgui_title" text="Vorgewende-Management (HLM): Konfiguration für "/>
 		<text name="hlmgui_on" text="an"/>

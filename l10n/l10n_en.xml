@@ -6,6 +6,9 @@
     	<text name="input_HLM_SWITCHOFF" text="Field-Mode" />	
     	<text name="input_HLM_SHOWGUI" text="Headland: Settings" />
     	<text name="input_HLM_MAINSWITCH" text="HLM: Switch on/off"/>
+		<text name="input_HLM_TOGGLEAUTO" text="HLM: Toggle headland automatic"/>
+		<text name="input_HLM_AUTOON" text="HLM: Turn on headland automatic"/>
+		<text name="input_HLM_AUTOOFF" text="HLM: Turn off headland automatic"/>
 		
 		<text name="text_HLM_isActive" text="Headland-Mode active"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
@@ -13,7 +16,18 @@
 		<text name="text_HLM_notInstalled" text="Headlandmanagement not installed"/>
 		<text name="text_HLM_installed_short" text="Installed"/>
 		<text name="text_HLM_notInstalled_short" text="Not installed"/>
+		<text name="text_HLM_implementTypeLoaded" text="Configuration loaded for implement type"/>
+		<text name="text_HLM_implementTypeSaved" text="Configuration saved for implement type"/>
 
+		<text name="text_HLM_type_Plow" text="Plow"/>
+		<text name="text_HLM_type_Cultivator" text="Cultivator"/>
+		<text name="text_HLM_type_Roller" text="Roller"/>
+		<text name="text_HLM_type_Sowingmachine" text="Sowingmachine"/>
+		<text name="text_HLM_type_Mulcher" text="Mulcher"/>
+		<text name="text_HLM_type_Combine" text="Combine"/>
+		<text name="text_HLM_type_Foragewagon" text="Foragewagon"/>
+		<text name="text_HLM_type_Baler" text="Baler"/>
+		
 		<text name="hlmgui_title" text="Headlandmanagement (HLM): Settings for "/>
 		<text name="hlmgui_on" text="on"/>
 		<text name="hlmgui_off" text="off"/>

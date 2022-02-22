@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.9.4.2</version>
+	<version>2.1.0.RC0</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -53,6 +53,7 @@ V2.1.0.0:
 - Headland automatic control now independent of Guidance Steering
 - Optional automatic return to field mode after turn
 - On/off switch added (lShift+lAlt+X)
+- Option to temporary disable headland automatic by key (keybindings not pre-defined)
 - Revised status display in vehicle HUD
 
 ]]>
@@ -98,6 +99,7 @@ V2.1.0.0:
 - Vorgewendeautomatik unabhängig von Guidance Steering
 - Wahlweise automatische Rückkehr in den Feldmodus nach Abschluss einer Wende
 - An/Aus-Schalter ergänzt (lShift+lAlt+X)
+- Option, die Vorgewende Automatik vorübergehend per Tastendruck abzuschalten (Tasten ist nicht vorbelegt)
 - Überarbeitete Statusanzeige im Fahrzeug HUD
 
 ]]>
@@ -232,7 +234,10 @@ V2.x.x.x:
 		<action name="HLM_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_SHOWGUI" categorie="VEHICLE" ignoreComboMask="false" />
-		<action name="HLM_MAINSWITCH" categorie="VEHICLE" ignoseComboMask="false" />
+		<action name="HLM_MAINSWITCH" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_TOGGLEAUTO" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_AUTOON" categorie="VEHICLE" ignoreComboMask="false" />
+		<action name="HLM_AUTOOFF" categorie="VEHICLE" ignoreComboMask="false" />
 	</actions>
 	<inputBinding>	
 		<actionBinding action="HLM_TOGGLESTATE">

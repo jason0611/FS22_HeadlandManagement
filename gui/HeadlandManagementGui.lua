@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.9.4.2
+-- Version 2.1.0.0 RC0
 --
 
 HeadlandManagementGui = {}
@@ -497,8 +497,8 @@ function HeadlandManagementGui:onClickOk()
 	self.spec.useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
 	-- crab steering
 	self.spec.csState = self.crabSteeringSetting:getState()
-	self.spec.useCrabSteering = (csState ~= 3)
-	self.spec.useCrabSteeringTwoStep = (csState == 2)
+	self.spec.useCrabSteering = (self.spec.csState ~= 3)
+	self.spec.useCrabSteeringTwoStep = (self.spec.csState == 2)
 	-- gps
 	self.spec.useGPS = self.gpsOnOffSetting:getState() == 1
 	self.spec.gpsSetting = self.gpsSetting:getState()
