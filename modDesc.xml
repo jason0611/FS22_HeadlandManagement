@@ -182,7 +182,7 @@ V2.1.0.0:
 - Zlepšené načasování jednotlivých pracovních kroků
 - Lepší ovládání sklízečů brambor a podobných vozidel
 - Přidána možnost zvedání: nejprve přední nářadí, pak zadní nářadí
-- Headland automatické nezávislé na Guidance Steering
+- Automatické otáčení na souvrati nyní nezávislé na Guidance Steering
 - Volitelný automatický návrat do polního režimu po dokončení tahu
 - Přidán přepínač zapnutí/vypnutí (lShift+lAlt+X)
 - Možnost dočasně vypnout automatické vypínání souvratí stisknutím tlačítka (není předdefinované tlačítko, lze nastavit podle potřeby v nastavení tlačítek).

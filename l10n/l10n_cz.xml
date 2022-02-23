@@ -1,31 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
 	<texts>
-    <text name="input_HLM_TOGGLESTATE" text="Souvraťový režim / režim pole"/>	
-   	<text name="input_HLM_SWITCHON" text="Souvraťový režim" />
-   	<text name="input_HLM_SWITCHOFF" text="Režim pole" />	
-   	<text name="input_HLM_SHOWGUI" text="Souvratě: Nastavení" />
+    <text name="input_HLM_TOGGLESTATE" text="HLM:Souvraťový režim / režim pole"/>	
+   	<text name="input_HLM_SWITCHON" text="HLM:Souvraťový režim" />
+   	<text name="input_HLM_SWITCHOFF" text="HLM:Režim pole" />	
+   	<text name="input_HLM_SHOWGUI" text="HLM:: Nastavení" />
    	<text name="input_HLM_MAINSWITCH" text="HLM: Zapnout/vypnout"/>
-	  <text name="input_HLM_TOGGLEAUTO" text="HLM: Toggle headland automatic"/>
-	  <text name="input_HLM_AUTOON" text="HLM: Turn on headland automatic"/>
-		<text name="input_HLM_AUTOOFF" text="HLM: Turn off headland automatic"/>
+	  <text name="input_HLM_TOGGLEAUTO" text="HLM: Přepnout otáčení na automatické"/>
+	  <text name="input_HLM_AUTOON" text="HLM: Zapnout automatické otáčení na souvrati"/>
+		<text name="input_HLM_AUTOOFF" text="HLM: Vypnout automatické otáčení na souvrati"/>
 		
-		<text name="text_HLM_isActive" text="Souvratě: Mod aktivní"/>
+		<text name="text_HLM_isActive" text="HLM:: Mod aktivní"/>
 		<text name="text_HLM_configuration" text="Souvraťový management"/>
 		<text name="text_HLM_installed" text="Souvraťový management nainstalován"/>
 		<text name="text_HLM_notInstalled" text="Souvraťový management není nainstalován"/>
 		<text name="text_HLM_installed_short" text="Instalováno"/>
 		<text name="text_HLM_notInstalled_short" text="Není Instalováno"/>
-		<text name="text_HLM_implementTypeLoaded" text="Configuration loaded for implement type"/>
-		<text name="text_HLM_implementTypeSaved" text="Configuration saved for implement type"/>
-		<text name="text_HLM_type_Plow" text="Plow"/>
-		<text name="text_HLM_type_Cultivator" text="Cultivator"/>
-		<text name="text_HLM_type_Roller" text="Roller"/>
-		<text name="text_HLM_type_Sowingmachine" text="Sowingmachine"/>
-		<text name="text_HLM_type_Mulcher" text="Mulcher"/>
-		<text name="text_HLM_type_Combine" text="Combine"/>
-		<text name="text_HLM_type_Foragewagon" text="Foragewagon"/>
-		<text name="text_HLM_type_Baler" text="Baler"/>
+		<text name="text_HLM_implementTypeLoaded" text="Konfigurace načtena pro typ nářadí"/>
+		<text name="text_HLM_implementTypeSaved" text="Konfigurace uložena pro typ nářadí"/>
+		<text name="text_HLM_type_Plow" text="Pluh"/>
+		<text name="text_HLM_type_Cultivator" text="Kultivátor"/>
+		<text name="text_HLM_type_Roller" text="Válce"/>
+		<text name="text_HLM_type_Sowingmachine" text="Sečka"/>
+		<text name="text_HLM_type_Mulcher" text="Mulčovač"/>
+		<text name="text_HLM_type_Combine" text="Kombajn"/>
+		<text name="text_HLM_type_Foragewagon" text="Sběrací vůz"/>
+		<text name="text_HLM_type_Baler" text="Lis"/>
 		
 		<text name="hlmgui_title" text="Souvraťový management (HLM): Nastavení pro "/>
 		<text name="hlmgui_on" text="Zap."/>
