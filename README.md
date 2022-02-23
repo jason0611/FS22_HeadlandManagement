@@ -16,14 +16,19 @@ It can be activated and deactivated in the vehicle with Shift-X. Alternatively, 
 Included functions:
 - Reduce speed (cruise control) and raise again
 - Lifting and lowering of implements, optionally also only in front or only in the rear
-- Separate lifting of front and rear implements, each when reaching the headland
+- Separate lifting of front and rear implements: Single, all, or each when reaching the headland
 - Turning the plough, single-stage or two-stage (via the middle position)
-- Lifting and changing of track rippers
+- Lifting and changing of ridge markers
 - Switch off and switch on power take-off shaft(s) and hydraulics, optionally front only or rear only
 - Change of steering direction in crab steering
 - Headland automatic: Headland mode can be activated automatically when the headland is reached
+- Headland automatic: Trigger can be set to front or back implement with configurable headland width
 - Headland automatic: Automatic switchover to field mode after 180° turn has been completed or after reaching the set headland width
 - Implement measurement for more precise implement lifting 
+- The headland management settings are now saved and restored local for each implement type automatically
+- Headland Management now got a mainswitch: It can be turned on and off by key to avoid unplanned triggering e.g. while on the road
+- Further on there are some more keys, that can be set if wanted, to temporarily disable and re-enable headland automatic. This can be helpful on field edges.  
+  These keys are not preassigned and can be assigned in the keyboard settings.
 - Audible signal when headland management is activated
 
 Additionally with existing Vehicle Control Addon (VCA):
@@ -65,7 +70,12 @@ Enthaltene Funktionen:
 - Zapfwelle(n) und Hydraulik abschalten und wieder anschalten, wahlweise auch nur vorne oder nur hinten
 - Wechsel der Lenkrichtung bei Hundegang
 - Vorgewende-Automatik: Der Vorgewendemodus kann automatisch aktiviert werden, wenn das Vorgewende erreicht wird
+- Vorgewende-Automatik: Der Auslöser kann wahlweise das vordere oder hintere Anbaugerät sein. Die Vorgewende-Breite ist dabei frei wählbar.
 - Vorgewende-Automatik: Automatisches Umschalten in den Feldmodus nach durchgeführter 180°-Wende oder nach Erreichen der eingestellten Vorgewende-Breite
+- Die Einstellungen des Vorgewende Managments werden nun je Gerätetyp automatisch lokal gespeichert und wiederhergestellt
+- Das Vorgewendemanagement hat jetzt einen Hauptschalter: Es kann per Taste ein- und ausgeschaltet werden, um ein ungeplantes Auslösen z.B. auf der Straße zu vermeiden.
+- Weiterhin gibt es einige weitere Tasten, die auf Wunsch gesetzt werden können, um die Vorgewendeautomatik vorübergehend zu deaktivieren und wieder zu aktivieren. 
+  Dies kann an Feldrändern hilfreich sein. Diese Tasten sind nicht vorbelegt und können in den Tastatureinstellungen frei zugewiesen werden.
 - Gerätevermessung für exakteres Geräteausheben 
 - Hinweiston bei aktiviertem Vorgewendemanagement
 
