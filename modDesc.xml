@@ -40,9 +40,6 @@ If VCA Mod (FS22_VehicleControlAddon) is present:
 If Guidance Steering (FS22_guidanceSteering) is present: 
 - Deactivate and reactivate GPS guidance
 
-Prepared and provided with one of the following updates when SpeedControl Mod (FS22_zzzSpeedControl) is available:
-- Speed adjustment also possible by changing the cruise control level
-
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
 ChangeLog:
@@ -53,8 +50,11 @@ V2.1.0.0:
 - Headland automatic control now independent of Guidance Steering
 - Optional automatic return to field mode after turn
 - On/off switch added (lShift+lAlt+X)
-- Option to temporary disable headland automatic by key (keybindings not pre-defined)
+- Option to temporary disable headland automatic by key (no key preassigned, could be set arbitrarily in the key settings)
 - Revised status display in vehicle HUD
+- Vehicle measurement to adapt front/back nodes, if implement is being attached or detached
+- Enable manual override of trigger controlled actions
+- Save and restore configuration locally for type of implement
 
 ]]>
 		</en>	
@@ -86,9 +86,6 @@ Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 Bei vorhandenem Guidance Steering (FS22_guidanceSteering):
 - GPS Spurführung deaktivieren und reaktivieren
 
-Vorbereitet und mit einem der folgenden Updates bereitgestellt, sobald SpeedControl (FS22_zzzSpeedControl?) verfügbar ist:
-- Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
-
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
 
 ChangeLog:
@@ -99,9 +96,11 @@ V2.1.0.0:
 - Vorgewendeautomatik unabhängig von Guidance Steering
 - Wahlweise automatische Rückkehr in den Feldmodus nach Abschluss einer Wende
 - An/Aus-Schalter ergänzt (lShift+lAlt+X)
-- Option, die Vorgewende Automatik vorübergehend per Tastendruck abzuschalten (Tasten ist nicht vorbelegt)
+- Option, die Vorgewende Automatik vorübergehend per Tastendruck abzuschalten (keine vordefinierte Taste, kann in den Tasteneinstellungen beliebig gesetzt werden)
 - Überarbeitete Statusanzeige im Fahrzeug HUD
-
+- Fahrzeugvermessung zur Anpassung der vorderen und hinteren Auslöser, wenn ein Arbeitsgerät an- oder abgehängt wird
+- Manuelles Übersteuern der Automatik möglich
+- Lokale Speicherung und Wiederherstellung der Konfiguration für den jeweiligen Arbeitsgerätetyp
 ]]>
 		</de>
 		<fr>
@@ -131,15 +130,21 @@ Si la fonction Guidance Steering (FS22_guidanceSteering) est présente :
 - Désactiver et réactiver le guidage GPS
 - Gestion automatique des fourrières : activation automatique de la gestion des fourrières lorsqu'elles sont atteintes
 
-Préparé et mis à disposition avec l'une des mises à jour suivantes, dès que SpeedControl (FS22_zzzSpeedControl ?) sera disponible :
-- Réglage de la vitesse également possible en modifiant le niveau du régulateur de vitesse.
-
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS22_HeadlandManagement, veuillez écrire en allemand ou en anglais
 
-ChangeLog:
-V2.x.x.x: 
-- Improved timing of the individual work steps
-- Improved control of potato harvesters and similar vehicles
+ChangeLog :
+V2.1.0.0 : 
+- Amélioration du timing des différentes étapes de travail
+- Amélioration du contrôle des arracheuses de pommes de terre et des véhicules similaires.
+- Option de relevage ajoutée : d'abord les outils avant, puis les outils arrière
+- Automatisme de fourrière indépendant de Guidance Steering
+- Retour automatique facultatif en mode champ à la fin d'un demi-tour
+- Bouton marche/arrêt ajouté (lShift+lAlt+X)
+- Option pour désactiver temporairement l'automatisme des manœuvres en bout de champ en appuyant sur une touche (pas de touche prédéfinie, peut être définie à volonté dans les paramètres des touches)
+- Affichage d'état révisé sur le HUD du véhicule
+- Mesure du véhicule pour ajuster les déclencheurs avant et arrière lorsqu'un outil de travail est attelé ou dételé.
+- Possibilité d'outrepasser manuellement les automatismes
+- Sauvegarde et restauration locales de la configuration pour chaque type d'outil de travail
 
 ]]>
 		</fr>
@@ -170,15 +175,21 @@ Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k 
 - Deaktivuje a znovu aktivuje navádění GPS
 - Souvraťová automatika: Aktivace souvraťového řízení automaticky při dosažení souvrati
 
-Připraveno a poskytnuto s jednou z následujících aktualizací, když bude k dispozici SpeedControl Mod (FS22_zzzSpeedControl):
-- Nastaví rychlost dle úrovní tempomatu
-
 Další nápady nebo přání jsou vítány na https://github.com/jason0611/FS22_HeadlandManagement
 
 Seznam změn:
-V2.x.x.x: 
-- Vylepšené načasování jednotlivých pracovních kroků
-- Vylepšené ovládání bramborových kombajnů a podobných vozidel
+V2.1.0.0: 
+- Zlepšené načasování jednotlivých pracovních kroků
+- Lepší ovládání sklízečů brambor a podobných vozidel
+- Přidána možnost zvedání: nejprve přední nářadí, pak zadní nářadí
+- Headland automatické nezávislé na Guidance Steering
+- Volitelný automatický návrat do polního režimu po dokončení tahu
+- Přidán přepínač zapnutí/vypnutí (lShift+lAlt+X)
+- Možnost dočasně vypnout automatické vypínání souvratí stisknutím tlačítka (není předdefinované tlačítko, lze nastavit podle potřeby v nastavení tlačítek).
+- Revidované zobrazení stavu na displeji HUD vozidla
+- Měření vozidla pro nastavení předních a zadních spouštěčů při připojování nebo odpojování nářadí
+- Možnost ručního ovládání automatického systému
+- Místní uložení a obnovení konfigurace pro příslušný typ implementace
 
 ]]>
 		</cz>
@@ -209,15 +220,21 @@ Se è presente il sistema di guida (Guidance Steering) (FS22_guidanceSteering):
 - Disattiva e riattiva la guida GPS
 - Capezzagna automatica: attiva automaticamente la gestione della capezzagna quando viene raggiunta la capezzagna
 
-Preparato e dotato di uno dei seguenti aggiornamenti quando è disponibile SpeedControl Mod (FS22_zzzSpeedControl):
-- Regolazione della velocità possibile anche modificando il livello del cruise control
-
 Ulteriori idee o desideri sono i benvenuti su https://github.com/jason0611/FS22_HeadlandManagement
 
 ChangeLog:
-V2.x.x.x: 
-- Improved timing of the individual work steps
-- Improved control of potato harvesters and similar vehicles
+V2.1.0.0: 
+- Miglioramento della tempistica delle singole fasi di lavoro
+- Migliore controllo delle raccoglitrici di patate e veicoli simili
+- Opzione di sollevamento aggiunta: prima gli attrezzi anteriori, poi quelli posteriori
+- Capezzagna automatica indipendente dalla guida di orientamento
+- Ritorno automatico opzionale alla modalità campo dopo il completamento di un turno
+- Aggiunto interruttore On/Off (lShift+lAlt+X)
+- Possibilità di spegnere temporaneamente l'automatismo a fine campo premendo un pulsante (nessun pulsante predefinito, può essere impostato come desiderato nelle impostazioni del pulsante)
+- Visualizzazione rivista dello stato nell'HUD del veicolo
+- Misura del veicolo per regolare i grilletti anteriori e posteriori quando si attacca o si stacca un attrezzo
+- Possibile l'override manuale del sistema automatico
+- Memorizzazione locale e ripristino della configurazione per il rispettivo tipo di attrezzo
 
 ]]>
 		</it>
