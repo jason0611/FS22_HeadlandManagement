@@ -879,11 +879,11 @@ local function isConfigImplement(implement)
 	local returnType
 	
 	if implement.spec_plow ~= nil then returnType = "Plow"
-		elseif implement.spec_cultivator ~= nil then returnType = "Cultivator"
-		elseif implement.spec_roller ~= nil then returnType = "Roller"
-		elseif implement.spec_sowingMachine ~= nil then returnType = "Sowingmachine"
-		elseif implement.spec_mulcher ~= nil then returnType = "Mulcher"
 		elseif implement.spec_combine ~= nil then returnType = "Combine"
+		elseif implement.spec_sowingMachine ~= nil then returnType = "Sowingmachine"
+		elseif implement.spec_cultivator ~= nil then returnType = "Cultivator"
+		elseif implement.spec_mulcher ~= nil then returnType = "Mulcher"
+		elseif implement.spec_roller ~= nil then returnType = "Roller"
 		elseif implement.spec_forageWagon ~= nil then returnType = "Foragewagon"
 		elseif implement.spec_baler ~= nil then returnType = "Baler"
 	end
