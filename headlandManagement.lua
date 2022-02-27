@@ -452,7 +452,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	end
 	
 	-- enable HLM in mission vehicles
-	spec.exists = spec.exists or self.propertyState == Vehicle.PROPERTY_STATE_MISSION
+	spec.exists = spec.exists or (self.configurations["HeadlandManagement"] ~= nil and self.propertyState == Vehicle.PROPERTY_STATE_MISSION)
 	
 	if spec.gpsSetting == 2 and not spec.modGuidanceSteeringFound then spec.gpsSetting = 1 end
 	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
