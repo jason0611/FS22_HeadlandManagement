@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.0 RC1
+-- Version 2.1.0.0 RC3
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -14,6 +14,7 @@
 -- Option to temporary disable headland automatic by key
 -- Auto-Resume if trigger leaves headland area
 -- Save configuration locally with implement-type
+-- Headland Management configured into mission vehicles
  
 HeadlandManagement = {}
 
@@ -450,6 +451,9 @@ function HeadlandManagement:onPostLoad(savegame)
 		end
 		dbgprint("onPostLoad : Loaded data for "..self:getName())
 	end
+	
+	-- enable HLM in mission vehicles
+	spec.exists = spec.exists or (self.configurations["HeadlandManagement"] ~= nil and self.propertyState == Vehicle.PROPERTY_STATE_MISSION)
 	
 	if spec.gpsSetting == 2 and not spec.modGuidanceSteeringFound then spec.gpsSetting = 1 end
 	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
