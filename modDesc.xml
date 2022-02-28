@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="63">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.1.0.RC1</version>
+	<version>2.1.0.RC3</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -55,6 +55,7 @@ V2.1.0.0:
 - Vehicle measurement to adapt front/back nodes, if implement is being attached or detached
 - Enable manual override of trigger controlled actions
 - Save and restore configuration locally for type of implement
+- Headland management available in mission vehicles
 
 ]]>
 		</en>	
@@ -101,6 +102,7 @@ V2.1.0.0:
 - Fahrzeugvermessung zur Anpassung der vorderen und hinteren Auslöser, wenn ein Arbeitsgerät an- oder abgehängt wird
 - Manuelles Übersteuern der Automatik möglich
 - Lokale Speicherung und Wiederherstellung der Konfiguration für den jeweiligen Arbeitsgerätetyp
+- Vorgewende Management in Missions-Fahrzeugen verfügbar
 ]]>
 		</de>
 		<fr>
@@ -145,6 +147,7 @@ V2.1.0.0 :
 - Mesure du véhicule pour ajuster les déclencheurs avant et arrière lorsqu'un outil de travail est attelé ou dételé.
 - Possibilité d'outrepasser manuellement les automatismes
 - Sauvegarde et restauration locales de la configuration pour chaque type d'outil de travail
+- Gestion des fourrières disponible dans les véhicules de mission
 
 ]]>
 		</fr>
@@ -190,6 +193,7 @@ V2.1.0.0:
 - Měření vozidla pro nastavení předních a zadních spouštěčů při připojování nebo odpojování nářadí
 - Možnost ručního ovládání automatického systému
 - Místní uložení a obnovení konfigurace pro příslušný typ implementace
+- Správa souvratí dostupná ve vozidlech mise
 
 ]]>
 		</cz>
@@ -235,6 +239,7 @@ V2.1.0.0:
 - Misura del veicolo per regolare i grilletti anteriori e posteriori quando si attacca o si stacca un attrezzo
 - Possibile l'override manuale del sistema automatico
 - Memorizzazione locale e ripristino della configurazione per il rispettivo tipo di attrezzo
+- Gestione dei promontori disponibili nei veicoli di missione
 
 ]]>
 		</it>
