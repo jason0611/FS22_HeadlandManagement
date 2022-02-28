@@ -26,6 +26,7 @@ Included functions:
 - Headland automatic: Automatic switchover to field mode after 180° turn has been completed or after reaching the set headland width
 - Implement measurement for more precise implement lifting 
 - The headland management settings are now saved and restored local for each implement type automatically
+- Headland management configured into mission vehicles
 - Headland Management now got a mainswitch: It can be turned on and off by key to avoid unplanned triggering e.g. while on the road
 - Further on there are some more keys, that can be set if wanted, to temporarily disable and re-enable headland automatic. This can be helpful on field edges.  
   These keys are not preassigned and can be assigned in the keyboard settings.
@@ -46,7 +47,6 @@ Ideas for subsequent versions (without guarantee):
 - Support of Enhanced Vehicle Mod
 - Suppression of automatic unloading of bales on the headland
 - VCA turn: Switching right/left by hotkey 
-- Headland management configured for mission vehicles
 
 ===
 
@@ -73,6 +73,7 @@ Enthaltene Funktionen:
 - Vorgewende-Automatik: Der Auslöser kann wahlweise das vordere oder hintere Anbaugerät sein. Die Vorgewende-Breite ist dabei frei wählbar.
 - Vorgewende-Automatik: Automatisches Umschalten in den Feldmodus nach durchgeführter 180°-Wende oder nach Erreichen der eingestellten Vorgewende-Breite
 - Die Einstellungen des Vorgewende Managments werden nun je Gerätetyp automatisch lokal gespeichert und wiederhergestellt
+- Vorgewende Management ist bei Missions-Fahrzeugen konfiguriert
 - Das Vorgewendemanagement hat jetzt einen Hauptschalter: Es kann per Taste ein- und ausgeschaltet werden, um ein ungeplantes Auslösen z.B. auf der Straße zu vermeiden.
 - Weiterhin gibt es einige weitere Tasten, die auf Wunsch gesetzt werden können, um die Vorgewendeautomatik vorübergehend zu deaktivieren und wieder zu aktivieren. 
   Dies kann an Feldrändern hilfreich sein. Diese Tasten sind nicht vorbelegt und können in den Tastatureinstellungen frei zugewiesen werden.
@@ -94,4 +95,3 @@ Ideen für Folgeversionen (ohne Gewähr):
 - Unterstützung des Enhanced Vehicle Mod
 - Unterdrückung des automatischen Entladens von Ballen im Vorgewende
 - VCA-Wende: Umschaltung Rechts/Links-Wechsel per Hotkey 
-- Vorgewende Management bei Missions-Fahrzeugen konfiguriert
