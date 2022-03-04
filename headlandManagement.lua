@@ -1057,7 +1057,7 @@ function HeadlandManagement:onUpdate(dt)
 		if bearing > 225 and bearing < 337.5 then override = true end
 		dbgrender("bearing: "..tostring(bearing), 16, 3)
 		distance = distance / math.cos(bearing * (2 * math.pi / 360))
-		if distance < 0 then distance = distance + 2 end -- correction to smooth field edge
+		if distance < 0 then distance = distance + 3 end -- correction value to smoothen field edge
 	end
 	
 	dbgrender("distance: "..tostring(distance), 17, 3)
