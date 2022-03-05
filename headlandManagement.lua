@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.0 RC3
+-- Version 2.1.0.0 RC4
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -1057,6 +1057,7 @@ function HeadlandManagement:onUpdate(dt)
 		if bearing > 225 and bearing < 337.5 then override = true end
 		dbgrender("bearing: "..tostring(bearing), 16, 3)
 		distance = distance / math.cos(bearing * (2 * math.pi / 360))
+		if distance < 0 then distance = distance + 3 end -- correction value to smoothen field edge
 	end
 	
 	dbgrender("distance: "..tostring(distance), 17, 3)
