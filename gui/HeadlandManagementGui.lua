@@ -475,9 +475,9 @@ function HeadlandManagementGui:onClickOk()
 	self.spec.useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.spec.useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
 	if useModSpeedControl then
-		turnSpeed = self.speedControlTurnSpeedSetting2:getState()
+		self.spec.turnSpeed = self.speedControlTurnSpeedSetting2:getState()
 	else 
-		turnSpeed = self.speedControlTurnSpeedSetting1:getState()
+		self.spec.turnSpeed = self.speedControlTurnSpeedSetting1:getState()
 	end
 	-- raise
 	local raiseState = self.raiseSetting:getState()
