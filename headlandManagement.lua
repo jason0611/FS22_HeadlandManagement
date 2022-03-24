@@ -910,8 +910,9 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 		-- try to load headland management configuration for added implement
 		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
+		local isMAVehicle = isControlledPlayer and g_currentMission.interactiveVehicleInRange ~= nil and self == g_currentMission.interactiveVehicleInRange
 		local implementType = isConfigImplement(implement)
-		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
+		if (isControlledVehicle or isMAVehicle) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
 			local loaded
 			spec, loaded = loadConfigWithImplement(spec, implementType)
 			dbgprint("onPostAttachImplement : configuration loaded for implement type "..tostring(implementType), 2)
@@ -937,8 +938,9 @@ function HeadlandManagement:onPreDetachImplement(implement)
 		-- save headland management configuration for implement to be removed 
 		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
+		local isMAVehicle = isControlledPlayer and g_currentMission.interactiveVehicleInRange ~= nil and self == g_currentMission.interactiveVehicleInRange
 		local implementType = isConfigImplement(implement.object)
-		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
+		if (isControlledVehicle or isMAVehicle) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
 			local saved = saveConfigWithImplement(spec, implementType)
 			dbgprint("onPreDetachImplement : configuration saved for implement type "..tostring(implementType), 2)
 			if saved then
