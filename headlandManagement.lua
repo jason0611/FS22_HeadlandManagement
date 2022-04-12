@@ -1466,7 +1466,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 			end
 		else
-			spec.turnSpeed = math.floor(self:getCruiseControlSpeed())
+			spec.turnSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.normSpeed, spec.normSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.normSpeed

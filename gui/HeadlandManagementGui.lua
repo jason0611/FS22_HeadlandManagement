@@ -147,7 +147,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		speedTable[n] = tostring(n)
 	end
 	self.speedControlTurnSpeedSetting1:setTexts(speedTable)
-	self.speedControlTurnSpeedSetting1:setState(not self.spec.useModSpeedControl and self.spec.turnSpeed or 5)
+	self.speedControlTurnSpeedSetting1:setState(not self.spec.useModSpeedControl and math.floor(self.spec.turnSpeed) or 5)
 	local disableSpeedcontrolMod
 	if not self.spec.modSpeedControlFound then
 		disableSpeedcontrolMod = true
