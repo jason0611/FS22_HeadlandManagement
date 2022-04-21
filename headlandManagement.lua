@@ -1303,8 +1303,8 @@ function HeadlandManagement:onDraw(dt)
 		local h = w * g_screenAspectRatio
 		local guiIcon = HeadlandManagement.guiIconOff
 		
-		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
-		local headlandAutomatic	= not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
+		local headlandAutomaticGS = not spec.autoOverride and (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
+		local headlandAutomatic	  = not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride
 				
 		-- field mode
