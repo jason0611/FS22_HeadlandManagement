@@ -186,7 +186,7 @@ function HeadlandManagement:onLoad(savegame)
 	HeadlandManagement.isDedi = g_server ~= nil and g_currentMission.connectedToDedicatedServer
 	
 	-- Make Specialization easier accessible
-	self.spec_HeadlandManagement = self[HeadlandManagement.MOD_NAME..".HeadlandManagement"]
+	self.spec_HeadlandManagement = self["spec_"..HeadlandManagement.MOD_NAME..".HeadlandManagement"]
 	
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
