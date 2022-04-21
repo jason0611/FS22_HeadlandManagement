@@ -423,7 +423,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
 		local xmlFile = savegame.xmlFile
-		local key = savegame.key .. HeadlandManagement.MOD_NAME..".HeadlandManagement"
+		local key = savegame.key .."."..HeadlandManagement.MOD_NAME..".HeadlandManagement"
 		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
 		if spec.exists then
 			spec.isOn = xmlFile:getValue(key.."#isOn", spec.isOn)
