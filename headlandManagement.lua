@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.1
+-- Version 2.1.0.2
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -22,7 +22,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -184,6 +184,9 @@ function HeadlandManagement:onLoad(savegame)
 	dbgprint("onLoad", 2)
 
 	HeadlandManagement.isDedi = g_server ~= nil and g_currentMission.connectedToDedicatedServer
+	
+	-- Make Specialization easier accessible
+	self.spec_HeadlandManagement = self["spec_"..HeadlandManagement.MOD_NAME..".HeadlandManagement"]
 	
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
@@ -1300,8 +1303,8 @@ function HeadlandManagement:onDraw(dt)
 		local h = w * g_screenAspectRatio
 		local guiIcon = HeadlandManagement.guiIconOff
 		
-		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
-		local headlandAutomatic	= not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
+		local headlandAutomaticGS = not spec.autoOverride and (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
+		local headlandAutomatic	  = not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride
 				
 		-- field mode
