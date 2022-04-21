@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="64">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.1.0.1</version>
+	<version>2.1.0.2</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -61,6 +61,9 @@ V2.1.0.1:
 - Local save and restore in connection with Manual Attach now works for the respective player only and not globally
 - Configuration of cruise control setting in headland-mode corrected
 
+V2.1.0.1:
+- Fix for update 1.4
+
 ]]>
 		</en>	
 		<de>
@@ -111,6 +114,10 @@ V2.1.0.0:
 V2.1.0.1:
 - Lokale Speicherung und Wiederherstellung in Verbindung mit Manual Attach jetzt nur bei dem jeweiligen Spielern und nicht global
 - Konfiguration der Tempomateinstellung im Vorgewende korrigiert
+
+V2.1.0.2:
+- Fix für Update 1.4
+
 ]]>
 		</de>
 		<fr>
@@ -160,6 +167,9 @@ V2.1.0.0 :
 V2.1.0.1 :
 - Sauvegarde et restauration locales en relation avec Manual Attach maintenant seulement pour les joueurs respectifs et pas globalement
 - Correction de la configuration du régulateur de vitesse en bout de champ
+
+V2.1.0.2 :
+- Correction pour la mise à jour 1.4
 
 ]]>
 		</fr>
@@ -211,6 +221,9 @@ V2.1.0.1:
 - Místní ukládání a obnovení v souvislosti s ručním připojením nyní pouze pro příslušný přehrávač, nikoli globálně.
 - Konfigurace nastavení tempomatu v korigované poloze na souvrati
 
+V2.1.0.2:
+- Oprava pro aktualizaci 1.4
+
 ]]>
 		</cz>
 		<it>
@@ -260,6 +273,9 @@ V2.1.0.0:
 V2.1.0.1:
 - Salvataggio e ripristino locale in connessione con Attacco manuale ora solo per il rispettivo giocatore e non globalmente.
 - Configurazione dell'impostazione del controllo di crociera in capezzagna corretta
+
+V2.1.0.2:
+- Fix per l'aggiornamento 1.4
 
 ]]>
 		</it>
