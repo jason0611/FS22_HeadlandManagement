@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.1
+-- Version 2.1.0.2
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -184,6 +184,9 @@ function HeadlandManagement:onLoad(savegame)
 	dbgprint("onLoad", 2)
 
 	HeadlandManagement.isDedi = g_server ~= nil and g_currentMission.connectedToDedicatedServer
+	
+	-- Make Specialization easier accessible
+	self.spec_HeadlandManagement = self[HeadlandManagement.MOD_NAME..".HeadlandManagement"]
 	
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
