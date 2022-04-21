@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="64">
+<modDesc descVersion="65">
 	<author>Jason06 / Glowins Modschmiede</author>
 	<version>2.1.0.2</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
@@ -62,7 +62,7 @@ V2.1.0.1:
 - Configuration of cruise control setting in headland-mode corrected
 
 V2.1.0.1:
-- Fix for update 1.4
+- Fix for update 1.4 to prevent lua callstacks
 
 ]]>
 		</en>	
@@ -116,7 +116,7 @@ V2.1.0.1:
 - Konfiguration der Tempomateinstellung im Vorgewende korrigiert
 
 V2.1.0.2:
-- Fix für Update 1.4
+- Fix für Update 1.4/1.4.1 um  lua callstacks zu verhindern
 
 ]]>
 		</de>
@@ -169,7 +169,7 @@ V2.1.0.1 :
 - Correction de la configuration du régulateur de vitesse en bout de champ
 
 V2.1.0.2 :
-- Correction pour la mise à jour 1.4
+- Correction pour la mise à jour 1.4/1.4.1 pour éviter les callstacks lua
 
 ]]>
 		</fr>
@@ -222,7 +222,7 @@ V2.1.0.1:
 - Konfigurace nastavení tempomatu v korigované poloze na souvrati
 
 V2.1.0.2:
-- Oprava pro aktualizaci 1.4
+- Oprava pro aktualizaci 1.4/1.4.1 pro zabránění vzniku callstacků lua
 
 ]]>
 		</cz>
@@ -275,7 +275,7 @@ V2.1.0.1:
 - Configurazione dell'impostazione del controllo di crociera in capezzagna corretta
 
 V2.1.0.2:
-- Fix per l'aggiornamento 1.4
+- Correzione per l'aggiornamento 1.4/1.4.1 per prevenire i calltacks lua
 
 ]]>
 		</it>
