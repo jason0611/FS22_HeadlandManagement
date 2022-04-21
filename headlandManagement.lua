@@ -124,44 +124,46 @@ function HeadlandManagement.initSpecialization()
     local schemaSavegame = Vehicle.xmlSchemaSavegame
 	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process", 1)
 	
-    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
-    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#isOn", "HLM is turned on", false)
+	local schemaKey = HeadlandManagement.MOD_NAME..".HeadlandManagement"
+	
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#configured", "HLM configured", false)
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#isOn", "HLM is turned on", false)
     
-    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
-    schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#beepVol", "Audible alert volume", 5)
+    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#beep", "Audible alert", true)
+    schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?)."..schemaKey.."#beepVol", "Audible alert volume", 5)
 	
-	schemaSavegame:register(XMLValueType.FLOAT,"vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useSpeedControl", "Change speed in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useModSpeedControl", "use mod SpeedControl", false)
+	schemaSavegame:register(XMLValueType.FLOAT,"vehicles.vehicle(?)."..schemaKey.."#turnSpeed", "Speed in headlands", 5)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useSpeedControl", "Change speed in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useModSpeedControl", "use mod SpeedControl", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useCrabSteering", "Change crab steering in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useCrabSteering", "Change crab steering in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementF", "Raise front attachements in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementB", "Raise back attahements in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#waitOnTrigger", "Raise back attachements when reaching position of front implement's raise", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useRaiseImplementF", "Raise front attachements in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useRaiseImplementB", "Raise back attahements in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#waitOnTrigger", "Raise back attachements when reaching position of front implement's raise", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOF", "Stop front PTO in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOB", "Stop back PTO in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useStopPTOF", "Stop front PTO in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useStopPTOB", "Stop back PTO in headlands", true)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#turnPlow", "Turn plow in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#centerPlow", "Center plow first in headlands", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#turnPlow", "Turn plow in headlands", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#centerPlow", "Center plow first in headlands", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchRidge", "Change ridgemarkers", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#switchRidge", "Change ridgemarkers", true)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
-	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#gpsSetting", "GPS-Mode", 1)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#vcaDirSwitch", "Switch vca-turn", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#autoResume", "Auto resume field mode after turn", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useGPS", "Change GPS", true)
+	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?)."..schemaKey.."#gpsSetting", "GPS-Mode", 1)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#vcaDirSwitch", "Switch vca-turn", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#autoResume", "Auto resume field mode after turn", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useGuidanceSteeringTrigger", "Use headland automatic", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useGuidanceSteeringOffset", "Use back trigger", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerF", "Use HLM trigger with front node", false)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerB", "Use HLM trigger with back node", false)
-	schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?).HeadlandManagement#headlandDistance", "Distance to headland", 9)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useHLMTriggerF", "Use HLM trigger with front node", false)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useHLMTriggerB", "Use HLM trigger with back node", false)
+	schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..schemaKey.."#headlandDistance", "Distance to headland", 9)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
+	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..schemaKey.."#useDiffLock", "Unlock diff locks in headland", true)
 	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
 end
 
@@ -421,7 +423,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
 		local xmlFile = savegame.xmlFile
-		local key = savegame.key .. ".HeadlandManagement"
+		local key = savegame.key .. HeadlandManagement.MOD_NAME..".HeadlandManagement"
 		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
 		if spec.exists then
 			spec.isOn = xmlFile:getValue(key.."#isOn", spec.isOn)
