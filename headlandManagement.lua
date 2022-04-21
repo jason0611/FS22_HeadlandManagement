@@ -127,12 +127,12 @@ function HeadlandManagement.initSpecialization()
 	local schemaKey = HeadlandManagement.MOD_NAME..".HeadlandManagement"
 	
 	-- register new and old schema for backwarts compatibility reasons
-	for _, key in pairs({{schemaKey},{"HeadlandManagement"}}) do
+	for _, key in pairs({schemaKey,"HeadlandManagement"}) do
  		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#configured", "HLM configured", false)
-	    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#isOn", "HLM is turned on", false)
+	    	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#isOn", "HLM is turned on", false)
     
-	    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#beep", "Audible alert", true)
-	    schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?)."..key.."#beepVol", "Audible alert volume", 5)
+	    	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#beep", "Audible alert", true)
+	    	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?)."..key.."#beepVol", "Audible alert volume", 5)
 	
 		schemaSavegame:register(XMLValueType.FLOAT,"vehicles.vehicle(?)."..key.."#turnSpeed", "Speed in headlands", 5)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useSpeedControl", "Change speed in headlands", true)
