@@ -58,11 +58,11 @@ V2.1.0.0:
 - Headland management available in mission vehicles
 
 V2.1.0.1:
-- Local save and restore in connection with Manual Attach now works for the respective player only and not globally
+- Local save and restore in connection with Manual Attach now affects the respective player only and not works globally
 - Configuration of cruise control setting in headland-mode corrected
 
-V2.1.0.1:
-- Fix for update 1.4 to prevent lua callstacks
+V2.1.0.2:
+- Fix for update 1.4/1.4.1 to prevent lua callstacks
 
 ]]>
 		</en>	
@@ -116,7 +116,7 @@ V2.1.0.1:
 - Konfiguration der Tempomateinstellung im Vorgewende korrigiert
 
 V2.1.0.2:
-- Fix für Update 1.4/1.4.1 um  lua callstacks zu verhindern
+- Fix für Update 1.4/1.4.1 um lua callstacks zu verhindern
 
 ]]>
 		</de>
