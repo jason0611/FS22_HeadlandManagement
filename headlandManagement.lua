@@ -250,7 +250,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCrabSteeringTwoStep = true -- change crab steering to AI driver position in headland mode
 	
 	spec.useGPS = true				-- control gps in headland mode
-	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
+	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right, 6: ev-mode dir, 7: ev-mode track
 	spec.wasGPSAutomatic = false	-- was headland automatic active on field?
 	
 	spec.modGuidanceSteeringFound = false
@@ -1852,6 +1852,14 @@ function HeadlandManagement.stopGPS(self, enable)
 			dbgprint("stopGPS : VCA is active")
 		end
 	end
+	
+	if spec.gpsSetting == 1 and spec.modEVFound then
+		local evStatus = self.vData.is[5]
+		if evStatus then
+			spec.gpsSetting = 6
+		end
+	end
+	
 	dbgprint("stopGPS : gpsSetting: "..tostring(spec.gpsSetting))
 
 -- Part 2: Guidance Steering	
@@ -1885,7 +1893,7 @@ function HeadlandManagement.stopGPS(self, enable)
 	
 -- Part 3: Vehicle Control Addon (VCA)
 	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
-	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
+	if spec.modVCAFound and spec.gpsSetting ~= 2 and spec.gpsSetting < 6 and enable then
 		spec.vcaStatus = self:vcaGetState("snapIsOn")
 		if spec.vcaStatus then 
 			if spec.gpsSetting == 1 or spec.gpsSetting == 3 then
@@ -1924,6 +1932,29 @@ function HeadlandManagement.stopGPS(self, enable)
 		else
 			spec.gpsSetting = 4
 		end
+	end
+	
+-- Part 4: Enhanced Vehicle
+	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
+	if spec.modEVFound and (spec.gpsSetting == 1 or spec.gpsSetting == 6) and enable then
+		spec.evStatus = self.vData.is[5]
+		spec.evTrack = self.vData.is[6]
+		if spec.evStatus then
+			dbgprint("stopGPS : EV-GPS off")
+			spec.gpsSetting = 6
+			if spec.evTrack then
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_REVERSE", 1, nil, nil, nil)
+			else
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
+			end
+		end
+	end
+	if spec.modEVFound and (spec.gpsSetting == 1 or spec.gpsSetting == 6) and not enable then
+		if self.vData.is[5] ~= spec.evStatus then
+			dbgprint("stopGPS : EV-GPS on")
+			spec.gpsSetting = 1
+			FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
+		end	
 	end
 end
 
