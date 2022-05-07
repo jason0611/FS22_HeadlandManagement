@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.1
+-- Version 2.9.1.0
 --
 
 HeadlandManagementGui = {}
@@ -365,8 +365,8 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.diffControlOnOffSetting:setState(self.spec.useDiffLock and 1 or 2)
-	self.diffControlOnOffSetting:setDisabled(not self.spec.modVCAFound)
-	self.diffControlOnOffSetting:setVisible(self.spec.modVCAFound)
+	self.diffControlOnOffSetting:setDisabled(not self.spec.modVCAFound and not self.spec.modEVFound)
+	self.diffControlOnOffSetting:setVisible(self.spec.modVCAFound or self.spec.modEVFound)
 	
 	-- CrabSteering control
 	self.crabSteeringTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_crabSteering"))
@@ -474,7 +474,7 @@ function HeadlandManagementGui:onClickOk()
 	-- speed control
 	self.spec.useSpeedControl = self.speedControlOnOffSetting:getState() == 1
 	self.spec.useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
-	if useModSpeedControl then
+	if self.spec.useModSpeedControl then
 		self.spec.turnSpeed = self.speedControlTurnSpeedSetting2:getState()
 	else 
 		self.spec.turnSpeed = self.speedControlTurnSpeedSetting1:getState()

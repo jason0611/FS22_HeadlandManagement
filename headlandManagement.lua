@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.2
+-- Version 2.9.1.0
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -22,7 +22,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -68,7 +68,8 @@ HeadlandManagement.filterList[1] = "E-DriveLaner"
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
 HeadlandManagement.kbGS = false
-HeadlandManagement.kbSC = true
+HeadlandManagement.kbSC = false
+HeadlandManagement.kbEV = false
 
 -- set configuration 
 
@@ -258,11 +259,14 @@ function HeadlandManagement:onLoad(savegame)
 	spec.guidanceSteeringOffset = 0
 	spec.setServerHeadlandActDistance = -1
 	spec.GSStatus = false
+	
 	spec.modVCAFound = false
 	spec.vcaStatus = false
 	spec.vcaDirSwitch = true
 	spec.autoResume = false 
 	spec.autoResumeOnTrigger = false
+	
+	spec.modEVFound = false
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -408,7 +412,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound), 1)
 	
 	-- Check if Mod SpeedControl exists
-	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
+	if FS22_SpeedControl ~= nil and FS22_SpeedControl.SpeedControl ~= nil and FS22_SpeedControl.SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
 		spec.modSpeedControlFound = true 
 		spec.useModSpeedControl = true
 		spec.turnSpeed = 1 --SpeedControl Mode 1
@@ -420,6 +424,11 @@ function HeadlandManagement:onPostLoad(savegame)
 
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
+	
+	-- Check if Mod EV exists
+	spec.modEVFound = FS22_EnhancedVehicle ~= nil and FS22_EnhancedVehicle.FS22_EnhancedVehicle ~= nil and FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall ~= nil and not HeadlandManagement.kbEV
+	
+	dbgprint("modEVFound is "..tostring(spec.modEVFound).."("..tostring(modEVFound).."/"..tostring(modEVEnabled)..")")
 
 	-- HLM configured?
 	spec.exists = self.configurations["HeadlandManagement"] ~= nil and self.configurations["HeadlandManagement"] > 1
@@ -1163,7 +1172,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 		spec.action[HeadlandManagement.WAITTIME1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
-		spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
+		spec.action[HeadlandManagement.DIFFLOCK] = (spec.modVCAFound or spec.modEVFound) and spec.useDiffLock
 		spec.action[HeadlandManagement.RAISEIMPLEMENT1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.WAITONTRIGGER] = spec.waitOnTrigger
 		spec.action[HeadlandManagement.RAISEIMPLEMENT2] = spec.useRaiseImplementF or spec.useRaiseImplementB
@@ -1176,10 +1185,11 @@ function HeadlandManagement:onUpdate(dt)
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep), 2)
 			dbgprint("onUpdate : waitTime: "..tostring(spec.waitTime), 4)
+			local useEV = spec.modEVFound
 			-- Activation
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, true); end
 			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, true, spec.useCrabSteeringTwoStep); end
-			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, true); end
+			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, true, useEV); end
 			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
 			if spec.actStep == HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, spec.useHLMTriggerB); end
 			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
@@ -1195,7 +1205,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
 			if spec.actStep == -HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, false); end
 			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
-			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false); end
+			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false, useEV); end
 			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, false, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == -HeadlandManagement.WAITTIME1 and spec.action[HeadlandManagement.WAITTIME1] then HeadlandManagement.wait(self, spec.waitTime, dt); end
 			if spec.actStep == -HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, false); end		
@@ -1456,12 +1466,14 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		spec.cruiseControlState = self:getCruiseControlState()
 		dbgprint("reduceSpeed : cruiseControlState: "..tostring(spec.cruiseControlState))
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			-- Use Mod Speedontrol
 			spec.normSpeed = self.speedControl.currentKey or 2
 			if spec.normSpeed ~= spec.turnSpeed then
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
-				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
+				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
 			end
 		else
+			-- Use Vanilla Speedcontrol
 			spec.normSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
@@ -1476,11 +1488,14 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		end
 	else
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			
 			if self.speedControl.currentKey ~= spec.normSpeed then
+			-- Use Mod Speedontrol
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
-				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
+				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 			end
 		else
+			-- Use Vanilla Speedcontrol
 			spec.turnSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.normSpeed, spec.normSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
@@ -1912,22 +1927,53 @@ function HeadlandManagement.stopGPS(self, enable)
 	end
 end
 
-function HeadlandManagement.disableDiffLock(self, disable)
+function HeadlandManagement.disableDiffLock(self, disable, EV)
 	local spec = self.spec_HeadlandManagement
-	if disable then
-		spec.diffStateF = self:vcaGetState("diffLockFront") --self.vcaDiffLockFront
-		spec.diffStateB = self:vcaGetState("diffLockBack") --self.vcaDiffLockBack
-		if spec.diffStateF then 
-			dbgprint("disableDiffLock : DiffLockF off")
-			self:vcaSetState("diffLockFront", false)
-		end
-		if spec.diffStateB then 
-			dbgprint("disableDiffLock : DiffLockB off")
-			self:vcaSetState("diffLockBack", false)
+	local useEV = EV or false
+	if useEV and (self.vData == nil or self.vData.want == nil) then
+		dbgprint("DisableDiffLock: EV not usable")
+		return
+	end
+	if useEV then
+		-- EnhancedVehicle diff-control
+		if disable then
+			spec.diffStateF = self.vData.want[1] or false
+			spec.diffStateB = self.vData.want[2] or false
+			if spec.diffStateF then 
+				dbgprint("disableDiffLock : EV DiffLockF off")
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_FD", 1, nil, nil, nil)
+			end
+			if spec.diffStateB then 
+				dbgprint("disableDiffLock : EV DiffLockB off")
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_BD", 1, nil, nil, nil)
+			end
+		else
+			if spec.diffStateF then 
+				dbgprint("disableDiffLock : EV DiffLockF on")
+				if not self.vData.is[1] then FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_FD", 1, nil, nil, nil) end
+			end
+			if spec.diffStateB then 
+				dbgprint("disableDiffLock : EV DiffLockB on")
+				if not self.vData.is[2] then FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_RD", 1, nil, nil, nil) end
+			end
 		end
 	else
-		dbgprint("disableDiffLock : DiffLock reset")
-		self:vcaSetState("diffLockFront", spec.diffStateF)
-		self:vcaSetState("diffLockBack", spec.diffStateB)
+		-- VCA diff-control
+		if disable then
+			spec.diffStateF = self:vcaGetState("diffLockFront") --self.vcaDiffLockFront
+			spec.diffStateB = self:vcaGetState("diffLockBack") --self.vcaDiffLockBack
+			if spec.diffStateF then 
+				dbgprint("disableDiffLock : VCA DiffLockF off")
+				self:vcaSetState("diffLockFront", false)
+			end
+			if spec.diffStateB then 
+				dbgprint("disableDiffLock : VCA DiffLockB off")
+				self:vcaSetState("diffLockBack", false)
+			end
+		else
+			dbgprint("disableDiffLock : VCA DiffLock reset")
+			self:vcaSetState("diffLockFront", spec.diffStateF)
+			self:vcaSetState("diffLockBack", spec.diffStateB)
+		end
 	end
 end
