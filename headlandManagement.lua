@@ -250,7 +250,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCrabSteeringTwoStep = true -- change crab steering to AI driver position in headland mode
 	
 	spec.useGPS = true				-- control gps in headland mode
-	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right, 6: ev-mode dir, 7: ev-mode track
+	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right, 6: ev-mode
 	spec.wasGPSAutomatic = false	-- was headland automatic active on field?
 	
 	spec.modGuidanceSteeringFound = false

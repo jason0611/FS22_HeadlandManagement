@@ -64,6 +64,7 @@
 		<text name="hlmgui_gps_vca" text="nur VCA"/>
 		<text name="hlmgui_gps_vcaL" text="nur VCA: Automatische Wende links"/>
 		<text name="hlmgui_gps_vcaR" text="nur VCA: Automatische Wende rechts"/>
+		<text name="hlmgui_gps_ev" text="nur Enhanced Vehicle"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Vorgewendeautomatik"/>
 		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Aktuelle Gespannmaße: Gesamtlänge: %2.2f m, Gesamtbreite: %2.2f m, Wenderadius: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Auslöser für Automatik"/>
