@@ -40,6 +40,13 @@ If VCA Mod (FS22_VehicleControlAddon) is present:
 If Guidance Steering (FS22_guidanceSteering) is present: 
 - Deactivate and reactivate GPS guidance
 
+If SpeedControl (FS22_SpeedControl is present:
+- Speed adjustment also possible via change of cruise control level
+
+If EnhancedVehicle (FS22_EnhancedVehicle) is present:
+- Deactivate and reactivate GPS guidance
+- Release and reset active differential locks
+
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
 ChangeLog:
@@ -63,6 +70,10 @@ V2.1.0.1:
 
 V2.1.0.2:
 - Fix for update 1.4/1.4.1 to prevent lua callstacks
+
+V2.1.1.0:
+- Support for Mod SpeedControl added
+- Support for Mod EnhancedVehicle added
 
 ]]>
 		</en>	
@@ -94,6 +105,13 @@ Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 Bei vorhandenem Guidance Steering (FS22_guidanceSteering):
 - GPS Spurführung deaktivieren und reaktivieren
 
+Bei vorhandenem SpeedControl (FS22_SpeedControl):
+- Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
+
+Bei vorhandenem EnhancedVehicle (FS22_EnhancedVehicle):
+- GPS Spurführung deaktivieren und reaktivieren
+- Aktive Differentialsperren lösen und wieder setzen
+
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
 
 ChangeLog:
@@ -118,9 +136,9 @@ V2.1.0.1:
 V2.1.0.2:
 - Fix für Update 1.4/1.4.1 um lua callstacks zu verhindern
 
-V2.1.1.0 BETA:
-- Unterstützung für EnhancedVehicle Mod
-- Unterstützung für SpeedControl Mod
+V2.1.1.0:
+- Unterstützung für EnhancedVehicle Mod hinzugefügt
+- Unterstützung für SpeedControl Mod hinzugefügt
 
 ]]>
 		</de>
