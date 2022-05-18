@@ -43,10 +43,12 @@ Additionally, if Guidance Steering is available:
 Additionally, if SpeedControl becomes available:
 - Speed adjustment also possible via change of cruise control level
 
+Additionally with existing EnhancedVehicle:
+- Deactivate and reactivate GPS guidance
+- Release and reset active differential locks
+
 Ideas for subsequent versions (without guarantee):
-- Support of Enhanced Vehicle Mod
 - Suppression of automatic unloading of bales on the headland
-- VCA turn: Switching right/left by hotkey 
 
 ===
 
@@ -91,7 +93,9 @@ Zusätzlich, wenn Guidance Steering verfügbar ist:
 Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
+Zusätzlich bei vorhandenem EnhancedVehicle:
+- GPS Spurführung deaktivieren und reaktivieren
+- Aktive Differentialsperren lösen und wieder setzen
+
 Ideen für Folgeversionen (ohne Gewähr):
-- Unterstützung des Enhanced Vehicle Mod
 - Unterdrückung des automatischen Entladens von Ballen im Vorgewende
-- VCA-Wende: Umschaltung Rechts/Links-Wechsel per Hotkey 
