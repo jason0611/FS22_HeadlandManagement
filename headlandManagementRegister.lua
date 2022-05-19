@@ -2,11 +2,13 @@
 -- Register Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 2.1.0.0 RC4
+-- Version 2.b.1.1
 --
 
+local specName = g_currentModName..".HeadlandManagement"
+
 if g_specializationManager:getSpecializationByName("HeadlandManagement") == nil then
-  	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", true, nil)
+  	g_specializationManager:addSpecialization("HeadlandManagement", "HeadlandManagement", g_currentModDirectory.."headlandManagement.lua", nil)
   	dbgprint("Specialization 'HeadlandManagement' added", 2)
 end
 
@@ -19,8 +21,8 @@ for typeName, typeEntry in pairs(g_vehicleTypeManager.types) do
     	and not SpecializationUtil.hasSpecialization(Locomotive, typeEntry.specializations)
     
     then
-     	g_vehicleTypeManager:addSpecialization(typeName, "HeadlandManagement")
-		dbgprint("registered for "..typeName)
+     	g_vehicleTypeManager:addSpecialization(typeName, specName)
+		dbgprint(specName.." registered for "..typeName)
     end
 end
 

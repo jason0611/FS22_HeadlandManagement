@@ -79,6 +79,7 @@
 		<text name="hlmgui_gps_vca" text="pouze VCA"/>
 		<text name="hlmgui_gps_vcaL" text="poue VCA: Aut. otočení vlevo"/>
 		<text name="hlmgui_gps_vcaR" text="pouze VCA: Aut. otočení vpravo"/>
+		<text name="hlmgui_gps_ev" text="pouze Enhanced Vehicle"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Automatické souvratě"/>
 		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Aktuální rozměry vozu: Celková délka: %2.2f m, Celková šířka: %2.2f m, Poloměr otáčení: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Bod pro automatické spuštění"/>

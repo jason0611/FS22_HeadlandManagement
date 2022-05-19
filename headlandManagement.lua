@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.0.0 RC4
+-- Version 2.b.1.1
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -68,7 +68,8 @@ HeadlandManagement.filterList[1] = "E-DriveLaner"
 -- Killbits for not yet published mods
 HeadlandManagement.kbVCA = false
 HeadlandManagement.kbGS = false
-HeadlandManagement.kbSC = true
+HeadlandManagement.kbSC = false
+HeadlandManagement.kbEV = false
 
 -- set configuration 
 
@@ -124,45 +125,51 @@ function HeadlandManagement.initSpecialization()
     local schemaSavegame = Vehicle.xmlSchemaSavegame
 	dbgprint("initSpecialization: starting xmlSchemaSavegame registration process", 1)
 	
-    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#configured", "HLM configured", false)
-    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#isOn", "HLM is turned on", false)
+	local schemaKey = HeadlandManagement.MOD_NAME..".HeadlandManagement"
+	
+	-- register new and old schema for backwarts compatibility reasons
+	for _, key in pairs({schemaKey,"HeadlandManagement"}) do
+ 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#configured", "HLM configured", false)
+	    	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#isOn", "HLM is turned on", false)
     
-    schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#beep", "Audible alert", true)
-    schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#beepVol", "Audible alert volume", 5)
+	    	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#beep", "Audible alert", true)
+	    	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?)."..key.."#beepVol", "Audible alert volume", 5)
 	
-	schemaSavegame:register(XMLValueType.FLOAT,"vehicles.vehicle(?).HeadlandManagement#turnSpeed", "Speed in headlands", 5)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useSpeedControl", "Change speed in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useModSpeedControl", "use mod SpeedControl", false)
+		schemaSavegame:register(XMLValueType.FLOAT,"vehicles.vehicle(?)."..key.."#turnSpeed", "Speed in headlands", 5)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useSpeedControl", "Change speed in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useModSpeedControl", "use mod SpeedControl", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useCrabSteering", "Change crab steering in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useCrabSteering", "Change crab steering in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useCrabSteeringTwoStep", "Changecrab steering over turn config", true)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementF", "Raise front attachements in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useRaiseImplementB", "Raise back attahements in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#waitOnTrigger", "Raise back attachements when reaching position of front implement's raise", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useRaiseImplementF", "Raise front attachements in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useRaiseImplementB", "Raise back attahements in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#waitOnTrigger", "Raise back attachements when reaching position of front implement's raise", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOF", "Stop front PTO in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useStopPTOB", "Stop back PTO in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useStopPTOF", "Stop front PTO in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useStopPTOB", "Stop back PTO in headlands", true)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#turnPlow", "Turn plow in headlands", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#centerPlow", "Center plow first in headlands", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#turnPlow", "Turn plow in headlands", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#centerPlow", "Center plow first in headlands", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#switchRidge", "Change ridgemarkers", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#switchRidge", "Change ridgemarkers", true)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGPS", "Change GPS", true)
-	schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?).HeadlandManagement#gpsSetting", "GPS-Mode", 1)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#vcaDirSwitch", "Switch vca-turn", true)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#autoResume", "Auto resume field mode after turn", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useGPS", "Change GPS", true)
+		schemaSavegame:register(XMLValueType.INT,  "vehicles.vehicle(?)."..key.."#gpsSetting", "GPS-Mode", 1)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#vcaDirSwitch", "Switch vca-turn", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#autoResume", "Auto resume field mode after turn", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringTrigger", "Use headland automatic", false)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useGuidanceSteeringOffset", "Use back trigger", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useGuidanceSteeringTrigger", "Use headland automatic", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useGuidanceSteeringOffset", "Use back trigger", false)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerF", "Use HLM trigger with front node", false)
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useHLMTriggerB", "Use HLM trigger with back node", false)
-	schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?).HeadlandManagement#headlandDistance", "Distance to headland", 9)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useHLMTriggerF", "Use HLM trigger with front node", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useHLMTriggerB", "Use HLM trigger with back node", false)
+		schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..key.."#headlandDistance", "Distance to headland", 9)
 	
-	schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?).HeadlandManagement#useDiffLock", "Unlock diff locks in headland", true)
-	dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useDiffLock", "Unlock diff locks in headland", true)
+		dbgprint("initSpecialization: finished xmlSchemaSavegame registration process for schema "..key, 1)
+	end
+		dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
 end
 
 function HeadlandManagement.registerEventListeners(vehicleType)
@@ -184,6 +191,9 @@ function HeadlandManagement:onLoad(savegame)
 	dbgprint("onLoad", 2)
 
 	HeadlandManagement.isDedi = g_server ~= nil and g_currentMission.connectedToDedicatedServer
+	
+	-- Make Specialization easier accessible
+	self.spec_HeadlandManagement = self["spec_"..HeadlandManagement.MOD_NAME..".HeadlandManagement"]
 	
 	local spec = self.spec_HeadlandManagement
 	spec.dirtyFlag = self:getNextDirtyFlag()
@@ -240,7 +250,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useCrabSteeringTwoStep = true -- change crab steering to AI driver position in headland mode
 	
 	spec.useGPS = true				-- control gps in headland mode
-	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right
+	spec.gpsSetting = 1 			-- 1: auto-mode, 2: gs-mode, 3: vca-mode, 4: vca-turn-left, 5: vca-turn-right, 6: ev-mode
 	spec.wasGPSAutomatic = false	-- was headland automatic active on field?
 	
 	spec.modGuidanceSteeringFound = false
@@ -249,11 +259,14 @@ function HeadlandManagement:onLoad(savegame)
 	spec.guidanceSteeringOffset = 0
 	spec.setServerHeadlandActDistance = -1
 	spec.GSStatus = false
+	
 	spec.modVCAFound = false
 	spec.vcaStatus = false
 	spec.vcaDirSwitch = true
 	spec.autoResume = false 
 	spec.autoResumeOnTrigger = false
+	
+	spec.modEVFound = false
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -399,7 +412,7 @@ function HeadlandManagement:onPostLoad(savegame)
 	dbgprint("onPostLoad : CrabSteering exists: "..tostring(spec.crabSteeringFound), 1)
 	
 	-- Check if Mod SpeedControl exists
-	if SpeedControl ~= nil and SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
+	if FS22_SpeedControl ~= nil and FS22_SpeedControl.SpeedControl ~= nil and FS22_SpeedControl.SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
 		spec.modSpeedControlFound = true 
 		spec.useModSpeedControl = true
 		spec.turnSpeed = 1 --SpeedControl Mode 1
@@ -411,6 +424,11 @@ function HeadlandManagement:onPostLoad(savegame)
 
 	-- Check if Mod VCA exists
 	spec.modVCAFound = self.vcaSetState ~= nil and not HeadlandManagement.kbVCA
+	
+	-- Check if Mod EV exists
+	spec.modEVFound = FS22_EnhancedVehicle ~= nil and FS22_EnhancedVehicle.FS22_EnhancedVehicle ~= nil and FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall ~= nil and not HeadlandManagement.kbEV
+	
+	dbgprint("modEVFound is "..tostring(spec.modEVFound).."("..tostring(modEVFound).."/"..tostring(modEVEnabled)..")")
 
 	-- HLM configured?
 	spec.exists = self.configurations["HeadlandManagement"] ~= nil and self.configurations["HeadlandManagement"] > 1
@@ -418,8 +436,14 @@ function HeadlandManagement:onPostLoad(savegame)
 	if savegame ~= nil then	
 		dbgprint("onPostLoad : loading saved data", 2)
 		local xmlFile = savegame.xmlFile
-		local key = savegame.key .. ".HeadlandManagement"
+		local key = savegame.key .."."..HeadlandManagement.MOD_NAME..".HeadlandManagement"
+		local keyOld = savegame.key..".HeadlandManagement"
 		spec.exists = xmlFile:getValue(key.."#configured", spec.exists)
+		if not spec.exists then
+			-- Old savegame from version before 1.4.0.0? Load from old schema path!
+			spec.exists = xmlFile:getValue(keyOld.."#configured", spec.exists)
+			if spec.exists then key = keyOld end
+		end
 		if spec.exists then
 			spec.isOn = xmlFile:getValue(key.."#isOn", spec.isOn)
 			spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
@@ -447,9 +471,9 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.vcaDirSwitch = xmlFile:getValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
 			spec.autoResume = xmlFile:getValue(key.."#autoResume", spec.autoResume)	
 			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
-			dbgprint("onPostLoad : Loaded whole data set", 2)
+			dbgprint("onPostLoad : Loaded whole data set using key "..key, 1)
 		end
-		dbgprint("onPostLoad : Loaded data for "..self:getName())
+		dbgprint("onPostLoad : Loaded data for "..self:getName(), 1)
 	end
 	
 	-- enable HLM in mission vehicles
@@ -910,8 +934,9 @@ function HeadlandManagement:onPostAttachImplement(implement, jointDescIndex)
 		-- try to load headland management configuration for added implement
 		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
+		local isMAVehicle = isControlledPlayer and g_currentMission.interactiveVehicleInRange ~= nil and self == g_currentMission.interactiveVehicleInRange
 		local implementType = isConfigImplement(implement)
-		if (isControlledVehicle or isControlledPlayer) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
+		if (isControlledVehicle or isMAVehicle) and implement~= nil and implement.getFullName ~= nil and implementType ~= nil and g_currentMission.isMissionStarted then
 			local loaded
 			spec, loaded = loadConfigWithImplement(spec, implementType)
 			dbgprint("onPostAttachImplement : configuration loaded for implement type "..tostring(implementType), 2)
@@ -937,8 +962,9 @@ function HeadlandManagement:onPreDetachImplement(implement)
 		-- save headland management configuration for implement to be removed 
 		local isControlledVehicle = g_currentMission.controlledVehicle ~= nil and self == g_currentMission.controlledVehicle -- w/o manual attach
 		local isControlledPlayer = g_currentMission.player ~= nil and g_currentMission.player.isControlled -- with manual attach
+		local isMAVehicle = isControlledPlayer and g_currentMission.interactiveVehicleInRange ~= nil and self == g_currentMission.interactiveVehicleInRange
 		local implementType = isConfigImplement(implement.object)
-		if (isControlledVehicle or isControlledPlayer) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
+		if (isControlledVehicle or isMAVehicle) and implement ~= nil and implement.object ~= nil and implement.object.getFullName ~= nil and implementType ~= nil then
 			local saved = saveConfigWithImplement(spec, implementType)
 			dbgprint("onPreDetachImplement : configuration saved for implement type "..tostring(implementType), 2)
 			if saved then
@@ -1146,7 +1172,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.action[HeadlandManagement.REDUCESPEED] = spec.useSpeedControl
 		spec.action[HeadlandManagement.WAITTIME1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.CRABSTEERING] = spec.crabSteeringFound and spec.useCrabSteering
-		spec.action[HeadlandManagement.DIFFLOCK] = spec.modVCAFound and spec.useDiffLock
+		spec.action[HeadlandManagement.DIFFLOCK] = (spec.modVCAFound or spec.modEVFound) and spec.useDiffLock
 		spec.action[HeadlandManagement.RAISEIMPLEMENT1] = spec.useRaiseImplementF or spec.useRaiseImplementB
 		spec.action[HeadlandManagement.WAITONTRIGGER] = spec.waitOnTrigger
 		spec.action[HeadlandManagement.RAISEIMPLEMENT2] = spec.useRaiseImplementF or spec.useRaiseImplementB
@@ -1159,10 +1185,11 @@ function HeadlandManagement:onUpdate(dt)
 		if spec.action[math.abs(spec.actStep)] and not HeadlandManagement.isDedi then
 			dbgprint("onUpdate : actStep: "..tostring(spec.actStep), 2)
 			dbgprint("onUpdate : waitTime: "..tostring(spec.waitTime), 4)
+			local useEV = spec.modEVFound
 			-- Activation
 			if spec.actStep == HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, true); end
 			if spec.actStep == HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, true, spec.useCrabSteeringTwoStep); end
-			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, true); end
+			if spec.actStep == HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, true, useEV); end
 			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
 			if spec.actStep == HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, spec.useHLMTriggerB); end
 			if spec.actStep == HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then spec.waitTime = HeadlandManagement.raiseImplements(self, true, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
@@ -1178,7 +1205,7 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
 			if spec.actStep == -HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, false); end
 			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
-			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false); end
+			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false, useEV); end
 			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, false, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == -HeadlandManagement.WAITTIME1 and spec.action[HeadlandManagement.WAITTIME1] then HeadlandManagement.wait(self, spec.waitTime, dt); end
 			if spec.actStep == -HeadlandManagement.REDUCESPEED and spec.action[HeadlandManagement.REDUCESPEED] then HeadlandManagement.reduceSpeed(self, false); end		
@@ -1298,8 +1325,8 @@ function HeadlandManagement:onDraw(dt)
 		local h = w * g_screenAspectRatio
 		local guiIcon = HeadlandManagement.guiIconOff
 		
-		local headlandAutomaticGS = (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
-		local headlandAutomatic	= not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
+		local headlandAutomaticGS = not spec.autoOverride and (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
+		local headlandAutomatic	  = not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride
 				
 		-- field mode
@@ -1439,12 +1466,14 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		spec.cruiseControlState = self:getCruiseControlState()
 		dbgprint("reduceSpeed : cruiseControlState: "..tostring(spec.cruiseControlState))
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			-- Use Mod Speedontrol
 			spec.normSpeed = self.speedControl.currentKey or 2
 			if spec.normSpeed ~= spec.turnSpeed then
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
-				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
+				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
 			end
 		else
+			-- Use Vanilla Speedcontrol
 			spec.normSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
@@ -1459,11 +1488,14 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		end
 	else
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
+			
 			if self.speedControl.currentKey ~= spec.normSpeed then
+			-- Use Mod Speedontrol
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
-				SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
+				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 			end
 		else
+			-- Use Vanilla Speedcontrol
 			spec.turnSpeed = self:getCruiseControlSpeed()
 			self:setCruiseControlMaxSpeed(spec.normSpeed, spec.normSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
@@ -1820,6 +1852,14 @@ function HeadlandManagement.stopGPS(self, enable)
 			dbgprint("stopGPS : VCA is active")
 		end
 	end
+	
+	if spec.gpsSetting == 1 and spec.modEVFound then
+		local evStatus = self.vData.is[5]
+		if evStatus then
+			spec.gpsSetting = 6
+		end
+	end
+	
 	dbgprint("stopGPS : gpsSetting: "..tostring(spec.gpsSetting))
 
 -- Part 2: Guidance Steering	
@@ -1853,7 +1893,7 @@ function HeadlandManagement.stopGPS(self, enable)
 	
 -- Part 3: Vehicle Control Addon (VCA)
 	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
-	if spec.modVCAFound and spec.gpsSetting ~= 2 and enable then
+	if spec.modVCAFound and spec.gpsSetting ~= 2 and spec.gpsSetting < 6 and enable then
 		spec.vcaStatus = self:vcaGetState("snapIsOn")
 		if spec.vcaStatus then 
 			if spec.gpsSetting == 1 or spec.gpsSetting == 3 then
@@ -1893,24 +1933,78 @@ function HeadlandManagement.stopGPS(self, enable)
 			spec.gpsSetting = 4
 		end
 	end
+	
+-- Part 4: Enhanced Vehicle
+	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
+	if spec.modEVFound and (spec.gpsSetting == 1 or spec.gpsSetting == 6) and enable then
+		spec.evStatus = self.vData.is[5]
+		spec.evTrack = self.vData.is[6]
+		if spec.evStatus then
+			dbgprint("stopGPS : EV-GPS off")
+			spec.gpsSetting = 6
+			if spec.evTrack then
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_REVERSE", 1, nil, nil, nil)
+			else
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
+			end
+		end
+	end
+	if spec.modEVFound and (spec.gpsSetting == 1 or spec.gpsSetting == 6) and not enable then
+		if self.vData.is[5] ~= spec.evStatus then
+			dbgprint("stopGPS : EV-GPS on")
+			spec.gpsSetting = 1
+			FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
+		end	
+	end
 end
 
-function HeadlandManagement.disableDiffLock(self, disable)
+function HeadlandManagement.disableDiffLock(self, disable, EV)
 	local spec = self.spec_HeadlandManagement
-	if disable then
-		spec.diffStateF = self:vcaGetState("diffLockFront") --self.vcaDiffLockFront
-		spec.diffStateB = self:vcaGetState("diffLockBack") --self.vcaDiffLockBack
-		if spec.diffStateF then 
-			dbgprint("disableDiffLock : DiffLockF off")
-			self:vcaSetState("diffLockFront", false)
-		end
-		if spec.diffStateB then 
-			dbgprint("disableDiffLock : DiffLockB off")
-			self:vcaSetState("diffLockBack", false)
+	local useEV = EV or false
+	if useEV and (self.vData == nil or self.vData.want == nil) then
+		dbgprint("DisableDiffLock: EV not usable")
+		return
+	end
+	if useEV then
+		-- EnhancedVehicle diff-control
+		if disable then
+			spec.diffStateF = self.vData.want[1] or false
+			spec.diffStateB = self.vData.want[2] or false
+			if spec.diffStateF then 
+				dbgprint("disableDiffLock : EV DiffLockF off")
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_FD", 1, nil, nil, nil)
+			end
+			if spec.diffStateB then 
+				dbgprint("disableDiffLock : EV DiffLockB off")
+				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_BD", 1, nil, nil, nil)
+			end
+		else
+			if spec.diffStateF then 
+				dbgprint("disableDiffLock : EV DiffLockF on")
+				if not self.vData.is[1] then FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_FD", 1, nil, nil, nil) end
+			end
+			if spec.diffStateB then 
+				dbgprint("disableDiffLock : EV DiffLockB on")
+				if not self.vData.is[2] then FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_RD", 1, nil, nil, nil) end
+			end
 		end
 	else
-		dbgprint("disableDiffLock : DiffLock reset")
-		self:vcaSetState("diffLockFront", spec.diffStateF)
-		self:vcaSetState("diffLockBack", spec.diffStateB)
+		-- VCA diff-control
+		if disable then
+			spec.diffStateF = self:vcaGetState("diffLockFront") --self.vcaDiffLockFront
+			spec.diffStateB = self:vcaGetState("diffLockBack") --self.vcaDiffLockBack
+			if spec.diffStateF then 
+				dbgprint("disableDiffLock : VCA DiffLockF off")
+				self:vcaSetState("diffLockFront", false)
+			end
+			if spec.diffStateB then 
+				dbgprint("disableDiffLock : VCA DiffLockB off")
+				self:vcaSetState("diffLockBack", false)
+			end
+		else
+			dbgprint("disableDiffLock : VCA DiffLock reset")
+			self:vcaSetState("diffLockFront", spec.diffStateF)
+			self:vcaSetState("diffLockBack", spec.diffStateB)
+		end
 	end
 end
