@@ -1854,7 +1854,7 @@ function HeadlandManagement.stopGPS(self, enable)
 	end
 	
 	if spec.gpsSetting == 1 and spec.modEVFound then
-		local evStatus = self.vData.is[6]
+		local evStatus = self.vData.is[5]
 		if evStatus then
 			spec.gpsSetting = 6
 		end
@@ -1936,7 +1936,7 @@ function HeadlandManagement.stopGPS(self, enable)
 	
 -- Part 4: Enhanced Vehicle
 	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
-	if spec.modEVFound and (spec.gpsSetting == 1 or spec.gpsSetting == 6) and enable then
+	if spec.modEVFound and spec.gpsSetting == 6 and enable then
 		spec.evStatus = self.vData.is[5]
 		spec.evTrack = self.vData.is[6]
 		if spec.evStatus then
@@ -1949,7 +1949,7 @@ function HeadlandManagement.stopGPS(self, enable)
 			end
 		end
 	end
-	if spec.modEVFound and (spec.gpsSetting == 1 or spec.gpsSetting == 6) and not enable then
+	if spec.modEVFound and spec.gpsSetting == 6 and not enable then
 		if self.vData.is[5] ~= spec.evStatus then
 			dbgprint("stopGPS : EV-GPS on")
 			spec.gpsSetting = 1
