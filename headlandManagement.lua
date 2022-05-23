@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.1.2 beta
+-- Version 2.1.1.3 beta
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -1854,7 +1854,7 @@ function HeadlandManagement.stopGPS(self, enable)
 	end
 	
 	if spec.gpsSetting == 1 and spec.modEVFound then
-		local evStatus = self.vData.is[5]
+		local evStatus = self.vData.is[6]
 		if evStatus then
 			spec.gpsSetting = 6
 		end
