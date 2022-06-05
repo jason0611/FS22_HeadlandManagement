@@ -1166,6 +1166,15 @@ function HeadlandManagement:onUpdate(dt)
 		end
 	end
 
+-- activate headland management at headland in auto-mode triggered by Enhanced Vehicle
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.useEVTrigger then
+		local gsSpec = self.spec_globalPositioningSystem
+		if not spec.isActive and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 and not spec.autoOverride then
+			spec.isActive = true
+			dbgprint("onUpdate : Headland mode activated by enhanced vehicle (auto-mode)", 2)
+		end
+	end
+	
 	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<HeadlandManagement.MAXSTEP then
 		-- Set management actions
