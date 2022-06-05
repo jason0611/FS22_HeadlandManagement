@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.1.3 beta
+-- Version 2.1.1.5 beta
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -22,7 +22,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 3)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -159,8 +159,10 @@ function HeadlandManagement.initSpecialization()
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#vcaDirSwitch", "Switch vca-turn", true)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#autoResume", "Auto resume field mode after turn", false)
 	
-		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useGuidanceSteeringTrigger", "Use headland automatic", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useGuidanceSteeringTrigger", "Use headland automatic of GS", false)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useGuidanceSteeringOffset", "Use back trigger", false)
+		
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useEVTrigger", "Use headland automatic of EV", false)
 	
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useHLMTriggerF", "Use HLM trigger with front node", false)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useHLMTriggerB", "Use HLM trigger with back node", false)
@@ -466,6 +468,7 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.gpsSetting = xmlFile:getValue(key.."#gpsSetting", spec.gpsSetting)
 			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+			spec.useEVTrigger = xmlFile:getValue(key.."#useEVTrigger", spec.useEVTrigger) and spec.modEVFound
 			spec.useHLMTriggerF = xmlFile:getValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
 			spec.useHLMTriggerB = xmlFile:getValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
 			spec.headlandDistance = xmlFile:getValue(key.."#headlandDistance", spec.headlandDistance)
@@ -481,7 +484,8 @@ function HeadlandManagement:onPostLoad(savegame)
 	spec.exists = spec.exists or (self.configurations["HeadlandManagement"] ~= nil and self.propertyState == Vehicle.PROPERTY_STATE_MISSION)
 	
 	if spec.gpsSetting == 2 and not spec.modGuidanceSteeringFound then spec.gpsSetting = 1 end
-	if spec.gpsSetting > 2 and not spec.modVCAFound then spec.gpsSetting = 1 end
+	if spec.gpsSetting > 2 and spec.gpsSetting < 6 and not spec.modVCAFound then spec.gpsSetting = 1 end
+	if spec.gpsSetting > 5 and not spec.modEVFound then spec.gpsSetting = 1 end
 	
 	spec.autoResumeOnTrigger = spec.autoResume and (spec.useHLMTriggerF or spec.useHLMTriggerB)
 	
@@ -531,6 +535,7 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#gpsSetting", spec.gpsSetting)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		xmlFile:setValue(key.."#useEVTrigger", spec.useEVTrigger)
 		xmlFile:setValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
 		xmlFile:setValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
 		xmlFile:setValue(key.."#headlandDistance", spec.headlandDistance)
@@ -568,6 +573,7 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.gpsSetting = streamReadInt8(streamId)
 		spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 		spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+		spec.useEVTrigger = streamReadBool(streamId)
 		spec.useHLMTriggerF = streamReadBool(streamId)
 		spec.useHLMTriggerB = streamReadBool(streamId)
 		spec.headlandDistance = streamReadInt8(streamId)
@@ -603,6 +609,7 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteInt8(streamId, spec.gpsSetting)
 		streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 		streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+		streamWriteBool(streamId, spec.useEVTrigger)
 		streamWriteBool(streamId, spec.useHLMTriggerF)
 		streamWriteBool(streamId, spec.useHLMTriggerB)
 		streamWriteInt8(streamId, spec.headlandDistance)
@@ -640,6 +647,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.gpsSetting = streamReadInt8(streamId)
 				spec.useGuidanceSteeringTrigger = streamReadBool(streamId)
 				spec.useGuidanceSteeringOffset = streamReadBool(streamId)
+				spec.useEVTrigger = streamReadBool(streamId)
 				spec.useHLMTriggerF = streamReadBool(streamId)
 				spec.useHLMTriggerB = streamReadBool(streamId)
 				spec.headlandDistance = streamReadInt8(streamId)
@@ -680,6 +688,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteInt8(streamId, spec.gpsSetting)
 				streamWriteBool(streamId, spec.useGuidanceSteeringTrigger)
 				streamWriteBool(streamId, spec.useGuidanceSteeringOffset)
+				streamWriteBool(streamId, spec.useEVTrigger)
 				streamWriteBool(streamId, spec.useHLMTriggerF)
 				streamWriteBool(streamId, spec.useHLMTriggerB)
 				streamWriteInt8(streamId, spec.headlandDistance)
@@ -744,10 +753,12 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	-- anschalten nur wenn inaktiv
 	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
+		spec.evOverride = true
 	-- abschalten nur wenn aktiv
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
+		spec.evOverride = true
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 		spec.actStep = -HeadlandManagement.MAXSTEP
@@ -1023,23 +1034,28 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("onHeadlandF: "..tostring(spec.headlandF), 5, 3)
 	dbgrender("onHeadlandB: "..tostring(spec.headlandB), 6, 3)
 	
-	dbgrender("lastOnHeadlandF: "..tostring(spec.lastHeadlandF), 9, 3)
-	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 10, 3)
+	dbgrender("lastOnHeadlandF: "..tostring(spec.lastHeadlandF), 8, 3)
+	dbgrender("lastOnHeadlandB: "..tostring(spec.lastHeadlandB), 9, 3)
 	
-	dbgrender("fieldNumF: "..tostring(spec.fieldNumF), 7, 3)
-	dbgrender("fieldNumB: "..tostring(spec.fieldNumB), 8, 3)
+	dbgrender("fieldNumF: "..tostring(spec.fieldNumF), 11, 3)
+	dbgrender("fieldNumB: "..tostring(spec.fieldNumB), 13, 3)
 
-	dbgrender("direction: "..tostring(math.floor(spec.heading)), 11, 3)
+	dbgrender("direction: "..tostring(math.floor(spec.heading)), 15, 3)
 	
-	dbgrender("isActive: "..tostring(spec.isActive), 13, 3)
-	dbgrender("actStep: "..tostring(spec.actStep), 14, 3)
+	dbgrender("isActive: "..tostring(spec.isActive), 17, 3)
+	dbgrender("actStep: "..tostring(spec.actStep), 18, 3)
 	
 	local turnTarget
 	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
-	dbgrender("turnHeading:"..tostring(turnTarget), 15, 3)
+	dbgrender("turnHeading:"..tostring(turnTarget), 20, 3)
 	
 	local fieldNum = getFieldNum(self.rootNode)
-	dbgrender("Field ID: "..tostring(fieldNum), 19, 3)
+	dbgrender("Field ID: "..tostring(fieldNum), 21, 3)
+	
+	dbgrender("useEVTrigger: "..tostring(spec.useEVTrigger), 23, 3)
+	dbgrender("EV: isOnField: "..tostring(self.vData.track.isOnField), 24, 3)
+	dbgrender("EV: Status (vData5): "..tostring(self.vData.is[5]), 25, 3)
+	dbgrender("EV: Track  (vData6): "..tostring(self.vData.is[6]), 26, 3)
 	
 	local analyseTable = nil
 	
@@ -1167,13 +1183,20 @@ function HeadlandManagement:onUpdate(dt)
 		end
 	end
 
--- activate headland management at headland in auto-mode triggered by Enhanced Vehicle
+	-- activate headland management at headland in auto-mode triggered by Enhanced Vehicle
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.useEVTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
-		if not spec.isActive and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 and not spec.autoOverride then
+		if not spec.isActive and not spec.evOverride and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 and not spec.autoOverride 
+			and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] == true and not spec.evOverride then
 			spec.isActive = true
+			spec.evStatus = true
 			dbgprint("onUpdate : Headland mode activated by enhanced vehicle (auto-mode)", 2)
 		end
+	end
+	
+	-- set Enhanced Vehicle's headland settings to avoid interferences
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.isOn and not spec.useEVTrigger then
+		if spec.vData ~= nil and spec.vData.track ~= nil then spec.vData.track.headlandMode = 1 end
 	end
 	
 	-- headland management main control
@@ -1224,6 +1247,7 @@ function HeadlandManagement:onUpdate(dt)
 		if spec.actStep == 0 then 
 			spec.isActive = false
 			spec.override = false
+			spec.evOverride = false
 			spec.turnHeading = nil
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
@@ -1284,7 +1308,7 @@ function HeadlandManagement:onUpdate(dt)
 	-- auto resume by enhanced vehicle
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.useEVTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
-		if spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField > 5 and not spec.autoOverride then
+		if spec.isActive and not spec.evOverride and spec.actStep == HeadlandManagement.MAXSTEP and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField > 5 and not spec.autoOverride then
 			spec.actStep = -spec.actStep
 			dbgprint("onUpdate : Field mode activated by enhanced vehicle (auto-resume)", 2)
 		end
@@ -1309,6 +1333,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = -spec.actStep
 		spec.lastHeadlandB = false 
 		spec.turnHeading = nil
+		spec.evOverride = false
 		dbgprint("onUpdate : Field mode activated by back trigger (auto-resume)", 2)
 	end
 	
@@ -1345,8 +1370,10 @@ function HeadlandManagement:onDraw(dt)
 		local guiIcon = HeadlandManagement.guiIconOff
 		
 		local headlandAutomaticGS = not spec.autoOverride and (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
+		local headlandAutomaticEV = not spec.autoOverride and (spec.modEVFound and spec.useEVTrigger and not spec.evOverride)
 		local headlandAutomatic	  = not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
-		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride
+		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride 
+		local headlandAutomaticResumeEV = (spec.modEVFound and spec.useEVTrigger and not spec.evOverride) and not spec.autoOverride and spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
 				
 		-- field mode
 		if spec.isOn and headlandAutomatic and not spec.isActive then 
@@ -1376,13 +1403,20 @@ function HeadlandManagement:onDraw(dt)
 				guiIcon = HeadlandManagement.guiIconFieldA
 			end
 		end
+		
+		if spec.isOn and headlandAutomaticEV and not spec.isActive then 
+			local gpsEnabled = spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
+			if gpsEnabled then
+				guiIcon = HeadlandManagement.guiIconFieldA
+			end
+		end
 	
 		-- headland mode			
-		if spec.isOn and headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+		if spec.isOn and (headlandAutomaticResume or headlandAutomaticResumeEV) and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
 			guiIcon = HeadlandManagement.guiIconHeadlandA
 		end
 		
-		if spec.isOn and not headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+		if spec.isOn and not(headlandAutomaticResume or headlandAutomaticResumeEV) and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
 			guiIcon = HeadlandManagement.guiIconHeadland
 		end	
 		
@@ -1955,7 +1989,7 @@ function HeadlandManagement.stopGPS(self, enable)
 	
 -- Part 4: Enhanced Vehicle
 	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
-	if spec.modEVFound and spec.gpsSetting == 6 and enable then
+	if spec.modEVFound and spec.gpsSetting == 6 and enable and not spec.useEVTrigger then
 		spec.evStatus = self.vData.is[5]
 		spec.evTrack = self.vData.is[6]
 		if spec.evStatus then
@@ -1968,7 +2002,7 @@ function HeadlandManagement.stopGPS(self, enable)
 			end
 		end
 	end
-	if spec.modEVFound and spec.gpsSetting == 6 and not enable then
+	if spec.modEVFound and (spec.gpsSetting == 6 or spec.useEVTrigger) and not enable then
 		if self.vData.is[5] ~= spec.evStatus then
 			dbgprint("stopGPS : EV-GPS on")
 			FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)

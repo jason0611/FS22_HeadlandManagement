@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.1.2 beta
+-- Version 2.1.1.5 beta
 --
 
 HeadlandManagementGui = {}
@@ -243,8 +243,8 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.gpsOnOffSetting:setState(self.spec.useGPS and 1 or 2)
-	self.gpsOnOffSetting:setDisabled(not self.spec.modGuidanceSteeringFound and not self.spec.modVCAFound)
-	self.gpsOnOffSetting:setVisible(self.spec.modGuidanceSteeringFound or self.spec.modVCAFound)
+	self.gpsOnOffSetting:setDisabled(not self.spec.modGuidanceSteeringFound and not self.spec.modVCAFound and not self.spec.modEVFound or self.spec.useEVTrigger)
+	self.gpsOnOffSetting:setVisible(self.spec.modGuidanceSteeringFound or self.spec.modVCAFound or self.spec.modEVFound)
 		
 	self.gpsSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsType"))
 	self.gpsSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -338,7 +338,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	else
 		gpsDisabled = not self.spec.useGPS
 	end
-	self.gpsSetting:setDisabled(gpsDisabled or not self.showGPS)
+	self.gpsSetting:setDisabled(gpsDisabled or not self.showGPS or self.spec.useEVTrigger)
 	self.gpsSetting:setVisible(self.spec.modGuidanceSteeringFound or self.spec.modVCAFound)
 	
 	-- VCA direction switching
@@ -376,11 +376,13 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	
 	if self.spec.useHLMTriggerF or self.spec.useHLMTriggerB then 
 		triggerSetting = 2
-	elseif self.spec.modGuidanceSteeringFound then
+	end
+	
+	if self.spec.modGuidanceSteeringFound then
 		triggerAnz = triggerAnz + 1 
 		if self.spec.useGuidanceSteeringTrigger then triggerSetting = triggerAnz end
-		
-	elseif self.spec.modEVFound then
+	end
+	if self.spec.modEVFound then
 		triggerAnz = triggerAnz + 1
 		if self.spec.useEVTrigger then triggerSetting = triggerAnz end
 	end
@@ -412,6 +414,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.gpsResumeSetting:setState(self.spec.autoResume and 1 or 2)
+	self.gpsResumeSetting:setDisabled((not self.spec.modGuidanceSteeringFound and triggerSetting == 3) or triggerSetting == 4)
 	
 	-- Vehicle control
 	self.vehicleControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vehicleControl"))
@@ -502,17 +505,23 @@ function HeadlandManagementGui:logicalCheck()
 	self.ridgeMarkerSetting:setDisabled(not useRaiseImplement)
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
-	self.gpsOnOffSetting:setDisabled(not self.spec.modGuidanceSteeringFound and not self.spec.modVCAFound)
+	local triggerSetting = self.gpsAutoTriggerSetting:getState()
+	local useEVTrigger = (triggerSetting == 3 and not self.spec.modGuidanceSteeringFound) or (triggerSetting == 4 and self.spec.modGuidanceSteeringFound)
+	self.gpsOnOffSetting:setDisabled(not self.spec.modGuidanceSteeringFound and not self.spec.modVCAFound and not self.spec.modEVFound or useEVTrigger)
 	
 	local gpsSetting = self.gpsSetting:getState()
 	if not self.spec.modGuidanceSteeringFound and gpsSetting > 1 then
 		gpsSetting = gpsSetting + 1
 	end
-	self.gpsSetting:setDisabled(not useGPS or not self.showGPS)
-	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.spec.modVCAFound or gpsSetting < 4 or gpsSetting > 5)
-	local triggerSetting = self.gpsAutoTriggerSetting:getState()
-	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
+	self.gpsSetting:setDisabled(not useGPS or not self.showGPS or useEVTrigger)
+	
+	self.gpsEnableDirSwitchSetting:setDisabled(not useGPS or not self.spec.modVCAFound or gpsSetting < 4 or gpsSetting > 5 or useEVTrigger)
+	
+	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled) or useEVTrigger)
+	
 	self.gpsAutoTriggerOffsetWidthInput:setDisabled(triggerSetting ~= 2)
+	
+	self.gpsResumeSetting:setDisabled(useEVTrigger)
 	
 	self.debugFlagSetting:setDisabled(self.raiseSetting:getState() ~= 2)
 end
@@ -578,26 +587,37 @@ function HeadlandManagementGui:onClickOk()
 		self.spec.useGuidanceSteeringOffset = false
 		self.spec.useHLMTriggerF = false
 		self.spec.useHLMTriggerB = false
+		self.spec.useEVTrigger = false
 	elseif triggerSetting == 2 and offsetSetting == 1 then
 		self.spec.useGuidanceSteeringTrigger = false
 		self.spec.useGuidanceSteeringOffset = false
 		self.spec.useHLMTriggerF = true
 		self.spec.useHLMTriggerB = false
+		self.spec.useEVTrigger = false
 	elseif triggerSetting == 2 and offsetSetting == 2 then
 		self.spec.useGuidanceSteeringTrigger = false
 		self.spec.useGuidanceSteeringOffset = false
 		self.spec.useHLMTriggerF = false
 		self.spec.useHLMTriggerB = true
+		self.spec.useEVTrigger = false
+	elseif (triggerSetting == 3 and not self.spec.modGuidanceSteeringFound) or (triggerSetting == 4 and self.spec.modGuidanceSteeringFound) then
+		self.spec.useGuidanceSteeringTrigger = false
+		self.spec.useGuidanceSteeringOffset = false
+		self.spec.useHLMTriggerF = false
+		self.spec.useHLMTriggerB = false
+		self.spec.useEVTrigger = true
 	elseif triggerSetting == 3 and offsetSetting == 1 then
 		self.spec.useGuidanceSteeringTrigger = true
 		self.spec.useGuidanceSteeringOffset = false
 		self.spec.useHLMTriggerF = false
 		self.spec.useHLMTriggerB = false
+		self.spec.useEVTrigger = false
 	elseif triggerSetting == 3 and offsetSetting == 2 then
 		self.spec.useGuidanceSteeringTrigger = true
 		self.spec.useGuidanceSteeringOffset = true
 		self.spec.useHLMTriggerF = false
 		self.spec.useHLMTriggerB = false
+		self.spec.useEVTrigger = false
 	end
 	-- VCA dir siwtch
 	self.spec.vcaDirSwitch = self.gpsEnableDirSwitchSetting:getState() == 1
