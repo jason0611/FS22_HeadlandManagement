@@ -2003,9 +2003,10 @@ function HeadlandManagement.stopGPS(self, enable)
 		end
 	end
 	if spec.modEVFound and (spec.gpsSetting == 6 or spec.useEVTrigger) and not enable then
-		if self.vData.is[5] ~= spec.evStatus then
+		if spec.evStatus and not self.vData.is[5] then
 			dbgprint("stopGPS : EV-GPS on")
 			FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
+			spec.evStatus = false
 		end	
 		if spec.wasGPSAutomatic then
 			spec.gpsSetting = 1
