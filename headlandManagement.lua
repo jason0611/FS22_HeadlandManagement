@@ -267,6 +267,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.autoResumeOnTrigger = false
 	
 	spec.modEVFound = false
+	spec.useEVTrigger = false
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -1278,6 +1279,15 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
 		dbgprint("onUpdate : Field mode activated by 180°-turn", 2)
+	end
+	
+	-- auto resume by enhanced vehicle
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.useEVTrigger then
+		local gsSpec = self.spec_globalPositioningSystem
+		if spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField > 5 and not spec.autoOverride then
+			spec.actStep = -spec.actStep
+			dbgprint("onUpdate : Field mode activated by enhanced vehicle (auto-resume)", 2)
+		end
 	end
 	
 	-- auto resume on trigger: activate field mode when leaving headland in auto-mode

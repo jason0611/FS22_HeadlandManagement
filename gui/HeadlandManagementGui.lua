@@ -356,18 +356,33 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.gpsAutoTriggerSubTitle:setText(string.format(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSubTitle"),self.spec.vehicleLength,self.spec.vehicleWidth,self.spec.maxTurningRadius))
 	self.gpsAutoTriggerTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerSetting"))
 	self.gpsAutoTriggerSetting.onClickCallback = HeadlandManagementGui.logicalCheck
+	local triggerAnz = 2
 	local triggerTexts = ({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on")
 	})
-	if self.spec.modGuidanceSteeringFound then triggerTexts[3] = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs") end
+	if self.spec.modGuidanceSteeringFound then 
+		triggerAnz = triggerAnz + 1
+		triggerTexts[triggerAnz] = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_gs") 
+	end
+	if self.spec.modEVFound then 
+		triggerAnz = triggerAnz + 1
+		triggerTexts[triggerAnz] = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_ev") 
+	end
 	self.gpsAutoTriggerSetting:setTexts(triggerTexts)
 	
 	local triggerSetting = 1
+	triggerAnz = 2
+	
 	if self.spec.useHLMTriggerF or self.spec.useHLMTriggerB then 
 		triggerSetting = 2
-	elseif self.spec.modGuidanceSteeringFound and self.spec.useGuidanceSteeringTrigger then 
-		triggerSetting = 3 
+	elseif self.spec.modGuidanceSteeringFound then
+		triggerAnz = triggerAnz + 1 
+		if self.spec.useGuidanceSteeringTrigger then triggerSetting = triggerAnz end
+		
+	elseif self.spec.modEVFound then
+		triggerAnz = triggerAnz + 1
+		if self.spec.useEVTrigger then triggerSetting = triggerAnz end
 	end
 	self.gpsAutoTriggerSetting:setState(triggerSetting)
 	
@@ -378,13 +393,13 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_back")
 	})	
 	local offsetSetting = 1
-	if triggerSetting == 3 and self.spec.useGuidanceSteeringOffset then 
+	if self.spec.modGuidanceSteeringFound and triggerSetting == 3 and self.spec.useGuidanceSteeringOffset then 
 		offsetSetting = 2 
 	elseif triggerSetting == 2 and self.spec.useHLMTriggerB then 
 		offsetSetting = 2
 	end
 	self.gpsAutoTriggerOffsetSetting:setState(offsetSetting)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled))
+	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled) or (triggerSetting == 3 and not self.spec.modGuidanceSteeringFound) or triggerSetting == 4)
 	
 	self.gpsAutoTriggerOffsetWidthTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetWidth"))
 	self.gpsAutoTriggerOffsetWidthInput:setText(tostring(self.spec.headlandDistance))
