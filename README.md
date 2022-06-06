@@ -46,6 +46,7 @@ Additionally, if SpeedControl becomes available:
 Additionally with existing EnhancedVehicle:
 - Deactivate and reactivate GPS guidance
 - Release and reset active differential locks
+- Possibility to use headland detection of ev instead of the build-in one
 
 Ideas for subsequent versions (without guarantee):
 - Suppression of automatic unloading of bales on the headland
@@ -96,6 +97,7 @@ Zusätzlich, wenn SpeedControl verfügbar werden sollte:
 Zusätzlich bei vorhandenem EnhancedVehicle:
 - GPS Spurführung deaktivieren und reaktivieren
 - Aktive Differentialsperren lösen und wieder setzen
+- Möglichkeit die Vorgewende-Erkennung von EV zu nutzen an Stelle der eingebauten Erkennung.
 
 Ideen für Folgeversionen (ohne Gewähr):
 - Unterdrückung des automatischen Entladens von Ballen im Vorgewende
