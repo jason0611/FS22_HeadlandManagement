@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.1.5 beta
+-- Version 2.1.1.6 beta
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -1989,20 +1989,20 @@ function HeadlandManagement.stopGPS(self, enable)
 	
 -- Part 4: Enhanced Vehicle
 	dbgprint("spec.gpsSetting: "..tostring(spec.gpsSetting))
-	if spec.modEVFound and spec.gpsSetting == 6 and enable and not spec.useEVTrigger then
+	if spec.modEVFound and spec.gpsSetting >= 6 and enable and not spec.useEVTrigger then
 		spec.evStatus = self.vData.is[5]
 		spec.evTrack = self.vData.is[6]
 		if spec.evStatus then
 			dbgprint("stopGPS : EV-GPS off")
-			spec.gpsSetting = 6
-			if spec.evTrack then
+			if spec.gpsSetting < 7 then spec.gpsSetting = 6 end
+			if spec.evTrack and spec.gpsSetting == 7 then
 				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_REVERSE", 1, nil, nil, nil)
 			else
 				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
 			end
 		end
 	end
-	if spec.modEVFound and (spec.gpsSetting == 6 or spec.useEVTrigger) and not enable then
+	if spec.modEVFound and (spec.gpsSetting == 6 and not enable or spec.useEVTrigger) then
 		if spec.evStatus and not self.vData.is[5] then
 			dbgprint("stopGPS : EV-GPS on")
 			FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)

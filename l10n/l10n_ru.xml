@@ -64,7 +64,8 @@
 		<text name="hlmgui_gps_vca" text="только VCA"/>
 		<text name="hlmgui_gps_vcaL" text="только VCA: автоповорот налево"/>
 		<text name="hlmgui_gps_vcaR" text="только VCA: автоповорот направо"/>
-		<text name="hlmgui_gps_ev" text="только Enhanced Vehicle"/>
+		<text name="hlmgui_gps_ev" text="только Enhanced Vehicle (EV)"/>
+		<text name="hlmgui_gps_ev_auto" text="EV только: автоповорот"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Автоматизация разворотной полосы"/>
 		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Текущие размеры техники: Общая длинна: %2.2f м, Общая ширина: %2.2f м, Радиус поворота: %2.2f м"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Триггер для автоматизации"/>

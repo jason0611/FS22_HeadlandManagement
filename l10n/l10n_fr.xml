@@ -64,7 +64,8 @@
 		<text name="hlmgui_gps_vca" text="VCA seulement"/>
 		<text name="hlmgui_gps_vcaL" text="VCA seulement : Retournement automatique à gauche"/>
 		<text name="hlmgui_gps_vcaR" text="VCA seulement : Retournement automatique à droite"/>
-		<text name="hlmgui_gps_ev" text="Enhanced Vehicle seulement"/>
+		<text name="hlmgui_gps_ev" text="Enhanced Vehicle (EV) seulement"/>
+		<text name="hlmgui_gps_ev_auto" text="EV seulement : Retournement automatique"/>
 		<text name="hlmgui_gpsAutoTriggerSetting" text="Fourrière automatique"/>
 		<text name="hlmgui_gpsAutoTriggerSubTitle" text="Current vehicle dimensions: Overall length: %2.2f m, Overall width: %2.2f m, Turning radius: %2.2f m"/>
 		<text name="hlmgui_gpsAutoTriggerOffsetSetting" text="Déclencheur automatique"/>

@@ -2,7 +2,7 @@
 -- Register Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede 
--- Version 2.1.1.5 beta
+-- Version 2.1.1.6 beta
 --
 
 local specName = g_currentModName..".HeadlandManagement"
