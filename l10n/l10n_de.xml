@@ -46,6 +46,7 @@
 		<text name="hlmgui_beep" text="Warnton bei aktiviertem Management"/>
 		<text name="hlmgui_beepVol" text="Lautstärke"/>
 		<text name="hlmgui_beepVolTT" text="Lautstärke des Warntons" />
+		<text name="hlmgui_keys" text="Tastenbelegungen anzeigen" />
 
 		<text name="hlmgui_implementControl" text="Steuerung der Anbaugeräte"/>
 		<text name="hlmgui_raise" text="Anbaugeräte ausheben"/>
@@ -89,6 +90,7 @@
 		<text name="hlmgui_speedSettingTT" text="Gewünschte Tempomateinstellung im Vorgewende."/>
 		<text name="hlmgui_speedControlModSettingTT" text="Nutze Tempomat 1, 2, oder 3 im Vorgewende."/>
 		<text name="hlmgui_alarmTT" text="Im Vorgewende-Modus wird ein regelmäßiger Warnton ausgegeben."/>
+		<text name="hlmgui_inputbindingsTT" text="Die jeweils aktiven Tastenbelegungen werden im F1-Menü angezeigt"/>
 		<text name="hlmgui_raiseTT" text="Im Vorgewende können abgesenkte Anbaugeräte ausgehoben und anschließend wieder abgesenkt werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_plowTT" text="Nach dem Ausheben können Pflüge gedreht werden. Entweder sofort vollständig, oder zunächst nur zur Mitte und erst beim Absenken vollständig. Hinweis: In letzterem Fall ist ein gutes Timing wichtig. Es wird daher empfohlen, zum Drehen und Absenken des Pflugs kurz anzuhalten."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Mit dem Ausheben kann der Spurreißer auf die gegenüberliegende Seite umgeschaltet werden."/>
