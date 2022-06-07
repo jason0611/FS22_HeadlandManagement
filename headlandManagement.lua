@@ -2010,10 +2010,11 @@ function HeadlandManagement.stopGPS(self, enable)
 		spec.evStatus = self.vData.is[5]
 		spec.evTrack = self.vData.is[6]
 		if spec.evStatus then
-			dbgprint("stopGPS : EV-GPS off")
 			if spec.evTrack and spec.gpsSetting == 7 then
+				dbgprint("stopGPS : EV-GPS turn")
 				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_REVERSE", 1, nil, nil, nil)
 			else
+				dbgprint("stopGPS : EV-GPS off")
 				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
 			end
 		end
