@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="65">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.b.1.5</version>
+	<version>2.b.1.9</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -44,8 +44,9 @@ If SpeedControl (FS22_SpeedControl is present:
 - Speed adjustment also possible via change of cruise control level
 
 If EnhancedVehicle (FS22_EnhancedVehicle) is present:
-- Deactivate and reactivate GPS guidance
+- Deactivate and reactivate GPS guidance, optionally with triggering the automatic turn function
 - Release and reset active differential locks
+- Use EV's headland detection if activated
 
 Further ideas or wishes are welcome at https://github.com/jason0611/FS22_HeadlandManagement
 
@@ -71,9 +72,10 @@ V2.1.0.1:
 V2.1.0.2:
 - Fix for update 1.4/1.4.1 to prevent lua callstacks
 
-V2.1.1.0:
+V2.2.0.0:
 - Support for Mod SpeedControl added
 - Support for Mod EnhancedVehicle added
+- Added option to hide keybinding info in F1 menu
 
 ]]>
 		</en>	
@@ -109,8 +111,9 @@ Bei vorhandenem SpeedControl (FS22_SpeedControl):
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Bei vorhandenem EnhancedVehicle (FS22_EnhancedVehicle):
-- GPS Spurführung deaktivieren und reaktivieren
+- GPS Spurführung deaktivieren und reaktivieren, wahlweise Auslösen der Wendefunktion
 - Aktive Differentialsperren lösen und wieder setzen
+- Nutzung der Vorgewendeerkennung von EV, wenn sie aktiviert wurde
 
 Weitere Ideen oder Wünsche werden gerne unter https://github.com/jason0611/FS22_HeadlandManagement entgegengenommen
 
@@ -136,9 +139,10 @@ V2.1.0.1:
 V2.1.0.2:
 - Fix für Update 1.4/1.4.1 um lua callstacks zu verhindern
 
-V2.1.1.0:
+V2.2.0.0:
 - Unterstützung für EnhancedVehicle Mod hinzugefügt
 - Unterstützung für SpeedControl Mod hinzugefügt
+- Option ergänzt, um die Tastenbelegungen im F1-Menü auszublenden
 
 ]]>
 		</de>
@@ -168,6 +172,11 @@ Si le VCA Mod (FS22_VehicleControlAddon) est présent :
 Si la fonction Guidance Steering (FS22_guidanceSteering) est présente : 
 - Désactiver et réactiver le guidage GPS
 - Gestion automatique des fourrières : activation automatique de la gestion des fourrières lorsqu'elles sont atteintes
+
+En présence d'un EnhancedVehicle (FS22_EnhancedVehicle) :
+- Désactiver et réactiver le guidage GPS, déclencher au choix la fonction de demi-tour
+- Débloquer et réactiver les blocages de différentiel actifs
+- Utilisation de la détection de fourrière de EV, si elle a été activée
 
 D'autres idées ou souhaits sont les bienvenus à l'adresse https://github.com/jason0611/FS22_HeadlandManagement, veuillez écrire en allemand ou en anglais
 

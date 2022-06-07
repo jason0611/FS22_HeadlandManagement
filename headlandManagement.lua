@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.1.6 beta
+-- Version 2.1.1.8 beta
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -43,6 +43,7 @@ HeadlandManagement.STOPGPS = 11
 HeadlandManagement.MAXSTEP = 12
 
 HeadlandManagement.debug = false
+HeadlandManagement.showKeys = true
 
 HeadlandManagement.BEEPSOUND = createSample("HLMBEEP")
 loadSample(HeadlandManagement.BEEPSOUND, g_currentModDirectory.."sound/beep.ogg", false)
@@ -53,13 +54,18 @@ HeadlandManagement.guiIconOff = createImageOverlay(g_currentModDirectory.."gui/h
 HeadlandManagement.guiIconField = createImageOverlay(g_currentModDirectory.."gui/hlm_field_normal.dds")
 HeadlandManagement.guiIconFieldR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_right.dds")
 HeadlandManagement.guiIconFieldL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_left.dds")
+HeadlandManagement.guiIconFieldLR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_leftright.dds")
 HeadlandManagement.guiIconFieldA = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_normal.dds")
 HeadlandManagement.guiIconFieldAR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_right.dds")
 HeadlandManagement.guiIconFieldAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_left.dds")
+HeadlandManagement.guiIconFieldALR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_leftright.dds")
 HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
+HeadlandManagement.guiIconFieldGS = createImageOverlay(g_currentModDirectory.."gui/hlm_field_gs.dds")
+HeadlandManagement.guiIconFieldEV = createImageOverlay(g_currentModDirectory.."gui/hlm_field_ev.dds")
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
 HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
 HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
+HeadlandManagement.guiIconHeadlandEV = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_ev.dds")
 
 -- Filteres implements
 HeadlandManagement.filterList = {}
@@ -708,6 +714,7 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 	dbgprint("onRegisterActionEvents", 4)
 	if self.isClient then
 		local spec = self.spec_HeadlandManagement
+		local sk = HeadlandManagement.showKeys
 		HeadlandManagement.actionEvents = {} 
 		if self:getIsActiveForInput(true) and spec ~= nil and spec.exists then 
 			local prio = GS_PRIO_HIGH; if spec.isOn then prio = GS_PRIO_NORMAL end
@@ -716,31 +723,32 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 			
 			_, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn and sk)
 			
 			_, spec.actionEventOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOn, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive and spec.isOn and sk)
 			
 			_, spec.actionEventOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SWITCHOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventOff, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, spec.isActive and spec.isOn and sk)
 			
 			_, spec.actionEventSwitchAuto = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLEAUTO', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitchAuto, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventSwitch, spec.isOn and sk)
 			
 			_, spec.actionEventAutoOn = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_AUTOON', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventAutoOn, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, spec.autoOverride and spec.isOn)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, spec.autoOverride and spec.isOn and sk)
 			
 			_, spec.actionEventAutoOff = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_AUTOOFF', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventAutoOff, GS_PRIO_NORMAL)
-			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB) and spec.isOn)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventOff, not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB) and spec.isOn and sk)
 			
 			local actionEventId
 			_, actionEventId = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_SHOWGUI', self, HeadlandManagement.SHOWGUI, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
+			g_inputBinding:setActionEventTextVisibility(actionEventId, sk)
 		end		
 	end
 end
@@ -809,12 +817,14 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
-	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug)
+	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug, HeadlandManagement.showKeys)
 end
 
-function HeadlandManagement:guiCallback(changes, debug)
+function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	self.spec_HeadlandManagement = changes
 	HeadlandManagement.debug = debug
+	HeadlandManagement.showKeys = showKeys
+	self.actionEventUpdateRequested = true
 	local spec = self.spec_HeadlandManagement
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -1057,6 +1067,8 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("EV: Status (vData5): "..tostring(self.vData.is[5]), 25, 3)
 	dbgrender("EV: Track  (vData6): "..tostring(self.vData.is[6]), 26, 3)
 	
+	dbgrender("spec.evOverride: "..tostring(spec.evOverride), 28, 3)
+	
 	local analyseTable = nil
 	
 	if analyseTable ~= nil then 
@@ -1154,8 +1166,13 @@ function HeadlandManagement:onUpdate(dt)
 		spec.timer = 0
 	end
 	
+	-- if activated, use EV's trigger instead of hlm's one
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.isOn then
+		if self.vData ~= nil and self.vData.track ~= nil and self.vData.is ~= nil then spec.useEVTrigger = (self.vData.track.headlandMode > 1) and self.vData.is[6] end
+	end
+	
 	-- activate headland mode when reaching headland in auto-mode
-	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and not spec.useEVTrigger
 		and spec.useHLMTriggerF and not spec.autoOverride
 		and spec.headlandF and not spec.lastHeadlandF 
 	then
@@ -1164,7 +1181,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.lastFieldNumF = spec.fieldNumF
 		dbgprint("onUpdate : Headland mode activated by front trigger (auto-mode) on Field "..tostring(spec.lastFieldNumF), 2)
 	end
-	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive 
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and not spec.isActive and not spec.useEVTrigger
 		and spec.useHLMTriggerB and not spec.autoOverride
 		and spec.headlandB and not spec.lastHeadlandB 
 	then
@@ -1175,7 +1192,7 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- activate headland management at headland in auto-mode triggered by Guidance Steering
-	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger then
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger and not spec.useEVTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning and not spec.autoOverride then
 			spec.isActive = true
@@ -1185,19 +1202,33 @@ function HeadlandManagement:onUpdate(dt)
 
 	-- activate headland management at headland in auto-mode triggered by Enhanced Vehicle
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.useEVTrigger then
-		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and not spec.evOverride and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 and not spec.autoOverride 
-			and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] == true and not spec.evOverride then
+			and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] == true then
 			spec.isActive = true
 			spec.evStatus = true
 			dbgprint("onUpdate : Headland mode activated by enhanced vehicle (auto-mode)", 2)
 		end
 	end
 	
-	-- set Enhanced Vehicle's headland settings to avoid interferences
-	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.isOn and not spec.useEVTrigger then
-		if spec.vData ~= nil and spec.vData.track ~= nil then spec.vData.track.headlandMode = 1 end
+	-- reset EV override if no longer on headland
+	if spec.evOverride and not spec.isActive and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField >= 5 then 
+		spec.evOverride = false 
 	end
+	
+	-- reset EV override if headland-mode is fully reached
+	if spec.evOverride and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 then 
+		spec.evOverride = false 
+	end
+	
+	-- reset EV override if ev track is disabled
+	if spec.evOverride and self.vData ~= nil and self.vData.is ~= nil and not self.vData.is[6] then 
+		spec.evOverride = false 
+	end
+	
+	-- set Enhanced Vehicle's headland settings to avoid interferences
+	--if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.isOn and not spec.useEVTrigger then
+	--	if spec.vData ~= nil and spec.vData.track ~= nil then spec.vData.track.headlandMode = 1 end
+	--end
 	
 	-- headland management main control
 	if self:getIsActive() and spec.isActive and self == g_currentMission.controlledVehicle and spec.exists and spec.actStep<HeadlandManagement.MAXSTEP then
@@ -1247,7 +1278,7 @@ function HeadlandManagement:onUpdate(dt)
 		if spec.actStep == 0 then 
 			spec.isActive = false
 			spec.override = false
-			spec.evOverride = false
+			--spec.evOverride = false
 			spec.turnHeading = nil
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
@@ -1298,7 +1329,7 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- auto resume on turn (180 degrees)
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP
-		and spec.autoResume and not spec.autoOverride and not spec.autoResumeOnTrigger and spec.heading == spec.turnHeading 
+		and not spec.useEVTrigger and spec.autoResume and not spec.autoOverride and not spec.autoResumeOnTrigger and spec.heading == spec.turnHeading 
 	then
 		spec.actStep = -spec.actStep
 		spec.turnHeading = nil
@@ -1308,14 +1339,14 @@ function HeadlandManagement:onUpdate(dt)
 	-- auto resume by enhanced vehicle
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.useEVTrigger then
 		local gsSpec = self.spec_globalPositioningSystem
-		if spec.isActive and not spec.evOverride and spec.actStep == HeadlandManagement.MAXSTEP and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField > 5 and not spec.autoOverride then
+		if spec.isActive and not spec.evOverride and spec.actStep == HeadlandManagement.MAXSTEP and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField > 0 and not spec.autoOverride then
 			spec.actStep = -spec.actStep
 			dbgprint("onUpdate : Field mode activated by enhanced vehicle (auto-resume)", 2)
 		end
 	end
 	
 	-- auto resume on trigger: activate field mode when leaving headland in auto-mode
-	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP 
+	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.isActive and spec.actStep == HeadlandManagement.MAXSTEP and not spec.useEVTrigger
 		and spec.useHLMTriggerF and spec.autoResumeOnTrigger 
 		and not spec.headlandF and spec.lastHeadlandF and not spec.autoOverride 
 		and isOnField(self.rootNode) and (spec.fieldNumF == getFieldNum(self.rootNode)) --spec.lastFieldNumF)
@@ -1333,7 +1364,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.actStep = -spec.actStep
 		spec.lastHeadlandB = false 
 		spec.turnHeading = nil
-		spec.evOverride = false
+		--spec.evOverride = false
 		dbgprint("onUpdate : Field mode activated by back trigger (auto-resume)", 2)
 	end
 	
@@ -1370,13 +1401,13 @@ function HeadlandManagement:onDraw(dt)
 		local guiIcon = HeadlandManagement.guiIconOff
 		
 		local headlandAutomaticGS = not spec.autoOverride and (spec.modGuidanceSteeringFound and spec.useGuidanceSteeringTrigger) 
-		local headlandAutomaticEV = not spec.autoOverride and (spec.modEVFound and spec.useEVTrigger and not spec.evOverride)
+		--local headlandAutomaticEV = not spec.autoOverride and (spec.modEVFound and spec.useEVTrigger and not spec.evOverride)
 		local headlandAutomatic	  = not spec.autoOverride and (spec.useHLMTriggerF or spec.useHLMTriggerB)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride 
-		local headlandAutomaticResumeEV = (spec.modEVFound and spec.useEVTrigger and not spec.evOverride) and not spec.autoOverride and spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
-				
+		--local headlandAutomaticResumeEV = (spec.modEVFound and spec.useEVTrigger and not spec.evOverride) and not spec.autoOverride and spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
+		
 		-- field mode
-		if spec.isOn and headlandAutomatic and not spec.isActive then 
+		if spec.isOn and headlandAutomatic and not spec.isActive and not spec.useEVTrigger then 
 			guiIcon = HeadlandManagement.guiIconFieldA
 			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
 				guiIcon = HeadlandManagement.guiIconFieldAL 
@@ -1384,9 +1415,12 @@ function HeadlandManagement:onDraw(dt)
 			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
 				guiIcon = HeadlandManagement.guiIconFieldAR 
 			end
+			if spec.gpsSetting == 7 and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] then 
+				guiIcon = HeadlandManagement.guiIconFieldALR
+			end
 		end
 		
-		if spec.isOn and not headlandAutomatic and not spec.isActive then 
+		if spec.isOn and not headlandAutomatic and not spec.isActive and not spec.useEVTrigger then 
 			guiIcon = HeadlandManagement.guiIconField
 			if spec.gpsSetting == 4 and self.vcaSnapReverseLeft ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
 				guiIcon = HeadlandManagement.guiIconFieldL 
@@ -1394,29 +1428,33 @@ function HeadlandManagement:onDraw(dt)
 			if spec.gpsSetting == 5 and self.vcaSnapReverseRight ~= nil and self.vcaGetState ~= nil and self:vcaGetState("snapIsOn") then 
 				guiIcon = HeadlandManagement.guiIconFieldR 
 			end
+			if spec.gpsSetting == 7 and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] then 
+				guiIcon = HeadlandManagement.guiIconFieldLR
+			end
 		end
 		
-		if spec.isOn and headlandAutomaticGS and not spec.isActive then
+		if spec.isOn and headlandAutomaticGS and not spec.isActive and not spec.useEVTrigger then
 			local spec_gs = self.spec_globalPositioningSystem 
 			local gpsEnabled = (spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive)
 			if gpsEnabled then
-				guiIcon = HeadlandManagement.guiIconFieldA
+				guiIcon = HeadlandManagement.guiIconFieldGS
 			end
 		end
 		
-		if spec.isOn and headlandAutomaticEV and not spec.isActive then 
-			local gpsEnabled = spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
-			if gpsEnabled then
-				guiIcon = HeadlandManagement.guiIconFieldA
-			end
+		if spec.isOn and not spec.isActive and spec.useEVTrigger then 
+			guiIcon = HeadlandManagement.guiIconFieldEV
 		end
 	
 		-- headland mode			
-		if spec.isOn and (headlandAutomaticResume or headlandAutomaticResumeEV) and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+		if spec.isOn and headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP and not spec.useEVTrigger then
 			guiIcon = HeadlandManagement.guiIconHeadlandA
 		end
 		
-		if spec.isOn and not(headlandAutomaticResume or headlandAutomaticResumeEV) and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then 
+		if spec.isOn and spec.useEVTrigger and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
+			guiIcon = HeadlandManagement.guiIconHeadlandEV
+		end
+		
+		if spec.isOn and not headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP and not spec.useEVTrigger then 
 			guiIcon = HeadlandManagement.guiIconHeadland
 		end	
 		
@@ -1524,6 +1562,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 			if spec.normSpeed ~= spec.turnSpeed then
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
 				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
+				self:setCruiseControlState(spec.cruiseControlState)
 			end
 		else
 			-- Use Vanilla Speedcontrol
@@ -1541,11 +1580,11 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		end
 	else
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
-			
 			if self.speedControl.currentKey ~= spec.normSpeed then
 			-- Use Mod Speedontrol
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
 				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
+				self:setCruiseControlState(spec.cruiseControlState)
 			end
 		else
 			-- Use Vanilla Speedcontrol
@@ -1993,16 +2032,16 @@ function HeadlandManagement.stopGPS(self, enable)
 		spec.evStatus = self.vData.is[5]
 		spec.evTrack = self.vData.is[6]
 		if spec.evStatus then
-			dbgprint("stopGPS : EV-GPS off")
-			if spec.gpsSetting < 7 then spec.gpsSetting = 6 end
 			if spec.evTrack and spec.gpsSetting == 7 then
+				dbgprint("stopGPS : EV-GPS turn")
 				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_REVERSE", 1, nil, nil, nil)
 			else
+				dbgprint("stopGPS : EV-GPS off")
 				FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
 			end
 		end
 	end
-	if spec.modEVFound and (spec.gpsSetting == 6 and not enable or spec.useEVTrigger) then
+	if spec.modEVFound and spec.gpsSetting == 6 and not enable and not spec.useEVTrigger then
 		if spec.evStatus and not self.vData.is[5] then
 			dbgprint("stopGPS : EV-GPS on")
 			FS22_EnhancedVehicle.FS22_EnhancedVehicle.onActionCall(self, "FS22_EnhancedVehicle_SNAP_ONOFF", 1, nil, nil, nil)
