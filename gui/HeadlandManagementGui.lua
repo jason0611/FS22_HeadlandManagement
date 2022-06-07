@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.1.1.7 beta
+-- Version 2.1.1.8 beta
 --
 
 HeadlandManagementGui = {}
@@ -37,6 +37,9 @@ HeadlandManagementGui.CONTROLS = {
 	"alarmVolumeTitle",
 	"alarmVolumeSetting",
 	"alarmVolumeTT",
+	"inputbindingsTitle",
+	"inputbindingsSetting",
+	"inputbindingsTT",
 		
 	"sectionImplementControl",
 	"implementControl",
@@ -108,7 +111,7 @@ function HeadlandManagementGui:new()
 end
 
 -- set current values
-function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debug)
+function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debug, showKeys)
 	dbgprint("HeadlandManagementGui: setData", 2)
 	self.spec = spec
 	self.gpsEnabled = gpsEnabled
@@ -178,6 +181,13 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.alarmVolumeSetting:setTexts(values)
 	self.alarmVolumeSetting:setState(self.spec.beepVol)
 	self.alarmVolumeSetting:setDisabled(not self.spec.beep)
+	
+	self.inputbindingsTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_keys"))
+	self.inputbindingsSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.inputbindingsSetting:setState(showKeys and 1 or 2)
 	
 	-- Implement control
 	self.implementControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_implementControl"))
@@ -374,6 +384,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	--	triggerTexts[triggerAnz] = g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_ev") 
 	--end
 	self.gpsAutoTriggerSetting:setTexts(triggerTexts)
+	self.gpsAutoTriggerSetting:setDisabled(self.spec.useEVTrigger)
 	
 	local triggerSetting = 1
 	triggerAnz = 2
@@ -405,12 +416,12 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		offsetSetting = 2
 	end
 	self.gpsAutoTriggerOffsetSetting:setState(offsetSetting)
-	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled) or (triggerSetting == 3 and not self.spec.modGuidanceSteeringFound) or triggerSetting == 4)
+	self.gpsAutoTriggerOffsetSetting:setDisabled(triggerSetting == 1 or (triggerSetting == 3 and self.gpsEnabled) or (triggerSetting == 3 and not self.spec.modGuidanceSteeringFound) or triggerSetting == 4 or self.spec.useEVTrigger)
 	
 	self.gpsAutoTriggerOffsetWidthTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsAutoTriggerOffsetWidth"))
 	self.gpsAutoTriggerOffsetWidthInput:setText(tostring(self.spec.headlandDistance))
 	self.gpsAutoTriggerOffsetWidthInput.onEnterPressedCallback = HeadlandManagementGui.onWidthInput
-	self.gpsAutoTriggerOffsetWidthInput:setDisabled(triggerSetting ~= 2)
+	self.gpsAutoTriggerOffsetWidthInput:setDisabled(triggerSetting ~= 2 or self.spec.useEVTrigger)
 	
 	self.gpsResumeTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_autoResume"))
 	self.gpsResumeSetting:setTexts({
@@ -418,7 +429,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
 	self.gpsResumeSetting:setState(self.spec.autoResume and 1 or 2)
-	self.gpsResumeSetting:setDisabled((not self.spec.modGuidanceSteeringFound and triggerSetting == 3) or triggerSetting == 4)
+	self.gpsResumeSetting:setDisabled((not self.spec.modGuidanceSteeringFound and triggerSetting == 3) or triggerSetting == 4 or self.spec.useEVTrigger)
 	
 	-- Vehicle control
 	self.vehicleControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_vehicleControl"))
@@ -634,13 +645,15 @@ function HeadlandManagementGui:onClickOk()
 	-- beep
 	self.spec.beep = self.alarmSetting:getState() == 1
 	self.spec.beepVol = self.alarmVolumeSetting:getState()
+	-- showKeys
+	local showKeys = self.inputbindingsSetting:getState() == 1
 	-- debug
 	local debug = self.debugSetting:getState() == 1
 	self.spec.debugFlag = self.debugFlagSetting:getState() == 1
 
 	dbgprint("gpsSetting (GUI): "..tostring(self.spec.gpsSetting), 3)
 	self:close()
-	self.callbackFunc(self.target, self.spec, debug)
+	self.callbackFunc(self.target, self.spec, debug, showKeys)
 end
 
 -- just close gui
