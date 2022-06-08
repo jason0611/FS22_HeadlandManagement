@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <l10n>
 	<texts>
-    <text name="input_HLM_TOGGLESTATE" text="HLM: Souvraťový režim/režim pole"/>	
-   	<text name="input_HLM_SWITCHON" text="HLM: Souvraťový režim" />
-   	<text name="input_HLM_SWITCHOFF" text="HLM: Režim pole" />	
-   	<text name="input_HLM_SHOWGUI" text="HLM: Nastavení" />
-   	<text name="input_HLM_MAINSWITCH" text="HLM: Zapnout/vypnout"/>
-	  <text name="input_HLM_TOGGLEAUTO" text="HLM: Přepnout ot.na aut."/>
-	  <text name="input_HLM_AUTOON" text="HLM: Zapnout aut. otáčení na souvrati"/>
+		<text name="input_HLM_TOGGLESTATE" text="HLM: Souvraťový režim/režim pole"/>	
+		<text name="input_HLM_SWITCHON" text="HLM: Souvraťový režim" />
+		<text name="input_HLM_SWITCHOFF" text="HLM: Režim pole" />	
+		<text name="input_HLM_SHOWGUI" text="HLM: Nastavení" />
+		<text name="input_HLM_MAINSWITCH" text="HLM: Zapnout/vypnout"/>
+		<text name="input_HLM_TOGGLEAUTO" text="HLM: Přepnout ot.na aut."/>
+		<text name="input_HLM_AUTOON" text="HLM: Zapnout aut. otáčení na souvrati"/>
 		<text name="input_HLM_AUTOOFF" text="HLM: Vypnout aut. otáčení na souvrati"/>
 		
 		<text name="text_HLM_isActive" text="HLM:: Mod aktivní"/>
@@ -17,15 +17,7 @@
 		<text name="text_HLM_installed_short" text="Instalováno"/>
 		<text name="text_HLM_notInstalled_short" text="Není Instalováno"/>
 		<text name="text_HLM_implementTypeLoaded" text="Konfigurace načtena pro typ nářadí"/>
-		<text name="text_HLM_implementTypeSaved" text="Konfigurace uložena pro typ nářadí"/>
-		
-		
-		
-		
-		
-		
-		
-		
+		<text name="text_HLM_implementTypeSaved" text="Konfigurace uložena pro typ nářadí"/>		
 		
 		<text name="text_HLM_type_Plow" text="Pluh"/>
 		<text name="text_HLM_type_Cultivator" text="Kultivátor"/>
@@ -48,28 +40,21 @@
 		<text name="hlmgui_speedControl" text="Nastavení kontroly rychlosti"/>
 		<text name="hlmgui_speedControlMod" text="Použít kontrolu rychlosti"/>
 		<text name="hlmgui_speedSetting" text="Pracovní rychlost na souvratích"/>
-		<text name="hlmgui_speedControlModSetting" text="Úroveň regulace rychlosti na souvratích"/>					  
-		<text name="hlmgui_alarmControl" text="Hlavní nastavení"/>
+		<text name="hlmgui_speedControlModSetting" text="Úroveň regulace rychlosti na souvratích"/>
 		
-		
-		<text name="hlmgui_beep" text="Zvukové upozornění při aktivaci"/>
-		
+		<text name="hlmgui_alarmControl" text="Hlavní nastavení"/>		
+		<text name="hlmgui_beep" text="Zvukové upozornění při aktivaci"/>		
 		<text name="hlmgui_beepVol" text="Hlasitost"/>
-		<text name="hlmgui_beepVolTT" text="Hlasitost zvukového upozornění" />
-		
+		<text name="hlmgui_beepVolTT" text="Hlasitost zvukového upozornění" />		
 		
 		<text name="hlmgui_implementControl" text="Implementace nářadí"/>
 		<text name="hlmgui_raise" text="Zvednout nářadí"/>
 		<text name="hlmgui_plow" text="Otočit pluh"/>
 		<text name="hlmgui_plowFull" text="Plné otočení"/>
-		<text name="hlmgui_plowCenter" text="Otočení ve dvou krocích"/>
-		
+		<text name="hlmgui_plowCenter" text="Otočení ve dvou krocích"/>		
 		<text name="hlmgui_plowOff" text="Neotáčet"/>
 		<text name="hlmgui_pto" text="Zastavte vývodový hřídel a hydraulické zařízení"/>
-		<text name="hlmgui_ridgeMarker" text="Vyměnte značkovač"/>
-		
-		
-		
+		<text name="hlmgui_ridgeMarker" text="Vyměnte značkovač"/>		
 		
 		<text name="hlmgui_gpsControl" text="kontrola GPS"/>
 		<text name="hlmgui_gpsSetting" text="nastav řízení GPS"/>
@@ -88,7 +73,6 @@
 		
 		<text name= "hlmgui_vcaDirSwitch" text="VCA automatické přepínání směru"/>
 		<text name= "hlmgui_autoResume" text="Automatický režim návratu"/>
-
 		
 		<text name="hlmgui_vehicleControl" text="Kontrola stroje"/>
 		<text name="hlmgui_diffLock" text="Odemkni diferenciály"/>	
@@ -98,7 +82,8 @@
 		
 		<text name="hlmgui_debug" text="Pro moddery"/>
 		<text name="hlmgui_debugTitle" text="Zvyditelnit uzly vozidel"/>
-		<text name="hlmgui_debugFlagTitle" text="Zviditelnit spouštěcí uzly"/>								  
+		<text name="hlmgui_debugFlagTitle" text="Zviditelnit spouštěcí uzly"/>
+		
 		<text name="hlmgui_speedControlTT" text="Na souvrati lze nastavení tempomatu změnit na nastavitelnou hodnotu a poté jej resetovat."/>																																					  
 		<text name="hlmgui_speedControlModTT" text="Je-li k dispozici, lze pro nastavení tempomatu použít modul „SpeedControl“."/>
 		<text name="hlmgui_speedSettingTT" text="Požadované nastavení tempomatu na souvrati."/>
