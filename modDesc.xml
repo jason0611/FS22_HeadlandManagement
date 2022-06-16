@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="65">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.b.2.0</version>
+	<version>2.2.R.1</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
-		<en>Headland Management</en>
-		<de>Vorgewende Management</de>
-		<fr>Gestion Des Fourrières</fr>
-		<cz>Souvraťový Management</cz>
-		<it>Gestione Capezzagna</it>
+		<en>Headland Management RC1</en>
+		<de>Vorgewende Management RC1</de>
+		<fr>Gestion Des Fourrières RC1</fr>
+		<cz>Souvraťový Management RC1</cz>
+		<it>Gestione Capezzagna RC1</it>
     </title>
     <description>
 		<en>
@@ -202,6 +202,11 @@ V2.1.0.1 :
 V2.1.0.2 :
 - Correction pour la mise à jour 1.4/1.4.1 pour éviter les callstacks lua
 
+V2.2.0.0 :
+- Ajout du support pour EnhancedVehicle Mod
+- Ajout du support pour SpeedControl Mod
+- Ajout d'une option permettant de masquer les affectations de touches dans le menu F1
+
 ]]>
 		</fr>
 		<cz>
@@ -255,6 +260,11 @@ V2.1.0.1:
 V2.1.0.2:
 - Oprava pro aktualizaci 1.4/1.4.1 pro zabránění vzniku callstacků lua
 
+V2.2.0.0:
+- Přidána podpora pro EnhancedVehicle Mod
+- Přidána podpora pro SpeedControl Mod
+- Přidána možnost skrýt přiřazení kláves v nabídce F1
+
 ]]>
 		</cz>
 		<it>
@@ -307,6 +317,11 @@ V2.1.0.1:
 
 V2.1.0.2:
 - Correzione per l'aggiornamento 1.4/1.4.1 per prevenire i calltacks lua
+
+V2.2.0.0:
+- Aggiunto il supporto per EnhancedVehicle Mod
+- Aggiunto il supporto per SpeedControl Mod
+- Aggiunta l'opzione per nascondere le assegnazioni dei tasti nel menu F1
 
 ]]>
 		</it>
