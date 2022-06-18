@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.2.0.0 RC1
+-- Version 2.2.0.0 RC2
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -1061,12 +1061,6 @@ function HeadlandManagement.onUpdateResearch(self)
 	
 	local fieldNum = getFieldNum(self.rootNode)
 	dbgrender("Field ID: "..tostring(fieldNum), 21, 3)
-	
-	dbgrender("useEVTrigger: "..tostring(spec.useEVTrigger), 23, 3)
-	dbgrender("EV: isOnField: "..tostring(self.vData.track.isOnField), 24, 3)
-	dbgrender("EV: Status (vData5): "..tostring(self.vData.is[5]), 25, 3)
-	dbgrender("EV: Track  (vData6): "..tostring(self.vData.is[6]), 26, 3)
-	
 	dbgrender("spec.evOverride: "..tostring(spec.evOverride), 28, 3)
 	
 	local analyseTable = nil
