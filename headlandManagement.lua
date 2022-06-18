@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.2.0.0 RC2
+-- Version 2.2.0.0 RC3
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -22,7 +22,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -97,9 +97,19 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		or	category == "SUGARCANEVEHICLES"
 		or	category == "MOWERVEHICLES"
 		or	category == "MISCVEHICLES"
+		
+		-- Ifkos John Deere Pack (category name taken from fs19)
 		or 	category == "JOHNDEEREPACK"
+		
+		-- Hof Bergmann etc.
+		or category == "MINIAGRICULTUREEQUIPMENT"
+		
 		)
 		and	configurations ~= nil
+		
+		and xmlFile:hasProperty("vehicle.enterable")
+		and xmlFile:hasProperty("vehicle.motorized")
+		and xmlFile:hasProperty("vehicle.drivable")
 
 	then
 		configurations["HeadlandManagement"] = {
