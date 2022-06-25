@@ -2,7 +2,7 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.2.0.0 RC3
+-- Version 2.2.0.0 RC4
 --
 -- Make Headland Detection independent from other mods like GS
 -- Two nodes: front node + back node
@@ -94,6 +94,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		or	category == "POTATOVEHICLES"
 		or	category == "COTTONVEHICLES"
 		or	category == "SPRAYERVEHICLES"
+		or  category == "SLURRYVEHICLES"
 		or	category == "SUGARCANEVEHICLES"
 		or	category == "MOWERVEHICLES"
 		or	category == "MISCVEHICLES"

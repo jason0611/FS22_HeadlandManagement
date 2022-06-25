@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="65">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.2.R.3</version>
+	<version>2.2.R.4</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -75,6 +75,7 @@ V2.1.0.2:
 V2.2.0.0:
 - Support for Mod SpeedControl added
 - Support for Mod EnhancedVehicle added
+- Configuration enabled for slurry vehicles
 - Added option to hide keybinding info in F1 menu
 
 ]]>
@@ -142,6 +143,7 @@ V2.1.0.2:
 V2.2.0.0:
 - Unterstützung für EnhancedVehicle Mod hinzugefügt
 - Unterstützung für SpeedControl Mod hinzugefügt
+- Konfiguration für Güllefahrzeuge ergänzt
 - Option ergänzt, um die Tastenbelegungen im F1-Menü auszublenden
 
 ]]>
@@ -205,6 +207,7 @@ V2.1.0.2 :
 V2.2.0.0 :
 - Ajout du support pour EnhancedVehicle Mod
 - Ajout du support pour SpeedControl Mod
+- Configuration activée pour les véhicules à lisier
 - Ajout d'une option permettant de masquer les affectations de touches dans le menu F1
 
 ]]>
@@ -263,6 +266,7 @@ V2.1.0.2:
 V2.2.0.0:
 - Přidána podpora pro EnhancedVehicle Mod
 - Přidána podpora pro SpeedControl Mod
+- Konfigurace povolená pro vozidla na kejdu
 - Přidána možnost skrýt přiřazení kláves v nabídce F1
 
 ]]>
@@ -321,6 +325,7 @@ V2.1.0.2:
 V2.2.0.0:
 - Aggiunto il supporto per EnhancedVehicle Mod
 - Aggiunto il supporto per SpeedControl Mod
+- Configurazione abilitata per i veicoli per liquami
 - Aggiunta l'opzione per nascondere le assegnazioni dei tasti nel menu F1
 
 ]]>
