@@ -46,6 +46,7 @@
 		<text name="hlmgui_beep" text="Zvukové upozornění při aktivaci"/>		
 		<text name="hlmgui_beepVol" text="Hlasitost"/>
 		<text name="hlmgui_beepVolTT" text="Hlasitost zvukového upozornění" />		
+		<text name="hlmgui_keys" text="Zobrazit přiřazení kláves" />
 		
 		<text name="hlmgui_implementControl" text="Implementace nářadí"/>
 		<text name="hlmgui_raise" text="Zvednout nářadí"/>

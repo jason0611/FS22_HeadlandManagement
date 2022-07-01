@@ -46,6 +46,7 @@
 		<text name="hlmgui_beep" text="Audible alert while active"/>
 		<text name="hlmgui_beepVol" text="Volume"/>
 		<text name="hlmgui_beepVolTT" text="Volume of audible alert" />
+		<text name="hlmgui_keys" text="Show key assignments" />
 		
 		<text name="hlmgui_implementControl" text="Implement control"/>
 		<text name="hlmgui_raise" text="Lift implements"/>

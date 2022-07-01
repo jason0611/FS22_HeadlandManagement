@@ -47,6 +47,7 @@
 			<text name="hlmgui_beep" text="Avviso acustico durante l'attività"/>
 			<text name="hlmgui_beepVol" text="Volume"/>
 			<text name="hlmgui_beepVolTT" text="Volume dell'avviso acustico" />
+			<text name="hlmgui_keys" text="Mostra le assegnazioni dei tasti" />
 		
 			<text name="hlmgui_implementControl" text="Controllo dell'attrezzo"/>
 			<text name="hlmgui_raise" text="Solleva gli attrezzi"/>

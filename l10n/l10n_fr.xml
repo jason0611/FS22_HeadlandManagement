@@ -46,6 +46,7 @@
 		<text name="hlmgui_beep" text="Tonalité d'avertissement lorsque la gestion est activée"/>
 		<text name="hlmgui_beepVol" text="Volume"/>
 		<text name="hlmgui_beepVolTT" text="Volume de l'alerte sonore" />
+		<text name="hlmgui_keys" text="Afficher l'affectation des touches" />
 
 		<text name="hlmgui_implementControl" text="Contrôle de l'équipement"/>
 		<text name="hlmgui_raise" text="Lever les équipements"/>
@@ -81,8 +82,8 @@
 		<text name="hlmgui_csTwoStep" text="via normal"/>
 		
 		<text name="hlmgui_debug" text="Debug-Settings"/>
-		<text name="hlmgui_debugTitle" text="Make vehicle nodes visible (global)"/>
-		<text name="hlmgui_debugFlagTitle" text="Make trigger nodes visible"/>
+		<text name="hlmgui_debugTitle" text="Rendre les nœuds de véhicules visibles (global)"/>
+		<text name="hlmgui_debugFlagTitle" text="Rendre les nœuds de déclenchement visibles"/>
 		
 		<text name="hlmgui_speedControlTT" text="En bout de champ, le réglage du régulateur de vitesse peut être modifié sur une valeur réglable, puis réinitialisé."/>
 		<text name="hlmgui_speedControlModTT" text="Si disponible, le mod 'SpeedControl' peut être utilisé pour la régulation du régulateur de vitesse."/>
@@ -100,9 +101,9 @@
 		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
 		<text name="hlmgui_diffLockTT" text="Dans les fourrières, les blocages de différentiel actifs sont relâchés puis remis en place."/>
 		<text name="hlmgui_csTT" text="Lorsque la fourrière est atteinte, il est possible de passer à une position de marche en crabe active. Soit directement, soit d'abord en position normale et seulement complètement à la fin de la tournière. Remarque : dans ce dernier cas, un bon timing est important. Il est donc recommandé de s'arrêter brièvement pour tourner et abaisser la charrue à la fin de la tournière."/>
-		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
-		<text name="hlmgui_gpsAutoResumeTT" text="Switches back to field mode as soon as the vehicle has changed course by 180°."/>
-		<text name="hlmgui_debugTT" text="Displays a marker at the front and rear vehicle node" />
-		<text name="hlmgui_debugFlagTT" text="Displays two flags marking the destination trigger (green) and the vehicle trigger (red) in the 'first front, then rear' setting in headland mode" />
+		<text name="hlmgui_VCADirSwitchTT" text="Active ou désactive le changement automatique de la direction du virage. Utile lorsque le VCA a des numéros différents pour le saut des voies gauche/droite."/>
+		<text name="hlmgui_gpsAutoResumeTT" text="Repasse en mode champ dès que le véhicule a changé de cap de 180°."/>
+		<text name="hlmgui_debugTT" text="Affiche un marqueur au niveau du nœud de véhicule avant et arrière" />
+		<text name="hlmgui_debugFlagTT" text="Affiche deux drapeaux marquant le déclenchement de la destination (vert) et le déclenchement du véhicule (rouge) dans le réglage 'd'abord l'avant, puis l'arrière' en mode fourrière." />
 	</texts>
 </l10n>

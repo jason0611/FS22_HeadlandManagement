@@ -46,6 +46,7 @@
 		<text name="hlmgui_beep" text="Звуковое оповещение"/>
 		<text name="hlmgui_beepVol" text="Громкость"/>
 		<text name="hlmgui_beepVolTT" text="Громкость звукового оповещения." />
+		<text name="hlmgui_keys" text="Показать назначение клавиш" />
 		
 		<text name="hlmgui_implementControl" text="Управление оборудованием"/>
 		<text name="hlmgui_raise" text="Поднятие оборудования"/>
