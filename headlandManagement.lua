@@ -731,6 +731,7 @@ function HeadlandManagement:onRegisterActionEvents(isActiveForInput)
 			local prio = GS_PRIO_HIGH; if spec.isOn then prio = GS_PRIO_NORMAL end
 			_, spec.actionEventMainSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_MAINSWITCH', self, HeadlandManagement.MAINSWITCH, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventMainSwitch, prio)
+			g_inputBinding:setActionEventTextVisibility(spec.actionEventMainSwitch, sk)
 			
 			_, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
 			g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
