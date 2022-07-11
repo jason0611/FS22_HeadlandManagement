@@ -6,9 +6,9 @@
 		<text name="input_HLM_SWITCHOFF" text="Режим - Поле" />
 		<text name="input_HLM_SHOWGUI" text="Разворотная полоса: Настройки" />
 		<text name="input_HLM_MAINSWITCH" text="HLM: Переключение вкл/выкл"/>
-		<text name="input_HLM_TOGGLEAUTO" text="HLM: Toggle headland automatic"/>
-		<text name="input_HLM_AUTOON" text="HLM: Turn on headland automatic"/>
-		<text name="input_HLM_AUTOOFF" text="HLM: Turn off headland automatic"/>
+		<text name="input_HLM_TOGGLEAUTO" text="HLM: Переключение авто. разворотная полоса"/>
+		<text name="input_HLM_AUTOON" text="HLM: Вкл авто. разворотная полоса"/>
+		<text name="input_HLM_AUTOOFF" text="HLM: Выкл авто. разворотная полоса"/>
 		
 		<text name="text_HLM_isActive" text="Режим Разворотной полосы активен"/>
 		<text name="text_HLM_configuration" text="Headlandmanagement"/>
@@ -16,17 +16,17 @@
 		<text name="text_HLM_notInstalled" text="Headlandmanagement не установлен"/>
 		<text name="text_HLM_installed_short" text="Установлен"/>
 		<text name="text_HLM_notInstalled_short" text="Не установлен"/>
-		<text name="text_HLM_implementTypeLoaded" text="Configuration loaded for implement type"/>
-		<text name="text_HLM_implementTypeSaved" text="Configuration saved for implement type"/>
+		<text name="text_HLM_implementTypeLoaded" text="Конфигурация загружена для типа оборудования"/>
+		<text name="text_HLM_implementTypeSaved" text="Конфигурация сохранена для типа оборудования"/>
 
-		<text name="text_HLM_type_Plow" text="Plow"/>
-		<text name="text_HLM_type_Cultivator" text="Cultivator"/>
-		<text name="text_HLM_type_Roller" text="Roller"/>
-		<text name="text_HLM_type_Sowingmachine" text="Sowingmachine"/>
-		<text name="text_HLM_type_Mulcher" text="Mulcher"/>
-		<text name="text_HLM_type_Combine" text="Combine"/>
-		<text name="text_HLM_type_Foragewagon" text="Foragewagon"/>
-		<text name="text_HLM_type_Baler" text="Baler"/>
+		<text name="text_HLM_type_Plow" text="Плуг"/>
+		<text name="text_HLM_type_Cultivator" text="Культиватор"/>
+		<text name="text_HLM_type_Roller" text="Каток"/>
+		<text name="text_HLM_type_Sowingmachine" text="Сеялка"/>
+		<text name="text_HLM_type_Mulcher" text="Мульчер"/>
+		<text name="text_HLM_type_Combine" text="Комбайн"/>
+		<text name="text_HLM_type_Foragewagon" text="Фуражный прицеп"/>
+		<text name="text_HLM_type_Baler" text="Пресс-подборщик"/>
 		
 		<text name="hlmgui_title" text="Headlandmanagement: Настройки для "/>
 		<text name="hlmgui_on" text="вкл"/>
