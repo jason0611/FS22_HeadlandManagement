@@ -38,7 +38,7 @@
 		<text name="hlmgui_default" text="défaut"/>
 		
 		<text name="hlmgui_speedControl" text="Régler le régulateur de vitesse"/>
-		<text name="hlmgui_speedControlMod" text="Utiliser Mod SpeedControl"/>
+		<text name="hlmgui_speedControlMod" text="Utiliser Mod Speed Control/Extended Cruise Control"/>
 		<text name="hlmgui_speedSetting" text="Vitesse de travail en bord de champ"/>
 		<text name="hlmgui_speedControlModSetting" text="Étape du régulateur de vitesse en bord de champ"/>
 

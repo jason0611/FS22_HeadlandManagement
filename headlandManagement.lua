@@ -67,15 +67,16 @@ HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory..
 HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
 HeadlandManagement.guiIconHeadlandEV = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_ev.dds")
 
--- Filteres implements
+-- Filtered implements
 HeadlandManagement.filterList = {}
 HeadlandManagement.filterList[1] = "E-DriveLaner"
 
--- Killbits for not yet published mods
+-- Killbits for supported published mods
 HeadlandManagement.kbVCA = false
 HeadlandManagement.kbGS = false
 HeadlandManagement.kbSC = false
 HeadlandManagement.kbEV = false
+HeadlandManagement.kbECC = true
 
 -- set configuration 
 
@@ -224,7 +225,7 @@ function HeadlandManagement:onLoad(savegame)
 	
 	spec.timer = 0					-- Timer for waiting actions
 	spec.beep = true				-- Beep on or off
-	spec.beepVol = 5				-- Beep volume setting
+	spec.beepVol = 3				-- Initial beep volume setting
 	
 	spec.normSpeed = 20				-- working speed on field
 	spec.turnSpeed = 5				-- working speed on headland
@@ -235,9 +236,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.action = {}				-- switches for process chain
 	spec.action[0] =false
 	
-	spec.useSpeedControl = true		-- change working speed n headland
-	spec.modSpeedControlFound = false	-- is mod 'FS22_zzzSpeedControl' existing?
-	spec.useModSpeedControl = false	-- use mod 'FS22_xxxSpeedControl'
+	spec.useSpeedControl = true		-- change working speed on headland
 	
 	spec.useHLMTriggerF = false 	-- use vehicle's front node as trigger
 	spec.useHLMTriggerB = false 	-- use vehicle's back node as trigger
@@ -289,6 +288,12 @@ function HeadlandManagement:onLoad(savegame)
 	
 	spec.modEVFound = false
 	spec.useEVTrigger = false
+	
+	spec.modSpeedControlFound = false	-- does mod 'FS22_zzzSpeedControl' exist?
+	spec.useModSpeedControl = false	-- use mod 'FS22_xxxSpeedControl'
+	
+	spec.modECCFound = false		-- does mod 'FS22_extendedCruiseControl' exist?
+	spec.useModECC = false
 	
 	spec.useDiffLock = true
 	spec.diffStateF = false
@@ -437,6 +442,15 @@ function HeadlandManagement:onPostLoad(savegame)
 	if FS22_SpeedControl ~= nil and FS22_SpeedControl.SpeedControl ~= nil and FS22_SpeedControl.SpeedControl.onInputAction ~= nil and not HeadlandManagement.kbSC then 
 		spec.modSpeedControlFound = true 
 		spec.useModSpeedControl = true
+		spec.turnSpeed = 1 --SpeedControl Mode 1
+		spec.normSpeed = 2 --SpeedControl Mode 2
+	end
+	
+	-- Check if Mod FS22_extendedCruiseControl exists
+	self.spec_extendedCruiseControl ~= nil and not HeadlandManagement.kbECC then 
+		spec.modECCFound = true 
+		spec.modSpeedControlFound = false -- Override SpeedControl if both mods are present
+		spec.useModECC = true
 		spec.turnSpeed = 1 --SpeedControl Mode 1
 		spec.normSpeed = 2 --SpeedControl Mode 2
 	end
@@ -1572,6 +1586,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
 				self:setCruiseControlState(spec.cruiseControlState)
 			end
+		--elseif spec.modECCFound and spec.useModECC 
 		else
 			-- Use Vanilla Speedcontrol
 			spec.normSpeed = self:getCruiseControlSpeed()
