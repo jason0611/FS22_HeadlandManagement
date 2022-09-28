@@ -64,7 +64,7 @@ HeadlandManagement.kbVCA = false
 HeadlandManagement.kbGS = false
 HeadlandManagement.kbSC = false
 HeadlandManagement.kbEV = false
-HeadlandManagement.kbECC = true
+HeadlandManagement.kbECC = false
 
 -- set configuration 
 
