@@ -40,7 +40,7 @@ Additionally with existing Vehicle Control Addon (VCA):
 Additionally, if Guidance Steering is available:
 - Deactivate and reactivate GPS guidance
 
-Additionally, if SpeedControl becomes available:
+Additionally, if SpeedControl or extendedCruiseControl is available:
 - Speed adjustment also possible via change of cruise control level
 
 Additionally with existing EnhancedVehicle:
@@ -91,7 +91,7 @@ Zusätzlich bei vorhandenem Vehicle Control Addon (VCA):
 Zusätzlich, wenn Guidance Steering verfügbar ist:
 - GPS Spurführung deaktivieren und reaktivieren
 
-Zusätzlich, wenn SpeedControl verfügbar werden sollte:
+Zusätzlich, wenn SpeedControl oder extendedCruiseControl verfügbar ist:
 - Geschwindigkeitsanpassung auch über Wechsel der Tempomatstufe möglich
 
 Zusätzlich bei vorhandenem EnhancedVehicle:
