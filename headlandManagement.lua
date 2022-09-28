@@ -1585,7 +1585,7 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		else
 			-- Use Vanilla Speedcontrol
 			spec.normSpeed = self:getCruiseControlSpeed()
-			if spec.turnSpeed < 0 then -- itching?
+			if spec.turnSpeed < 0 then -- inching?
 				local inchedSpeed = spec.normSpeed + spec.turnSpeed
 				if inchedSpeed < 1 then inchedSpeed = 1 end
 				self:setCruiseControlMaxSpeed(inchedSpeed, inchedSpeed)
