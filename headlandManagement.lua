@@ -1,20 +1,8 @@
 --
 -- Headland Management for LS 22
 --
--- Jason06 / Glowins Modschmiede
--- Version 2.2.0.0
+-- Glowins Modschmiede
 --
--- Make Headland Detection independent from other mods like GS
--- Two nodes: front node + back node
--- Adapt front/back nodes, if implement is being attached or detached
--- Detect, if turn has ended --> Headland Management with automatic field mode
--- Separate raising of front and back implement, each when reaching headland
--- Enable manual override of trigger controlled actions
--- Turn Headland Management on/off
--- Option to temporary disable headland automatic by key
--- Auto-Resume if trigger leaves headland area
--- Save configuration locally with implement-type
--- Headland Management configured into mission vehicles
  
 HeadlandManagement = {}
 
@@ -76,7 +64,7 @@ HeadlandManagement.kbVCA = false
 HeadlandManagement.kbGS = false
 HeadlandManagement.kbSC = false
 HeadlandManagement.kbEV = false
-HeadlandManagement.kbECC = true
+HeadlandManagement.kbECC = false
 
 -- set configuration 
 
@@ -447,10 +435,10 @@ function HeadlandManagement:onPostLoad(savegame)
 	end
 	
 	-- Check if Mod FS22_extendedCruiseControl exists
-	self.spec_extendedCruiseControl ~= nil and not HeadlandManagement.kbECC then 
+	if self.spec_extendedCruiseControl ~= nil and not HeadlandManagement.kbECC then 
 		spec.modECCFound = true 
+		spec.useModSpeedControl = true
 		spec.modSpeedControlFound = false -- Override SpeedControl if both mods are present
-		spec.useModECC = true
 		spec.turnSpeed = 1 --SpeedControl Mode 1
 		spec.normSpeed = 2 --SpeedControl Mode 2
 	end
@@ -1575,22 +1563,35 @@ function HeadlandManagement.reduceSpeed(self, enable)
 	local spec_drv = self.spec_drivable
 	if spec_drv == nil then return; end;
 	dbgprint("reduceSpeed : "..tostring(enable))
-	if enable then
+	if enable then -- switch to headland mode
 		spec.cruiseControlState = self:getCruiseControlState()
 		dbgprint("reduceSpeed : cruiseControlState: "..tostring(spec.cruiseControlState))
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
-			-- Use Mod Speedontrol
+			-- Use Mod SpeedControl
 			spec.normSpeed = self.speedControl.currentKey or 2
 			if spec.normSpeed ~= spec.turnSpeed then
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed))
 				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.turnSpeed), true, false, false)
 				self:setCruiseControlState(spec.cruiseControlState)
 			end
-		--elseif spec.modECCFound and spec.useModECC 
+		elseif spec.modECCFound and spec.useModSpeedControl then
+			-- Use Mod ExtendedCruiseControl
+			spec.normSpeed = self.spec_extendedCruiseControl.activeSpeedGroup or 2
+			if spec.normSpeed ~= spec.turnSpeed then
+				dbgprint("reduceSpeed : ".."ECC_TOGGLE_CRUISECONTROL_"..tostring(spec.turnSpeed))
+				FS22_extendedCruiseControl.ExtendedCruiseControl.actionEventCruiseControlGroup(self, "ECC_TOGGLE_CRUISECONTROL_"..tostring(spec.turnSpeed), true, false, false)
+				self:setCruiseControlState(spec.cruiseControlState)
+			end
 		else
 			-- Use Vanilla Speedcontrol
 			spec.normSpeed = self:getCruiseControlSpeed()
-			self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
+			if spec.turnSpeed < 0 then -- itching?
+				local inchedSpeed = spec.normSpeed + spec.turnSpeed
+				if inchedSpeed < 1 then inchedSpeed = 1 end
+				self:setCruiseControlMaxSpeed(inchedSpeed, inchedSpeed)
+			else		
+				self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
+			end
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.turnSpeed
 				dbgprint("reduceSpeed: SpeedControl adjusted")
@@ -1601,17 +1602,26 @@ function HeadlandManagement.reduceSpeed(self, enable)
 			end
 			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
 		end
-	else
+	else -- switch back to field mode
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
-			if self.speedControl.currentKey ~= spec.normSpeed then
 			-- Use Mod Speedontrol
+			if self.speedControl.currentKey ~= spec.normSpeed then
 				dbgprint("reduceSpeed : ".."SPEEDCONTROL_SPEED"..tostring(spec.normSpeed))
 				FS22_SpeedControl.SpeedControl.onInputAction(self, "SPEEDCONTROL_SPEED"..tostring(spec.normSpeed), true, false, false)
 				self:setCruiseControlState(spec.cruiseControlState)
 			end
+		elseif spec.modECCFound and spec.useModSpeedControl then
+			-- Use Mod ExtendedCruiseControl
+			if spec.normSpeed ~= spec.turnSpeed then
+				dbgprint("reduceSpeed : ".."ECC_TOGGLE_CRUISECONTROL_"..tostring(spec.normSpeed))
+				FS22_extendedCruiseControl.ExtendedCruiseControl.actionEventCruiseControlGroup(self, "ECC_TOGGLE_CRUISECONTROL_"..tostring(spec.normSpeed), true, false, false)
+				self:setCruiseControlState(spec.cruiseControlState)
+			end
 		else
 			-- Use Vanilla Speedcontrol
-			spec.turnSpeed = self:getCruiseControlSpeed()
+			if spec.turnSpeed > 0 then
+				spec.turnSpeed = self:getCruiseControlSpeed()
+			end
 			self:setCruiseControlMaxSpeed(spec.normSpeed, spec.normSpeed)
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
 				self.speedControl.keys[self.speedControl.currentKey].speed = spec.normSpeed
