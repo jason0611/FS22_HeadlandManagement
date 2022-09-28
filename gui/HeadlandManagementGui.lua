@@ -145,12 +145,21 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.speedControlUseSCModSetting:setVisible(self.spec.modSpeedControlFound or self.spec.modECCFound)
 	
 	self.speedControlTurnSpeedTitle1:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSetting"))
-	local speedTable = {}
+	local speedTable = {} --create speedTable with -10..-1,1..40
+	for n=1,10 do
+		speedTable[n] = tostring(n-11)
+	end
 	for n=1,40 do
-		speedTable[n] = tostring(n)
+		speedTable[n+10] = tostring(n)
 	end
 	self.speedControlTurnSpeedSetting1:setTexts(speedTable)
-	self.speedControlTurnSpeedSetting1:setState(not self.spec.useModSpeedControl and math.floor(self.spec.turnSpeed) or 5)
+	local turnSpeedSetting
+	if  = self.spec.turnSpeed < 0 then 
+		turnSpeedSetting = math.floor(self.spec.turnSpeed) + 11
+	else
+		turnSpeedSetting = math.floor(self.spec.turnSpeed) + 10
+	end
+	self.speedControlTurnSpeedSetting1:setState(not self.spec.useModSpeedControl and turnSpeedSetting or 15)
 	local disableSpeedcontrolMod
 	if not self.spec.modSpeedControlFound and not self.spec.modECCFound then
 		disableSpeedcontrolMod = true
@@ -563,7 +572,12 @@ function HeadlandManagementGui:onClickOk()
 	if self.spec.useModSpeedControl then
 		self.spec.turnSpeed = self.speedControlTurnSpeedSetting2:getState()
 	else 
-		self.spec.turnSpeed = self.speedControlTurnSpeedSetting1:getState()
+		local turnSpeed = self.speedControlTurnSpeedSetting1:getState()
+		if turnSpeed < 11 then 
+			self.spec.turnSpeed = turnSpeed - 11
+		else 
+			self.spec.turnSpeed = turnSpeed - 10
+		end
 	end
 	-- raise
 	local raiseState = self.raiseSetting:getState()
