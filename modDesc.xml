@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="67">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.2.9.3</version>
+	<version>2.2.1.0</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -78,6 +78,10 @@ V2.2.0.0:
 - Configuration enabled for slurry vehicles
 - Added option to hide keybinding info in F1 menu
 
+V2.2.1.0:
+- Support for Mod extendedCruiseControl added
+- Cruise Control: Inching added. Just choose a negative value to reduce speed in headland by this amount
+
 ]]>
 		</en>	
 		<de>
@@ -145,6 +149,10 @@ V2.2.0.0:
 - Unterstützung für SpeedControl Mod hinzugefügt
 - Konfiguration für Güllefässer ergänzt
 - Option ergänzt, um die Tastenbelegungen im F1-Menü auszublenden
+
+V2.2.1.0
+- Unterstützung für extendedCruiseControl hinzugefügt
+- Tempomat: Drückung hinzugefügt. Wähle einfach einen negativen Wert, um die Geschwindigkeit im Vorgewende um diesen Betrag zu reduzieren
 
 ]]>
 		</de>
