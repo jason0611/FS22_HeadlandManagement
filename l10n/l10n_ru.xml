@@ -38,7 +38,7 @@
 		<text name="hlmgui_default" text="по умолчанию"/>
 		
 		<text name="hlmgui_speedControl" text="Настройки скорости"/>
-		<text name="hlmgui_speedControlMod" text="Использовать мод SpeedControl"/>
+		<text name="hlmgui_speedControlMod" text="Использовать мод Speed Control/Extended Cruise Control"/>
 		<text name="hlmgui_speedSetting" text="Рабочая скорость на разворотной полосе"/>
 		<text name="hlmgui_speedControlModSetting" text="Скорость на разворотной полосе"/>
 	

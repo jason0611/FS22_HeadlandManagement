@@ -38,7 +38,7 @@
 		<text name="hlmgui_default" text="default"/>
 		
 		<text name="hlmgui_speedControl" text="Speed-Control Settings"/>
-		<text name="hlmgui_speedControlMod" text="Use mod SpeedControl"/>
+		<text name="hlmgui_speedControlMod" text="Use mod Speed Control/Extended Cruise Control"/>
 		<text name="hlmgui_speedSetting" text="Working speed in headlands"/>
 		<text name="hlmgui_speedControlModSetting" text="Speed-Control level in headlands"/>
 	

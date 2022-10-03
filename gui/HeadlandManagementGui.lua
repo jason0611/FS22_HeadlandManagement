@@ -140,19 +140,28 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
 	})
-	self.speedControlUseSCModSetting:setState(self.spec.useModSpeedControl and self.spec.modSpeedControlFound and 1 or 2)
-	self.speedControlUseSCModSetting:setDisabled(not self.spec.useSpeedControl or not self.spec.modSpeedControlFound)
-	self.speedControlUseSCModSetting:setVisible(self.spec.modSpeedControlFound)
+	self.speedControlUseSCModSetting:setState((self.spec.useModSpeedControl and (self.spec.modSpeedControlFound or self.spec.modECCFound)) and 1 or 2)
+	self.speedControlUseSCModSetting:setDisabled(not self.spec.useSpeedControl or (not self.spec.modSpeedControlFound and not self.spec.modECCFound))
+	self.speedControlUseSCModSetting:setVisible(self.spec.modSpeedControlFound or self.spec.modECCFound)
 	
 	self.speedControlTurnSpeedTitle1:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedSetting"))
-	local speedTable = {}
+	local speedTable = {} --create speedTable with -10..-1,1..40
+	for n=1,10 do
+		speedTable[n] = tostring(n-11)
+	end
 	for n=1,40 do
-		speedTable[n] = tostring(n)
+		speedTable[n+10] = tostring(n)
 	end
 	self.speedControlTurnSpeedSetting1:setTexts(speedTable)
-	self.speedControlTurnSpeedSetting1:setState(not self.spec.useModSpeedControl and math.floor(self.spec.turnSpeed) or 5)
+	local turnSpeedSetting
+	if self.spec.turnSpeed < 0 then 
+		turnSpeedSetting = math.floor(self.spec.turnSpeed) + 11
+	else
+		turnSpeedSetting = math.floor(self.spec.turnSpeed) + 10
+	end
+	self.speedControlTurnSpeedSetting1:setState(not self.spec.useModSpeedControl and turnSpeedSetting or 15)
 	local disableSpeedcontrolMod
-	if not self.spec.modSpeedControlFound then
+	if not self.spec.modSpeedControlFound and not self.spec.modECCFound then
 		disableSpeedcontrolMod = true
 	else 
 		disableSpeedcontrolMod = not self.spec.useModSpeedControl or not self.spec.useSpeedControl
@@ -162,8 +171,8 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.speedControlTurnSpeedTitle2:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_speedControlModSetting"))
 	self.speedControlTurnSpeedSetting2:setTexts({"1","2","3"})
 	self.speedControlTurnSpeedSetting2:setState(self.spec.useModSpeedControl and self.spec.turnSpeed or 1)
-	self.speedControlTurnSpeedSetting2:setDisabled(disableSpeedcontrolMod or not self.spec.modSpeedControlFound)
-	self.speedControlTurnSpeedSetting2:setVisible(self.spec.modSpeedControlFound)
+	self.speedControlTurnSpeedSetting2:setDisabled(disableSpeedcontrolMod) -- or (not self.spec.modSpeedControlFound and not self.spec.modECCFound))
+	self.speedControlTurnSpeedSetting2:setVisible(self.spec.modSpeedControlFound or self.spec.modECCFound)
 
 	-- General Settings
 	self.alarmControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_alarmControl"))
@@ -513,11 +522,11 @@ function HeadlandManagementGui:logicalCheck()
 	self.alarmVolumeSetting:setDisabled(not useBeep)
 	
 	local useSpeedControl = self.speedControlOnOffSetting:getState() == 1
-	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or not self.spec.modSpeedControlFound) 
+	self.speedControlUseSCModSetting:setDisabled(not useSpeedControl or (not self.spec.modSpeedControlFound and not self.spec.modECCFound)) 
 	
 	local useModSpeedControl = self.speedControlUseSCModSetting:getState() == 1
 	self.speedControlTurnSpeedSetting1:setDisabled(useModSpeedControl or not useSpeedControl)
-	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or not self.spec.modSpeedControlFound or not useSpeedControl)
+	self.speedControlTurnSpeedSetting2:setDisabled(not useModSpeedControl or (not self.spec.modSpeedControlFound and not self.spec.modECCFound) or not useSpeedControl)
 	
 	local useRaiseImplement = self.raiseSetting:getState() ~= 5	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
@@ -563,7 +572,12 @@ function HeadlandManagementGui:onClickOk()
 	if self.spec.useModSpeedControl then
 		self.spec.turnSpeed = self.speedControlTurnSpeedSetting2:getState()
 	else 
-		self.spec.turnSpeed = self.speedControlTurnSpeedSetting1:getState()
+		local turnSpeed = self.speedControlTurnSpeedSetting1:getState()
+		if turnSpeed < 11 then 
+			self.spec.turnSpeed = turnSpeed - 11
+		else 
+			self.spec.turnSpeed = turnSpeed - 10
+		end
 	end
 	-- raise
 	local raiseState = self.raiseSetting:getState()

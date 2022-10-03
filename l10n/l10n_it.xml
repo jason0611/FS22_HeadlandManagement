@@ -39,7 +39,7 @@
 			<text name="hlmgui_default" text="Predefinito"/>
 		
 			<text name="hlmgui_speedControl" text="Impostazioni di controllo della velocità"/>
-			<text name="hlmgui_speedControlMod" text="Usa mod SpeedControl"/>
+			<text name="hlmgui_speedControlMod" text="Usa mod Speed Control/Extended Cruise Control"/>
 			<text name="hlmgui_speedSetting" text="Velocità di lavoro in capezzagna"/>
 			<text name="hlmgui_speedControlModSetting" text="Livello di controllo della velocità in capezzagna"/>
 	

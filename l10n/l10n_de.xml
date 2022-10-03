@@ -38,7 +38,7 @@
 		<text name="hlmgui_default" text="Standardeinstellung"/>
 		
 		<text name="hlmgui_speedControl" text="Tempomat anpassen"/>
-		<text name="hlmgui_speedControlMod" text="Nutze Mod SpeedControl"/>
+		<text name="hlmgui_speedControlMod" text="Nutze Mod Speed Control/Extended Cruise Control"/>
 		<text name="hlmgui_speedSetting" text="Arbeitsgeschwindigkeit im Vorgewende"/>
 		<text name="hlmgui_speedControlModSetting" text="Tempomatstufe im Vorgewende"/>
 		

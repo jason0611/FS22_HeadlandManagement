@@ -38,7 +38,7 @@
 		<text name="hlmgui_default" text="výchozí"/>
 		
 		<text name="hlmgui_speedControl" text="Nastavení kontroly rychlosti"/>
-		<text name="hlmgui_speedControlMod" text="Použít kontrolu rychlosti"/>
+		<text name="hlmgui_speedControlMod" text="Použít kontrolu rychlosti/Extended Cruise Control"/>
 		<text name="hlmgui_speedSetting" text="Pracovní rychlost na souvratích"/>
 		<text name="hlmgui_speedControlModSetting" text="Úroveň regulace rychlosti na souvratích"/>
 		
