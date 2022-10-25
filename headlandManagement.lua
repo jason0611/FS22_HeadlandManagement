@@ -840,7 +840,6 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	self.spec_HeadlandManagement = changes
 	HeadlandManagement.debug = debug
 	HeadlandManagement.showKeys = showKeys
-	self.actionEventUpdateRequested = true
 	local spec = self.spec_HeadlandManagement
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -1585,22 +1584,23 @@ function HeadlandManagement.reduceSpeed(self, enable)
 		else
 			-- Use Vanilla Speedcontrol
 			spec.normSpeed = self:getCruiseControlSpeed()
-			if spec.turnSpeed < 0 then -- inching?
-				local inchedSpeed = spec.normSpeed + spec.turnSpeed
-				if inchedSpeed < 1 then inchedSpeed = 1 end
-				self:setCruiseControlMaxSpeed(inchedSpeed, inchedSpeed)
-			else		
-				self:setCruiseControlMaxSpeed(spec.turnSpeed, spec.turnSpeed)
+			local turnSpeed = spec.turnSpeed
+				
+			if turnSpeed < 0 then -- inching?
+				turnSpeed = turnSpeed + spec.normSpeed
+				if turnSpeed < 1 then turnSpeed = 1 end
 			end
+			self:setCruiseControlMaxSpeed(turnSpeed, turnSpeed)
+
 			if spec.modSpeedControlFound and self.speedControl ~= nil then
-				self.speedControl.keys[self.speedControl.currentKey].speed = spec.turnSpeed
+				self.speedControl.keys[self.speedControl.currentKey].speed = turnSpeed
 				dbgprint("reduceSpeed: SpeedControl adjusted")
 			end
 			if not self.isServer then
-				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, spec.turnSpeed, spec.turnSpeed))
+				g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, turnSpeed, turnSpeed))
 				dbgprint("reduceSpeed: speed sent to server")
 			end
-			dbgprint("reduceSpeed : Set cruise control to "..tostring(spec.turnSpeed))
+			dbgprint("reduceSpeed : Set cruise control to "..tostring(turnSpeed))
 		end
 	else -- switch back to field mode
 		if spec.modSpeedControlFound and spec.useModSpeedControl and self.speedControl ~= nil then
