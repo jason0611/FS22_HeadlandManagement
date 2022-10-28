@@ -32,7 +32,7 @@
 		<text name="hlmgui_on" text="вкл"/>
 		<text name="hlmgui_off" text="выкл"/>
 		<text name="hlmgui_both" text="переднее и заднее"/>
-		<text name="hlmgui_seq" text="сначала пред, потом зад"/>
+		<text name="hlmgui_seq" text="сначала перед, потом зад"/>
 		<text name="hlmgui_front" text="переднее"/>
 		<text name="hlmgui_back" text="заднее"/>
 		<text name="hlmgui_default" text="по умолчанию"/>
