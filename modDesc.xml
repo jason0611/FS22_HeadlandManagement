@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="67">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.2.1.1</version>
+	<version>2.2.1.2</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -83,7 +83,10 @@ V2.2.1.0:
 - Cruise Control: Inching added. Just choose a negative value to reduce speed in headland by this amount
 
 V2.2.1.1:
-- Fixed: After calling up the GUI, the vehicle must be selected for the assigned buttons to work
+- Fixed: After calling up the GUI, input actions only worked correctly, if the vehicle itself was selected
+
+V2.2.1.2: 
+- Added category FM_VEHICLES to supported vehicle categories
 ]]>
 		</en>	
 		<de>
@@ -157,7 +160,10 @@ V2.2.1.0
 - Tempomat: Drückung hinzugefügt. Wähle einfach einen negativen Wert, um die Geschwindigkeit im Vorgewende um diesen Betrag zu reduzieren
 
 V2.2.1.1
-- Behoben: Nach Aufruf der GUI musste das Fahrzeug ausgewählt werden, damit die zugewiesenen Tasten funktionierten
+- Behoben: Nach dem Aufrufen der GUI funktionierten belegte Tasten nur dann korrekt, wenn das Fahrzeug selbst ausgewählt war
+
+V2.2.1.2
+- Kategorie FM_VEHICLES zu den unterstützten Fahrzeugkategorien hinzugefügt
 ]]>
 		</de>
 		<fr>
@@ -222,8 +228,11 @@ V2.2.0.0 :
 - Configuration activée pour les véhicules à lisier
 - Ajout d'une option permettant de masquer les affectations de touches dans le menu F1
 
-V2.2.1.1 : 
-- Correction d'un problème : Après l'appel de l'interface graphique, le véhicule doit être sélectionné pour que les touches attribuées fonctionnent.
+V2.2.1.1
+- Correction d'un problème : Après avoir accédé à l'interface graphique, les touches occupées ne fonctionnaient correctement que si le véhicule lui-même était sélectionné.
+
+V2.2.1.2
+- Ajout de la catégorie FM_VEHICLES aux catégories de véhicules prises en charge
 ]]>
 		</fr>
 		<cz>
@@ -283,6 +292,11 @@ V2.2.0.0:
 - Konfigurace povolená pro vozidla na kejdu
 - Přidána možnost skrýt přiřazení kláves v nabídce F1
 
+V2.2.1.1
+- Opraveno: Po vyvolání grafického uživatelského rozhraní fungovala přiřazená tlačítka správně pouze v případě, že bylo vybráno samotné vozidlo.
+
+V2.2.1.2
+- Kategorie FM_VEHICLES přidána do podporovaných kategorií vozidel
 ]]>
 		</cz>
 		<it>
@@ -342,6 +356,11 @@ V2.2.0.0:
 - Configurazione abilitata per i veicoli per liquami
 - Aggiunta l'opzione per nascondere le assegnazioni dei tasti nel menu F1
 
+V2.2.1.1
+- Fissato: Dopo aver richiamato l'interfaccia grafica, i pulsanti assegnati funzionavano correttamente solo se era selezionato il veicolo stesso.
+
+V2.2.1.2
+- La categoria FM_VEHICLES è stata aggiunta alle categorie di veicoli supportate.
 ]]>
 		</it>
 	    
