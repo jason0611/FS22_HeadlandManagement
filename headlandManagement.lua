@@ -10,7 +10,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -95,6 +95,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		
 		-- Hof Bergmann etc.
 		or category == "MINIAGRICULTUREEQUIPMENT"
+		or category == "FM_VEHICLES"
 		
 		)
 		and	configurations ~= nil
