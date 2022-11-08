@@ -30,6 +30,9 @@ HeadlandManagement.STOPPTO = 10
 HeadlandManagement.STOPGPS = 11
 HeadlandManagement.MAXSTEP = 12
 
+HeadlandManagement.GUIDANCE_RIGHT = -1
+HeadlandManagement.GUIDANCE_LEFT = 1
+
 HeadlandManagement.debug = false
 HeadlandManagement.showKeys = true
 
@@ -287,6 +290,11 @@ function HeadlandManagement:onLoad(savegame)
 	spec.useDiffLock = true
 	spec.diffStateF = false
 	spec.diffStateB = false
+	
+	spec.contour = HeadlandManagement.GUIDANCE_RIGHT
+	spec.contourWidth = 3
+	spec.contourSharpness = 1
+	spec.contourDebug = true
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
@@ -1022,6 +1030,14 @@ local function getHeading(self)
 	return heading, dx, dz
 end	
 
+local function getContourPoints(self)
+	local spec = self.spec_HeadlandManagement
+	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 3)
+	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3)
+	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3)
+	return {x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}
+end
+
 -- Main part
 
 local function isOnField(node, x, z)
@@ -1387,6 +1403,23 @@ function HeadlandManagement:onUpdate(dt)
 		spec.lastHeadlandB = false 
 		dbgprint("onUpdate: reset lastHeadlandB", 2)
 	end
+	
+	-- contour guidance
+	spec.contourP1, spec.contourP2, spec.contourP3 = getContourPoints(self)
+	local x2, y3, z2 = unpack(spec.contourP2)
+	local x3, y3, z3 = unpack(spec.contourP3)
+	local courseOk = getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0
+	local turnOutside = getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) ~= 0
+	local turnInside = getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0
+	
+	if courseOk then 
+		print("ok")
+	elseif turnOutside then
+		print("out")
+	elseif turnInside then	
+		print("in")
+	end
+	
 end
 
 function HeadlandManagement:onDraw(dt)
@@ -1490,6 +1523,13 @@ function HeadlandManagement:onDraw(dt)
 				ShowNodeB:createWithNode(spec.backNode, 0.3, 0.3, 0.3)
 				ShowNodeB:draw() 
 			end
+		end
+		
+		-- debug: show contour guidance line
+		if spec.contourDebug and spec.contour ~= 0 and spec.contourP1 ~= nil and spec.contourP2 ~= nil then
+			local x1, y1, z1 = unpack(spec.contourP1)
+			local x2, y2, z2 = unpack(spec.contourP2)
+			drawDebugLine(x1, y1, z1, 0, 1, 0, x2, y2, z2, 0, 1, 0, true)
 		end
 	end
 end
