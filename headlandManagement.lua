@@ -293,7 +293,7 @@ function HeadlandManagement:onLoad(savegame)
 	
 	spec.contour = HeadlandManagement.GUIDANCE_RIGHT
 	spec.contourWidth = 3
-	spec.contourSharpness = 1
+	spec.contourSharpness = 0.5
 	spec.contourDebug = true
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
@@ -1033,9 +1033,11 @@ end
 local function getContourPoints(self)
 	local spec = self.spec_HeadlandManagement
 	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 3)
-	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3)
-	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3)
-	return {x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}
+	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) -- inside limit
+	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) -- outside limit 1
+	local x4, y4, z4 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) -- outside limit 2
+	local x5, y5, z5 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) -- outside limit 3
+	return {x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}, {x4, y4, z4}, {x5 ,y5, z5}
 end
 
 -- Main part
@@ -1405,21 +1407,31 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- contour guidance
-	spec.contourP1, spec.contourP2, spec.contourP3 = getContourPoints(self)
-	local x2, y3, z2 = unpack(spec.contourP2)
-	local x3, y3, z3 = unpack(spec.contourP3)
-	local courseOk = getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0
-	local turnOutside = getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) ~= 0
-	local turnInside = getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0
+	if spec.contour ~= 0 then
+		spec.contourP1, spec.contourP2, spec.contourP3, spec.contourP4, spec.contourP5 = getContourPoints(self)
 	
-	if courseOk then 
-		print("ok")
-	elseif turnOutside then
-		print("out")
-	elseif turnInside then	
-		print("in")
+		local x2, y2, z2 = unpack(spec.contourP2)
+		local x3, y3, z3 = unpack(spec.contourP3)
+		local x4, y4, z4 = unpack(spec.contourP4)
+		local x5, y5, z5 = unpack(spec.contourP5)
+	
+		local courseCorrection = 0
+		if getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0 then
+			-- course is correct, no action needed
+		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) ~= 0 then
+			courseCorrection = 0.3 -- too far inside, turn slowly to the outside
+		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x5, 0, z5) == 0 then
+			courseCorrection = -1 -- too far outside, turn max to the inside
+		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x4, 0, z4) == 0 then
+			courseCorrection = -0.6 -- too far outside, turn medium to the inside
+		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0 then
+			courseCorrection = -0.3 -- too far outside, turn slowly to the inside
+		end
+		
+		if courseCorrection ~= 0 then
+			self:setSteeringInput(courseCorrection * -spec.contour, true)
+		end
 	end
-	
 end
 
 function HeadlandManagement:onDraw(dt)
