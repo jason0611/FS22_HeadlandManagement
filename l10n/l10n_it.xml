@@ -91,6 +91,7 @@
 			<text name="hlmgui_speedSettingTT" text="Impostazione del regolatore di velocità desiderata in capezzagna."/>
 			<text name="hlmgui_speedControlModSettingTT" text="Utilizzare il cruise control 1, 2 o 3 in capezzagna."/>
 			<text name="hlmgui_alarmTT" text="In modalità capezzagna viene emesso un segnale acustico regolare."/>
+			<text name="hlmgui_inputbindingsTT" text="Le rispettive assegnazioni dei tasti attivi sono visualizzate nel menu F1"/>
 			<text name="hlmgui_raiseTT" text="In capezzagna, gli accessori abbassati possono essere sollevati e poi abbassati di nuovo. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
 			<text name="hlmgui_plowTT" text="Dopo lo scavo, gli aratri possono essere girati. O completamente immediatamente, o inizialmente solo verso il centro e solo completamente durante l'abbassamento. Nota: in quest'ultimo caso, è importante un buon tempismo. Si consiglia quindi di fermarsi brevemente per girare e abbassare l'aratro."/>
 			<text name="hlmgui_ptoTT" text="In capezzagna è possibile spegnere e riaccendere gli attrezzi attivati. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
@@ -99,7 +100,7 @@
 			<text name="hlmgui_gpsTypeTT" text="La funzione può essere limitata a Guidance Steering o VCA, oppure mettere automaticamente in pausa il sistema attualmente attivo."/>
 			<text name="hlmgui_gpsAutoTriggerTT" text="In combinazione con Guidance Steering, la gestione della capezzagna può essere attivata automaticamente quando viene raggiunta la capezzagna."/>
 			<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Di serie, il sistema automatico attiva la gestione della capezzagna quando la parte anteriore del veicolo raggiunge la capezzagna. Questo può essere spostato nella parte posteriore del veicolo. Importante: questa funzione può essere commutata solo se la guida di corsia Guidance Steering non è attiva!"/>
-			<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
+			<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Distanza dal bordo del campo da cui deve essere attivata la modalità capezzagna"/>
 			<text name="hlmgui_diffLockTT" text="In capezzagna, i bloccaggi differenziali attivi vengono rilasciati e quindi reimpostati."/>
 			<text name="hlmgui_csTT" text="Quando si raggiunge la capezzagna, è possibile commutare lo sterzo attivo a granchio. O direttamente, oppure prima in posizione normale o in retromarcia e poi a fine campo completamente."/>
 			<text name="hlmgui_VCADirSwitchTT" text="Abilita o disabilita automaticamente la commutazione della direzione di svolta. Utile quando VCA ha numeri diversi per saltare le corsie a sinistra/destra."/>

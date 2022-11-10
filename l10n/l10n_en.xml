@@ -90,6 +90,7 @@
 		<text name="hlmgui_speedSettingTT" text="Desired cruise control setting in the headland."/>
 		<text name="hlmgui_speedControlModSettingTT" text="Use cruise control 1, 2, or 3 on the headland."/>
 		<text name="hlmgui_alarmTT" text="When headland mode is activated, a regular warning tone is emitted."/>
+		<text name="hlmgui_inputbindingsTT" text="The respective active key assignments are displayed in the F1 menu"/>
 		<text name="hlmgui_raiseTT" text="In the headland, lowered implements can be raised and then lowered again. Optionally adjustable for all, only front or only rear implements."/>
 		<text name="hlmgui_plowTT" text="After lifting, plows can be turned. Either completely, or initially only to the center, and afterwards completely while lowering. Note: In the latter case, good timing is important. It is therefore recommended to stop briefly at the end of the headland to turn and lower the plow."/>
 		<text name="hlmgui_ptoTT" text="At the headland, activated implements can be switched off and then switched on again. Optionally adjustable for all, only front or only rear implements."/>
@@ -98,7 +99,7 @@
 		<text name="hlmgui_gpsTypeTT" text="The function can be limited to Guidance Steering or VCA, or automatically pause the currently active system."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="In conjunction with Guidance Steering, headland management can be activated automatically when the headland is reached."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="By default, headland management is activated when the front of the vehicle reaches the headland. This can be switched to the rear of the vehicle. Important: This function can only be switched if the track guidance of GS is not active!"/>
-		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Distance to the field edge from which the headland mode is to be activated"/>
 		<text name="hlmgui_diffLockTT" text="At the headland, active differential locks are released and then set again."/>
 		<text name="hlmgui_csTT" text="When the headland is reached, an active crab steering can be switched over. Either directly, or first in normal or reversing position and then at the end of the headland completely."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Enables or disables automatically switching of turn direction. Usefull when VCA has different numbers for skipping lanes left/right."/>
