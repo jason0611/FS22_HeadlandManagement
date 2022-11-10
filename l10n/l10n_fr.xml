@@ -90,6 +90,7 @@
 		<text name="hlmgui_speedSettingTT" text="Réglage souhaité du régulateur de vitesse en bout de champ."/>
 		<text name="hlmgui_speedControlModSettingTT" text="Utilise le régulateur de vitesse 1, 2 ou 3 dans les fourrières."/>
 		<text name="hlmgui_alarmTT" text="En mode fourrière, un avertissement sonore régulier retentit."/>
+		<text name="hlmgui_inputbindingsTT" text="Les affectations de touches actives sont affichées dans le menu F1."/>
 		<text name="hlmgui_raiseTT" text="En bout de champ, les outils portés abaissés peuvent être relevés puis redescendus. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
 		<text name="hlmgui_plowTT" text="Avec le relevage, les charrues peuvent être retournées. Soit directement, soit d'abord seulement vers le centre et seulement complètement lors de l'abaissement."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Le relevage permet de commuter le traceur sur le côté opposé."/>
@@ -98,7 +99,7 @@
 		<text name="hlmgui_gpsTypeTT" text="La fonction peut être limitée à Guidance Steering ou VCA, ou mettre automatiquement en pause le système actuellement actif."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="En combinaison avec Guidance Steering, la gestion des fourrières peut être activée automatiquement lorsque la fourrière est atteinte."/>
 		<text name="hlmgui_gpsAutoTriggerOffsetTT" text="Par défaut, le système automatique active la gestion des fourrières lorsque l'avant du véhicule atteint la fourrière. Cela peut être commuté sur l'arrière du véhicule. Important : cette fonction ne peut être activée que si le guidage de GPS n'est pas actif !"/>
-		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Actual dimensions: Turning radius: %2.2f m, vehicle length: %i m"/>
+		<text name="hlmgui_gpsAutoTriggerOffsetWidthTT" text="Distance par rapport au bord du champ à partir de laquelle le mode fourrière doit être activé"/>
 		<text name="hlmgui_diffLockTT" text="Dans les fourrières, les blocages de différentiel actifs sont relâchés puis remis en place."/>
 		<text name="hlmgui_csTT" text="Lorsque la fourrière est atteinte, il est possible de passer à une position de marche en crabe active. Soit directement, soit d'abord en position normale et seulement complètement à la fin de la tournière. Remarque : dans ce dernier cas, un bon timing est important. Il est donc recommandé de s'arrêter brièvement pour tourner et abaisser la charrue à la fin de la tournière."/>
 		<text name="hlmgui_VCADirSwitchTT" text="Active ou désactive le changement automatique de la direction du virage. Utile lorsque le VCA a des numéros différents pour le saut des voies gauche/droite."/>
