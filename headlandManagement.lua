@@ -292,6 +292,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.diffStateB = false
 	
 	spec.contour = HeadlandManagement.GUIDANCE_RIGHT
+	spec.contourTriggerMeasurement = false
 	spec.contourWidth = 3
 	spec.contourSharpness = 0.5
 	spec.contourDebug = true
@@ -783,15 +784,16 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	dbgprint_r(spec, 4)
 	-- headland management
-	-- anschalten nur wenn inaktiv
+	-- Vorgewendemodus nur wenn Feldmodus aktiv ist
 	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
 		spec.evOverride = true
-	-- abschalten nur wenn aktiv
+	-- Feldmodus nur wenn Vorgewendemodus aktiv ist
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
 		spec.evOverride = true
+		if spec.contour ~= 0 then spec.contourTriggerMeasurement = true end
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 		spec.actStep = -HeadlandManagement.MAXSTEP
@@ -854,6 +856,8 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
+
+-- Main part
 
 local function saveConfigWithImplement(spec, implementName)
 	--local spec = self.spec_HeadlandManagement
@@ -1033,19 +1037,30 @@ end
 local function getContourPoints(self)
 	local spec = self.spec_HeadlandManagement
 	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 3)
-	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) -- inside limit
-	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) -- outside limit 1
-	local x4, y4, z4 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) -- outside limit 2
-	local x5, y5, z5 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) -- outside limit 3
+	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) 	-- inside limit
+	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) 	-- outside limit 1
+	local x4, y4, z4 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) 		-- outside limit 2
+	local x5, y5, z5 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) 	-- outside limit 3
 	return {x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}, {x4, y4, z4}, {x5 ,y5, z5}
 end
-
--- Main part
 
 local function isOnField(node, x, z)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
 	return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
 end	
+
+local function measureBorderDistance(self)
+	local spec = self.spec_HeadlandManagement
+	for dist=0,1000,spec.contourSharpness do
+		local xi, yi, zi = localToWorld(self.rootNode, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
+		local xo, yo, zo = localToWorld(self.rootNode, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
+		if isOnField(self.rootNode, xi, zi) and not isOnField(self.rootNode, xo, zo) then
+			return dist
+		end
+	end
+	dbgprint("measureBorderDistance : result = "..tostring(dist), 2)
+	return 0
+end
 
 local function getFieldNum(node, x, z)
 	local fieldNum = 0
@@ -1412,7 +1427,15 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- contour guidance
-	if spec.contour ~= 0 then
+	
+	if spec.contourTriggerMeasurement then
+		spec.contourWidth = measureBorderDistance(self)
+		spec.contourTriggerMeasurement = false
+	end
+	
+	if spec.contour ~= 0 and spec.exists and not spec.isActive then
+		
+		
 		spec.contourP1, spec.contourP2, spec.contourP3, spec.contourP4, spec.contourP5 = getContourPoints(self)
 	
 		local x2, y2, z2 = unpack(spec.contourP2)
