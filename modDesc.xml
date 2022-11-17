@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="71">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.9.0.1</version>
+	<version>2.2.2.0</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -87,6 +87,10 @@ V2.2.1.1:
 
 V2.2.1.2: 
 - Added category FM_VEHICLES to supported vehicle categories
+
+V2.2.2.0:
+- Fixed a bug that prevents the correct timing while turning plows
+
 ]]>
 		</en>	
 		<de>
@@ -164,6 +168,10 @@ V2.2.1.1
 
 V2.2.1.2
 - Kategorie FM_VEHICLES zu den unterstützten Fahrzeugkategorien hinzugefügt
+
+V2.2.2.0
+- Ein Fehler wurde behoben, der das korrekte Timing beim Wenden von Pflügen verhindert.
+
 ]]>
 		</de>
 		<fr>
@@ -233,6 +241,10 @@ V2.2.1.1
 
 V2.2.1.2
 - Ajout de la catégorie FM_VEHICLES aux catégories de véhicules prises en charge
+
+V2.2.2.0
+- Correction d'un bug qui empêche le bon timing lors du retournement des charrues
+
 ]]>
 		</fr>
 		<cz>
@@ -297,6 +309,10 @@ V2.2.1.1
 
 V2.2.1.2
 - Kategorie FM_VEHICLES přidána do podporovaných kategorií vozidel
+
+V2.2.2.0
+- Opravena chyba, která brání správnému načasování při otáčení pluhů
+
 ]]>
 		</cz>
 		<it>
@@ -357,10 +373,14 @@ V2.2.0.0:
 - Aggiunta l'opzione per nascondere le assegnazioni dei tasti nel menu F1
 
 V2.2.1.1
-- Fissato: Dopo aver richiamato l'interfaccia grafica, i pulsanti assegnati funzionavano correttamente solo se era selezionato il veicolo stesso.
+- Fissato: Dopo aver richiamato l'interfaccia grafica, i pulsanti assegnati funzionavano correttamente solo se era selezionato il veicolo stesso
 
 V2.2.1.2
-- La categoria FM_VEHICLES è stata aggiunta alle categorie di veicoli supportate.
+- La categoria FM_VEHICLES è stata aggiunta alle categorie di veicoli supportate
+
+V2.2.2.0
+- È stato risolto un bug che impedisce la corretta temporizzazione durante la rotazione degli aratri
+
 ]]>
 		</it>
 	    
