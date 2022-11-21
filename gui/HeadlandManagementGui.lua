@@ -2,7 +2,6 @@
 -- Headland Management for LS 22
 --
 -- Jason06 / Glowins Modschmiede
--- Version 2.2.0.0
 --
 
 HeadlandManagementGui = {}
@@ -58,6 +57,12 @@ HeadlandManagementGui.CONTROLS = {
 	"crabSteeringTitle",
 	"crabSteeringSetting",
 	"csTT",
+	
+	"sectionContourControl",
+	"contourControl",
+	"contourOnOffTitle",
+	"contourOnOffSetting",
+	"contourTT",
 	
 	"sectionGPSControl",
 	"gpsControl",
@@ -253,6 +258,39 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.ridgeMarkerSetting:setState(self.spec.useRidgeMarker and 1 or 2)
 	self.ridgeMarkerSetting:setDisabled(raiseState == 5)
 	
+	-- Contour Guidance control
+	self.contourControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourControl"))
+	
+	self.contourOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourOnOff"))
+	
+	self.contourOnOffSetting.onClickCallback = HeadlandManagementGui.logicalCheck
+	self.contourOnOffSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_On1Pass"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_OnMPass"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	local contourSetting = 1
+	if self.spec.contour ~= 0 then
+		if self.spec.contourMultiMode then 
+			contourSetting = 3
+		else
+			contourSetting = 2
+		end
+	end	
+	self.contourOnOffSetting:setState(contourSetting)
+	
+	self.contourSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourSetting"))
+	self.contourSetting.onClickCallback = HeadlandManagementGui.logicalCheck
+	self.contourSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_nextRight"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_nextLeft"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_alwaysRight"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_alwaysLeft")
+	})
+	local contourMode = self.contourSetting:setState(self.spec.contour > 0 and 1 or 2
+	if self.spec.contourNoSwap then contourMode = contourMode + 2 end
+	self.contourSetting:setState(contourMode)
+		
 	-- GPS control
 	self.gpsControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsControl"))
 	self.gpsOnOffTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsSetting"))

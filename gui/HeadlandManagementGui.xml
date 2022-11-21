@@ -104,6 +104,27 @@
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="csTT"/>
 			</GuiElement>
 			
+		<!-- Contour Guidance Control -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="contourControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourOnOffTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourSettingTT"/>
+			</GuiElement>	
+		
 		<!-- GPS control -->
 			<GuiElement type="text" profile="dialogHeaderText"/>
 			<GuiElement type="text" profile="dialogHeaderText" id="gpsControl"/>

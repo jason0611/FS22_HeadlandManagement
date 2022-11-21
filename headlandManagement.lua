@@ -291,11 +291,13 @@ function HeadlandManagement:onLoad(savegame)
 	spec.diffStateF = false
 	spec.diffStateB = false
 	
-	spec.contour = HeadlandManagement.GUIDANCE_RIGHT
+	spec.contour = 0
 	spec.contourTriggerMeasurement = false
 	spec.contourWidth = 3
 	spec.contourSharpness = 0.5
 	spec.contourDebug = true
+	spec.contourMultiMode = false
+	spec.contourNoSwap = false
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end

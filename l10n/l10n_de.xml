@@ -57,6 +57,16 @@
 		<text name="hlmgui_pto" text="Zapfwelle/Hydraulik abschalten"/>
 		<text name="hlmgui_ridgeMarker" text="Spurreißer wechseln"/>
 		
+		<text name="hlmgui_contourControl" text="Kontur-Führung Einstellungen"/>
+		<text name="hlmgui_contourOnOff" text="Kontur-Führung aktivieren"/>
+		<text name="hlmgui_contourSetting" text="Feldrandseite"/>
+		<text name="hlmgui_contour_On1Pass" text="an: Nur eine Bahn"/>
+		<text name="hlmgui_contour_OnMPass" text="an: Jede Bahn"/>
+		<text name="hlmgui_contour_nextRight" text="zunächst rechts"/>
+		<text name="hlmgui_contour_nextLeft" text="zunächst links"/>
+		<text name="hlmgui_contour_alwaysRight" text="immer rechts"/>
+		<text name="hlmgui_contour_alwaysLeft" text="immer links"/>
+		
 		<text name="hlmgui_gpsControl" text="GPS-Einstellungen"/>
 		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>
 		<text name="hlmgui_gpsType" text="Genutzte GPS-Variante"/>
