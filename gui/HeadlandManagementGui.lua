@@ -63,6 +63,8 @@ HeadlandManagementGui.CONTROLS = {
 	"contourOnOffTitle",
 	"contourOnOffSetting",
 	"contourTT",
+	"contourSettingTitle",
+	"contourSetting",
 	
 	"sectionGPSControl",
 	"gpsControl",
@@ -265,19 +267,19 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	
 	self.contourOnOffSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.contourOnOffSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_On1Pass"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_OnMPass"),
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_OnMPass")
 	})
-	local contourSetting = 1
+	local contourOnOffSetting = 1
 	if self.spec.contour ~= 0 then
 		if self.spec.contourMultiMode then 
-			contourSetting = 3
+			contourOnOffSetting = 3
 		else
-			contourSetting = 2
+			contourOnOffSetting = 2
 		end
 	end	
-	self.contourOnOffSetting:setState(contourSetting)
+	self.contourOnOffSetting:setState(contourOnOffSetting)
 	
 	self.contourSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourSetting"))
 	self.contourSetting.onClickCallback = HeadlandManagementGui.logicalCheck
@@ -287,7 +289,9 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_alwaysRight"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_alwaysLeft")
 	})
-	local contourMode = self.contourSetting:setState(self.spec.contour > 0 and 1 or 2
+	self.contourSetting:setDisabled(contourOnOffSetting == 1)
+	local contourMode = 1 
+	if self.spec.contour > 0 then contourMode = 2 end
 	if self.spec.contourNoSwap then contourMode = contourMode + 2 end
 	self.contourSetting:setState(contourMode)
 		
@@ -569,6 +573,9 @@ function HeadlandManagementGui:logicalCheck()
 	local useRaiseImplement = self.raiseSetting:getState() ~= 5	
 	self.turnPlowSetting:setDisabled(not useRaiseImplement)
 	self.ridgeMarkerSetting:setDisabled(not useRaiseImplement)
+	
+	local contourOnOffSetting = self.contourOnOffSetting:getState()
+	self.contourSetting:setDisabled(contourOnOffSetting == 1)
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local triggerSetting = self.gpsAutoTriggerSetting:getState()
@@ -637,6 +644,24 @@ function HeadlandManagementGui:onClickOk()
 	self.spec.csState = self.crabSteeringSetting:getState()
 	self.spec.useCrabSteering = (self.spec.csState ~= 3)
 	self.spec.useCrabSteeringTwoStep = (self.spec.csState == 2)
+	-- contour guidance
+	local contour = self.contourOnOffSetting:getState() -- 1: off, 2: 1 row, 3: every row
+	local contourMode = self.contourSetting:getState()  -- 1: next right, 2: next left, 3: always right, 4: always left
+	self.spec.contour = 0
+	self.spec.contourMultiMode = false
+	self.spec.contourNoSwap = false
+	if contourMode > 2 then
+		self.spec.contourNoSwap = true
+		contourMode = contourMode - 2
+	end
+	if contour == 3 then
+		self.spec.contourMultiMode = true
+	end
+	if contour > 1 and contourMode == 1 then
+		self.spec.contour = -1
+	elseif contour > 1 and contourMode == 2 then
+		self.spec.contour = 1
+	end
 	-- gps
 	self.spec.useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()

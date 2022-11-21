@@ -10,7 +10,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -292,12 +292,13 @@ function HeadlandManagement:onLoad(savegame)
 	spec.diffStateB = false
 	
 	spec.contour = 0
+	spec.contourMultiMode = false
+	spec.contourNoSwap = false
+	spec.contourSetActive = false
 	spec.contourTriggerMeasurement = false
 	spec.contourWidth = 3
 	spec.contourSharpness = 0.5
 	spec.contourDebug = true
-	spec.contourMultiMode = false
-	spec.contourNoSwap = false
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
@@ -790,12 +791,26 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
 		spec.evOverride = true
+		-- contour guidance: swap field border side
+		if not spec.contourNoSwap and not spec.contourSetActive then
+			spec.contour = -spec.contour
+		end
+		-- contour guidance: if not freshly active or contourMultiMode is true, reset contour mode
+		if spec.contour ~= 0 and not spec.contourSetActive and not spec.contourMultiMode then 
+			spec.contour = 0
+		end
+		-- contour guidance: reset activation
+		spec.contourSetActive = false
 	-- Feldmodus nur wenn Vorgewendemodus aktiv ist
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
 		spec.evOverride = true
-		if spec.contour ~= 0 then spec.contourTriggerMeasurement = true end
+		-- contour guidance: trigger measurement
+		if spec.contour ~= 0 then 
+			spec.contourTriggerMeasurement = true 
+			spec.contourSetActive = false
+		end
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 		spec.actStep = -HeadlandManagement.MAXSTEP
@@ -854,6 +869,7 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	HeadlandManagement.debug = debug
 	HeadlandManagement.showKeys = showKeys
 	local spec = self.spec_HeadlandManagement
+	if spec.contour ~= 0 then spec.contourSetActive = true end
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
@@ -1106,13 +1122,16 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("isActive: "..tostring(spec.isActive), 17, 3)
 	dbgrender("actStep: "..tostring(spec.actStep), 18, 3)
 	
+	dbgrender("contour: "..tostring(spec.contour), 24, 3)
+	dbgrender("contourSetActive: "..tostring(spec.contourSetActive), 25, 3)
+	
 	local turnTarget
 	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
 	dbgrender("turnHeading:"..tostring(turnTarget), 20, 3)
 	
 	local fieldNum = getFieldNum(self.rootNode)
 	dbgrender("Field ID: "..tostring(fieldNum), 21, 3)
-	dbgrender("spec.evOverride: "..tostring(spec.evOverride), 28, 3)
+	dbgrender("spec.evOverride: "..tostring(spec.evOverride), 22, 3)
 	
 	local analyseTable = nil
 	
@@ -1435,8 +1454,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.contourTriggerMeasurement = false
 	end
 	
-	if spec.contour ~= 0 and spec.exists and not spec.isActive then
-		
+	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
 		
 		spec.contourP1, spec.contourP2, spec.contourP3, spec.contourP4, spec.contourP5 = getContourPoints(self)
 	
@@ -1568,7 +1586,7 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		-- debug: show contour guidance line
-		if spec.contourDebug and spec.contour ~= 0 and spec.contourP1 ~= nil and spec.contourP2 ~= nil then
+		if spec.contourDebug and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourP1 ~= nil and spec.contourP2 ~= nil then
 			local x1, y1, z1 = unpack(spec.contourP1)
 			local x2, y2, z2 = unpack(spec.contourP2)
 			drawDebugLine(x1, y1, z1, 0, 1, 0, x2, y2, z2, 0, 1, 0, true)
