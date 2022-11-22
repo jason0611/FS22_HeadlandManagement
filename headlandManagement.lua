@@ -423,36 +423,27 @@ local function vehicleMeasurement(self, excludedImplement)
 	else
 		vehicleLength = lengthBackup
 	end
+	
+	local rwx, rwy, rwz, vz
 	-- center projection of frontNode
-	--local wrx, wry, wrz = getWorldTranslation(self.rootNode)
+	rwx, rwy, rwz = getWorldTranslation(frontNode)
+	_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
+	local cFrontNode = createTransformGroup("cFrontNode")
+	link(self.rootNode, cFrontNode)
+	setTranslation(cFrontNode, 0, 0, vz)
 	
-	--[[
-	local wfx, wfy, wfz = getWorldTranslation(frontNode)
-	local lfx, lfy, lfz = worldToLocal(self.rootNode, wfx, wfy, wfz)
-	local cfx, cfy, cfz = localToWorld(self.rootNode, 0, lfy, lfz)
-	
-	local cFrontNode = createTransformGroup("frontNode")
-	link(self.rootNode, cFrontNode) 
-	setTranslation(cFrontNode, cfx, cfy, cfz)
-	setRotation(cFrontNode, 0, 0, 0)
-	--frontNode = centeredNode
-	
-	local wbx, wby, wbz = getWorldTranslation(backNode)
-	local lbx, lby, lbz = worldToLocal(self.rootNode, wbx, wby, wbz)
-	local cbx, cby, cbz = localToWorld(self.rootNode, 0, lby, lbz)
-	
-	local cBackNode = createTransformGroup("backNode")
-	link(self.rootNode, cBackNode) 
-	setTranslation(cBackNode, cbx, cby, cbz)
-	setRotation(cBackNode, 0, 0, 0)
-	--frontNode = centeredNode
-	--]]
+	-- center projection of backNode
+	rwx, rwy, rwz = getWorldTranslation(backNode)
+	_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
+	local cBackNode = createTransformGroup("cBackNode")
+	link(self.rootNode, cBackNode)
+	setTranslation(cBackNode, 0, 0, vz)
 	
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
 	dbgprint("vehicleMeasurement : vehicleWidth: "..tostring(vehicleWidth), 1)
-	return frontNode, backNode, vehicleLength, vehicleWidth, maxTurningRadius
+	return cFrontNode, cBackNode, vehicleLength, vehicleWidth, maxTurningRadius
 end
 
 function HeadlandManagement:onPostLoad(savegame)
@@ -1083,13 +1074,13 @@ local function getContourPoints(self)
 	local spec = self.spec_HeadlandManagement
 	local node = spec.frontNode
 	if node == nil then node = self.rootNode end
-	local xr, yr, zr = localToWorld(node, 0, 0, 3)
-	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) 	-- inside limit
-	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - spec.contourSharpness) * spec.contour, 0, 3) 		-- inside limit 2
-	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - spec.contourSharpness * 2) * spec.contour, 0, 3) 	-- inside limit 3
-	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) 	-- outside limit 1
-	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) 		-- outside limit 2
-	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) 	-- outside limit 3
+	local xr, yr, zr = localToWorld(node, 0, 0, 0)
+	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 0) 	-- inside limit
+	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - spec.contourSharpness) * spec.contour, 0, 0) 		-- inside limit 2
+	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- inside limit 3
+	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 0) -- outside limit 1
+	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 0) 		-- outside limit 2
+	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- outside limit 3
 	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
@@ -1631,7 +1622,7 @@ function HeadlandManagement:onDraw(dt)
 			local xr, yr, zr = unpack(spec.contourPr)
 			local xo1, yo1, zo1 = unpack(spec.contourPo1)
 			yo1 = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, xo1, 0,zo1)+0.1
-			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1, 2, true)
+			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1)
 		end
 	end
 end
