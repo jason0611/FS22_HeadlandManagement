@@ -292,6 +292,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.diffStateB = false
 	
 	spec.contour = 0
+	spec.contourLast = 0
 	spec.contourMultiMode = false
 	spec.contourNoSwap = false
 	spec.contourSetActive = false
@@ -422,6 +423,31 @@ local function vehicleMeasurement(self, excludedImplement)
 	else
 		vehicleLength = lengthBackup
 	end
+	-- center projection of frontNode
+	--local wrx, wry, wrz = getWorldTranslation(self.rootNode)
+	
+	--[[
+	local wfx, wfy, wfz = getWorldTranslation(frontNode)
+	local lfx, lfy, lfz = worldToLocal(self.rootNode, wfx, wfy, wfz)
+	local cfx, cfy, cfz = localToWorld(self.rootNode, 0, lfy, lfz)
+	
+	local cFrontNode = createTransformGroup("frontNode")
+	link(self.rootNode, cFrontNode) 
+	setTranslation(cFrontNode, cfx, cfy, cfz)
+	setRotation(cFrontNode, 0, 0, 0)
+	--frontNode = centeredNode
+	
+	local wbx, wby, wbz = getWorldTranslation(backNode)
+	local lbx, lby, lbz = worldToLocal(self.rootNode, wbx, wby, wbz)
+	local cbx, cby, cbz = localToWorld(self.rootNode, 0, lby, lbz)
+	
+	local cBackNode = createTransformGroup("backNode")
+	link(self.rootNode, cBackNode) 
+	setTranslation(cBackNode, cbx, cby, cbz)
+	setRotation(cBackNode, 0, 0, 0)
+	--frontNode = centeredNode
+	--]]
+	
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
@@ -869,7 +895,8 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	HeadlandManagement.debug = debug
 	HeadlandManagement.showKeys = showKeys
 	local spec = self.spec_HeadlandManagement
-	if spec.contour ~= 0 then spec.contourSetActive = true end
+	if spec.contour ~= 0 and spec.contour ~= spec.contourLast then spec.contourSetActive = true end
+	spec.contourLast = spec.contour
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
@@ -1054,12 +1081,16 @@ end
 
 local function getContourPoints(self)
 	local spec = self.spec_HeadlandManagement
-	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 3)
-	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) 	-- inside limit
-	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) 	-- outside limit 1
-	local x4, y4, z4 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) 		-- outside limit 2
-	local x5, y5, z5 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) 	-- outside limit 3
-	return {x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}, {x4, y4, z4}, {x5 ,y5, z5}
+	local node = spec.frontNode
+	if node == nil then node = self.rootNode end
+	local xr, yr, zr = localToWorld(node, 0, 0, 3)
+	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) 	-- inside limit
+	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - spec.contourSharpness) * spec.contour, 0, 3) 		-- inside limit 2
+	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - spec.contourSharpness * 2) * spec.contour, 0, 3) 	-- inside limit 3
+	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) 	-- outside limit 1
+	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) 		-- outside limit 2
+	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) 	-- outside limit 3
+	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
 local function isOnField(node, x, z)
@@ -1069,10 +1100,12 @@ end
 
 local function measureBorderDistance(self)
 	local spec = self.spec_HeadlandManagement
+	local node = spec.frontNode
+	if frontNode == nil then frontnode = self.rootNode end
 	for dist=0,1000,spec.contourSharpness do
-		local xi, yi, zi = localToWorld(self.rootNode, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
-		local xo, yo, zo = localToWorld(self.rootNode, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
-		if isOnField(self.rootNode, xi, zi) and not isOnField(self.rootNode, xo, zo) then
+		local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
+		local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
+		if isOnField(node, xi, zi) and not isOnField(node, xo, zo) then
 			return dist
 		end
 	end
@@ -1456,28 +1489,36 @@ function HeadlandManagement:onUpdate(dt)
 	
 	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
 		
-		spec.contourP1, spec.contourP2, spec.contourP3, spec.contourP4, spec.contourP5 = getContourPoints(self)
+		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
 	
-		local x2, y2, z2 = unpack(spec.contourP2)
-		local x3, y3, z3 = unpack(spec.contourP3)
-		local x4, y4, z4 = unpack(spec.contourP4)
-		local x5, y5, z5 = unpack(spec.contourP5)
-	
+		local xi1, yi1, zi1 = unpack(spec.contourPi1)
+		local xi2, yi2, zi2 = unpack(spec.contourPi2)
+		local xi3, yi3, zi3 = unpack(spec.contourPi3)
+		local xo1, yo1, zo1 = unpack(spec.contourPo1)
+		local xo2, yo2, zo2 = unpack(spec.contourPo2)
+		local xo3, yo3, zo3 = unpack(spec.contourPo3)
+		
 		local courseCorrection = 0
-		if getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0 then
+		if isOnField(self.rootNode, xi1, zi1) and not isOnField(self.rootNode, xo1, zo1) then
 			-- course is correct, no action needed
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) ~= 0 then
+			
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo3, zo3) then
+			courseCorrection = -1 -- too far inside, turn max to the outside
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo2, zo2) then
+			courseCorrection = -0.6 -- too far inside, turn medium to the outside
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo1, zo1) then
 			courseCorrection = 0.3 -- too far inside, turn slowly to the outside
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x5, 0, z5) == 0 then
-			courseCorrection = -1 -- too far outside, turn max to the inside
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x4, 0, z4) == 0 then
-			courseCorrection = -0.6 -- too far outside, turn medium to the inside
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0 then
-			courseCorrection = -0.3 -- too far outside, turn slowly to the inside
+			
+		elseif not isOnField(self.rootNode, xi3, zi3) then
+			courseCorrection = 1 -- too far outside, turn max to the inside
+		elseif not isOnField(self.rootNode, xi2, zi2) then
+			courseCorrection = 0.6 -- too far outside, turn medium to the inside
+		elseif not isOnField(self.rootNode, xi1, zi1) then
+			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
 		if courseCorrection ~= 0 then
-			self:setSteeringInput(courseCorrection * -spec.contour, true)
+			self:setSteeringInput(courseCorrection * spec.contour, true)
 		end
 	end
 end
@@ -1586,10 +1627,11 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		-- debug: show contour guidance line
-		if spec.contourDebug and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourP1 ~= nil and spec.contourP2 ~= nil then
-			local x1, y1, z1 = unpack(spec.contourP1)
-			local x2, y2, z2 = unpack(spec.contourP2)
-			drawDebugLine(x1, y1, z1, 0, 1, 0, x2, y2, z2, 0, 1, 0, true)
+		if spec.contourDebug and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
+			local xr, yr, zr = unpack(spec.contourPr)
+			local xo1, yo1, zo1 = unpack(spec.contourPo1)
+			yo1 = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, xo1, 0,zo1)+0.1
+			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1, 2, true)
 		end
 	end
 end
