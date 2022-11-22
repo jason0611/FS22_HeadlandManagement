@@ -425,19 +425,27 @@ local function vehicleMeasurement(self, excludedImplement)
 	end
 	
 	local rwx, rwy, rwz, vz
-	-- center projection of frontNode
-	rwx, rwy, rwz = getWorldTranslation(frontNode)
-	_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
-	local cFrontNode = createTransformGroup("cFrontNode")
-	link(self.rootNode, cFrontNode)
-	setTranslation(cFrontNode, 0, 0, vz)
+	if frontNode ~= nil then
+		-- center projection of frontNode
+		rwx, rwy, rwz = getWorldTranslation(frontNode)
+		_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
+		local cFrontNode = createTransformGroup("cFrontNode")
+		link(self.rootNode, cFrontNode)
+		setTranslation(cFrontNode, 0, 0, vz)
+	else 
+		cFrontNode = nil
+	end
 	
-	-- center projection of backNode
-	rwx, rwy, rwz = getWorldTranslation(backNode)
-	_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
-	local cBackNode = createTransformGroup("cBackNode")
-	link(self.rootNode, cBackNode)
-	setTranslation(cBackNode, 0, 0, vz)
+	if backNode ~= nil then
+		-- center projection of backNode
+		rwx, rwy, rwz = getWorldTranslation(backNode)
+		_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
+		local cBackNode = createTransformGroup("cBackNode")
+		link(self.rootNode, cBackNode)
+		setTranslation(cBackNode, 0, 0, vz)
+	else
+		cBackNode = nil
+	end
 	
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
