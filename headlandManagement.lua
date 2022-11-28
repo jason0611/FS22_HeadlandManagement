@@ -306,7 +306,7 @@ end
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
 local function vehicleMeasurement(self, excludedImplement)
-	local frontNode, backNode
+	local frontNode, backNode, cFrontNode, cBackNode
 	local vehicleLength, vehicleWidth, maxTurningRadius = 0, 0, 0
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
 	local frontExists, backExists
@@ -426,29 +426,37 @@ local function vehicleMeasurement(self, excludedImplement)
 	
 	local rwx, rwy, rwz, vz
 	if frontNode ~= nil then
+		dbgprint("frontNode center projection", 2)
 		-- center projection of frontNode
 		rwx, rwy, rwz = getWorldTranslation(frontNode)
 		_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
-		local cFrontNode = createTransformGroup("cFrontNode")
+		cFrontNode = createTransformGroup("cFrontNode")
 		link(self.rootNode, cFrontNode)
 		setTranslation(cFrontNode, 0, 0, vz)
 	else 
+		dbgprint("no frontNode center projection", 2)
 		cFrontNode = nil
 	end
 	
 	if backNode ~= nil then
+		dbgprint("backNode center projection", 2)
 		-- center projection of backNode
 		rwx, rwy, rwz = getWorldTranslation(backNode)
 		_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
-		local cBackNode = createTransformGroup("cBackNode")
+		cBackNode = createTransformGroup("cBackNode")
 		link(self.rootNode, cBackNode)
 		setTranslation(cBackNode, 0, 0, vz)
 	else
+		dbgprint("no backNode center projection", 2)
 		cBackNode = nil
 	end
 	
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
+	dbgprint("vehicleMeasurement : frontNode: "..tostring(frontNode), 2)
+	dbgprint("vehicleMeasurement : backNode: "..tostring(backNode), 2)
+	dbgprint("vehicleMeasurement : cFrontNode: "..tostring(cFrontNode), 2)
+	dbgprint("vehicleMeasurement : cBackNode: "..tostring(cBackNode), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
 	dbgprint("vehicleMeasurement : vehicleWidth: "..tostring(vehicleWidth), 1)
 	return cFrontNode, cBackNode, vehicleLength, vehicleWidth, maxTurningRadius
@@ -883,7 +891,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug, HeadlandManagement.showKeys)
@@ -1100,7 +1108,7 @@ end
 local function measureBorderDistance(self)
 	local spec = self.spec_HeadlandManagement
 	local node = spec.frontNode
-	if frontNode == nil then frontnode = self.rootNode end
+	if node == nil then node = self.rootNode end
 	for dist=0,1000,spec.contourSharpness do
 		local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
 		local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
@@ -1506,7 +1514,7 @@ function HeadlandManagement:onUpdate(dt)
 		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo2, zo2) then
 			courseCorrection = -0.6 -- too far inside, turn medium to the outside
 		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo1, zo1) then
-			courseCorrection = 0.3 -- too far inside, turn slowly to the outside
+			courseCorrection = -0.3 -- too far inside, turn slowly to the outside
 			
 		elseif not isOnField(self.rootNode, xi3, zi3) then
 			courseCorrection = 1 -- too far outside, turn max to the inside
