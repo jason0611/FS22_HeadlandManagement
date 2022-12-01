@@ -833,7 +833,7 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 			spec.contour = 0
 		end
 		-- contour guidance: reset activation
-		spec.contourSetActive = false
+		--spec.contourSetActive = false
 	-- Feldmodus nur wenn Vorgewendemodus aktiv ist
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
@@ -1548,6 +1548,21 @@ function HeadlandManagement:onDraw(dt)
 			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHON"))
 		end
 		
+		-- contour guidance
+		if spec.exists and spec.isOn and spec.contour ~= 0 and not spec.isActive and not spec.contourSetActive then
+			local dirText
+			if spec.contour < 0 then dirText = "Right" else dirText = "Left" end
+			if spec.contourNoSwap then dirText = "always "..dirText end
+			--g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
+			g_currentMission:addExtraPrintText(string.format("Contour Guidance Active (%s)", dirText))
+		end
+		if spec.exists and spec.isOn and (spec.contour ~= 0 and not spec.isActive and spec.contourSetActive) or (spec.contour ~= 0 and spec.isActive and (spec.contourMultiMode or spec.contourSetActive)) then
+			local dirText
+			if spec.contour < 0 then dirText = "right" else dirText = "left" end
+			if spec.contourNoSwap then dirText = "always "..dirText end
+			g_currentMission:addExtraPrintText(string.format("Contour Guidance Stand-By (%s)", dirText))
+		end
+			
 		-- gui icon
 		local scale = g_gameSettings.uiScale
 		
