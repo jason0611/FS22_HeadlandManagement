@@ -1094,10 +1094,13 @@ local function getContourPoints(self)
 	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 0) 	-- inside limit
 	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - spec.contourSharpness) * spec.contour, 0, 0) 		-- inside limit 2
 	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- inside limit 3
+	local xf1, yf1, zf1 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness / 2)) 				-- front limit
+	local xf2, yf2, zf2 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness)) 					-- front limit 2
+	local xf3, yf3, zf3 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness * 2)) 				-- front limit 3
 	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 0) -- outside limit 1
 	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 0) 		-- outside limit 2
 	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- outside limit 3
-	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
+	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xf1, yf1, zf1}, {xf2, yf2, zf2}, {xf3, yf3, zf3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
 local function isOnField(node, x, z)
@@ -1496,31 +1499,34 @@ function HeadlandManagement:onUpdate(dt)
 	
 	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
 		
-		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
+		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPf1, spec.contourPf2, spec.contourPf3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
 	
 		local xi1, yi1, zi1 = unpack(spec.contourPi1)
 		local xi2, yi2, zi2 = unpack(spec.contourPi2)
 		local xi3, yi3, zi3 = unpack(spec.contourPi3)
+		local xf1, yf1, zf1 = unpack(spec.contourPf1)
+		local xf2, yf2, zf2 = unpack(spec.contourPf2)
+		local xf3, yf3, zf3 = unpack(spec.contourPf3)
 		local xo1, yo1, zo1 = unpack(spec.contourPo1)
 		local xo2, yo2, zo2 = unpack(spec.contourPo2)
 		local xo3, yo3, zo3 = unpack(spec.contourPo3)
 		
 		local courseCorrection = 0
-		if isOnField(self.rootNode, xi1, zi1) and not isOnField(self.rootNode, xo1, zo1) then
+		if isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and not isOnField(self.rootNode, xo1, zo1) then
 			-- course is correct, no action needed
 			
-		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo3, zo3) then
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo3, zo3) then
 			courseCorrection = -1 -- too far inside, turn max to the outside
-		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo2, zo2) then
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo2, zo2) then
 			courseCorrection = -0.6 -- too far inside, turn medium to the outside
-		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xo1, zo1) then
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo1, zo1) then
 			courseCorrection = -0.3 -- too far inside, turn slowly to the outside
 			
-		elseif not isOnField(self.rootNode, xi3, zi3) then
+		elseif not isOnField(self.rootNode, xi3, zi3) or not isOnField(self.rootNode, xf3, zf3) then
 			courseCorrection = 1 -- too far outside, turn max to the inside
-		elseif not isOnField(self.rootNode, xi2, zi2) then
+		elseif not isOnField(self.rootNode, xi2, zi2) or not isOnField(self.rootNode, xf2, zf2) then
 			courseCorrection = 0.6 -- too far outside, turn medium to the inside
-		elseif not isOnField(self.rootNode, xi1, zi1) then
+		elseif not isOnField(self.rootNode, xi1, zi1) or not isOnField(self.rootNode, xf1, zf1) then
 			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
@@ -1637,8 +1643,10 @@ function HeadlandManagement:onDraw(dt)
 		if spec.contourDebug and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
 			local xr, yr, zr = unpack(spec.contourPr)
 			local xo1, yo1, zo1 = unpack(spec.contourPo1)
+			local xf1, yf1, zf1 = unpack(spec.contourPf1)
 			yo1 = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, xo1, 0,zo1)+0.1
 			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1)
+			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xf1, yf1+0.25, zf1, 0, 0, 1)
 		end
 	end
 end
