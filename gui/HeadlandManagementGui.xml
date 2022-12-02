@@ -82,6 +82,14 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="ridgeMarkerTT"/>
 			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="emptyBalersSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="emptyBalersSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="emptyBalersSettingTT"/>
+			</GuiElement>
 			
 		<!-- Vehicle control -->
 			<GuiElement type="text" profile="dialogHeaderText"/>
@@ -114,8 +122,8 @@
 				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
 				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourOnOffTitle"/>
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
-				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourTT"/>
-			</GuiElement>	
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourOnOffTT"/>
+			</GuiElement>		
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
@@ -124,6 +132,22 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourSettingTT"/>
 			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourWidthSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourWidthSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWidthSettingTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourWidthChangeSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourWidthChangeSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWidthChangeSettingTT"/>
+			</GuiElement>
 		
 		<!-- GPS control -->
 			<GuiElement type="text" profile="dialogHeaderText"/>

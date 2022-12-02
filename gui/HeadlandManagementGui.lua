@@ -54,6 +54,9 @@ HeadlandManagementGui.CONTROLS = {
 	"ridgeMarkerTitle",
 	"ridgeMarkerSetting",
 	"ridgeMarkerTT",
+	"emptyBalersSetting",
+	"emptyBalersSettingTitle",
+	"emptyBalersSettingTT",
 	"crabSteeringTitle",
 	"crabSteeringSetting",
 	"csTT",
@@ -62,9 +65,16 @@ HeadlandManagementGui.CONTROLS = {
 	"contourControl",
 	"contourOnOffTitle",
 	"contourOnOffSetting",
-	"contourTT",
+	"contourOnOffTT",
 	"contourSettingTitle",
 	"contourSetting",
+	"contourSettingTT",
+	"contourWidthSetting",
+	"contourWidthSettingTitle",
+	"contourWidthSettingTT",
+	"contourWidthChangeSetting",
+	"contourWidthChangeSettingTitle",
+	"contourWidthChangeSettingTT",
 	
 	"sectionGPSControl",
 	"gpsControl",
@@ -260,6 +270,14 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.ridgeMarkerSetting:setState(self.spec.useRidgeMarker and 1 or 2)
 	self.ridgeMarkerSetting:setDisabled(raiseState == 5)
 	
+	self.emptyBalersSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_emptyBaler"))
+	self.emptyBalersSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.emptyBalersSetting:setState(self.spec.stopEmptyBaler and 1 or 2)
+	self.emptyBalersSetting:setDisabled(true)
+	
 	-- Contour Guidance control
 	self.contourControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourControl"))
 	
@@ -294,6 +312,32 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	if self.spec.contour > 0 then contourMode = 2 end
 	if self.spec.contourNoSwap then contourMode = contourMode + 2 end
 	self.contourSetting:setState(contourMode)
+	
+	self.contourWidthSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourWidthSetting"))
+	self.contourWidthSetting.onClickCallback = HeadlandManagementGui.logicalCheck
+	self.contourWidthSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
+		tostring(math.floor(self.spec.vehicleWidth * 0.5)).." m",
+		tostring(math.floor(self.spec.vehicleWidth * 1.5)).." m",
+		tostring(math.floor(self.spec.vehicleWidth * 2.5)).." m",
+		tostring(math.floor(self.spec.vehicleWidth * 3.5)).." m"
+	})
+	self.contourWidthSetting:setDisabled(contourOnOffSetting == 1)
+	local widthMode = 1
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) then widthMode = 2 end
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 1.5) then widthMode = 3 end
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 2.5) then widthMode = 4 end
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 3.5) then widthMode = 5 end
+	self.contourWidthSetting:setState(widthMode)
+	
+	self.contourWidthChangeSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourWidthChangeSetting"))
+	self.contourWidthChangeSettingTitle.onClickCallback = HeadlandManagementGui.logicalCheck
+	self.contourWidthChangeSetting:setTexts({
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_on"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_off")
+	})
+	self.contourWidthChangeSetting:setDisabled(contourOnOffSetting == 1 or widthMode == 1)
+	self.contourWidthChangeSetting:setState(self.spec.contourWidthAdation == true and 1 or 2)
 		
 	-- GPS control
 	self.gpsControl:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gpsControl"))
@@ -575,7 +619,10 @@ function HeadlandManagementGui:logicalCheck()
 	self.ridgeMarkerSetting:setDisabled(not useRaiseImplement)
 	
 	local contourOnOffSetting = self.contourOnOffSetting:getState()
+	local widthSetting = self.contourWidthSetting:getState()
 	self.contourSetting:setDisabled(contourOnOffSetting == 1)
+	self.contourWidthSetting:setDisabled(contourOnOffSetting == 1)
+	self.contourWidthChangeSetting:setDisabled(contourOnOffSetting == 1 or widthSetting == 1)
 
 	local useGPS = self.gpsOnOffSetting:getState() == 1
 	local triggerSetting = self.gpsAutoTriggerSetting:getState()
@@ -640,6 +687,8 @@ function HeadlandManagementGui:onClickOk()
 	self.spec.useCenterPlow = (plowState == 2)
 	-- ridgemarker
 	self.spec.useRidgeMarker = self.ridgeMarkerSetting:getState() == 1
+	-- stop emptying balers
+	self.spec.stopEmptyBaler = self.emptyBalersSetting:getState() == 1
 	-- crab steering
 	self.spec.csState = self.crabSteeringSetting:getState()
 	self.spec.useCrabSteering = (self.spec.csState ~= 3)
@@ -662,6 +711,29 @@ function HeadlandManagementGui:onClickOk()
 	elseif contour > 1 and contourMode == 2 then
 		self.spec.contour = 1
 	end
+	local widthMode = self.contourWidthSetting:getState()
+	if widthMode == 2 then 
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5)
+		self.spec.contourWidthMeasurement = false
+		self.spec.contourTrack = 1
+	elseif widthMode == 3 then 
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 1.5)
+		self.spec.contourWidthMeasurement = false
+		self.spec.contourTrack = 2
+	elseif widthMode == 4 then 
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 2.5)
+		self.spec.contourWidthMeasurement = false
+		self.spec.contourTrack = 3
+	elseif widthMode == 5 then 
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 3.5)
+		self.spec.contourWidthMeasurement = false	
+		self.spec.contourTrack = 4
+	else
+		self.spec.contourWidth = 0
+		self.spec.contourWidthMeasurement = true
+		self.spec.contourTrack = 0
+	end		
+	self.spec.contourWidthAdation = self.contourWidthChangeSetting:getState() == 1
 	-- gps
 	self.spec.useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()

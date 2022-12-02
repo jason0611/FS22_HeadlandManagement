@@ -56,6 +56,7 @@
 		<text name="hlmgui_plowOff" text="nicht drehen"/>
 		<text name="hlmgui_pto" text="Zapfwelle/Hydraulik abschalten"/>
 		<text name="hlmgui_ridgeMarker" text="Spurreißer wechseln"/>
+		<text name="hlmgui_emptyBaler" text="Automatisches Abladen stoppen"/>
 		
 		<text name="hlmgui_contourControl" text="Kontur-Führung Einstellungen"/>
 		<text name="hlmgui_contourOnOff" text="Kontur-Führung aktivieren"/>
@@ -66,6 +67,8 @@
 		<text name="hlmgui_contour_nextLeft" text="zunächst links"/>
 		<text name="hlmgui_contour_alwaysRight" text="immer rechts"/>
 		<text name="hlmgui_contour_alwaysLeft" text="immer links"/>
+		<text name="hlmgui_contourWidthSetting" text="Abstand zum Feldrand"/>
+		<text name="hlmgui_contourWidthChangeSetting" text="Abstand automatisch erhöhen" />
 		
 		<text name="hlmgui_gpsControl" text="GPS-Einstellungen"/>
 		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>
@@ -104,6 +107,7 @@
 		<text name="hlmgui_raiseTT" text="Im Vorgewende können abgesenkte Anbaugeräte ausgehoben und anschließend wieder abgesenkt werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_plowTT" text="Nach dem Ausheben können Pflüge gedreht werden. Entweder sofort vollständig, oder zunächst nur zur Mitte und erst beim Absenken vollständig. Hinweis: In letzterem Fall ist ein gutes Timing wichtig. Es wird daher empfohlen, zum Drehen und Absenken des Pflugs kurz anzuhalten."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Mit dem Ausheben kann der Spurreißer auf die gegenüberliegende Seite umgeschaltet werden."/>
+		<text name="hlmgui_emptyBalerTT" text="Stoppt bei Ballenpressen das automatische Abladen im Vorgewende"/>
 		<text name="hlmgui_ptoTT" text="Im Vorgewende können aktivierte Anbaugeräte abgeschaltet und anschließend wieder angeschaltet werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_gpsTT" text="Im Vorgewende wird die GPS-Spurführung pausiert und anschließend fortgesetzt."/>
 		<text name="hlmgui_gpsTypeTT" text="Die Funktion kann auf Guidance Steering oder VCA eingeschränkt werden, oder automatisch das jeweils gerade aktive System pausieren."/>

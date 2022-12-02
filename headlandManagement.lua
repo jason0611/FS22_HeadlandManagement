@@ -254,6 +254,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.implementPTOTable = {}		-- table of implement's pto state on field
 	spec.useStopPTOF = true			-- stop front pto in headland mode
 	spec.useStopPTOB = true			-- stop back pto in headland mode
+	spec.stopEmptyBaler = false		-- stop auto-emptying of balers in headland
 	spec.waitTime = 0				-- time to wait for animations to finish
 	spec.waitOnTrigger = false 		-- wait until vehicle has moved to trigger point before raising back implements
 	spec.useTurnPlow = true			-- turn plow in headland mode
@@ -307,7 +308,11 @@ function HeadlandManagement:onLoad(savegame)
 	spec.contourNoSwap = false
 	spec.contourSetActive = false
 	spec.contourTriggerMeasurement = false
-	spec.contourWidth = 3
+	spec.contourWidthAdation = false
+	spec.contourWidthMeasurement = true
+	spec.triggerContourStateChange = false
+	spec.contourWidth = 0
+	spec.contourTrack = 0
 	spec.contourSharpness = 0.5
 	spec.contourDebug = true
 	
@@ -834,26 +839,12 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
 		spec.evOverride = true
-		-- contour guidance: swap field border side
-		if not spec.contourNoSwap and not spec.contourSetActive then
-			spec.contour = -spec.contour
-		end
-		-- contour guidance: if not freshly active or contourMultiMode is true, reset contour mode
-		if spec.contour ~= 0 and not spec.contourSetActive and not spec.contourMultiMode then 
-			spec.contour = 0
-		end
-		-- contour guidance: reset activation
-		--spec.contourSetActive = false
+		spec.triggerContourStateChange = true
 	-- Feldmodus nur wenn Vorgewendemodus aktiv ist
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
 		spec.evOverride = true
-		-- contour guidance: trigger measurement
-		if spec.contour ~= 0 then 
-			spec.contourTriggerMeasurement = true 
-			spec.contourSetActive = false
-		end
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.WAITONTRIGGER then
 		spec.override = true
 		spec.actStep = -HeadlandManagement.MAXSTEP
@@ -879,6 +870,8 @@ function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
 		spec.isActive = false
 		spec.actStep = 0
 		spec.autoOverride = false
+		spec.contour = 0
+		spec.contourSetActive = false
 		spec.isOn = false
 	else
 		spec.lastHeadlandF = false
@@ -1121,16 +1114,20 @@ end
 local function measureBorderDistance(self)
 	local spec = self.spec_HeadlandManagement
 	local node = spec.frontNode
-	if node == nil then node = self.rootNode end
-	for dist=0,1000,spec.contourSharpness do
-		local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
-		local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
-		if isOnField(node, xi, zi) and not isOnField(node, xo, zo) then
-			return dist
+	if spec.contourWidthMeasurement or spec.contourWidth == 0 then
+		if node == nil then node = self.rootNode end
+		for dist=0,1000,spec.contourSharpness do
+			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
+			local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
+			if isOnField(node, xi, zi) and not isOnField(node, xo, zo) then
+				return dist
+			end
 		end
+		dbgprint("measureBorderDistance : result = "..tostring(dist), 2)
+		return math.floor(spec.vehicleWidth * 0.5)
+	else
+		return spec.contourWidth
 	end
-	dbgprint("measureBorderDistance : result = "..tostring(dist), 2)
-	return 0
 end
 
 local function getFieldNum(node, x, z)
@@ -1293,6 +1290,7 @@ function HeadlandManagement:onUpdate(dt)
 		and spec.useHLMTriggerF and not spec.autoOverride
 		and spec.headlandF and not spec.lastHeadlandF 
 	then
+		spec.triggerContourStateChange = true
 		spec.isActive = true
 		spec.lastHeadlandF = true
 		spec.lastFieldNumF = spec.fieldNumF
@@ -1302,6 +1300,8 @@ function HeadlandManagement:onUpdate(dt)
 		and spec.useHLMTriggerB and not spec.autoOverride
 		and spec.headlandB and not spec.lastHeadlandB 
 	then
+		
+		spec.triggerContourStateChange = true
 		spec.isActive = true
 		spec.lastHeadlandB = true
 		spec.lastFieldNumB = spec.fieldNumB
@@ -1313,6 +1313,7 @@ function HeadlandManagement:onUpdate(dt)
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning and not spec.autoOverride then
 			spec.isActive = true
+			spec.triggerContourStateChange = true
 			dbgprint("onUpdate : Headland mode activated by guidance steering (auto-mode)", 2)
 		end
 	end
@@ -1322,6 +1323,7 @@ function HeadlandManagement:onUpdate(dt)
 		if not spec.isActive and not spec.evOverride and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 and not spec.autoOverride 
 			and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] == true then
 			spec.isActive = true
+			spec.triggerContourStateChange = true
 			spec.evStatus = true
 			dbgprint("onUpdate : Headland mode activated by enhanced vehicle (auto-mode)", 2)
 		end
@@ -1399,6 +1401,7 @@ function HeadlandManagement:onUpdate(dt)
 		
 		if spec.actStep == 0 then 
 			spec.isActive = false
+			spec.triggerContourStateChange = true
 			spec.override = false
 			--spec.evOverride = false
 			spec.turnHeading = nil
@@ -1502,6 +1505,32 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- contour guidance
 	
+	if spec.isActive and spec.triggerContourStateChange then
+	-- swap field border side
+		if not spec.contourNoSwap and not spec.contourSetActive then
+			spec.contour = -spec.contour
+		end
+		-- contour guidance: if not freshly active or contourMultiMode is true, reset contour mode
+		if spec.contour ~= 0 and not spec.contourSetActive and not spec.contourMultiMode then 
+			spec.contour = 0
+		end
+		spec.triggerContourStateChange = false
+	end
+		
+	if not spec.isActive and spec.triggerContourStateChange then
+		-- contour guidance: trigger measurement, if contourWidthAdaption is set, increase distance to field border
+		if spec.contour ~= 0 then 
+			if not spec.contourWidthAdation or type(spec.contourTrack)~="number" or spec.contourTrack == 0 then
+				spec.contourTriggerMeasurement = true 
+			elseif not spec.contourSetActive then
+				spec.contourTrack = spec.contourTrack + 1
+				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5 + spec.vehicleWidth * (spec.contourTrack-1))
+			end
+			spec.contourSetActive = false
+		end
+		spec.triggerContourStateChange = false
+	end	
+		
 	if spec.contourTriggerMeasurement then
 		spec.contourWidth = measureBorderDistance(self)
 		spec.contourTriggerMeasurement = false
