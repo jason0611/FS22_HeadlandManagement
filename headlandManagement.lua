@@ -53,10 +53,18 @@ HeadlandManagement.guiIconFieldALR = createImageOverlay(g_currentModDirectory.."
 HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
 HeadlandManagement.guiIconFieldGS = createImageOverlay(g_currentModDirectory.."gui/hlm_field_gs.dds")
 HeadlandManagement.guiIconFieldEV = createImageOverlay(g_currentModDirectory.."gui/hlm_field_ev.dds")
+HeadlandManagement.guiIconFieldCGA = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_normal.dds")
+HeadlandManagement.guiIconFieldCGAR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_right.dds")
+HeadlandManagement.guiIconFieldCGAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_left.dds")
+HeadlandManagement.guiIconFieldCG = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_normal.dds")
+HeadlandManagement.guiIconFieldCGR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_right.dds")
+HeadlandManagement.guiIconFieldCGL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_left.dds")
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
 HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
 HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
 HeadlandManagement.guiIconHeadlandEV = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_ev.dds")
+HeadlandManagement.guiIconHeadlandCG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_normal.dds")
+HeadlandManagement.guiIconHeadlandACG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_auto_normal.dds")
 
 -- Filtered implements
 HeadlandManagement.filterList = {}
@@ -1578,6 +1586,9 @@ function HeadlandManagement:onDraw(dt)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride 
 		--local headlandAutomaticResumeEV = (spec.modEVFound and spec.useEVTrigger and not spec.evOverride) and not spec.autoOverride and spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
 		
+		local cgIsOn = spec.contour ~= 0 and not spec.contourSetActive
+		local cgIsStandby = spec.contourSetActive
+		
 		-- field mode
 		if spec.isOn and headlandAutomatic and not spec.isActive and not spec.useEVTrigger then 
 			guiIcon = HeadlandManagement.guiIconFieldA
@@ -1589,6 +1600,9 @@ function HeadlandManagement:onDraw(dt)
 			end
 			if spec.gpsSetting == 7 and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] then 
 				guiIcon = HeadlandManagement.guiIconFieldALR
+			end
+			if cgIsOn then
+				guiIcon = HeadlandManagement.guiIconFieldCGA
 			end
 		end
 		
@@ -1602,6 +1616,9 @@ function HeadlandManagement:onDraw(dt)
 			end
 			if spec.gpsSetting == 7 and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] then 
 				guiIcon = HeadlandManagement.guiIconFieldLR
+			end
+			if cgIsOn then
+				guiIcon = HeadlandManagement.guiIconFieldCG
 			end
 		end
 		
@@ -1619,7 +1636,11 @@ function HeadlandManagement:onDraw(dt)
 	
 		-- headland mode			
 		if spec.isOn and headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP and not spec.useEVTrigger then
-			guiIcon = HeadlandManagement.guiIconHeadlandA
+			if not cgIsStandby then
+				guiIcon = HeadlandManagement.guiIconHeadlandA
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandACG
+			end
 		end
 		
 		if spec.isOn and spec.useEVTrigger and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
@@ -1627,7 +1648,11 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		if spec.isOn and not headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP and not spec.useEVTrigger then 
-			guiIcon = HeadlandManagement.guiIconHeadland
+			if not cgIsStandby then
+				guiIcon = HeadlandManagement.guiIconHeadland
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandCG
+			end
 		end	
 		
 		-- Working Mode
