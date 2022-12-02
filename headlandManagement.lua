@@ -51,6 +51,7 @@ HeadlandManagement.guiIconFieldAR = createImageOverlay(g_currentModDirectory.."g
 HeadlandManagement.guiIconFieldAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_left.dds")
 HeadlandManagement.guiIconFieldALR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_leftright.dds")
 HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
+HeadlandManagement.guiIconFieldWCG = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_working.dds")
 HeadlandManagement.guiIconFieldGS = createImageOverlay(g_currentModDirectory.."gui/hlm_field_gs.dds")
 HeadlandManagement.guiIconFieldEV = createImageOverlay(g_currentModDirectory.."gui/hlm_field_ev.dds")
 HeadlandManagement.guiIconFieldCGA = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_normal.dds")
@@ -62,6 +63,7 @@ HeadlandManagement.guiIconFieldCGL = createImageOverlay(g_currentModDirectory.."
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
 HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
 HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
+HeadlandManagement.guiIconHeadlandWCG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_working.dds")
 HeadlandManagement.guiIconHeadlandEV = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_ev.dds")
 HeadlandManagement.guiIconHeadlandCG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_normal.dds")
 HeadlandManagement.guiIconHeadlandACG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_auto_normal.dds")
@@ -1586,8 +1588,8 @@ function HeadlandManagement:onDraw(dt)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride 
 		--local headlandAutomaticResumeEV = (spec.modEVFound and spec.useEVTrigger and not spec.evOverride) and not spec.autoOverride and spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
 		
-		local cgIsOn = spec.contour ~= 0 and not spec.contourSetActive
-		local cgIsStandby = spec.contourSetActive
+		local cgIsOn = spec.contour ~= 0
+		local cgIsStandby = spec.contourSetActive or spec.contourMultiMode
 		
 		-- field mode
 		if spec.isOn and headlandAutomatic and not spec.isActive and not spec.useEVTrigger then 
@@ -1602,7 +1604,13 @@ function HeadlandManagement:onDraw(dt)
 				guiIcon = HeadlandManagement.guiIconFieldALR
 			end
 			if cgIsOn then
-				guiIcon = HeadlandManagement.guiIconFieldCGA
+				if not spec.contourSetActive and spec.contour < 0 then 
+					guiIcon = HeadlandManagement.guiIconFieldCGAR
+				elseif not spec.contourSetActive and spec.contour > 0 then
+					guiIcon = HeadlandManagement.guiIconFieldCGAL
+				else
+					guiIcon = HeadlandManagement.guiIconFieldCGA
+				end
 			end
 		end
 		
@@ -1618,7 +1626,13 @@ function HeadlandManagement:onDraw(dt)
 				guiIcon = HeadlandManagement.guiIconFieldLR
 			end
 			if cgIsOn then
-				guiIcon = HeadlandManagement.guiIconFieldCG
+				if not spec.contourSetActive and spec.contour < 0 then 
+					guiIcon = HeadlandManagement.guiIconFieldCGR
+				elseif not spec.contourSetActive and spec.contour > 0 then
+					guiIcon = HeadlandManagement.guiIconFieldCGL
+				else
+					guiIcon = HeadlandManagement.guiIconFieldCG
+				end
 			end
 		end
 		
@@ -1657,10 +1671,18 @@ function HeadlandManagement:onDraw(dt)
 		
 		-- Working Mode
 		if spec.isOn and spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
-			guiIcon = HeadlandManagement.guiIconHeadlandW
+			if spec.contour ~= 0 then
+				guiIcon = HeadlandManagement.guiIconHeadlandWCG
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandW
+			end
 		end
 		if spec.isOn and spec.isActive and spec.actStep < 0 then
-			guiIcon = HeadlandManagement.guiIconFieldW
+			if spec.contour ~= 0 then
+				guiIcon = HeadlandManagement.guiIconFieldWCG
+			else
+				guiIcon = HeadlandManagement.guiIconFieldW
+			end
 		end
 		
 		renderOverlay(guiIcon, x, y, w, h)
