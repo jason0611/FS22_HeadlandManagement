@@ -10,7 +10,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -872,6 +872,7 @@ function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
 		spec.autoOverride = false
 		spec.contour = 0
 		spec.contourSetActive = false
+		spec.contourMultiMode = false
 		spec.isOn = false
 	else
 		spec.lastHeadlandF = false
@@ -905,7 +906,16 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	HeadlandManagement.debug = debug
 	HeadlandManagement.showKeys = showKeys
 	local spec = self.spec_HeadlandManagement
-	if spec.contour ~= 0 and spec.contour ~= spec.contourLast then spec.contourSetActive = true end
+	dbgprint("guiCallBack : "..tostring(spec.contour).." / "..tostring(spec.contourLast).." / "..tostring(spec.isActive), 2)
+	if spec.contour ~= 0 and spec.contour ~= spec.contourLast and spec.isActive then 
+		dbgprint("guiCallback : contourSetActive", 2)
+		spec.contourSetActive = true 
+	elseif spec.contour ~= 0 and spec.contour ~= spec.contourLast and not spec.isActive then
+		dbgprint("guiCallback : contourTriggerMeasurement", 2)
+		spec.contourTriggerMeasurement = true
+	else 
+		dbgprint("guiCallback : no contour changes", 2)
+	end
 	spec.contourLast = spec.contour
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
@@ -1513,6 +1523,7 @@ function HeadlandManagement:onUpdate(dt)
 		-- contour guidance: if not freshly active or contourMultiMode is true, reset contour mode
 		if spec.contour ~= 0 and not spec.contourSetActive and not spec.contourMultiMode then 
 			spec.contour = 0
+			spec.contourLast = 0
 		end
 		spec.triggerContourStateChange = false
 	end
@@ -1520,9 +1531,11 @@ function HeadlandManagement:onUpdate(dt)
 	if not spec.isActive and spec.triggerContourStateChange then
 		-- contour guidance: trigger measurement, if contourWidthAdaption is set, increase distance to field border
 		if spec.contour ~= 0 then 
-			if not spec.contourWidthAdation or type(spec.contourTrack)~="number" or spec.contourTrack == 0 then
+			if not spec.contourWidthAdaption or type(spec.contourTrack)~="number" or spec.contourTrack == 0 then
+				dbgprint("onUpdate : contourTriggerMeasurement", 2)
 				spec.contourTriggerMeasurement = true 
 			elseif not spec.contourSetActive then
+				dbgprint("onUpdate : contourWidthAdaption", 2)
 				spec.contourTrack = spec.contourTrack + 1
 				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5 + spec.vehicleWidth * (spec.contourTrack-1))
 			end
