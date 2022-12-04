@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="71">
 	<author>Jason06 / Glowins Modschmiede</author>
-	<version>2.9.6.0</version>
+	<version>2.9.6.1</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -400,9 +400,6 @@ V2.2.2.0
 		<action name="HLM_TOGGLEAUTO" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_AUTOON" categorie="VEHICLE" ignoreComboMask="false" />
 		<action name="HLM_AUTOOFF" categorie="VEHICLE" ignoreComboMask="false" />
-		<action name="HLM_CG_TOGGLESTATE" category="VEHICLE" ignoreComboMask="false" />
-		<action name="HLM_CG_SWITCHOFF" categorie="VEHICLE" ignoreComboMask="false" />
-		<action name="HLM_CG_SWITCHON" categorie="VEHICLE" ignoreComboMask="false" />
 	</actions>
 	<inputBinding>	
 		<actionBinding action="HLM_TOGGLESTATE">
