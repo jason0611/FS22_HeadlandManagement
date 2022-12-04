@@ -10,7 +10,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -51,12 +51,22 @@ HeadlandManagement.guiIconFieldAR = createImageOverlay(g_currentModDirectory.."g
 HeadlandManagement.guiIconFieldAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_left.dds")
 HeadlandManagement.guiIconFieldALR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_auto_leftright.dds")
 HeadlandManagement.guiIconFieldW = createImageOverlay(g_currentModDirectory.."gui/hlm_field_working.dds")
+HeadlandManagement.guiIconFieldWCG = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_working.dds")
 HeadlandManagement.guiIconFieldGS = createImageOverlay(g_currentModDirectory.."gui/hlm_field_gs.dds")
 HeadlandManagement.guiIconFieldEV = createImageOverlay(g_currentModDirectory.."gui/hlm_field_ev.dds")
+HeadlandManagement.guiIconFieldCGA = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_normal.dds")
+HeadlandManagement.guiIconFieldCGAR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_right.dds")
+HeadlandManagement.guiIconFieldCGAL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_auto_left.dds")
+HeadlandManagement.guiIconFieldCG = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_normal.dds")
+HeadlandManagement.guiIconFieldCGR = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_right.dds")
+HeadlandManagement.guiIconFieldCGL = createImageOverlay(g_currentModDirectory.."gui/hlm_field_cg_left.dds")
 HeadlandManagement.guiIconHeadland = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_normal.dds")
 HeadlandManagement.guiIconHeadlandA = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_auto_normal.dds")
 HeadlandManagement.guiIconHeadlandW = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_working.dds")
+HeadlandManagement.guiIconHeadlandWCG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_working.dds")
 HeadlandManagement.guiIconHeadlandEV = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_ev.dds")
+HeadlandManagement.guiIconHeadlandCG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_normal.dds")
+HeadlandManagement.guiIconHeadlandACG = createImageOverlay(g_currentModDirectory.."gui/hlm_headland_cg_auto_normal.dds")
 
 -- Filtered implements
 HeadlandManagement.filterList = {}
@@ -244,6 +254,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.implementPTOTable = {}		-- table of implement's pto state on field
 	spec.useStopPTOF = true			-- stop front pto in headland mode
 	spec.useStopPTOB = true			-- stop back pto in headland mode
+	spec.stopEmptyBaler = false		-- stop auto-emptying of balers in headland
 	spec.waitTime = 0				-- time to wait for animations to finish
 	spec.waitOnTrigger = false 		-- wait until vehicle has moved to trigger point before raising back implements
 	spec.useTurnPlow = true			-- turn plow in headland mode
@@ -291,8 +302,17 @@ function HeadlandManagement:onLoad(savegame)
 	spec.diffStateF = false
 	spec.diffStateB = false
 	
-	spec.contour = HeadlandManagement.GUIDANCE_RIGHT
-	spec.contourWidth = 3
+	spec.contour = 0
+	spec.contourLast = 0
+	spec.contourMultiMode = false
+	spec.contourNoSwap = false
+	spec.contourSetActive = false
+	spec.contourTriggerMeasurement = false
+	spec.contourWidthAdation = false
+	spec.contourWidthMeasurement = true
+	spec.triggerContourStateChange = false
+	spec.contourWidth = 0
+	spec.contourTrack = 0
 	spec.contourSharpness = 0.5
 	spec.contourDebug = true
 	
@@ -301,7 +321,7 @@ end
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
 local function vehicleMeasurement(self, excludedImplement)
-	local frontNode, backNode
+	local frontNode, backNode, cFrontNode, cBackNode
 	local vehicleLength, vehicleWidth, maxTurningRadius = 0, 0, 0
 	local distFront, distBack, lastFront, lastBack = 0, 0, 0, 0		
 	local frontExists, backExists
@@ -418,11 +438,43 @@ local function vehicleMeasurement(self, excludedImplement)
 	else
 		vehicleLength = lengthBackup
 	end
+	
+	local rwx, rwy, rwz, vz
+	if frontNode ~= nil then
+		dbgprint("frontNode center projection", 2)
+		-- center projection of frontNode
+		rwx, rwy, rwz = getWorldTranslation(frontNode)
+		_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
+		cFrontNode = createTransformGroup("cFrontNode")
+		link(self.rootNode, cFrontNode)
+		setTranslation(cFrontNode, 0, 0, vz)
+	else 
+		dbgprint("no frontNode center projection", 2)
+		cFrontNode = nil
+	end
+	
+	if backNode ~= nil then
+		dbgprint("backNode center projection", 2)
+		-- center projection of backNode
+		rwx, rwy, rwz = getWorldTranslation(backNode)
+		_, _, vz = worldToLocal(self.rootNode, rwx, rwy, rwz)	
+		cBackNode = createTransformGroup("cBackNode")
+		link(self.rootNode, cBackNode)
+		setTranslation(cBackNode, 0, 0, vz)
+	else
+		dbgprint("no backNode center projection", 2)
+		cBackNode = nil
+	end
+	
 	dbgprint("vehicleMeasurement : distFront: "..tostring(distFront), 2)
 	dbgprint("vehicleMeasurement : distBack: "..tostring(distBack), 2)
+	dbgprint("vehicleMeasurement : frontNode: "..tostring(frontNode), 2)
+	dbgprint("vehicleMeasurement : backNode: "..tostring(backNode), 2)
+	dbgprint("vehicleMeasurement : cFrontNode: "..tostring(cFrontNode), 2)
+	dbgprint("vehicleMeasurement : cBackNode: "..tostring(cBackNode), 2)
 	dbgprint("vehicleMeasurement : vehicleLength: "..tostring(vehicleLength), 1)
 	dbgprint("vehicleMeasurement : vehicleWidth: "..tostring(vehicleWidth), 1)
-	return frontNode, backNode, vehicleLength, vehicleWidth, maxTurningRadius
+	return cFrontNode, cBackNode, vehicleLength, vehicleWidth, maxTurningRadius
 end
 
 function HeadlandManagement:onPostLoad(savegame)
@@ -783,11 +835,12 @@ function HeadlandManagement:TOGGLESTATE(actionName, keyStatus, arg3, arg4, arg5)
 	local spec = self.spec_HeadlandManagement
 	dbgprint_r(spec, 4)
 	-- headland management
-	-- anschalten nur wenn inaktiv
+	-- Vorgewendemodus nur wenn Feldmodus aktiv ist
 	if not spec.isActive and spec.isOn and (actionName == "HLM_SWITCHON" or actionName == "HLM_TOGGLESTATE") then
 		spec.isActive = true
 		spec.evOverride = true
-	-- abschalten nur wenn aktiv
+		spec.triggerContourStateChange = true
+	-- Feldmodus nur wenn Vorgewendemodus aktiv ist
 	elseif spec.isActive and spec.isOn and (actionName == "HLM_SWITCHOFF" or actionName == "HLM_TOGGLESTATE") and spec.actStep == HeadlandManagement.MAXSTEP then
 		if spec.actStep == HeadlandManagement.WAITONTRIGGER then spec.override = true end
 		spec.actStep = -spec.actStep
@@ -817,6 +870,9 @@ function HeadlandManagement:MAINSWITCH(actionName, keyStatus, arg3, arg4, arg5)
 		spec.isActive = false
 		spec.actStep = 0
 		spec.autoOverride = false
+		spec.contour = 0
+		spec.contourSetActive = false
+		spec.contourMultiMode = false
 		spec.isOn = false
 	else
 		spec.lastHeadlandF = false
@@ -839,7 +895,7 @@ function HeadlandManagement:SHOWGUI(actionName, keyStatus, arg3, arg4, arg5)
 	local hlmGui = g_gui:showDialog("HeadlandManagementGui")
 	local spec_gs = self.spec_globalPositioningSystem
 	local gpsEnabled = spec_gs ~= nil and spec_gs.lastInputValues ~= nil and spec_gs.lastInputValues.guidanceSteeringIsActive
-	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth = vehicleMeasurement(self)
+	spec.frontNode, spec.backNode, spec.vehicleLength, spec.vehicleWidth, spec.maxTurningRadius = vehicleMeasurement(self)
 	dbgprint_r(spec, 4, 2)
 	hlmGui.target:setCallback(HeadlandManagement.guiCallback, self)
 	HeadlandManagementGui.setData(hlmGui.target, self:getFullName(), spec, gpsEnabled, HeadlandManagement.debug, HeadlandManagement.showKeys)
@@ -850,10 +906,23 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	HeadlandManagement.debug = debug
 	HeadlandManagement.showKeys = showKeys
 	local spec = self.spec_HeadlandManagement
+	dbgprint("guiCallBack : "..tostring(spec.contour).." / "..tostring(spec.contourLast).." / "..tostring(spec.isActive), 2)
+	if spec.contour ~= 0 and spec.contour ~= spec.contourLast and spec.isActive then 
+		dbgprint("guiCallback : contourSetActive", 2)
+		spec.contourSetActive = true 
+	elseif spec.contour ~= 0 and spec.contour ~= spec.contourLast and not spec.isActive then
+		dbgprint("guiCallback : contourTriggerMeasurement", 2)
+		spec.contourTriggerMeasurement = true
+	else 
+		dbgprint("guiCallback : no contour changes", 2)
+	end
+	spec.contourLast = spec.contour
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
+
+-- Main part
 
 local function saveConfigWithImplement(spec, implementName)
 	--local spec = self.spec_HeadlandManagement
@@ -1032,20 +1101,44 @@ end
 
 local function getContourPoints(self)
 	local spec = self.spec_HeadlandManagement
-	local x1, y1, z1 = localToWorld(self.rootNode, 0, 0, 3)
-	local x2, y2, z2 = localToWorld(self.rootNode, 0 + (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 3) -- inside limit
-	local x3, y3, z3 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 3) -- outside limit 1
-	local x4, y4, z4 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 3) -- outside limit 2
-	local x5, y5, z5 = localToWorld(self.rootNode, 0 + (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 3) -- outside limit 3
-	return {x1, y1, z1}, {x2, y2, z2}, {x3, y3, z3}, {x4, y4, z4}, {x5 ,y5, z5}
+	local node = spec.frontNode
+	if node == nil then node = self.rootNode end
+	local xr, yr, zr = localToWorld(node, 0, 0, 0)
+	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 0) 	-- inside limit
+	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - spec.contourSharpness) * spec.contour, 0, 0) 		-- inside limit 2
+	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- inside limit 3
+	local xf1, yf1, zf1 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness / 2)) 				-- front limit
+	local xf2, yf2, zf2 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness)) 					-- front limit 2
+	local xf3, yf3, zf3 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness * 2)) 				-- front limit 3
+	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 0) -- outside limit 1
+	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 0) 		-- outside limit 2
+	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- outside limit 3
+	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xf1, yf1, zf1}, {xf2, yf2, zf2}, {xf3, yf3, zf3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
-
--- Main part
 
 local function isOnField(node, x, z)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
 	return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
 end	
+
+local function measureBorderDistance(self)
+	local spec = self.spec_HeadlandManagement
+	local node = spec.frontNode
+	if spec.contourWidthMeasurement or spec.contourWidth == 0 then
+		if node == nil then node = self.rootNode end
+		for dist=0,1000,spec.contourSharpness do
+			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
+			local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
+			if isOnField(node, xi, zi) and not isOnField(node, xo, zo) then
+				return dist
+			end
+		end
+		dbgprint("measureBorderDistance : result = "..tostring(dist), 2)
+		return math.floor(spec.vehicleWidth * 0.5)
+	else
+		return spec.contourWidth
+	end
+end
 
 local function getFieldNum(node, x, z)
 	local fieldNum = 0
@@ -1089,13 +1182,16 @@ function HeadlandManagement.onUpdateResearch(self)
 	dbgrender("isActive: "..tostring(spec.isActive), 17, 3)
 	dbgrender("actStep: "..tostring(spec.actStep), 18, 3)
 	
+	dbgrender("contour: "..tostring(spec.contour), 24, 3)
+	dbgrender("contourSetActive: "..tostring(spec.contourSetActive), 25, 3)
+	
 	local turnTarget
 	if spec.turnHeading ~= nil then turnTarget=math.floor(spec.turnHeading) else turnTarget = nil end
 	dbgrender("turnHeading:"..tostring(turnTarget), 20, 3)
 	
 	local fieldNum = getFieldNum(self.rootNode)
 	dbgrender("Field ID: "..tostring(fieldNum), 21, 3)
-	dbgrender("spec.evOverride: "..tostring(spec.evOverride), 28, 3)
+	dbgrender("spec.evOverride: "..tostring(spec.evOverride), 22, 3)
 	
 	local analyseTable = nil
 	
@@ -1204,6 +1300,7 @@ function HeadlandManagement:onUpdate(dt)
 		and spec.useHLMTriggerF and not spec.autoOverride
 		and spec.headlandF and not spec.lastHeadlandF 
 	then
+		spec.triggerContourStateChange = true
 		spec.isActive = true
 		spec.lastHeadlandF = true
 		spec.lastFieldNumF = spec.fieldNumF
@@ -1213,6 +1310,8 @@ function HeadlandManagement:onUpdate(dt)
 		and spec.useHLMTriggerB and not spec.autoOverride
 		and spec.headlandB and not spec.lastHeadlandB 
 	then
+		
+		spec.triggerContourStateChange = true
 		spec.isActive = true
 		spec.lastHeadlandB = true
 		spec.lastFieldNumB = spec.fieldNumB
@@ -1224,6 +1323,7 @@ function HeadlandManagement:onUpdate(dt)
 		local gsSpec = self.spec_globalPositioningSystem
 		if not spec.isActive and gsSpec.playHeadLandWarning and not spec.autoOverride then
 			spec.isActive = true
+			spec.triggerContourStateChange = true
 			dbgprint("onUpdate : Headland mode activated by guidance steering (auto-mode)", 2)
 		end
 	end
@@ -1233,6 +1333,7 @@ function HeadlandManagement:onUpdate(dt)
 		if not spec.isActive and not spec.evOverride and self.vData ~= nil and self.vData.track ~= nil and self.vData.track.isOnField == 0 and not spec.autoOverride 
 			and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] == true then
 			spec.isActive = true
+			spec.triggerContourStateChange = true
 			spec.evStatus = true
 			dbgprint("onUpdate : Headland mode activated by enhanced vehicle (auto-mode)", 2)
 		end
@@ -1310,6 +1411,7 @@ function HeadlandManagement:onUpdate(dt)
 		
 		if spec.actStep == 0 then 
 			spec.isActive = false
+			spec.triggerContourStateChange = true
 			spec.override = false
 			--spec.evOverride = false
 			spec.turnHeading = nil
@@ -1412,29 +1514,76 @@ function HeadlandManagement:onUpdate(dt)
 	end
 	
 	-- contour guidance
-	if spec.contour ~= 0 then
-		spec.contourP1, spec.contourP2, spec.contourP3, spec.contourP4, spec.contourP5 = getContourPoints(self)
 	
-		local x2, y2, z2 = unpack(spec.contourP2)
-		local x3, y3, z3 = unpack(spec.contourP3)
-		local x4, y4, z4 = unpack(spec.contourP4)
-		local x5, y5, z5 = unpack(spec.contourP5)
+	if spec.isActive and spec.triggerContourStateChange then
+	-- swap field border side
+		if not spec.contourNoSwap and not spec.contourSetActive then
+			spec.contour = -spec.contour
+		end
+		-- contour guidance: if not freshly active or contourMultiMode is true, reset contour mode
+		if spec.contour ~= 0 and not spec.contourSetActive and not spec.contourMultiMode then 
+			spec.contour = 0
+			spec.contourLast = 0
+		end
+		spec.triggerContourStateChange = false
+	end
+		
+	if not spec.isActive and spec.triggerContourStateChange then
+		-- contour guidance: trigger measurement, if contourWidthAdaption is set, increase distance to field border
+		if spec.contour ~= 0 then 
+			if not spec.contourWidthAdaption or type(spec.contourTrack)~="number" or spec.contourTrack == 0 then
+				dbgprint("onUpdate : contourTriggerMeasurement", 2)
+				spec.contourTriggerMeasurement = true 
+			elseif not spec.contourSetActive then
+				dbgprint("onUpdate : contourWidthAdaption", 2)
+				spec.contourTrack = spec.contourTrack + 1
+				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5 + spec.vehicleWidth * (spec.contourTrack-1))
+			end
+			spec.contourSetActive = false
+		end
+		spec.triggerContourStateChange = false
+	end	
+		
+	if spec.contourTriggerMeasurement then
+		spec.contourWidth = measureBorderDistance(self)
+		spec.contourTriggerMeasurement = false
+	end
 	
+	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
+		
+		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPf1, spec.contourPf2, spec.contourPf3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
+	
+		local xi1, yi1, zi1 = unpack(spec.contourPi1)
+		local xi2, yi2, zi2 = unpack(spec.contourPi2)
+		local xi3, yi3, zi3 = unpack(spec.contourPi3)
+		local xf1, yf1, zf1 = unpack(spec.contourPf1)
+		local xf2, yf2, zf2 = unpack(spec.contourPf2)
+		local xf3, yf3, zf3 = unpack(spec.contourPf3)
+		local xo1, yo1, zo1 = unpack(spec.contourPo1)
+		local xo2, yo2, zo2 = unpack(spec.contourPo2)
+		local xo3, yo3, zo3 = unpack(spec.contourPo3)
+		
 		local courseCorrection = 0
-		if getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0 then
+		if isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and not isOnField(self.rootNode, xo1, zo1) then
 			-- course is correct, no action needed
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) ~= 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) ~= 0 then
-			courseCorrection = 0.3 -- too far inside, turn slowly to the outside
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x5, 0, z5) == 0 then
-			courseCorrection = -1 -- too far outside, turn max to the inside
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x4, 0, z4) == 0 then
-			courseCorrection = -0.6 -- too far outside, turn medium to the inside
-		elseif getDensityAtWorldPos(g_currentMission.terrainDetailId, x2, 0, z2) == 0 and getDensityAtWorldPos(g_currentMission.terrainDetailId, x3, 0, z3) == 0 then
-			courseCorrection = -0.3 -- too far outside, turn slowly to the inside
+			
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo3, zo3) then
+			courseCorrection = -1 -- too far inside, turn max to the outside
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo2, zo2) then
+			courseCorrection = -0.6 -- too far inside, turn medium to the outside
+		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo1, zo1) then
+			courseCorrection = -0.3 -- too far inside, turn slowly to the outside
+			
+		elseif not isOnField(self.rootNode, xi3, zi3) or not isOnField(self.rootNode, xf3, zf3) then
+			courseCorrection = 1 -- too far outside, turn max to the inside
+		elseif not isOnField(self.rootNode, xi2, zi2) or not isOnField(self.rootNode, xf2, zf2) then
+			courseCorrection = 0.6 -- too far outside, turn medium to the inside
+		elseif not isOnField(self.rootNode, xi1, zi1) or not isOnField(self.rootNode, xf1, zf1) then
+			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
 		if courseCorrection ~= 0 then
-			self:setSteeringInput(courseCorrection * -spec.contour, true)
+			self:setSteeringInput(courseCorrection * spec.contour, true)
 		end
 	end
 end
@@ -1451,6 +1600,21 @@ function HeadlandManagement:onDraw(dt)
 			g_inputBinding:setActionEventText(spec.actionEventSwitch, g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("input_HLM_SWITCHON"))
 		end
 		
+		-- contour guidance
+		if spec.exists and spec.isOn and spec.contour ~= 0 and not spec.isActive and not spec.contourSetActive then
+			local dirText
+			if spec.contour < 0 then dirText = "Right" else dirText = "Left" end
+			if spec.contourNoSwap then dirText = "always "..dirText end
+			--g_currentMission:addExtraPrintText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("text_HLM_isActive"))
+			g_currentMission:addExtraPrintText(string.format("Contour Guidance Active (%s)", dirText))
+		end
+		if spec.exists and spec.isOn and (spec.contour ~= 0 and not spec.isActive and spec.contourSetActive) or (spec.contour ~= 0 and spec.isActive and (spec.contourMultiMode or spec.contourSetActive)) then
+			local dirText
+			if spec.contour < 0 then dirText = "right" else dirText = "left" end
+			if spec.contourNoSwap then dirText = "always "..dirText end
+			g_currentMission:addExtraPrintText(string.format("Contour Guidance Stand-By (%s)", dirText))
+		end
+			
 		-- gui icon
 		local scale = g_gameSettings.uiScale
 		
@@ -1466,6 +1630,9 @@ function HeadlandManagement:onDraw(dt)
 		local headlandAutomaticResume = spec.autoResume and not spec.autoOverride 
 		--local headlandAutomaticResumeEV = (spec.modEVFound and spec.useEVTrigger and not spec.evOverride) and not spec.autoOverride and spec.vData ~= nil and spec.vData.is ~= nil and spec.vData.is[6]
 		
+		local cgIsOn = spec.contour ~= 0
+		local cgIsStandby = spec.contourSetActive or spec.contourMultiMode
+		
 		-- field mode
 		if spec.isOn and headlandAutomatic and not spec.isActive and not spec.useEVTrigger then 
 			guiIcon = HeadlandManagement.guiIconFieldA
@@ -1477,6 +1644,15 @@ function HeadlandManagement:onDraw(dt)
 			end
 			if spec.gpsSetting == 7 and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] then 
 				guiIcon = HeadlandManagement.guiIconFieldALR
+			end
+			if cgIsOn then
+				if not spec.contourSetActive and spec.contour < 0 then 
+					guiIcon = HeadlandManagement.guiIconFieldCGAR
+				elseif not spec.contourSetActive and spec.contour > 0 then
+					guiIcon = HeadlandManagement.guiIconFieldCGAL
+				else
+					guiIcon = HeadlandManagement.guiIconFieldCGA
+				end
 			end
 		end
 		
@@ -1490,6 +1666,15 @@ function HeadlandManagement:onDraw(dt)
 			end
 			if spec.gpsSetting == 7 and self.vData ~= nil and self.vData.is ~= nil and self.vData.is[6] then 
 				guiIcon = HeadlandManagement.guiIconFieldLR
+			end
+			if cgIsOn then
+				if not spec.contourSetActive and spec.contour < 0 then 
+					guiIcon = HeadlandManagement.guiIconFieldCGR
+				elseif not spec.contourSetActive and spec.contour > 0 then
+					guiIcon = HeadlandManagement.guiIconFieldCGL
+				else
+					guiIcon = HeadlandManagement.guiIconFieldCG
+				end
 			end
 		end
 		
@@ -1507,7 +1692,11 @@ function HeadlandManagement:onDraw(dt)
 	
 		-- headland mode			
 		if spec.isOn and headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP and not spec.useEVTrigger then
-			guiIcon = HeadlandManagement.guiIconHeadlandA
+			if not cgIsStandby then
+				guiIcon = HeadlandManagement.guiIconHeadlandA
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandACG
+			end
 		end
 		
 		if spec.isOn and spec.useEVTrigger and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP then
@@ -1515,15 +1704,27 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		if spec.isOn and not headlandAutomaticResume and spec.isActive and spec.actStep==HeadlandManagement.MAXSTEP and not spec.useEVTrigger then 
-			guiIcon = HeadlandManagement.guiIconHeadland
+			if not cgIsStandby then
+				guiIcon = HeadlandManagement.guiIconHeadland
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandCG
+			end
 		end	
 		
 		-- Working Mode
 		if spec.isOn and spec.isActive and spec.actStep > 0 and spec.actStep < HeadlandManagement.MAXSTEP then
-			guiIcon = HeadlandManagement.guiIconHeadlandW
+			if spec.contour ~= 0 then
+				guiIcon = HeadlandManagement.guiIconHeadlandWCG
+			else
+				guiIcon = HeadlandManagement.guiIconHeadlandW
+			end
 		end
 		if spec.isOn and spec.isActive and spec.actStep < 0 then
-			guiIcon = HeadlandManagement.guiIconFieldW
+			if spec.contour ~= 0 then
+				guiIcon = HeadlandManagement.guiIconFieldWCG
+			else
+				guiIcon = HeadlandManagement.guiIconFieldW
+			end
 		end
 		
 		renderOverlay(guiIcon, x, y, w, h)
@@ -1543,10 +1744,13 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		-- debug: show contour guidance line
-		if spec.contourDebug and spec.contour ~= 0 and spec.contourP1 ~= nil and spec.contourP2 ~= nil then
-			local x1, y1, z1 = unpack(spec.contourP1)
-			local x2, y2, z2 = unpack(spec.contourP2)
-			drawDebugLine(x1, y1, z1, 0, 1, 0, x2, y2, z2, 0, 1, 0, true)
+		if spec.contourDebug and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
+			local xr, yr, zr = unpack(spec.contourPr)
+			local xo1, yo1, zo1 = unpack(spec.contourPo1)
+			local xf1, yf1, zf1 = unpack(spec.contourPf1)
+			yo1 = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, xo1, 0,zo1)+0.1
+			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1)
+			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xf1, yf1+0.25, zf1, 0, 0, 1)
 		end
 	end
 end

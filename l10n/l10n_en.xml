@@ -94,7 +94,16 @@
 		<text name="hlmgui_raiseTT" text="In the headland, lowered implements can be raised and then lowered again. Optionally adjustable for all, only front or only rear implements."/>
 		<text name="hlmgui_plowTT" text="After lifting, plows can be turned. Either completely, or initially only to the center, and afterwards completely while lowering. Note: In the latter case, good timing is important. It is therefore recommended to stop briefly at the end of the headland to turn and lower the plow."/>
 		<text name="hlmgui_ptoTT" text="At the headland, activated implements can be switched off and then switched on again. Optionally adjustable for all, only front or only rear implements."/>
+
+		<text name="hlmgui_contourOnOffTT" text="Activates control along the edge of the field, either for one lane only, or until it is switched off again. This function is only active in field mode, in headland mode it is on stand-by."/>
+		<text name="hlmgui_contourSettingTT" text="Determines on which side the field border is to be followed. Here, the page can optionally be switched with each change to the headland mode, or it is retained."/>
+		<text name="hlmgui_contourWidthSettingTT" text="The distance to the field edge can either be determined automatically or it can be fixed."/>
+		<text name="hlmgui_contourWidthChangeSettingTT" text="If desired, the distance to the edge of the field can be widened by one vehicle width each time you switch to headland mode."/>
+
 		<text name="hlmgui_ridgeMarkerTT" text="While lifting, the ridgemarker can be switched to the opposite side."/>
+		
+		<text name="hlmgui_emptyBalersSettingTT" text="Stops automatic unloading of balers in the headland "/>
+		
 		<text name="hlmgui_gpsTT" text="GPS tracking is paused at the headland and then resumed."/>
 		<text name="hlmgui_gpsTypeTT" text="The function can be limited to Guidance Steering or VCA, or automatically pause the currently active system."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="In conjunction with Guidance Steering, headland management can be activated automatically when the headland is reached."/>
