@@ -107,8 +107,15 @@
 		<text name="hlmgui_raiseTT" text="Im Vorgewende können abgesenkte Anbaugeräte ausgehoben und anschließend wieder abgesenkt werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
 		<text name="hlmgui_plowTT" text="Nach dem Ausheben können Pflüge gedreht werden. Entweder sofort vollständig, oder zunächst nur zur Mitte und erst beim Absenken vollständig. Hinweis: In letzterem Fall ist ein gutes Timing wichtig. Es wird daher empfohlen, zum Drehen und Absenken des Pflugs kurz anzuhalten."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Mit dem Ausheben kann der Spurreißer auf die gegenüberliegende Seite umgeschaltet werden."/>
-		<text name="hlmgui_emptyBalerTT" text="Stoppt bei Ballenpressen das automatische Abladen im Vorgewende"/>
+		<text name="hlmgui_emptyBalersSettingTT" text="Stoppt bei Ballenpressen das automatische Abladen im Vorgewende."/>
+
 		<text name="hlmgui_ptoTT" text="Im Vorgewende können aktivierte Anbaugeräte abgeschaltet und anschließend wieder angeschaltet werden. Wahlweise für alle, nur vordere oder nur hintere Geräte einstellbar."/>
+		
+		<text name="hlmgui_contourOnOffTT" text="Aktiviert die Steuerung entlang des Feldrands, entweder für nur eine Bahn, oder bis es wieder ausgeschaltet wird. Diese Funktion ist nur im Feldmodus aktiv, im Vorgewendemodus ist sie auf Stand-By."/>
+		<text name="hlmgui_contourSettingTT" text="Legt fest, auf welcher Seite dem Feldrand gefolgt werden soll. Hierbei kann wahlweise mit jedem Wechsel in den Vorgewendemodus die Seite umgeschaltet werden, oder sie wird beibehalten."/>
+		<text name="hlmgui_contourWidthSettingTT" text="Der Abstand zum Feldrand kann entweder automatisch ermittelt werden, oder er wird fest eingestellt."/>
+		<text name="hlmgui_contourWidthChangeSettingTT" text="Auf Wunsch kann der Abstand zum Feldrand bei jedem Wechsel in den Vorgewendemodus um eine Fahrzeugbreite verbreitert werden."/>
+		
 		<text name="hlmgui_gpsTT" text="Im Vorgewende wird die GPS-Spurführung pausiert und anschließend fortgesetzt."/>
 		<text name="hlmgui_gpsTypeTT" text="Die Funktion kann auf Guidance Steering oder VCA eingeschränkt werden, oder automatisch das jeweils gerade aktive System pausieren."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="In Verbindung mit Guidance Steering kann das Vorgewende-Management bei Erreichen des Vorgewendes automatisch aktiviert werden."/>

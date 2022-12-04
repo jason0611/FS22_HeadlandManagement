@@ -94,7 +94,16 @@
 		<text name="hlmgui_raiseTT" text="En bout de champ, les outils portés abaissés peuvent être relevés puis redescendus. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
 		<text name="hlmgui_plowTT" text="Avec le relevage, les charrues peuvent être retournées. Soit directement, soit d'abord seulement vers le centre et seulement complètement lors de l'abaissement."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Le relevage permet de commuter le traceur sur le côté opposé."/>
+		
+		<text name="hlmgui_emptyBalersSettingTT" text="Arrêt du déchargement automatique en bout de champ pour les presses à balles"/>
+		
 		<text name="hlmgui_ptoTT" text="En bout de champ, les outils portés activés peuvent être désactivés puis réactivés. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
+
+		<text name="hlmgui_contourOnOffTT" text="Active le contrôle le long du bord du champ, soit pour une seule trajectoire, soit jusqu'à ce qu'il soit désactivé. Cette fonction n'est active qu'en mode champ, en mode bout de champ, elle est en stand-by."/>
+		<text name="hlmgui_contourSettingTT" text="Détermine de quel côté le bord du champ doit être suivi. Il est possible de changer de page ou de la conserver à chaque passage en mode de tournière"/>.
+		<text name="hlmgui_contourWidthSettingTT" text="La distance par rapport au bord du champ peut soit être déterminée automatiquement, soit être fixée."/>
+		<text name="hlmgui_contourWidthChangeSettingTT" text="Si vous le souhaitez, la distance par rapport au bord du champ peut être élargie d'une largeur de véhicule à chaque passage en mode bout de champ."/>
+
 		<text name="hlmgui_gpsTT" text="Dans les fourrières, le guidage GPS est mis en pause, puis repris."/>
 		<text name="hlmgui_gpsTypeTT" text="La fonction peut être limitée à Guidance Steering ou VCA, ou mettre automatiquement en pause le système actuellement actif."/>
 		<text name="hlmgui_gpsAutoTriggerTT" text="En combinaison avec Guidance Steering, la gestion des fourrières peut être activée automatiquement lorsque la fourrière est atteinte."/>
