@@ -94,6 +94,19 @@
 		<text name="hlmgui_raiseTT" text="En bout de champ, les outils portés abaissés peuvent être relevés puis redescendus. Réglable au choix pour tous les outils, uniquement pour l'avant ou uniquement pour l'arrière."/>
 		<text name="hlmgui_plowTT" text="Avec le relevage, les charrues peuvent être retournées. Soit directement, soit d'abord seulement vers le centre et seulement complètement lors de l'abaissement."/>
 		<text name="hlmgui_ridgeMarkerTT" text="Le relevage permet de commuter le traceur sur le côté opposé."/>
+		<text name="hlmgui_emptyBaler" text="Arrêter le déchargement automatique"/>
+		
+		<text name="hlmgui_contourControl" text="Réglages du guidage du contour"/>
+		<text name="hlmgui_contourOnOff" text="Activer le guidage de contour"/>
+		<text name="hlmgui_contourSetting" text="Côté bord du champ"/>
+		<text name="hlmgui_contour_On1Pass" text="an : une seule piste"/>
+		<text name="hlmgui_contour_OnMPass" text="an : Chaque piste"/>
+		<text name="hlmgui_contour_nextRight" text="d'abord à droite"/>
+		<text name="hlmgui_contour_nextLeft" text="d'abord à gauche"/>
+		<text name="hlmgui_contour_alwaysRight" text="toujours à droite"/>
+		<text name="hlmgui_contour_alwaysLeft" text="toujours à gauche"/>
+		<text name="hlmgui_contourWidthSetting" text="Distance au bord du champ"/>
+		<text name="hlmgui_contourWidthChangeSetting" text="Augmenter automatiquement la distance" />
 		
 		<text name="hlmgui_emptyBalersSettingTT" text="Arrêt du déchargement automatique en bout de champ pour les presses à balles"/>
 		

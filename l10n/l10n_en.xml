@@ -56,6 +56,19 @@
 		<text name="hlmgui_plowOff" text="Don't turn"/>
 		<text name="hlmgui_pto" text="Stop PTO and hydraulical devices"/>
 		<text name="hlmgui_ridgeMarker" text="Change ridgemarker"/>
+		<text name="hlmgui_emptyBaler" text="Stop Automatic Unloading"/>
+		
+		<text name="hlmgui_contourControl" text="Contour Guide Settings"/>
+		<text name="hlmgui_contourOnOff" text="Enable Contour Guide"/>
+		<text name="hlmgui_contourSetting" text="Field Edge Page"/>
+		<text name="hlmgui_contour_On1Pass" text="on: One lane only"/>
+		<text name="hlmgui_contour_OnMPass" text="an: Any lane"/>
+		<text name="hlmgui_contour_nextRight" text="first right"/>
+		<text name="hlmgui_contour_nextLeft" text="first left"/>
+		<text name="hlmgui_contour_alwaysRight" text="always right"/>
+		<text name="hlmgui_contour_alwaysLeft" text="always left"/>
+		<text name="hlmgui_contourWidthSetting" text="Distance to field edge"/>
+		<text name="hlmgui_contourWidthChangeSetting" text="Increase distance automatically" />
 		
 		<text name="hlmgui_gpsControl" text="GPS control"/>
 		<text name="hlmgui_gpsSetting" text="Stop GPS steering"/>

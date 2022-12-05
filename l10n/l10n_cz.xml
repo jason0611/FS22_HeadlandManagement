@@ -57,6 +57,20 @@
 		<text name="hlmgui_pto" text="Zastavte vývodový hřídel a hydraulické zařízení"/>
 		<text name="hlmgui_ridgeMarker" text="Vyměnte značkovač"/>		
 		
+		<text name="hlmgui_emptyBaler" text="Zastavit automatické vykládání"/>
+		
+		<text name="hlmgui_contourControl" text="Nastavení průvodce obrysem"/>
+		<text name="hlmgui_contourOnOff" text="Povolit průvodce obrysy"/>
+		<text name="hlmgui_contourSetting" text="Field Edge Page"/>
+		<text name="hlmgui_contour_On1Pass" text="on: Pouze jeden jízdní pruh"/>
+		<text name="hlmgui_contour_OnMPass" text="an: Libovolný jízdní pruh"/>
+		<text name="hlmgui_contour_nextRight" text="první vpravo"/>
+		<text name="hlmgui_contour_nextLeft" text="první vlevo"/>
+		<text name="hlmgui_contour_alwaysRight" text="vždy vpravo"/>
+		<text name="hlmgui_contour_alwaysLeft" text="vždy vlevo"/>
+		<text name="hlmgui_contourWidthSetting" text="Vzdálenost od okraje pole"/>
+		<text name="hlmgui_contourWidthChangeSetting" text="Automaticky zvětšit vzdálenost" />
+		
 		<text name="hlmgui_gpsControl" text="kontrola GPS"/>
 		<text name="hlmgui_gpsSetting" text="nastav řízení GPS"/>
 		<text name="hlmgui_gpsType" text="Použij GPS-Mod"/>

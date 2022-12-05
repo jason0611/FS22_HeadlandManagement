@@ -57,6 +57,19 @@
 			<text name="hlmgui_plowOff" text="Non gira"/>
 			<text name="hlmgui_pto" text="Arresto della presa di forza e dei dispositivi idraulici"/>
 			<text name="hlmgui_ridgeMarker" text="Cambia il marcatore"/>
+			<text name="hlmgui_emptyBaler" text="Interrompi lo scaricamento automatico"/>
+		
+			<text name="hlmgui_contourControl" text="Impostazioni guida contorni"/>
+			<text name="hlmgui_contourOnOff" text="Abilita guida contorni"/>
+			<text name="hlmgui_contourSetting" text="Pagina bordo campo"/>
+			<text name="hlmgui_contour_On1Pass" text="on: Una sola corsia"/>.
+			<text name="hlmgui_contour_OnMPass" text="an: Qualsiasi corsia"/>.
+			<text name="hlmgui_contour_nextRight" text="prima destra"/>
+			<text name="hlmgui_contour_nextLeft" text="prima sinistra"/>
+			<text name="hlmgui_contour_alwaysRight" text="sempre a destra"/>
+			<text name="hlmgui_contour_alwaysLeft" text="sempre a sinistra"/>
+			<text name="hlmgui_contourWidthSetting" text="Distanza dal bordo del campo" />
+			<text name="hlmgui_contourWidthChangeSetting" text="Aumenta automaticamente la distanza" />
 		
 			<text name="hlmgui_gpsControl" text="Impostazioni GPS"/>
 			<text name="hlmgui_gpsSetting" text="Metti in pausa il GPS"/>
