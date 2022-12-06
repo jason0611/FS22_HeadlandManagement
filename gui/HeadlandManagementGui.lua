@@ -738,7 +738,7 @@ function HeadlandManagementGui:onClickOk()
 		self.spec.contourWidthMeasurement = true
 		self.spec.contourTrack = 0
 	end		
-	self.spec.contourWidthAdation = self.contourWidthChangeSetting:getState() == 1
+	self.spec.contourWidthAdaption = self.contourWidthChangeSetting:getState() == 1
 	-- gps
 	self.spec.useGPS = self.gpsOnOffSetting:getState() == 1
 	local gpsSetting = self.gpsSetting:getState()
