@@ -211,6 +211,10 @@ function HeadlandManagement.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onPreDetachImplement", HeadlandManagement) 
 end
 
+function HeadlandManagement.registerOverwrittenFunctions(vehicleType)
+	SpecializationUtil.registerOverwrittenFunction(vehicleType, "setSteeringInput", HeadlandManagement.setSteeringInput)
+end
+
 function HeadlandManagement:onLoad(savegame)
 	dbgprint("onLoad", 2)
 
@@ -1582,10 +1586,27 @@ function HeadlandManagement:onUpdate(dt)
 			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
-		if courseCorrection ~= 0 then
-			self:setSteeringInput(courseCorrection * spec.contour, true)
+		spec.contourSteering = courseCorrection * spec.contour
+		
+		if courseCorrection ~= 0 and self.spec_drivable ~= nil and self.spec_drivable.lastInputValues ~= nil then
+			local axis = self.spec_drivable.lastInputValues.axisSteer or 0
+			self:setSteeringInput(axis, true)
 		end
 	end
+end
+
+-- if contour guidance is active, only react to steering input, if it is more than 50%
+function HeadlandManagement:setSteeringInput(superFunc, inputValue, isAnalog, deviceCategory)
+	local spec = self.spec_HeadlandManagement
+	
+	if spec ~= nil and not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
+		if math.abs(inputValue) < 0.5 then
+			inputValue = spec.contourSteering or 0
+			dbgrender(inputValue, 19, 3)
+		end
+	end
+	
+	return superFunc(self, inputValue, isAnalog, deviceCategory)
 end
 
 function HeadlandManagement:onDraw(dt)
