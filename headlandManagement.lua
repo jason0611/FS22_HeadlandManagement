@@ -198,6 +198,7 @@ end
 
 function HeadlandManagement.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onUpdate", HeadlandManagement)
+	SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onDraw", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onLoad", HeadlandManagement)
 	SpecializationUtil.registerEventListener(vehicleType, "onPostLoad", HeadlandManagement)
@@ -1553,8 +1554,17 @@ function HeadlandManagement:onUpdate(dt)
 		spec.contourTriggerMeasurement = false
 	end
 	
+	if spec.contourSteering ~= 0 and self.spec_drivable ~= nil and self.spec_drivable.lastInputValues ~= nil then
+		local axis = self.spec_drivable.lastInputValues.axisSteer or 0
+		self:setSteeringInput(axis, true)
+	end
+end
+
+function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+	local spec = self.spec_HeadlandManagement
+
 	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
-		
+		print("Tick!")
 		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPf1, spec.contourPf2, spec.contourPf3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
 	
 		local xi1, yi1, zi1 = unpack(spec.contourPi1)
@@ -1570,6 +1580,7 @@ function HeadlandManagement:onUpdate(dt)
 		local courseCorrection = 0
 		if isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and not isOnField(self.rootNode, xo1, zo1) then
 			-- course is correct, no action needed
+			print("Tick2")
 			
 		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo3, zo3) then
 			courseCorrection = -1 -- too far inside, turn max to the outside
@@ -1587,11 +1598,6 @@ function HeadlandManagement:onUpdate(dt)
 		end
 		
 		spec.contourSteering = courseCorrection * spec.contour
-		
-		if courseCorrection ~= 0 and self.spec_drivable ~= nil and self.spec_drivable.lastInputValues ~= nil then
-			local axis = self.spec_drivable.lastInputValues.axisSteer or 0
-			self:setSteeringInput(axis, true)
-		end
 	end
 end
 
