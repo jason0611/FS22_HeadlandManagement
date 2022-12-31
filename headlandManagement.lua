@@ -1542,7 +1542,7 @@ function HeadlandManagement:onUpdate(dt)
 			elseif not spec.contourSetActive then
 				dbgprint("onUpdate : contourWidthAdaption", 2)
 				spec.contourTrack = spec.contourTrack + 1
-				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5) + math.floor(spec.vehicleWidth * (spec.contourTrack-1))
+				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5) + math.floor(spec.vehicleWidth) * (spec.contourTrack-1)
 			end
 			spec.contourSetActive = false
 		end

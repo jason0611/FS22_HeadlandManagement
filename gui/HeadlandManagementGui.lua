@@ -318,16 +318,16 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.contourWidthSetting:setTexts({
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
 		tostring(math.floor(self.spec.vehicleWidth * 0.5)).." m",
-		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 1)).." m",
-		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 2)).." m",
-		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 3)).." m"
+		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 1).." m",
+		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 2).." m",
+		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 3).." m"
 	})
 	self.contourWidthSetting:setDisabled(contourOnOffSetting == 1)
 	local widthMode = 1
 	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) then widthMode = 2 end
-	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 1) then widthMode = 3 end
-	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 2) then widthMode = 4 end
-	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 3) then widthMode = 5 end
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 1 then widthMode = 3 end
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 2 then widthMode = 4 end
+	if self.spec.contourWidth == math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 3 then widthMode = 5 end
 	self.contourWidthSetting:setState(widthMode)
 	
 	self.contourWidthChangeSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourWidthChangeSetting"))
@@ -722,15 +722,15 @@ function HeadlandManagementGui:onClickOk()
 		self.spec.contourWidthMeasurement = false
 		self.spec.contourTrack = 1
 	elseif widthMode == 3 then 
-		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 1)
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 1
 		self.spec.contourWidthMeasurement = false
 		self.spec.contourTrack = 2
 	elseif widthMode == 4 then 
-		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 2)
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 2
 		self.spec.contourWidthMeasurement = false
 		self.spec.contourTrack = 3
 	elseif widthMode == 5 then 
-		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth * 3)
+		self.spec.contourWidth = math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 3
 		self.spec.contourWidthMeasurement = false	
 		self.spec.contourTrack = 4
 	else
