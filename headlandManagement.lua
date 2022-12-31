@@ -1542,7 +1542,7 @@ function HeadlandManagement:onUpdate(dt)
 			elseif not spec.contourSetActive then
 				dbgprint("onUpdate : contourWidthAdaption", 2)
 				spec.contourTrack = spec.contourTrack + 1
-				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5 + spec.vehicleWidth * (spec.contourTrack-1))
+				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5) + math.floor(spec.vehicleWidth * (spec.contourTrack-1))
 			end
 			spec.contourSetActive = false
 		end
@@ -1564,7 +1564,6 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 	local spec = self.spec_HeadlandManagement
 
 	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
-		print("Tick!")
 		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPf1, spec.contourPf2, spec.contourPf3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
 	
 		local xi1, yi1, zi1 = unpack(spec.contourPi1)
@@ -1580,7 +1579,6 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		local courseCorrection = 0
 		if isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and not isOnField(self.rootNode, xo1, zo1) then
 			-- course is correct, no action needed
-			print("Tick2")
 			
 		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo3, zo3) then
 			courseCorrection = -1 -- too far inside, turn max to the outside
