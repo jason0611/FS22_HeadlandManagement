@@ -133,7 +133,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.spec = spec
 	self.gpsEnabled = gpsEnabled
 	
-	dbgprint_r(self.spec)
+	dbgprint_r(self.spec, 4)
 		
 	self.yesButton.onClickCallback=HeadlandManagementGui.onClickOk
 	self.noButton.onClickCallback=HeadlandManagementGui.onClickBack
