@@ -124,6 +124,14 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourOnOffTT"/>
 			</GuiElement>		
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourFrontSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourFrontTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourFrontTT"/>
+			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
