@@ -60,6 +60,10 @@
 		
 		<text name="hlmgui_contourControl" text="Управление краем поля"/>
 		<text name="hlmgui_contourOnOff" text="Край поля"/>
+		<text name="hlmgui_contourFront" text="Активировать передний датчик"/>
+		<text name="hlmgui_contourWorkedArea" text="Линия ориентации"/>
+		<text name="hlmgui_contourFieldBorder" text="Граница поля"/>
+		<text name="hlmgui_contourWorkArea" text="Обрабатываемая площадь"/>
 		<text name="hlmgui_contourSetting" text="Сторона поля"/>
 		<text name="hlmgui_contour_On1Pass" text="вкл: один проход"/>
 		<text name="hlmgui_contour_OnMPass" text="вкл: каждый проход"/>
