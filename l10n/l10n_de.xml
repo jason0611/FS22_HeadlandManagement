@@ -64,7 +64,7 @@
 		<text name="hlmgui_contourWorkedArea" text="Orientierungslinie"/>
 		<text name="hlmgui_contourFieldBorder" text="Feldgrenze"/>
 		<text name="hlmgui_contourWorkArea" text="Bearbeiteter Bereich"/>
-		<text name="hlmgui_contourSetting" text="Feldrand"/>
+		<text name="hlmgui_contourSetting" text="Feldrandseite"/>
 		<text name="hlmgui_contour_On1Pass" text="an: Nur eine Bahn"/>
 		<text name="hlmgui_contour_OnMPass" text="an: Jede Bahn"/>
 		<text name="hlmgui_contour_nextRight" text="zunächst rechts"/>

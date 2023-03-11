@@ -64,7 +64,7 @@
 		<text name="hlmgui_contourWorkedArea" text="Orientation line"/>
 		<text name="hlmgui_contourFieldBorder" text="Field boundary"/>
 		<text name="hlmgui_contourWorkArea" text="Processed area"/>
-		<text name="hlmgui_contourSetting" text="Field Edge Page"/>
+		<text name="hlmgui_contourSetting" text="Side of Field Edge"/>
 		<text name="hlmgui_contour_On1Pass" text="on: One lane only"/>
 		<text name="hlmgui_contour_OnMPass" text="an: Any lane"/>
 		<text name="hlmgui_contour_nextRight" text="first right"/>
