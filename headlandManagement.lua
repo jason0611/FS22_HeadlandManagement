@@ -4,7 +4,7 @@
 -- Glowins Modschmiede
 --
 -- Todos:
---			X Contour: Speichern sder Einstellungen
+--			X Contour: Speichern der Einstellungen
 --			X Contour: Wahlweise Abschaltung des Front-Detectors
 --			X Contour: Wahlweise Orientierung entlang der Feldgrenze oder entlang der Arbeitslinie
 --			- Contour: Begrenzung der max. Geschwindigkeit auf 10 km/h
