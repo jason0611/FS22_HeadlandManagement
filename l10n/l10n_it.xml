@@ -61,6 +61,10 @@
 		
 			<text name="hlmgui_contourControl" text="Impostazioni guida contorni"/>
 			<text name="hlmgui_contourOnOff" text="Abilita guida contorni"/>
+			<text name="hlmgui_contourFront" text="Attivare il sensore anteriore"/>
+			<text name="hlmgui_contourWorkedArea" text="Linea di orientamento"/>
+			<text name="hlmgui_contourFieldBorder" text="Confine del campo"/>
+			<text name="hlmgui_contourWorkArea" text="Area elaborata"/>
 			<text name="hlmgui_contourSetting" text="Pagina bordo campo"/>
 			<text name="hlmgui_contour_On1Pass" text="on: Una sola corsia"/>.
 			<text name="hlmgui_contour_OnMPass" text="an: Qualsiasi corsia"/>.

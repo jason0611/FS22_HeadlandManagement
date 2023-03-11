@@ -3,6 +3,14 @@
 --
 -- Glowins Modschmiede
 --
+-- Todos:
+--			X Contour: Speichern der Einstellungen
+--			X Contour: Wahlweise Abschaltung des Front-Detectors
+--			X Contour: Wahlweise Orientierung entlang der Feldgrenze oder entlang der Arbeitslinie
+--			- Contour: Begrenzung der max. Geschwindigkeit auf 10 km/h
+--			- Optionales Anhalten am Ende des Wendevorgangs bis Abschluss aller Sequenzen
+--			- Fertigstellung des Ballenablade-Stopps
+--			- Prüfen: Konfigurierbare 4-Tasten-Option
  
 HeadlandManagement = {}
 
@@ -10,7 +18,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -191,6 +199,17 @@ function HeadlandManagement.initSpecialization()
 		schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..key.."#headlandDistance", "Distance to headland", 9)
 	
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#useDiffLock", "Unlock diff locks in headland", true)
+		
+		schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..key.."#contour", "Contour state", 0)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourMultiMode", "More than one row", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourNoSwap", "Swap guiding side", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourFrontActive", "Front sensor state", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthAdaption", "Adapt width in headland mode", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthMeasurement", "Automatic mode state", false)
+		schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..key.."#contourWidth", "Contour width", 0)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourShowLines", "Show contour lines", true)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWorkedArea", "Contour on worked area or on field border", false)
+		
 		dbgprint("initSpecialization: finished xmlSchemaSavegame registration process for schema "..key, 1)
 	end
 		dbgprint("initSpecialization: finished xmlSchemaSavegame registration process", 1)
@@ -307,19 +326,21 @@ function HeadlandManagement:onLoad(savegame)
 	spec.diffStateF = false
 	spec.diffStateB = false
 	
-	spec.contour = 0
-	spec.contourLast = 0
-	spec.contourMultiMode = false
-	spec.contourNoSwap = false
-	spec.contourSetActive = false
-	spec.contourTriggerMeasurement = false
-	spec.contourWidthAdation = false
-	spec.contourWidthMeasurement = true
-	spec.triggerContourStateChange = false
+	spec.contour = 0							-- contour state (0=off)
+	spec.contourLast = 0						
+	spec.contourMultiMode = false				-- more than one row
+	spec.contourNoSwap = false					-- swap guiding side
+	spec.contourFrontActive = true				-- front sensor state
+	spec.contourSetActive = false				-- cg active
+	spec.contourTriggerMeasurement = false		-- trigger measurement as soon as it is possible
+	spec.contourWidthAdaption = false			-- adapt width in headland mode
+	spec.contourWidthMeasurement = true			-- automatic mode state
+	spec.triggerContourStateChange = false		-- cg on standby (headland mode active)
 	spec.contourWidth = 0
 	spec.contourTrack = 0
 	spec.contourSharpness = 0.5
-	spec.contourDebug = true
+	spec.contourWorkedArea = false				-- get contour of worked area (true) or of field border (false)
+	spec.contourShowLines = true
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
@@ -538,11 +559,14 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.isOn = xmlFile:getValue(key.."#isOn", spec.isOn)
 			spec.beep = xmlFile:getValue(key.."#beep", spec.beep)
 			spec.beepVol = xmlFile:getValue(key.."#beepVol", spec.beepVol)
+			
 			spec.turnSpeed = xmlFile:getValue(key.."#turnSpeed", spec.turnSpeed)
 			spec.useSpeedControl = xmlFile:getValue(key.."#useSpeedControl", spec.useSpeedControl)
 			spec.useModSpeedControl = xmlFile:getValue(key.."#useModSpeedControl", spec.useModSpeedControl)
+			
 			spec.useCrabSteering = xmlFile:getValue(key.."#useCrabSteering", spec.useCrabSteering)
 			spec.useCrabSteeringTwoStep = xmlFile:getValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+			
 			spec.useRaiseImplementF = xmlFile:getValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
 			spec.useRaiseImplementB = xmlFile:getValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
 			spec.waitOnTrigger = xmlFile:getValue(key.."#waitOnTrigger", spec.waitOnTrigger)
@@ -551,17 +575,31 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.useTurnPlow = xmlFile:getValue(key.."#turnPlow", spec.useTurnPlow)
 			spec.useCenterPlow = xmlFile:getValue(key.."#centerPlow", spec.useCenterPlow)
 			spec.useRidgeMarker = xmlFile:getValue(key.."#switchRidge", spec.useRidgeMarker)
+			
 			spec.useGPS = xmlFile:getValue(key.."#useGPS", spec.useGPS)
 			spec.gpsSetting = xmlFile:getValue(key.."#gpsSetting", spec.gpsSetting)
 			spec.useGuidanceSteeringTrigger = xmlFile:getValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 			spec.useGuidanceSteeringOffset = xmlFile:getValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+			
 			spec.useEVTrigger = xmlFile:getValue(key.."#useEVTrigger", spec.useEVTrigger) and spec.modEVFound
 			spec.useHLMTriggerF = xmlFile:getValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
 			spec.useHLMTriggerB = xmlFile:getValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
 			spec.headlandDistance = xmlFile:getValue(key.."#headlandDistance", spec.headlandDistance)
+
 			spec.vcaDirSwitch = xmlFile:getValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
 			spec.autoResume = xmlFile:getValue(key.."#autoResume", spec.autoResume)	
 			spec.useDiffLock = xmlFile:getValue(key.."#useDiffLock", spec.useDiffLock)
+			
+			spec.contour = xmlFile:getValue(key.."#contour", spec.contour)
+			spec.contourMultiMode = xmlFile:getValue(key.."#contourMultiMode", spec.contourMultiMode)
+			spec.contourNoSwap = xmlFile:getValue(key.."#contourNoSwap", spec.contourNoSwap)
+			spec.contourFrontActive = xmlFile:getValue(key.."#contourFrontActive", spec.contourFrontActive)
+			spec.contourWidthAdaption = xmlFile:getValue(key.."#contourWidthAdaption", spec.contourWidthAdaption)
+			spec.contourWidthMeasurement = xmlFile:getValue(key.."#contourWidthMeasurement", spec.contourWidthMeasurement)
+			spec.contourWidth = xmlFile:getValue(key.."#contourWidth", spec.contourWidth)
+			spec.contourWorkedArea = xmlFile:getValue(key.."#contourWorkedArea", spec.contourWorkedArea)
+			spec.contourShowLines = xmlFile:getValue(key.."#contourShowLines", spec.contourShowLines)
+			
 			dbgprint("onPostLoad : Loaded whole data set using key "..key, 1)
 		end
 		dbgprint("onPostLoad : Loaded data for "..self:getName(), 1)
@@ -605,11 +643,14 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#isOn", spec.isOn)
 		xmlFile:setValue(key.."#beep", spec.beep)
 		xmlFile:setValue(key.."#beepVol", spec.beepVol)
+		
 		xmlFile:setValue(key.."#turnSpeed", spec.turnSpeed)
 		xmlFile:setValue(key.."#useSpeedControl", spec.useSpeedControl)
 		xmlFile:setValue(key.."#useModSpeedControl", spec.useModSpeedControl)
+		
 		xmlFile:setValue(key.."#useCrabSteering", spec.useCrabSteering)
 		xmlFile:setValue(key.."#useCrabSteeringTwoStep", spec.useCrabSteeringTwoStep)
+		
 		xmlFile:setValue(key.."#useRaiseImplementF", spec.useRaiseImplementF)
 		xmlFile:setValue(key.."#useRaiseImplementB", spec.useRaiseImplementB)
 		xmlFile:setValue(key.."#waitOnTrigger", spec.waitOnTrigger)
@@ -618,17 +659,30 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#turnPlow", spec.useTurnPlow)
 		xmlFile:setValue(key.."#centerPlow", spec.useCenterPlow)
 		xmlFile:setValue(key.."#switchRidge", spec.useRidgeMarker)
+		
 		xmlFile:setValue(key.."#useGPS", spec.useGPS)
 		xmlFile:setValue(key.."#gpsSetting", spec.gpsSetting)
 		xmlFile:setValue(key.."#useGuidanceSteeringTrigger", spec.useGuidanceSteeringTrigger)
 		xmlFile:setValue(key.."#useGuidanceSteeringOffset", spec.useGuidanceSteeringOffset)
+		
 		xmlFile:setValue(key.."#useEVTrigger", spec.useEVTrigger)
 		xmlFile:setValue(key.."#useHLMTriggerF", spec.useHLMTriggerF)
 		xmlFile:setValue(key.."#useHLMTriggerB", spec.useHLMTriggerB)
 		xmlFile:setValue(key.."#headlandDistance", spec.headlandDistance)
+		
 		xmlFile:setValue(key.."#vcaDirSwitch", spec.vcaDirSwitch)
 		xmlFile:setValue(key.."#autoResume", spec.autoResume)
 		xmlFile:setValue(key.."#useDiffLock", spec.useDiffLock)
+		
+		xmlFile:setValue(key.."#contour", spec.contour)
+		xmlFile:setValue(key.."#contourMultiMode", spec.contourMultiMode)
+		xmlFile:setValue(key.."#contourNoSwap", spec.contourNoSwap)
+		xmlFile:setValue(key.."#contourFrontActive", spec.contourFrontActive)
+		xmlFile:setValue(key.."#contourWidthAdaption", spec.contourWidthAdaption)
+		xmlFile:setValue(key.."#contourWidthMeasurement", spec.contourWidthMeasurement)
+		xmlFile:setValue(key.."#contourWidth", spec.contourWidth)
+		xmlFile:setValue(key.."#contourWorkedArea", spec.contourWorkedArea)
+		xmlFile:setValue(key.."#contourShowLines", spec.contourShowLines)
 		
 		dbgprint("saveToXMLFile : saving whole data", 2)
 	end
@@ -1121,9 +1175,14 @@ local function getContourPoints(self)
 	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xf1, yf1, zf1}, {xf2, yf2, zf2}, {xf3, yf3, zf3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
-local function isOnField(node, x, z)
+local function isOnField(node, x, z, onUnWorkedField)
+	local nx, _, nz = getWorldTranslation(node)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
-	return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
+	if onUnWorkedField then
+		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) == getDensityAtWorldPos(g_currentMission.terrainDetailId, nx, 0, nz)
+	else
+		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
+	end
 end	
 
 local function measureBorderDistance(self)
@@ -1132,7 +1191,7 @@ local function measureBorderDistance(self)
 	if spec.contourWidthMeasurement or spec.contourWidth == 0 then
 		if node == nil then node = self.rootNode end
 		for dist=0,1000,spec.contourSharpness do
-			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)		-- inside limit
+			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)	-- inside limit
 			local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
 			if isOnField(node, xi, zi) and not isOnField(node, xo, zo) then
 				return dist
@@ -1577,21 +1636,22 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		local xo3, yo3, zo3 = unpack(spec.contourPo3)
 		
 		local courseCorrection = 0
-		if isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and not isOnField(self.rootNode, xo1, zo1) then
+		
+		if isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and not isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea) then
 			-- course is correct, no action needed
 			
-		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo3, zo3) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo3, zo3, spec.contourWorkedArea) then
 			courseCorrection = -1 -- too far inside, turn max to the outside
-		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo2, zo2) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo2, zo2, spec.contourWorkedArea) then
 			courseCorrection = -0.6 -- too far inside, turn medium to the outside
-		elseif isOnField(self.rootNode, xi1, zi1) and isOnField(self.rootNode, xf1, zf1) and isOnField(self.rootNode, xo1, zo1) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea) then
 			courseCorrection = -0.3 -- too far inside, turn slowly to the outside
 			
-		elseif not isOnField(self.rootNode, xi3, zi3) or not isOnField(self.rootNode, xf3, zf3) then
+		elseif not isOnField(self.rootNode, xi3, zi3, spec.contourWorkedArea) or (not isOnField(self.rootNode, xf3, zf3, spec.contourWorkedArea) or not spec.contourFrontActive) then
 			courseCorrection = 1 -- too far outside, turn max to the inside
-		elseif not isOnField(self.rootNode, xi2, zi2) or not isOnField(self.rootNode, xf2, zf2) then
+		elseif not isOnField(self.rootNode, xi2, zi2, spec.contourWorkedArea) or (not isOnField(self.rootNode, xf2, zf2, spec.contourWorkedArea) or not spec.contourFrontActive) then
 			courseCorrection = 0.6 -- too far outside, turn medium to the inside
-		elseif not isOnField(self.rootNode, xi1, zi1) or not isOnField(self.rootNode, xf1, zf1) then
+		elseif not isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) or (not isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) then
 			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
@@ -1769,7 +1829,7 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		-- debug: show contour guidance line
-		if spec.contourDebug and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
+		if spec.contourShowLines and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
 			local xr, yr, zr = unpack(spec.contourPr)
 			local xo1, yo1, zo1 = unpack(spec.contourPo1)
 			local xf1, yf1, zf1 = unpack(spec.contourPf1)

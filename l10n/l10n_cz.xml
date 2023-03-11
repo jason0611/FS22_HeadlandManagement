@@ -61,6 +61,10 @@
 		
 		<text name="hlmgui_contourControl" text="Nastavení průvodce obrysem"/>
 		<text name="hlmgui_contourOnOff" text="Povolit průvodce obrysy"/>
+		<text name="hlmgui_contourFront" text="Aktivace předního snímače"/>
+		<text name="hlmgui_contourWorkedArea" text="Orientační linie"/>
+		<text name="hlmgui_contourFieldBorder" text="Hranice pole"/>
+		<text name="hlmgui_contourWorkArea" text="Zpracovávaná oblast"/>
 		<text name="hlmgui_contourSetting" text="Field Edge Page"/>
 		<text name="hlmgui_contour_On1Pass" text="on: Pouze jeden jízdní pruh"/>
 		<text name="hlmgui_contour_OnMPass" text="an: Libovolný jízdní pruh"/>
