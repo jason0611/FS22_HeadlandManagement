@@ -341,6 +341,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.contourSharpness = 0.5
 	spec.contourWorkedArea = false				-- get contour of worked area (true) or of field border (false)
 	spec.contourShowLines = true
+	spec.workedArea = 0
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
@@ -976,6 +977,9 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 		dbgprint("guiCallback : no contour changes", 2)
 	end
 	spec.contourLast = spec.contour
+	local x, _, z = getWorldTranslation(self.rootNode)
+	spec.workedArea = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
+	dbgprint("guiCallback: set workedArea to "..tostring(spec.workedArea), 2)
 	dbgprint("guiCallback", 4)
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
@@ -1175,17 +1179,17 @@ local function getContourPoints(self)
 	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xf1, yf1, zf1}, {xf2, yf2, zf2}, {xf3, yf3, zf3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
-local function isOnField(node, x, z, onUnWorkedField)
+local function isOnField(node, x, z, onUnWorkedField, workedArea)
 	local nx, _, nz = getWorldTranslation(node)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
 	if onUnWorkedField then
-		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) == getDensityAtWorldPos(g_currentMission.terrainDetailId, nx, 0, nz)
+		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) == workedArea
 	else
 		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
 	end
 end	
 
-local function measureBorderDistance(self)
+local function measureBorderDistance(self, onUnWorkedField)
 	local spec = self.spec_HeadlandManagement
 	local node = spec.frontNode
 	if spec.contourWidthMeasurement or spec.contourWidth == 0 then
@@ -1193,7 +1197,7 @@ local function measureBorderDistance(self)
 		for dist=0,1000,spec.contourSharpness do
 			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)	-- inside limit
 			local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
-			if isOnField(node, xi, zi) and not isOnField(node, xo, zo) then
+			if isOnField(node, xi, zi, onUnWorkedField, spec.workedArea) and not isOnField(node, xo, zo, onUnWorkedField, spec.workedArea) then
 				return dist
 			end
 		end
@@ -1609,7 +1613,7 @@ function HeadlandManagement:onUpdate(dt)
 	end	
 		
 	if spec.contourTriggerMeasurement then
-		spec.contourWidth = measureBorderDistance(self)
+		spec.contourWidth = measureBorderDistance(self, spec.contourWorkedArea)
 		spec.contourTriggerMeasurement = false
 	end
 	
@@ -1640,18 +1644,18 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		if isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and not isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea) then
 			-- course is correct, no action needed
 			
-		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo3, zo3, spec.contourWorkedArea) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo3, zo3, spec.contourWorkedArea, spec.workedArea) then
 			courseCorrection = -1 -- too far inside, turn max to the outside
-		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo2, zo2, spec.contourWorkedArea) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo2, zo2, spec.contourWorkedArea, spec.workedArea) then
 			courseCorrection = -0.6 -- too far inside, turn medium to the outside
-		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea, spec.workedArea) then
 			courseCorrection = -0.3 -- too far inside, turn slowly to the outside
 			
-		elseif not isOnField(self.rootNode, xi3, zi3, spec.contourWorkedArea) or (not isOnField(self.rootNode, xf3, zf3, spec.contourWorkedArea) or not spec.contourFrontActive) then
+		elseif not isOnField(self.rootNode, xi3, zi3, spec.contourWorkedArea, spec.workedArea) or (not isOnField(self.rootNode, xf3, zf3, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) then
 			courseCorrection = 1 -- too far outside, turn max to the inside
-		elseif not isOnField(self.rootNode, xi2, zi2, spec.contourWorkedArea) or (not isOnField(self.rootNode, xf2, zf2, spec.contourWorkedArea) or not spec.contourFrontActive) then
+		elseif not isOnField(self.rootNode, xi2, zi2, spec.contourWorkedArea, spec.workedArea) or (not isOnField(self.rootNode, xf2, zf2, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) then
 			courseCorrection = 0.6 -- too far outside, turn medium to the inside
-		elseif not isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) or (not isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) then
+		elseif not isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) or (not isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) then
 			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
@@ -1835,7 +1839,7 @@ function HeadlandManagement:onDraw(dt)
 			local xf1, yf1, zf1 = unpack(spec.contourPf1)
 			yo1 = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, xo1, 0,zo1)+0.1
 			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1)
-			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xf1, yf1+0.25, zf1, 0, 0, 1)
+			if spec.contourFrontActive then drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xf1, yf1+0.25, zf1, 0, 0, 1) end
 		end
 	end
 end
