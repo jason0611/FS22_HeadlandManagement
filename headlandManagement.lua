@@ -113,6 +113,7 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		
 		-- Ifkos John Deere Pack (category name taken from fs19)
 		or 	category == "JOHNDEEREPACK"
+		or  category == "LSFM"
 		
 		-- Hof Bergmann etc.
 		or category == "MINIAGRICULTUREEQUIPMENT"
