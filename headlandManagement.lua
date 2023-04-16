@@ -111,14 +111,17 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		or	category == "GRAPEVEHICLES"
 		or 	category == "OLIVEVEHICLES"
 		
-		-- Ifkos John Deere Pack (category name taken from fs19)
-		or 	category == "JOHNDEEREPACK"
+		-- Ifkos etc.
+		or 	category == "LSFM"
 		
 		-- Hof Bergmann etc.
 		or category == "MINIAGRICULTUREEQUIPMENT"
 		or category == "FM_VEHICLES"
 		
+		or category == "FENDTPACKCATEGORY"
+		or category == "FD_CASEPACKCATEGORY"
 		)
+		
 		and	configurations ~= nil
 		
 		and xmlFile:hasProperty("vehicle.enterable")
@@ -341,7 +344,7 @@ function HeadlandManagement:onLoad(savegame)
 	spec.contourSharpness = 0.5
 	spec.contourWorkedArea = false				-- get contour of worked area (true) or of field border (false)
 	spec.contourShowLines = true
-	spec.workedArea = 0
+	spec.unworkedArea = -1
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
 end
@@ -798,6 +801,7 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.autoResume = streamReadBool(streamId)
 				spec.autoResumeOnTrigger = streamReadBool(streamId)
 				spec.useDiffLock = streamReadBool(streamId)
+				spec.unworkedArea = streamReadInt8(streamId)
 			end
 		end
 	end
@@ -839,6 +843,7 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.autoResume)
 				streamWriteBool(streamId, spec.autoResumeOnTrigger)
 				streamWriteBool(streamId, spec.useDiffLock)
+				streamWriteInt8(streamId, spec.unworkedArea)
 			end
 		end
 	end
@@ -977,10 +982,18 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 		dbgprint("guiCallback : no contour changes", 2)
 	end
 	spec.contourLast = spec.contour
+	spec.unworkedArea = -1
+	
+	--[[
 	local x, _, z = getWorldTranslation(self.rootNode)
-	spec.workedArea = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
-	dbgprint("guiCallback: set workedArea to "..tostring(spec.workedArea), 2)
-	dbgprint("guiCallback", 4)
+	local newUnworkedArea = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
+	if newUnworkedArea ~= spec.unworkedArea then
+		spec.unworkedArea = newUnworkedArea
+		dbgprint("guiCallback: set workedArea to "..tostring(spec.unworkedArea), 2)
+		dbgprint("guiCallback", 4)
+	end
+	--]]
+	
 	self:raiseDirtyFlags(spec.dirtyFlag)
 	dbgprint_r(spec, 4, 2)
 end
@@ -1179,11 +1192,14 @@ local function getContourPoints(self)
 	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xf1, yf1, zf1}, {xf2, yf2, zf2}, {xf3, yf3, zf3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
-local function isOnField(node, x, z, onUnWorkedField, workedArea)
-	local nx, _, nz = getWorldTranslation(node)
+local function isOnField(node, x, z, onUnWorkedField, unWorkedArea)
+	--local nx, _, nz = getWorldTranslation(node)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
 	if onUnWorkedField then
-		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) == workedArea
+		unworkedArea = unworkedArea or 0
+		local terrain = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
+		dbgrender("isOnField : terrain: "..tostring(terrain), 2, 3)
+		return terrain == unWorkedArea and terrain ~= 0
 	else
 		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
 	end
@@ -1197,7 +1213,7 @@ local function measureBorderDistance(self, onUnWorkedField)
 		for dist=0,1000,spec.contourSharpness do
 			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)	-- inside limit
 			local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
-			if isOnField(node, xi, zi, onUnWorkedField, spec.workedArea) and not isOnField(node, xo, zo, onUnWorkedField, spec.workedArea) then
+			if isOnField(node, xi, zi, onUnWorkedField, spec.unworkedArea) and not isOnField(node, xo, zo, onUnWorkedField, spec.unworkedArea) then
 				return dist
 			end
 		end
@@ -1284,7 +1300,7 @@ function HeadlandManagement:onUpdate(dt)
 		dbgprint("onUpdate : spec_HeadlandManagement:", 4)
 		dbgprint_r("spec", 4)
 	end
-		
+	
 	-- calculate position, direction, field mode and vehicle's heading
 	local fx, fz, bx, bz, dx, dz, tfx, tfz, tbx, tbz
 	spec.heading, dx, dz = getHeading(self)
@@ -1483,6 +1499,9 @@ function HeadlandManagement:onUpdate(dt)
 			spec.override = false
 			--spec.evOverride = false
 			spec.turnHeading = nil
+			-- reset underground sensor
+			spec.unworkedArea = -1
+		
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end	
 		g_inputBinding:setActionEventTextVisibility(spec.actionEventOn, not spec.isActive)
@@ -1627,8 +1646,16 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 	local spec = self.spec_HeadlandManagement
 
 	if not spec.contourSetActive and spec.contour ~= 0 and spec.exists and not spec.isActive then
+		
+		if spec.unworkedArea < 0 then 
+			local x, _, z = getWorldTranslation(self.rootNode)
+			local newArea = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
+			spec.unworkedArea = newArea > 0 and newArea or -1
+			dbgprint("onUpdateTick: set workedArea to "..tostring(spec.unworkedArea), 2)
+			self:raiseDirtyFlags(spec.dirtyFlag)
+		end
+		
 		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPf1, spec.contourPf2, spec.contourPf3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
-	
 		local xi1, yi1, zi1 = unpack(spec.contourPi1)
 		local xi2, yi2, zi2 = unpack(spec.contourPi2)
 		local xi3, yi3, zi3 = unpack(spec.contourPi3)
@@ -1644,18 +1671,18 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		if isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea) or not spec.contourFrontActive) and not isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea) then
 			-- course is correct, no action needed
 			
-		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo3, zo3, spec.contourWorkedArea, spec.workedArea) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.unworkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.unworkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo3, zo3, spec.contourWorkedArea, spec.unworkedArea) then
 			courseCorrection = -1 -- too far inside, turn max to the outside
-		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo2, zo2, spec.contourWorkedArea, spec.workedArea) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.unworkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.unworkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo2, zo2, spec.contourWorkedArea, spec.unworkedArea) then
 			courseCorrection = -0.6 -- too far inside, turn medium to the outside
-		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea, spec.workedArea) then
+		elseif isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.unworkedArea) and (isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.unworkedArea) or not spec.contourFrontActive) and isOnField(self.rootNode, xo1, zo1, spec.contourWorkedArea, spec.unworkedArea) then
 			courseCorrection = -0.3 -- too far inside, turn slowly to the outside
 			
-		elseif not isOnField(self.rootNode, xi3, zi3, spec.contourWorkedArea, spec.workedArea) or (not isOnField(self.rootNode, xf3, zf3, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) then
+		elseif not isOnField(self.rootNode, xi3, zi3, spec.contourWorkedArea, spec.unworkedArea) or (not isOnField(self.rootNode, xf3, zf3, spec.contourWorkedArea, spec.unworkedArea) or not spec.contourFrontActive) then
 			courseCorrection = 1 -- too far outside, turn max to the inside
-		elseif not isOnField(self.rootNode, xi2, zi2, spec.contourWorkedArea, spec.workedArea) or (not isOnField(self.rootNode, xf2, zf2, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) then
+		elseif not isOnField(self.rootNode, xi2, zi2, spec.contourWorkedArea, spec.unworkedArea) or (not isOnField(self.rootNode, xf2, zf2, spec.contourWorkedArea, spec.unworkedArea) or not spec.contourFrontActive) then
 			courseCorrection = 0.6 -- too far outside, turn medium to the inside
-		elseif not isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.workedArea) or (not isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.workedArea) or not spec.contourFrontActive) then
+		elseif not isOnField(self.rootNode, xi1, zi1, spec.contourWorkedArea, spec.unworkedArea) or (not isOnField(self.rootNode, xf1, zf1, spec.contourWorkedArea, spec.unworkedArea) or not spec.contourFrontActive) then
 			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
@@ -1845,7 +1872,7 @@ function HeadlandManagement:onDraw(dt)
 		--debug: show terrainDetailId
 		local nx, _, nz = getWorldTranslation(self.rootNode)
 		local density = getDensityAtWorldPos(g_currentMission.terrainDetailId, nx, 0, nz)
-		debugrender("densityAtWorldPos: "..tostring(density), 1, 3)
+		dbgrender("densityAtWorldPos: "..tostring(density), 1, 3)
 	end
 end
 	
