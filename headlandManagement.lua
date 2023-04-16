@@ -1841,6 +1841,11 @@ function HeadlandManagement:onDraw(dt)
 			drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xo1, yo1, zo1, 0, 0, 1)
 			if spec.contourFrontActive then drawDebugLine(xr, yr+0.25, zr, 0, 1, 0, xf1, yf1+0.25, zf1, 0, 0, 1) end
 		end
+		
+		--debug: show terrainDetailId
+		local nx, _, nz = getWorldTranslation(self.rootNode)
+		local density = getDensityAtWorldPos(g_currentMission.terrainDetailId, nx, 0, nz)
+		debugrender("densityAtWorldPos: "..tostring(density), 1, 3)
 	end
 end
 	
