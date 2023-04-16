@@ -319,8 +319,8 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourFieldBorder"),
 		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourWorkArea"),
 	})
-	self.contourWorkedAreaSetting:setDisabled(contourOnOffSetting == 1)
-	self.contourWorkedAreaSetting:setState(self.spec.contourWorkedArea and 2 or 1)
+	self.contourWorkedAreaSetting:setDisabled(true) --contourOnOffSetting == 1)
+	self.contourWorkedAreaSetting:setState(1) --self.spec.contourWorkedArea and 2 or 1)
 	
 	self.contourSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourSetting"))
 	self.contourSetting.onClickCallback = HeadlandManagementGui.logicalCheck
