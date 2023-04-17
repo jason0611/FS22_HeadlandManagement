@@ -1195,13 +1195,13 @@ end
 local function isOnField(node, x, z, onUnWorkedField, unWorkedArea)
 	--local nx, _, nz = getWorldTranslation(node)
 	if (x == nil) or (z == nil) then x, _, z = getWorldTranslation(node) end
+	local onField, _, terrain = FSDensityMapUtil.getFieldDataAtWorldPosition(x, 0, z)
 	if onUnWorkedField then
 		unworkedArea = unworkedArea or 0
-		local terrain = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
 		dbgrender("isOnField : terrain: "..tostring(terrain), 2, 3)
 		return terrain == unWorkedArea and terrain ~= 0
 	else
-		return getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z) ~= 0
+		return onField
 	end
 end	
 
@@ -1649,8 +1649,8 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		
 		if spec.unworkedArea < 0 then 
 			local x, _, z = getWorldTranslation(self.rootNode)
-			local newArea = getDensityAtWorldPos(g_currentMission.terrainDetailId, x, 0, z)
-			spec.unworkedArea = newArea > 0 and newArea or -1
+			local onField, _, newArea = FSDensityMapUtil.getFieldDataAtWorldPosition(x, 0, z)
+			spec.unworkedArea = onField and newArea or -1
 			dbgprint("onUpdateTick: set workedArea to "..tostring(spec.unworkedArea), 2)
 			self:raiseDirtyFlags(spec.dirtyFlag)
 		end
@@ -1871,8 +1871,10 @@ function HeadlandManagement:onDraw(dt)
 		
 		--debug: show terrainDetailId
 		local nx, _, nz = getWorldTranslation(self.rootNode)
-		local density = getDensityAtWorldPos(g_currentMission.terrainDetailId, nx, 0, nz)
-		dbgrender("densityAtWorldPos: "..tostring(density), 1, 3)
+		--local density = getDensityAtWorldPos(g_currentMission.terrainDetailId, nx, 0, nz)
+		local onField, _, groundType = FSDensityMapUtil.getFieldDataAtWorldPosition(nx, 0, nz)
+		dbgrender("groundType: "..tostring(groundType), 1, 3)
+		dbgrender("onField: "..tostring(onField), 2, 3)
 	end
 end
 	
