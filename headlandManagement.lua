@@ -209,7 +209,7 @@ function HeadlandManagement.initSpecialization()
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourFrontActive", "Front sensor state", true)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthAdaption", "Adapt width in headland mode", false)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthMeasurement", "Automatic mode state", false)
-		schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..key.."#contourWidth", "Contour width", 0)
+		schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?)."..key.."#contourWidth", "Contour width", 0.0)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourShowLines", "Show contour lines", true)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWorkedArea", "Contour on worked area or on field border", false)
 		
@@ -341,7 +341,9 @@ function HeadlandManagement:onLoad(savegame)
 	spec.triggerContourStateChange = false		-- cg on standby (headland mode active)
 	spec.contourWidth = 0
 	spec.contourTrack = 0
+	spec.contourSteering = 0
 	spec.contourSharpness = 0.5
+	spec.contourSteeringSmoothness = 0.001
 	spec.contourWorkedArea = false				-- get contour of worked area (true) or of field border (false)
 	spec.contourShowLines = true
 	spec.unworkedArea = -1
@@ -1623,7 +1625,7 @@ function HeadlandManagement:onUpdate(dt)
 				spec.contourTriggerMeasurement = true 
 			elseif not spec.contourSetActive then
 				dbgprint("onUpdate : contourWidthAdaption", 2)
-				spec.contourTrack = spec.contourTrack + 1
+				spec.contourTrack = spec.contourTrack == 1.5 and 2 or spec.contourTrack + 1
 				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5) + math.floor(spec.vehicleWidth) * (spec.contourTrack-1)
 			end
 			spec.contourSetActive = false
@@ -1686,7 +1688,10 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 			courseCorrection = 0.3 -- too far outside, turn slowly to the inside
 		end
 		
-		spec.contourSteering = courseCorrection * spec.contour
+		--spec.contourSteering = courseCorrection * spec.contour
+		local interpolationFunc
+		if spec.contour>0 then interpolationFunc = math.min else interpolationFunc = math.max end
+		spec.contourSteering = spec.contour ~= 0 and interpolationFunc(spec.contourSteering + spec.contourSteeringSmoothness * dt * spec.contour, courseCorrection * spec.contour) or 0
 	end
 end
 
