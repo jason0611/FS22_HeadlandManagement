@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+
+	<GuiElement type="empty" profile="newLayer" />
+	<GuiElement type="bitmap" profile="dialogFullscreenBg"/>
+	<GuiElement type="bitmap" profile="bgVignette"/>
+	<GuiElement type="bitmap" profile="bgGlowDialog" id="dialogElement" size="1600px 900px"/>
+	
+	<GuiElement type="empty" profile="ingameMenuCenterBox" id="settingsContainer">
+		<GuiElement type="bitmap" profile="topScrollClipper" name="topClipper" />
+		<GuiElement type="bitmap" profile="bottomScrollClipper" name="bottomClipper" />
+		
+		<!-- header -->
+		<GuiElement type="bitmap" profile="dialogHeaderDocked">
+			<GuiElement type="text" profile="dialogHeaderText" textAutoSize="true" id="guiTitle" />
+		</GuiElement>
+
+		<GuiElement type="scrollingLayout" profile="ingameMenuSettingsLayout">
+		
+		<!-- AlertMode -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="alarmControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="alarmSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="alarmTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="alarmTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="alarmVolumeSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="alarmVolumeTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="alarmVolumeTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="inputbindingsSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="inputbindingsTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="inputbindingsTT"/>
+			</GuiElement>	
+			
+		<!-- ImplementControl -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="implementControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="raiseSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="raiseTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="raiseTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="turnPlowSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="turnPlowTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="plowTT"/>
+			</GuiElement>				
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="stopPtoSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="stopPtoTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="ptoTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="ridgeMarkerSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="ridgeMarkerTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="ridgeMarkerTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="emptyBalersSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="emptyBalersSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="emptyBalersSettingTT"/>
+			</GuiElement>
+			
+		<!-- Vehicle control -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="vehicleControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="diffControlOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="diffControlOnOffTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="diffLockTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="crabSteeringSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="crabSteeringTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="csTT"/>
+			</GuiElement>
+			
+		<!-- Contour Guidance Control -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="contourControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourOnOffTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourOnOffTT"/>
+			</GuiElement>		
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourSettingTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourWorkedAreaSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourWorkedAreaTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWorkedAreaSettingTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourFrontSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourFrontTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourFrontTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourWidthSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourWidthSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWidthSettingTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourWidthChangeSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourWidthChangeSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWidthChangeSettingTT"/>
+			</GuiElement>
+		
+		<!-- GPS control -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="gpsControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsOnOffTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsSettingTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsTypeTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsEnableDirSwitchSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsDisableDirSwitchTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsDirSwitchTT"/>
+			</GuiElement>	
+		
+		<!-- Headland automatic -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="gpsAutoTrigger"/>
+			<GuiElement type="text" profile="dialogHeaderText" textSize="17px" id="gpsAutoTriggerSubTitle" />
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsAutoTriggerSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsAutoTriggerOffsetSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerOffsetTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerOffsetTT"/>
+			</GuiElement>
+			<GuiElement type="empty" profile="ingameMenuGameSettingsTextInputWrapper">
+				<GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="gpsAutoTriggerOffsetWidthInput" imeKeyboardType="normal"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsAutoTriggerOffsetWidthTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsAutoTriggerOffsetWidthTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="gpsResumeSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="gpsResumeTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="gpsResumeTT"/>
+			</GuiElement>
+			
+		<!-- SpeedControl -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="speedControl"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlOnOffSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlOnOffTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlUseSCModSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlUseSCModTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlModTT"/>
+			</GuiElement>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlTurnSpeedSetting1">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlTurnSpeedTitle1"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedSettingTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="speedControlTurnSpeedSetting2">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="speedControlTurnSpeedTitle2"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="speedControlModSettingTT"/>
+			</GuiElement>	
+			<!-- Debug -->
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="text" profile="dialogHeaderText" id="debug"/>
+			<GuiElement type="text" profile="dialogHeaderText"/>
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="debugSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="debugTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="debugTT"/>
+			</GuiElement>	
+			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="debugFlagSetting">
+				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
+				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsText"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="debugFlagTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="debugFlagTT"/>
+			</GuiElement>	
+			<GuiElement type="text" profile="dialogHeaderText"/>
+		</GuiElement>
+		
+		<!-- footer -->
+		<GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">
+			<GuiElement type="button" profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>
+			<GuiElement type="button" profile="buttonBack" id="noButton" text="$l10n_button_back" onClick="onClickBack"/>
+		</GuiElement>
+	</GuiElement>
+</GUI>
