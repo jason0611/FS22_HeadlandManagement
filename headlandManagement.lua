@@ -341,8 +341,9 @@ function HeadlandManagement:onLoad(savegame)
 	spec.triggerContourStateChange = false		-- cg on standby (headland mode active)
 	spec.contourWidth = 0
 	spec.contourTrack = 0
+	spec.contourSteering = 0
 	spec.contourSharpness = 0.5
-	spec.contourSteeringSmoothness = 0.01
+	spec.contourSteeringSmoothness = 0.001
 	spec.contourWorkedArea = false				-- get contour of worked area (true) or of field border (false)
 	spec.contourShowLines = true
 	spec.unworkedArea = -1
