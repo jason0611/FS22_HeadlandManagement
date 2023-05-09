@@ -1378,7 +1378,7 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- if activated, use EV's trigger instead of hlm's one
 	if not HeadlandManagement.isDedi and self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle and spec.modEVFound and spec.isOn then
-		if self.vData ~= nil and self.vData.track ~= nil and self.vData.is ~= nil then spec.useEVTrigger = (self.vData.track.headlandMode > 1) and self.vData.is[6] end
+		if self.vData ~= nil and self.vData.track ~= nil and self.vData.is ~= nil then spec.useEVTrigger = (self.vData.track.headlandMode ~= nil and self.vData.track.headlandMode > 1) and self.vData.is[6] end
 	end
 	
 	-- activate headland mode when reaching headland in auto-mode
