@@ -25,16 +25,16 @@ source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
 g_gui:loadGui(g_currentModDirectory.."gui/HeadlandManagementGui.xml", "HeadlandManagementGui", HeadlandManagementGui:new())
 
 HeadlandManagement.REDUCESPEED = 1
-HeadlandManagement.WAITTIME1 = 2
-HeadlandManagement.CRABSTEERING = 3
-HeadlandManagement.DIFFLOCK = 4
-HeadlandManagement.RAISEIMPLEMENT1 = 5
-HeadlandManagement.WAITONTRIGGER = 6
-HeadlandManagement.RAISEIMPLEMENT2 = 7
-HeadlandManagement.WAITTIME2 = 8
-HeadlandManagement.TURNPLOW = 9
-HeadlandManagement.STOPPTO = 10
-HeadlandManagement.STOPGPS = 11
+HeadlandManagement.STOPGPS = 2
+HeadlandManagement.WAITTIME1 = 3
+HeadlandManagement.CRABSTEERING = 4
+HeadlandManagement.DIFFLOCK = 5
+HeadlandManagement.RAISEIMPLEMENT1 = 6
+HeadlandManagement.WAITONTRIGGER = 7
+HeadlandManagement.RAISEIMPLEMENT2 = 8
+HeadlandManagement.WAITTIME2 = 9
+HeadlandManagement.TURNPLOW = 10
+HeadlandManagement.STOPPTO = 11
 HeadlandManagement.WAITTIME3 = 12
 HeadlandManagement.MAXSTEP = 13
 

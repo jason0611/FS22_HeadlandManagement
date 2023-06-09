@@ -72,6 +72,7 @@
 		<text name="hlmgui_contour_alwaysRight" text="always right"/>
 		<text name="hlmgui_contour_alwaysLeft" text="always left"/>
 		<text name="hlmgui_contourWidthSetting" text="Distance to field edge"/>
+		<text name="hlmgui_contour_keepDistance" text="Maintain current distance"/>
 		<text name="hlmgui_contourWidthChangeSetting" text="Increase distance automatically" />
 		
 		<text name="hlmgui_gpsControl" text="GPS control"/>
@@ -112,9 +113,9 @@
 		<text name="hlmgui_plowTT" text="After lifting, plows can be turned. Either completely, or initially only to the center, and afterwards completely while lowering. Note: In the latter case, good timing is important. It is therefore recommended to stop briefly at the end of the headland to turn and lower the plow."/>
 		<text name="hlmgui_ptoTT" text="At the headland, activated implements can be switched off and then switched on again. Optionally adjustable for all, only front or only rear implements."/>
 
-		<text name="hlmgui_contourOnOffTT" text="Activates control along the edge of the field, either for one lane only, or until it is switched off again. This function is only active in field mode, in headland mode it is on stand-by."/>
+		<text name="hlmgui_contourOnOffTT" text="Activates control along the edge of the field, either for one lane only, or until it is switched off again. This function is only active in field mode, in headland mode it is on stand-by. With active contour guidance, it is recommended not to exceed a working speed of 10km/h."/>
 		<text name="hlmgui_contourSettingTT" text="Determines on which side the field border is to be followed. Here, the page can optionally be switched with each change to the headland mode, or it is retained."/>
-		<text name="hlmgui_contourWidthSettingTT" text="The distance to the field edge can either be determined automatically or it can be fixed."/>
+		<text name="hlmgui_contourWidthSettingTT" text="The distance to the field edge can either be maintained or it can be fixed."/>
 		<text name="hlmgui_contourWidthChangeSettingTT" text="If desired, the distance to the edge of the field can be widened by one vehicle width each time you switch to headland mode."/>
 
 		<text name="hlmgui_ridgeMarkerTT" text="While lifting, the ridgemarker can be switched to the opposite side."/>
