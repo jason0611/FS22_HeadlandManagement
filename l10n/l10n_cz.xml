@@ -73,6 +73,7 @@
 		<text name="hlmgui_contour_alwaysRight" text="vždy vpravo"/>
 		<text name="hlmgui_contour_alwaysLeft" text="vždy vlevo"/>
 		<text name="hlmgui_contourWidthSetting" text="Vzdálenost od okraje pole"/>
+		<text name="hlmgui_contour_keepDistance" text="Udržování aktuální vzdálenosti"/>
 		<text name="hlmgui_contourWidthChangeSetting" text="Automaticky zvětšit vzdálenost" />
 		
 		<text name="hlmgui_gpsControl" text="kontrola GPS"/>
@@ -113,9 +114,9 @@
 		<text name="hlmgui_plowTT" text="Po zvednutí lze pluhy otočit. Buď úplně, nebo zpočátku jen do středu a poté úplně při spouštění. Poznámka: V druhém případě je důležité dobré načasování. Proto se doporučuje na konci souvrati krátce zastavit, aby se pluh otočil a spustil."/>
 		<text name="hlmgui_ptoTT" text="Na souvrati lze aktivované nářadí vypnout a znovu zapnout. Volitelně nastavitelné pro všechny, pouze přední nebo pouze zadní nářadí."/>
 
-		<text name="hlmgui_contourOnOffTT" text="Aktivuje ovládání podél okraje pole, buď pouze pro jeden pruh, nebo dokud není opět vypnuto. Tato funkce je aktivní pouze v polním režimu, v režimu na souši je v pohotovostním režimu."/>
+		<text name="hlmgui_contourOnOffTT" text="Aktivuje ovládání podél okraje pole, buď pouze pro jeden pruh, nebo dokud není opět vypnuto. Tato funkce je aktivní pouze v polním režimu, v režimu na souši je v pohotovostním režimu. Při aktivním navádění po obrysech se doporučuje nepřekračovat pracovní rychlost 10 km/h."/>
 		<text name="hlmgui_contourSettingTT" text="Určuje, na které straně se má sledovat okraj pole. Zde se může stránka volitelně přepínat při každé změně režimu na souostroví, nebo se zachová."/>
-		<text name="hlmgui_contourWidthSettingTT" text="Vzdálenost k okraji pole může být určena buď automaticky, nebo je nastavena trvale."/>
+		<text name="hlmgui_contourWidthSettingTT" text="Vzdálenost od okraje pole může být buď zachována, nebo stanovena."/>
 		<text name="hlmgui_contourWidthChangeSettingTT" text="Pokud je to žádoucí, může se vzdálenost k okraji pole rozšířit o jednu šířku vozidla pokaždé, když vozidlo přepne do režimu souvratě."/>
 		
 		<text name="hlmgui_ridgeMarkerTT" text="Při zvedání lze značkovač přepnout na opačnou stranu."/>

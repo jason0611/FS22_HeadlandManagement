@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="73">
+<modDesc descVersion="75">
 	<author>Glowins Modschmiede</author>
-	<version>A.2.9.2</version>
+	<version>2.3.0.0</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
 
 	<title>
@@ -21,6 +21,9 @@ With headland management, functions of vehicles can be combined and activated to
 The headland management system must be added once to the respective vehicle in the shop or in the workshop as a configuration before it can be used. The cost for this is 3000,-.
 It can be activated and deactivated in the vehicle with Shift-X. Alternatively, different buttons for activation and deactivation can be configured. The GUI is called up by default with Shift+Ctrl+X.
 
+New: Headland Management can now perform contour guidance, i.e. automatic steering along the field boundary or the worked area.
+Important: When contour guidance is activated, a working speed of 10 km/h should not be exceeded, otherwise the steering may oscillate strongly. In this case, simply reduce the speed briefly.
+
 Included functions:
 - Reduce speed (cruise control) and raise again, reactivate cruise control if previously active
 - Raise lowered implements and lower them again
@@ -31,6 +34,7 @@ Included functions:
 - Beep when headland management is activated
 - On/Off switch: Headland Management can be switched on and off. This prevents accidental triggering during transfer to the target field and improves road safety.
 - Headland automatic: Activate headland mode automatically when headland is reached. Optional return to field mode after completing the 180° turn.
+- Contour guidance: Automatic control along the field boundary or along the machined area
 
 If VCA Mod (FS22_VehicleControlAddon) is present:
 - Deactivate and reactivate GPS track guidance
@@ -91,6 +95,8 @@ V2.2.1.2:
 V2.2.2.0:
 - Fixed a bug that prevents the correct timing while turning plows
 
+V2.3.0.0
+- Contour guidance
 ]]>
 		</en>	
 		<de>
@@ -102,6 +108,9 @@ Mit dem Vorgewende-Management können Funktionen im Fahrzeug zusammengefasst und
 Das Vorgewende-Management muss vor der Nutzung im Shop oder in der Werkstatt dem jeweiligen Fahrzeug einmalig als Konfiguration hinzugefügt werden. Die Kosten dafür liegen bei 3000,-. 
 Es kann im Fahrzeug mit (links) Shift-X aktiviert und deaktiviert werden. Es lassen sich auch verschiedene Tasten für Aktivierung und Deaktivierung konfigurieren. Die GUI wird standardmäßig mit Shift+Strg+X aufgerufen.
 
+Neu: Das Vorgewende Management kann nun Konturführung, also die automatische Lenkung entlang der Feldgrenze oder des bearbeiteten Bereichs.
+Wichtig: Bei aktivierter Konturführung sollte eine Arbeitsgeschwindigkeit von 10 km/h nicht überschritten werden, sonst kann es bei der Lenkung zu starkem Pendeln kommen. In diesem Fall generell einfach kurz die Geschwindigkeit reduzieren.
+
 Enthaltene Funktionen:
 - Geschwindigkeit (Tempomat) reduzieren und wieder anheben, Tempomat reaktivieren, falls er vorher aktiv war
 - Abgesenkte Geräte ausheben und wieder absenken
@@ -112,6 +121,7 @@ Enthaltene Funktionen:
 - Hinweiston bei aktiviertem Vorgewendemanagement
 - An/Aus-Schalter: Das Vorgewende Management kann an- und abgeschaltet werden. Dadurch wird versehentliches Auslösen beim Transfer zum Einsatzort vermieden und die Verkehrssicherheit verbessert.
 - Vorgewendeautomatik: Automatische Aktivierung des Vorgewendemodus, wenn das Vorgewende erreicht wird. Wahlweise Rückkehr in den Feldmodus nach Abschluss der 180°-Wende.
+- Konturführung: Automatische Steuerung entlang der Feldgrenze oder entlang des bearbeiten Bereiche
 
 Bei vorhandenem VCA Mod (FS22_VehicleControlAddon):
 - GPS Spurführung deaktivieren und reaktivieren
@@ -172,6 +182,9 @@ V2.2.1.2
 V2.2.2.0
 - Ein Fehler wurde behoben, der das korrekte Timing beim Wenden von Pflügen verhindert.
 
+V2.3.0.0
+- Konturführung
+
 ]]>
 		</de>
 		<fr>
@@ -183,6 +196,9 @@ Grâce à la programmation des manœuvres en bout de champ, plusieurs fonctions 
 Avant de pouvoir être utilisé, le système de programmation des manœuvres en bout de champ doit être ajouté une fois au véhicule concerné depuis le magasin ou l'atelier. Il apparaitra en tant qu'une configuration possible. Le coût de cette opération est de 3 000 euros.
 Par défaut, il peut être activé et désactivé dans le véhicule avec la touche SHIFT(gauche) + X. D'autres raccourcis clavier peuvent être choisis pour l'activation et la désactivation. L'interface graphique est appelée par défaut avec Shift+Ctrl+X.
 
+Nouveau : la gestion des manœuvres en bout de champ permet désormais le guidage des contours, c'est-à-dire le guidage automatique le long de la limite du champ ou de la zone travaillée.
+Important : lorsque le guidage des contours est activé, il ne faut pas dépasser une vitesse de travail de 10 km/h, sinon le guidage risque d'osciller fortement. Dans ce cas, il suffit généralement de réduire brièvement la vitesse.
+
 Fonctions incluses :
 - Réduire la vitesse (régulateur de vitesse) et remonter les outils, réactiver le régulateur de vitesse s'il était précédemment actif.
 - Relever les outils et les abaisser à nouveau.
@@ -191,6 +207,9 @@ Fonctions incluses :
 - Contrôle automatique de la marche en crabe lors des allers-retours
 - Désengager et réengager la ou les prises de force et le système hydraulique
 - Bip sonore lorsque la gestion des fourrières est activée
+- Interrupteur marche/arrêt : la gestion des fourrières peut être activée ou désactivée. Cela permet d'éviter les déclenchements accidentels lors du transfert vers le lieu d'intervention et d'améliorer la sécurité routière.
+- Gestion automatique des fourrières : activation automatique du mode fourrière lorsque la fourrière est atteinte. Retour facultatif au mode champ une fois le demi-tour à 180° terminé.
+- Contour guidance: Automatic control along the field boundary or along the machined area
 
 Si le VCA Mod (FS22_VehicleControlAddon) est présent :
 - Désactiver et réactiver le guidage par traces GPS
@@ -245,6 +264,8 @@ V2.2.1.2
 V2.2.2.0
 - Correction d'un bug qui empêche le bon timing lors du retournement des charrues
 
+V2.3.0.0
+- Guide des contours
 ]]>
 		</fr>
 		<cz>
@@ -256,6 +277,9 @@ Díky řízení na souvrati lze funkce vozidel kombinovat a aktivovat společně
 Systém souvraťového managementu musí být před použitím jednou přidán do příslušného vozidla v obchodě nebo v dílně jako konfigurace. Cena za to je 3000 €.
 Ve vozidle ji lze aktivovat a deaktivovat pomocí Shift-X. Alternativně lze nakonfigurovat různá tlačítka pro aktivaci a deaktivaci. Nastavení se standardně vyvolává pomocí Shift+Ctrl+X.
 
+Novinka: Správa souvratí může nyní provádět obrysové navádění, tj. automatické řízení podél hranice pole nebo obdělávané plochy.
+Důležité: Při aktivaci obrysového navádění by neměla být překročena pracovní rychlost 10 km/h, jinak může řízení silně kolísat. V takovém případě jednoduše krátce snižte rychlost.
+
 Zahrnuté funkce:
 - Snížení rychlosti (tempomatu) a opakovaná aktivace, pokud byl dříve aktivní
 - Zvednutí nářadí a opětovné spuštění
@@ -264,6 +288,9 @@ Zahrnuté funkce:
 - Ovládání krabího řízení
 - Odpojení a zpětné zapojení diferenciálu(ů) a hydraulik
 - Možnost zvukové signalizace při aktivním otáčení na souvrati
+- Vypínač: Systém Headland Management lze zapnout a vypnout. Tím se zabrání náhodnému spuštění při přesunu na místo a zvýší se bezpečnost silničního provozu.
+- Headland automatic: Automatická aktivace režimu Headland při dosažení souvratě. Volitelný návrat do polního režimu po dokončení otočky o 180°.
+- Obrysové navádění: Automatické řízení podél hranice pole nebo podél obdělávané plochy.
 
 Pokud je přítomen VCA Mod (FS22_VehicleControlAddon):
 - Deaktivuje a opětovně aktivuje naváděnou trasu GPS
@@ -313,6 +340,8 @@ V2.2.1.2
 V2.2.2.0
 - Opravena chyba, která brání správnému načasování při otáčení pluhů
 
+V2.3.0.0
+- Vedení obrysů
 ]]>
 		</cz>
 		<it>
@@ -324,6 +353,9 @@ Con la gestione della capezzagna, le funzioni dei veicoli possono essere combina
 Il sistema di gestione della capezzagna deve essere aggiunto una volta al rispettivo veicolo in officina o in officina come configurazione prima di poter essere utilizzato. Il costo per questo è 3000,-.
 Può essere attivato e disattivato nel veicolo con Shift-X. In alternativa è possibile configurare diversi pulsanti per l'attivazione e la disattivazione. La GUI viene richiamata di default con Shift+Ctrl+X.
 
+Novità: la Gestione capezzagna può ora eseguire la guida a contorno, cioè la sterzata automatica lungo il confine del campo o l'area lavorata.
+Importante: quando la guida per contorni è attivata, non si deve superare una velocità di lavoro di 10 km/h, altrimenti lo sterzo potrebbe oscillare fortemente. In questo caso, è sufficiente ridurre brevemente la velocità.
+
 Funzioni incluse:
 - Ridurre la velocità (cruise control (regolazione automatica della velocità)) e aumentare nuovamente, riattivare il cruise control (regolazione automatica della velocità) se precedentemente attivo
 - Sollevare gli attrezzi abbassati e riabbassarli
@@ -332,6 +364,9 @@ Funzioni incluse:
 - Controlla lo sterzo a granchio
 - Disinserire e reinserire la/e presa/e di forza e l'impianto idraulico
 - Segnale acustico quando è attivata la gestione della capezzagna
+- Interruttore On/Off: la gestione del promontorio può essere attivata e disattivata. Ciò impedisce l'attivazione accidentale durante il trasferimento in cantiere e migliora la sicurezza stradale.
+- Automatico a fine campo: attivazione automatica della modalità a fine campo quando si raggiunge il fine campo. Ritorno opzionale alla modalità campo dopo aver completato la svolta di 180°.
+- Guida a contorno: controllo automatico lungo il confine del campo o lungo l'area coltivata.
 
 Se è presente la Mod VCA (FS22_VehicleControlAddon):
 - Disattiva e riattiva la guida della traccia GPS
@@ -381,6 +416,8 @@ V2.2.1.2
 V2.2.2.0
 - È stato risolto un bug che impedisce la corretta temporizzazione durante la rotazione degli aratri
 
+V2.3.0.0
+- Guida ai contorni
 ]]>
 		</it>
 	    

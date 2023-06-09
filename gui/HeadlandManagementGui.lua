@@ -337,7 +337,7 @@ function HeadlandManagementGui.setData(self, vehicleName, spec, gpsEnabled, debu
 	self.contourWidthSettingTitle:setText(g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contourWidthSetting"))
 	self.contourWidthSetting.onClickCallback = HeadlandManagementGui.logicalCheck
 	self.contourWidthSetting:setTexts({
-		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_gps_auto"),
+		g_i18n.modEnvironments[HeadlandManagement.MOD_NAME]:getText("hlmgui_contour_keepDistance"),
 		tostring(math.floor(self.spec.vehicleWidth * 0.5)).." m",
 		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 0.5).." m",
 		tostring(math.floor(self.spec.vehicleWidth * 0.5) + math.floor(self.spec.vehicleWidth) * 1).." m",

@@ -73,6 +73,7 @@
 			<text name="hlmgui_contour_alwaysRight" text="sempre a destra"/>
 			<text name="hlmgui_contour_alwaysLeft" text="sempre a sinistra"/>
 			<text name="hlmgui_contourWidthSetting" text="Distanza dal bordo del campo" />
+			<text name="hlmgui_contour_keepDistance" text="Mantenere la distanza attuale"/>
 			<text name="hlmgui_contourWidthChangeSetting" text="Aumenta automaticamente la distanza" />
 		
 			<text name="hlmgui_gpsControl" text="Impostazioni GPS"/>
@@ -113,9 +114,9 @@
 			<text name="hlmgui_plowTT" text="Dopo lo scavo, gli aratri possono essere girati. O completamente immediatamente, o inizialmente solo verso il centro e solo completamente durante l'abbassamento. Nota: in quest'ultimo caso, è importante un buon tempismo. Si consiglia quindi di fermarsi brevemente per girare e abbassare l'aratro."/>
 			<text name="hlmgui_ptoTT" text="In capezzagna è possibile spegnere e riaccendere gli attrezzi attivati. Facoltativamente regolabile per tutti, solo dispositivi anteriori o solo posteriori."/>
 
-			<text name="hlmgui_contourOnOffTT" text="Attiva il controllo lungo il bordo del campo, per una sola corsia o finché non viene nuovamente disattivato. Questa funzione è attiva solo in modalità campo, in modalità capezzagna è in stand-by."/>
+			<text name="hlmgui_contourOnOffTT" text="Attiva il controllo lungo il bordo del campo, per una sola corsia o finché non viene nuovamente disattivato. Questa funzione è attiva solo in modalità campo, in modalità capezzagna è in stand-by. Con la guida attiva delle curve di livello, si raccomanda di non superare una velocità di lavoro di 10 km/h."/>
 			<text name="hlmgui_contourSettingTT" text="Determina da quale lato deve essere seguito il bordo del campo. In questo caso, la pagina può essere cambiata ad ogni passaggio alla modalità a fine campo, oppure viene mantenuta."/>
-			<text name="hlmgui_contourWidthSettingTT" text="La distanza dal bordo del campo può essere determinata automaticamente oppure impostata in modo permanente."/>
+			<text name="hlmgui_contourWidthSettingTT" text="La distanza dal bordo campo può essere mantenuta o fissata."/>
 			<text name="hlmgui_contourWidthChangeSettingTT" text="Se lo si desidera, la distanza dal bordo del campo può essere ampliata di una larghezza di veicolo ogni volta che il veicolo passa alla modalità capezzagna."/>
 
 			<text name="hlmgui_ridgeMarkerTT" text="Quando lo sollevi, il marker può essere spostato sul lato opposto."/>
