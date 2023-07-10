@@ -18,7 +18,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, false)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -433,6 +433,8 @@ local function vehicleMeasurement(self, excludedImplement)
 		if excludedImplement.getChildVehicles ~= nil then excludedChilds = excludedImplement:getChildVehicles() end
 	end
 	
+	local vehicleWidthShop = 0
+	local vehicleWidthWA = 0
 	for _,implement in pairs(allImplements) do
 		if implement ~= nil then 
 			
@@ -457,7 +459,7 @@ local function vehicleMeasurement(self, excludedImplement)
 				dbgprint("vehicleMeasurement : width: "..tostring(implement.size.width))
 				dbgprint("vehicleMeasurement : length: "..tostring(implement.size.length)) 
 				lengthBackup = lengthBackup + implement.size.length
-				vehicleWidth = math.max(vehicleWidth, implement.size.width)
+				vehicleWidthShop = math.max(vehicleWidthShop, implement.size.width)
 			end
 			
 			if not filtered and spec_at ~= nil then
@@ -488,39 +490,44 @@ local function vehicleMeasurement(self, excludedImplement)
 
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
-				local waWidth = 0
-				local maxX, minX = 0, 0
 				for index, workArea in pairs(spec_wa.workAreas) do
-					if workArea.start ~= nil then
-						local testNode = workArea.start
-						local widthNode = workArea.width
-						local wx, wy, wz = getWorldTranslation(testNode)
-						local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
+					local waWidth = 0
+					local maxX, minX = 0, 0
+					if workArea.functionName ~= "processRidgeMarkerArea" then
+						if workArea.start ~= nil then
+							local testNode = workArea.start
+							local widthNode = workArea.width
+							local wx, wy, wz = getWorldTranslation(testNode)
+							local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
 		
-						local wwx, wwy, wwz = getWorldTranslation(widthNode)
-						local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
-						maxX = math.max(maxX, math.max(lwx, lx))
-						minX = math.min(minX, math.min(lwx, lx))
-						waWidth = math.abs(maxX - minX)
-						lastFront, lastBack = distFront, distBack
-						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
-						if lastFront ~= distFront then 
-							frontExists = true
-							frontNode = testNode; 
-							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
+							local wwx, wwy, wwz = getWorldTranslation(widthNode)
+							local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
+							maxX = math.max(maxX, math.max(lwx, lx))
+							minX = math.min(minX, math.min(lwx, lx))
+							waWidth = math.abs(maxX - minX)
+							lastFront, lastBack = distFront, distBack
+							distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
+							if lastFront ~= distFront then 
+								frontExists = true
+								frontNode = testNode; 
+								dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
+							end
+							if lastBack ~= distBack then
+								backExists = true 
+								backNode = testNode; 
+								dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
+							end
 						end
-						if lastBack ~= distBack then
-							backExists = true 
-							backNode = testNode; 
-							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
-						end
+						vehicleWidthWA = math.max(vehicleWidthWA, waWidth)
 					end
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": function: "..tostring(workArea.functionName), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen), 2)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleWidth: "..tostring(vehicleWidthWA), 2)
 				end
-				vehicleWidth = math.max(vehicleWidth, waWidth)
+				--vehicleWidth = vehicleWidthWA ~= 0 and vehicleWidthWA or vehicleWidth
 				dbgprint("vehicleMeasurement workArea: new vehicleWidth: "..tostring(vehicleWidth), 2)
 			else
 				dbgprint("vehicleMeasurement: filtered or no workArea", 2)
@@ -534,6 +541,7 @@ local function vehicleMeasurement(self, excludedImplement)
 	else
 		vehicleLength = lengthBackup
 	end
+	vehicleWidth = vehicleWidthWA ~= 0 and vehicleWidthWA or vehicleWidthShop
 	
 	local rwx, rwy, rwz, vz
 	if frontNode ~= nil then
