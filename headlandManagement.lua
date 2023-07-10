@@ -1051,6 +1051,9 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	else 
 		dbgprint("guiCallback : no contour changes", 2)
 	end
+	if spec.contourWidthMeasurement then
+		spec.contourTriggerMeasurement = true
+	end
 	spec.contourLast = spec.contour
 	spec.unworkedArea = -1
 	
@@ -1672,8 +1675,9 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- contour guidance
 	
+	-- headland mode: Stop contour guidance and, if applicable swap field border side or change width
 	if spec.isActive and spec.triggerContourStateChange then
-	-- swap field border side
+		-- swap field border side
 		if not spec.contourNoSwap and not spec.contourSetActive then
 			spec.contour = -spec.contour
 		end
@@ -1684,9 +1688,10 @@ function HeadlandManagement:onUpdate(dt)
 		end
 		spec.triggerContourStateChange = false
 	end
-		
+	
+	-- 	field mode: set or calculate width and start contour guidance
 	if not spec.isActive and spec.triggerContourStateChange then
-		-- contour guidance: trigger measurement, if contourWidthAdaption is set, increase distance to field border
+		-- contour guidance: trigger measurement, or if contourWidthAdaption is set, increase distance to field border
 		if spec.contour ~= 0 then 
 			if not spec.contourWidthAdaption or type(spec.contourTrack)~="number" or spec.contourTrack == 0 then
 				dbgprint("onUpdate : contourTriggerMeasurement", 2)
