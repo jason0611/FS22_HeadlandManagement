@@ -1290,17 +1290,20 @@ local function measureBorderDistance(self, onUnWorkedField)
 	local spec = self.spec_HeadlandManagement
 	local node = spec.frontNode
 	if spec.contourWidthMeasurement or spec.contourWidth == 0 then
+		dbgprint("measureBorderDistance: measurement started", 2)
 		if node == nil then node = self.rootNode end
 		for dist=0,1000,HeadlandManagement.contourSharpness do
 			local xi, yi, zi = localToWorld(node, 0 + (dist - HeadlandManagement.contourSharpness / 2) * spec.contour, 0, 3)	-- inside limit
 			local xo, yo, zo = localToWorld(node, 0 + (dist + HeadlandManagement.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
 			if isOnField(node, xi, zi, onUnWorkedField, spec.unworkedArea) and not isOnField(node, xo, zo, onUnWorkedField, spec.unworkedArea) then
+				dbgprint("measureBorderDistance: found distance: "..tostring(dist), 2)
 				return dist
 			end
 		end
-		dbgprint("measureBorderDistance : result = "..tostring(dist), 2)
+		dbgprint("measureBorderDistance: no result, using vehicle's width", 2)
 		return math.floor(spec.vehicleWidth * 0.5)
 	else
+		dbgprint("measureBorderDistance: no measurement, keeping distance "..tostring(spec.vehicleWidth), 2)
 		return spec.contourWidth
 	end
 end
@@ -1714,7 +1717,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.triggerContourStateChange = false
 	end	
 		
-	if spec.contourTriggerMeasurement then
+	if spec.contourTriggerMeasurement and spec.unworkedArea > -1 then
 		spec.contourWidth = measureBorderDistance(self, spec.contourWorkedArea)
 		spec.contourTriggerMeasurement = false
 	end
