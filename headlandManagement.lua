@@ -7,7 +7,6 @@
 --			X Contour: Speichern der Einstellungen
 --			X Contour: Wahlweise Abschaltung des Front-Detectors
 --			X Contour: Wahlweise Orientierung entlang der Feldgrenze oder entlang der Arbeitslinie
---			? Contour: Begrenzung der max. Geschwindigkeit auf 10 km/h
 --			- Optionales Anhalten am Ende des Wendevorgangs bis Abschluss aller Sequenzen
 --			- Fertigstellung des Ballenablade-Stopps
 --			- Prüfen: Konfigurierbare 4-Tasten-Option
