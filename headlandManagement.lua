@@ -7,7 +7,6 @@
 --			X Contour: Speichern der Einstellungen
 --			X Contour: Wahlweise Abschaltung des Front-Detectors
 --			X Contour: Wahlweise Orientierung entlang der Feldgrenze oder entlang der Arbeitslinie
---			- Contour: Begrenzung der max. Geschwindigkeit auf 10 km/h
 --			- Optionales Anhalten am Ende des Wendevorgangs bis Abschluss aller Sequenzen
 --			- Fertigstellung des Ballenablade-Stopps
 --			- Prüfen: Konfigurierbare 4-Tasten-Option
@@ -18,7 +17,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, false)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -40,6 +39,10 @@ HeadlandManagement.MAXSTEP = 13
 
 HeadlandManagement.GUIDANCE_RIGHT = -1
 HeadlandManagement.GUIDANCE_LEFT = 1
+
+HeadlandManagement.contourSharpness = 0.75
+HeadlandManagement.contourSteeringSmoothness = 0.005
+HeadlandManagement.contourParametersChanged = false
 
 HeadlandManagement.debug = false
 HeadlandManagement.showKeys = true
@@ -238,6 +241,51 @@ function HeadlandManagement.registerOverwrittenFunctions(vehicleType)
 	SpecializationUtil.registerOverwrittenFunction(vehicleType, "setSteeringInput", HeadlandManagement.setSteeringInput)
 end
 
+function HeadlandManagement:saveContourSettings()
+	local filename = HeadlandManagement.MODSETTINGSDIR.."contourSettings.xml"
+	local key = "contourSettings"
+	local saved = false
+	
+	createFolder(HeadlandManagement.MODSETTINGSDIR)
+	local xmlFile = XMLFile.create("settingsXML", filename, key)
+
+	if xmlFile ~= nil then 		
+		dbgprint("saveSettings : key: "..tostring(key), 2)
+		
+		xmlFile:setFloat(key..".contourSharpness", HeadlandManagement.contourSharpness)
+		xmlFile:setFloat(key..".contourSteeringSmoothness", HeadlandManagement.contourSteeringSmoothness)
+		xmlFile:save()
+		
+		xmlFile:delete()
+		dbgprint("saveSettings : saving data finished", 2)
+		saved = true
+	end
+	return saved
+end
+
+function HeadlandManagement:loadContourSettings()
+	local loaded = false
+	local filename = HeadlandManagement.MODSETTINGSDIR.."contourSettings.xml"
+	local key = "contourSettings"
+	
+	local xmlFile = XMLFile.loadIfExists("settingsXML", filename, key)
+	
+	if xmlFile ~= nil then
+		dbgprint("loadSettings : spec: "..tostring(spec), 2)
+	
+		HeadlandManagement.contourSharpness = xmlFile:getFloat(key..".contourSharpness") or HeadlandManagement.contourSharpness
+		HeadlandManagement.contourSteeringSmoothness = xmlFile:getFloat(key..".contourSteeringSmoothness") or HeadlandManagement.contourSteeringSmoothness
+
+		HeadlandManagement.contourSharpness = math.floor(HeadlandManagement.contourSharpness * 10000)/10000
+		HeadlandManagement.contourSteeringSmoothness = math.floor(HeadlandManagement.contourSteeringSmoothness * 10000)/10000
+		
+		xmlFile:delete()
+		dbgprint("loadSettings : loading data finished", 2)
+		loaded = true
+	end
+	return loaded
+end
+
 function HeadlandManagement:onLoad(savegame)
 	dbgprint("onLoad", 2)
 
@@ -342,14 +390,29 @@ function HeadlandManagement:onLoad(savegame)
 	spec.contourWidth = 0
 	spec.contourTrack = 0
 	spec.contourSteering = 0
-	spec.contourSharpness = 0.5
-	spec.contourSteeringSmoothness = 0.001
 	spec.contourWorkedArea = false				-- get contour of worked area (true) or of field border (false)
 	spec.contourShowLines = true
 	spec.unworkedArea = -1
 	
 	spec.debugFlag = false			-- shows green flag for triggerNode and red flag for vehicle's measure node
+	
+	HeadlandManagement:loadContourSettings()
 end
+
+function HeadlandManagement:editParameter(sharpnessStr, smoothnessStr)
+	local vehicle = g_currentMission.controlledVehicle or nil
+	local spec = vehicle ~= nil and vehicle.spec_HeadlandManagement or nil
+	if spec ~= nil then
+		local sharpness = tonumber(sharpnessStr) or HeadlandManagement.contourSharpness
+		local smoothness = tonumber(smoothnessStr) or HeadlandManagement.contourSteeringSmoothness
+		local changed = sharpness ~= HeadlandManagement.contourSharpness and smoothness ~= HeadlandManagement.contourSteeringSmoothness
+		print("HLM Parameter: Sharpness = "..tostring(sharpness).." / SteeringSmoothness = "..tostring(smoothness))
+		HeadlandManagement.contourSharpness = sharpness
+		HeadlandManagement.contourSteeringSmoothness = smoothness
+		HeadlandManagement.contourParametersChanged = changed
+	end
+end
+addConsoleCommand("hlmParameter", "HLM: Change contour parameters", "editParameter", HeadlandManagement)
 
 -- Detect outmost frontNode and outmost backNode by considering vehicle's attacherJoints and known workAreas
 local function vehicleMeasurement(self, excludedImplement)
@@ -369,6 +432,8 @@ local function vehicleMeasurement(self, excludedImplement)
 		if excludedImplement.getChildVehicles ~= nil then excludedChilds = excludedImplement:getChildVehicles() end
 	end
 	
+	local vehicleWidthShop = 0
+	local vehicleWidthWA = 0
 	for _,implement in pairs(allImplements) do
 		if implement ~= nil then 
 			
@@ -393,7 +458,7 @@ local function vehicleMeasurement(self, excludedImplement)
 				dbgprint("vehicleMeasurement : width: "..tostring(implement.size.width))
 				dbgprint("vehicleMeasurement : length: "..tostring(implement.size.length)) 
 				lengthBackup = lengthBackup + implement.size.length
-				vehicleWidth = math.max(vehicleWidth, implement.size.width)
+				vehicleWidthShop = math.max(vehicleWidthShop, implement.size.width)
 			end
 			
 			if not filtered and spec_at ~= nil then
@@ -424,39 +489,44 @@ local function vehicleMeasurement(self, excludedImplement)
 
 			local spec_wa = implement.spec_workArea
 			if not filtered and spec_wa ~= nil and spec_wa.workAreas ~= nil then
-				local waWidth = 0
-				local maxX, minX = 0, 0
 				for index, workArea in pairs(spec_wa.workAreas) do
-					if workArea.start ~= nil then
-						local testNode = workArea.start
-						local widthNode = workArea.width
-						local wx, wy, wz = getWorldTranslation(testNode)
-						local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
+					local waWidth = 0
+					local maxX, minX = 0, 0
+					if workArea.functionName ~= "processRidgeMarkerArea" then
+						if workArea.start ~= nil then
+							local testNode = workArea.start
+							local widthNode = workArea.width
+							local wx, wy, wz = getWorldTranslation(testNode)
+							local lx, ly, lz = worldToLocal(self.rootNode, wx, wy, wz)
 		
-						local wwx, wwy, wwz = getWorldTranslation(widthNode)
-						local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
-						maxX = math.max(maxX, math.max(lwx, lx))
-						minX = math.min(minX, math.min(lwx, lx))
-						waWidth = math.abs(maxX - minX)
-						lastFront, lastBack = distFront, distBack
-						distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
-						if lastFront ~= distFront then 
-							frontExists = true
-							frontNode = testNode; 
-							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
+							local wwx, wwy, wwz = getWorldTranslation(widthNode)
+							local lwx, lwy, lwz = worldToLocal(self.rootNode, wwx, wwy, wwz)
+							maxX = math.max(maxX, math.max(lwx, lx))
+							minX = math.min(minX, math.min(lwx, lx))
+							waWidth = math.abs(maxX - minX)
+							lastFront, lastBack = distFront, distBack
+							distFront, distBack = math.max(distFront, lz), math.min(distBack, lz)
+							if lastFront ~= distFront then 
+								frontExists = true
+								frontNode = testNode; 
+								dbgprint("vehicleMeasurement workArea "..tostring(index)..": New frontNode set", 2) 
+							end
+							if lastBack ~= distBack then
+								backExists = true 
+								backNode = testNode; 
+								dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
+							end
 						end
-						if lastBack ~= distBack then
-							backExists = true 
-							backNode = testNode; 
-							dbgprint("vehicleMeasurement workArea "..tostring(index)..": New backNode set", 2) 
-						end
+						vehicleWidthWA = math.max(vehicleWidthWA, waWidth)
 					end
 					tmpLen = math.floor(math.abs(distFront) + math.abs(distBack) + 0.5)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": function: "..tostring(workArea.functionName), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distFront: "..tostring(distFront), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new distBack: "..tostring(distBack), 2)
 					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleLength: "..tostring(tmpLen), 2)
+					dbgprint("vehicleMeasurement workArea "..tostring(index)..": new vehicleWidth: "..tostring(vehicleWidthWA), 2)
 				end
-				vehicleWidth = math.max(vehicleWidth, waWidth)
+				--vehicleWidth = vehicleWidthWA ~= 0 and vehicleWidthWA or vehicleWidth
 				dbgprint("vehicleMeasurement workArea: new vehicleWidth: "..tostring(vehicleWidth), 2)
 			else
 				dbgprint("vehicleMeasurement: filtered or no workArea", 2)
@@ -470,6 +540,7 @@ local function vehicleMeasurement(self, excludedImplement)
 	else
 		vehicleLength = lengthBackup
 	end
+	vehicleWidth = vehicleWidthWA ~= 0 and vehicleWidthWA or vehicleWidthShop
 	
 	local rwx, rwy, rwz, vz
 	if frontNode ~= nil then
@@ -639,6 +710,10 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 	dbgprint("saveToXMLFile", 2)
 	dbgprint("1:", 4)
 	dbgprint_r(self.configurations, 4, 2)
+	
+	if HeadlandManagement.contourParametersChanged then
+		HeadlandManagement.contourParametersChanged = not HeadlandManagement:saveContourSettings()
+	end
 	
 	local spec = self.spec_HeadlandManagement
 	spec.exists = self.configurations["HeadlandManagement"] == 2
@@ -983,6 +1058,9 @@ function HeadlandManagement:guiCallback(changes, debug, showKeys)
 	else 
 		dbgprint("guiCallback : no contour changes", 2)
 	end
+	if spec.contourWidthMeasurement then
+		spec.contourTriggerMeasurement = true
+	end
 	spec.contourLast = spec.contour
 	spec.unworkedArea = -1
 	
@@ -1182,15 +1260,15 @@ local function getContourPoints(self)
 	local node = spec.frontNode
 	if node == nil then node = self.rootNode end
 	local xr, yr, zr = localToWorld(node, 0, 0, 0)
-	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - spec.contourSharpness / 2) * spec.contour, 0, 0) 	-- inside limit
-	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - spec.contourSharpness) * spec.contour, 0, 0) 		-- inside limit 2
-	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- inside limit 3
-	local xf1, yf1, zf1 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness / 2)) 				-- front limit
-	local xf2, yf2, zf2 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness)) 					-- front limit 2
-	local xf3, yf3, zf3 = localToWorld(node, 0, 0, (spec.contourWidth - spec.contourSharpness * 2)) 				-- front limit 3
-	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + spec.contourSharpness / 2) * spec.contour , 0, 0) -- outside limit 1
-	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + spec.contourSharpness) * spec.contour, 0, 0) 		-- outside limit 2
-	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + spec.contourSharpness * 2) * spec.contour, 0, 0) 	-- outside limit 3
+	local xi1, yi1, zi1 = localToWorld(node, (spec.contourWidth - HeadlandManagement.contourSharpness / 2) * spec.contour, 0, 0) 	-- inside limit
+	local xi2, yi2, zi2 = localToWorld(node, (spec.contourWidth - HeadlandManagement.contourSharpness) * spec.contour, 0, 0) 		-- inside limit 2
+	local xi3, yi3, zi3 = localToWorld(node, (spec.contourWidth - HeadlandManagement.contourSharpness * 2) * spec.contour, 0, 0) 	-- inside limit 3
+	local xf1, yf1, zf1 = localToWorld(node, 0, 0, (spec.contourWidth - HeadlandManagement.contourSharpness / 2)) 				-- front limit
+	local xf2, yf2, zf2 = localToWorld(node, 0, 0, (spec.contourWidth - HeadlandManagement.contourSharpness)) 					-- front limit 2
+	local xf3, yf3, zf3 = localToWorld(node, 0, 0, (spec.contourWidth - HeadlandManagement.contourSharpness * 2)) 				-- front limit 3
+	local xo1, yo1, zo1 = localToWorld(node, (spec.contourWidth + HeadlandManagement.contourSharpness / 2) * spec.contour , 0, 0) -- outside limit 1
+	local xo2, yo2, zo2 = localToWorld(node, (spec.contourWidth + HeadlandManagement.contourSharpness) * spec.contour, 0, 0) 		-- outside limit 2
+	local xo3, yo3, zo3 = localToWorld(node, (spec.contourWidth + HeadlandManagement.contourSharpness * 2) * spec.contour, 0, 0) 	-- outside limit 3
 	return {xr, yr, zr}, {xi1, yi1, zi1}, {xi2, yi2, zi2}, {xi3, yi3, zi3}, {xf1, yf1, zf1}, {xf2, yf2, zf2}, {xf3, yf3, zf3}, {xo1, yo1, zo1}, {xo2, yo2, zo2}, {xo3, yo3, zo3}
 end
 
@@ -1211,17 +1289,20 @@ local function measureBorderDistance(self, onUnWorkedField)
 	local spec = self.spec_HeadlandManagement
 	local node = spec.frontNode
 	if spec.contourWidthMeasurement or spec.contourWidth == 0 then
+		dbgprint("measureBorderDistance: measurement started", 2)
 		if node == nil then node = self.rootNode end
-		for dist=0,1000,spec.contourSharpness do
-			local xi, yi, zi = localToWorld(node, 0 + (dist - spec.contourSharpness / 2) * spec.contour, 0, 3)	-- inside limit
-			local xo, yo, zo = localToWorld(node, 0 + (dist + spec.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
+		for dist=0,1000,HeadlandManagement.contourSharpness do
+			local xi, yi, zi = localToWorld(node, 0 + (dist - HeadlandManagement.contourSharpness / 2) * spec.contour, 0, 3)	-- inside limit
+			local xo, yo, zo = localToWorld(node, 0 + (dist + HeadlandManagement.contourSharpness / 2) * spec.contour , 0, 3)	-- outside limit
 			if isOnField(node, xi, zi, onUnWorkedField, spec.unworkedArea) and not isOnField(node, xo, zo, onUnWorkedField, spec.unworkedArea) then
+				dbgprint("measureBorderDistance: found distance: "..tostring(dist), 2)
 				return dist
 			end
 		end
-		dbgprint("measureBorderDistance : result = "..tostring(dist), 2)
+		dbgprint("measureBorderDistance: no result, using vehicle's width", 2)
 		return math.floor(spec.vehicleWidth * 0.5)
 	else
+		dbgprint("measureBorderDistance: no measurement, keeping distance "..tostring(spec.vehicleWidth), 2)
 		return spec.contourWidth
 	end
 end
@@ -1368,7 +1449,7 @@ function HeadlandManagement:onUpdate(dt)
 	if not HeadlandManagement.isDedi and self:getIsActive() and self == g_currentMission.controlledVehicle and spec.exists and spec.beep and spec.actStep==HeadlandManagement.MAXSTEP then
 		spec.timer = spec.timer + dt
 		if spec.timer > 2000 then 
-			playSample(HeadlandManagement.BEEPSOUND, 1, spec.beepVol / 10, 0, 0, 0)
+			playSample(HeadlandManagement.BEEPSOUND, 1, spec.beepVol / 20, 0, 0, 0)
 			dbgprint("Beep: "..self:getName(), 4)
 			spec.timer = 0
 		end	
@@ -1604,8 +1685,9 @@ function HeadlandManagement:onUpdate(dt)
 	
 	-- contour guidance
 	
+	-- headland mode: Stop contour guidance and, if applicable swap field border side or change width
 	if spec.isActive and spec.triggerContourStateChange then
-	-- swap field border side
+		-- swap field border side
 		if not spec.contourNoSwap and not spec.contourSetActive then
 			spec.contour = -spec.contour
 		end
@@ -1616,9 +1698,10 @@ function HeadlandManagement:onUpdate(dt)
 		end
 		spec.triggerContourStateChange = false
 	end
-		
+	
+	-- 	field mode: set or calculate width and start contour guidance
 	if not spec.isActive and spec.triggerContourStateChange then
-		-- contour guidance: trigger measurement, if contourWidthAdaption is set, increase distance to field border
+		-- contour guidance: trigger measurement, or if contourWidthAdaption is set, increase distance to field border
 		if spec.contour ~= 0 then 
 			if not spec.contourWidthAdaption or type(spec.contourTrack)~="number" or spec.contourTrack == 0 then
 				dbgprint("onUpdate : contourTriggerMeasurement", 2)
@@ -1633,7 +1716,7 @@ function HeadlandManagement:onUpdate(dt)
 		spec.triggerContourStateChange = false
 	end	
 		
-	if spec.contourTriggerMeasurement then
+	if spec.contourTriggerMeasurement and spec.unworkedArea > -1 then
 		spec.contourWidth = measureBorderDistance(self, spec.contourWorkedArea)
 		spec.contourTriggerMeasurement = false
 	end
@@ -1691,7 +1774,7 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		--spec.contourSteering = courseCorrection * spec.contour
 		local interpolationFunc
 		if spec.contour>0 then interpolationFunc = math.min else interpolationFunc = math.max end
-		spec.contourSteering = spec.contour ~= 0 and interpolationFunc(spec.contourSteering + spec.contourSteeringSmoothness * dt * spec.contour, courseCorrection * spec.contour) or 0
+		spec.contourSteering = spec.contour ~= 0 and interpolationFunc(spec.contourSteering + HeadlandManagement.contourSteeringSmoothness * dt * spec.contour, courseCorrection * spec.contour) or 0
 	end
 end
 

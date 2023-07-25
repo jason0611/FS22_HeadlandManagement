@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="75">
 	<author>Glowins Modschmiede</author>
-	<version>2.3.0.0</version>
-	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68</contributors >
+	<version>2.3.1.0</version>
+	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68, A-intheCode</contributors >
 
 	<title>
 		<en>Headland Management</en>
@@ -97,6 +97,11 @@ V2.2.2.0:
 
 V2.3.0.0
 - Contour guidance
+
+V2.3.1.0
+- Contour guide: Parameters optimized
+- Contour guidance: The parameters of the contour guidance can now be changed via the console and are saved in the modSettings directory
+- Vehicle measurement: Determination of vehicle width improved (erroneous measurement due to ridgemarkers eliminated)
 ]]>
 		</en>	
 		<de>
@@ -110,6 +115,8 @@ Es kann im Fahrzeug mit (links) Shift-X aktiviert und deaktiviert werden. Es las
 
 Neu: Das Vorgewende Management kann nun Konturführung, also die automatische Lenkung entlang der Feldgrenze oder des bearbeiteten Bereichs.
 Wichtig: Bei aktivierter Konturführung sollte eine Arbeitsgeschwindigkeit von 10 km/h nicht überschritten werden, sonst kann es bei der Lenkung zu starkem Pendeln kommen. In diesem Fall generell einfach kurz die Geschwindigkeit reduzieren.
+
+Die Parameter der Konturführung können über die Konsole mit dem Befehl "hlmParameter [smoothness] [sharpness]" angepasst werden. Angepasste Werte werden im modSettings-Verzeichnis gespeichert.
 
 Enthaltene Funktionen:
 - Geschwindigkeit (Tempomat) reduzieren und wieder anheben, Tempomat reaktivieren, falls er vorher aktiv war
@@ -184,6 +191,15 @@ V2.2.2.0
 
 V2.3.0.0
 - Konturführung
+
+V2.3.0.1
+- Konturführung: Parameter optimiert
+- Maximale Lautstärke des Warntons reduziert
+
+V2.3.1.0
+- Konturführung: Parameter optimiert
+- Konturführung: Die Parameter der Konturführung sind nun über die Konsole änderbar und werden im modSettings-Verzeichnis gespeichert
+- Fahrzeugvermessung: Ermittlung der Fahrzeugbreite verbessert (fehlerhafte Messung durch Spurreißer eliminiert)
 
 ]]>
 		</de>
@@ -266,6 +282,11 @@ V2.2.2.0
 
 V2.3.0.0
 - Guide des contours
+
+V2.3.1.0
+- Guidage de contour : paramètres optimisés
+- Guidage du contour : les paramètres du guidage du contour sont maintenant modifiables via la console et sont enregistrés dans le répertoire modSettings
+- Mesure du véhicule : amélioration de la détermination de la largeur du véhicule
 ]]>
 		</fr>
 		<cz>
@@ -342,6 +363,11 @@ V2.2.2.0
 
 V2.3.0.0
 - Vedení obrysů
+
+V2.3.1.0
+- Vedení po obrysech: Optimalizace parametrů
+- Vedení obrysů: Parametry vedení obrysů lze nyní měnit prostřednictvím konzoly a jsou uloženy v adresáři modSettings.
+- Měření vozidla: Zlepšení určení šířky vozidla
 ]]>
 		</cz>
 		<it>
@@ -418,6 +444,11 @@ V2.2.2.0
 
 V2.3.0.0
 - Guida ai contorni
+
+V2.3.1.0
+- Guida di contorno: ottimizzazione dei parametri
+- Guida al contorno: i parametri della guida al contorno possono ora essere modificati tramite la console e sono salvati nella directory modSettings
+- Misurazione del veicolo: determinazione della larghezza del veicolo migliorata
 ]]>
 		</it>
 	    
