@@ -74,6 +74,8 @@
 		<text name="hlmgui_contourWidthSetting" text="Distance to field edge"/>
 		<text name="hlmgui_contour_keepDistance" text="Maintain current distance"/>
 		<text name="hlmgui_contourWidthChangeSetting" text="Increase distance automatically" />
+		<text name="hlmgui_contourWidthSettingInputTitle" text="Manual Distance"/>
+		<text name="hlmgui_contour_manualWidth" text="Manual Setting"/>
 		
 		<text name="hlmgui_gpsControl" text="GPS control"/>
 		<text name="hlmgui_gpsSetting" text="Stop GPS steering"/>

@@ -74,6 +74,8 @@
 		<text name="hlmgui_contourWidthSetting" text="Расстояние до края поля"/>
 		<text name="hlmgui_contour_keepDistance" text="Сохраняйте текущее расстояние"/>
 		<text name="hlmgui_contourWidthChangeSetting" text="Автоувеличение расстояния" />
+		<text name="hlmgui_contourWidthSettingInputTitle" text="Расстояние вручную"/>
+		<text name="hlmgui_contour_manualWidth" text="Ручная настройка"/>
 		
 		<text name="hlmgui_gpsControl" text="GPS управление"/>
 		<text name="hlmgui_gpsSetting" text="Остановить руление GPS"/>

@@ -75,6 +75,8 @@
 		<text name="hlmgui_contourWidthSetting" text="Vzdálenost od okraje pole"/>
 		<text name="hlmgui_contour_keepDistance" text="Udržování aktuální vzdálenosti"/>
 		<text name="hlmgui_contourWidthChangeSetting" text="Automaticky zvětšit vzdálenost" />
+		<text name="hlmgui_contourWidthSettingInputTitle" text="Ruční vzdálenost"/>
+		<text name="hlmgui_contour_manualWidth" text="Ruční nastavení"/>
 		
 		<text name="hlmgui_gpsControl" text="kontrola GPS"/>
 		<text name="hlmgui_gpsSetting" text="nastav řízení GPS"/>

@@ -156,6 +156,12 @@
 				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
 				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWidthSettingTT"/>
 			</GuiElement>
+			<GuiElement type="empty" profile="ingameMenuGameSettingsTextInputWrapper">
+				<GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="contourWidthSettingInput" imeKeyboardType="normal"/>
+				<GuiElement type="text" profile="multiTextOptionSettingsTitle" id="contourWidthSettingInputTitle"/>
+				<GuiElement type="bitmap" profile="multiTextOptionSettingsBg"/>
+				<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" id="contourWidthSettingInputTT"/>
+			</GuiElement>
 			<GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="contourWidthChangeSetting">
 				<GuiElement type="button" profile="multiTextOptionSettingsLeft"/>
 				<GuiElement type="button" profile="multiTextOptionSettingsRight"/>

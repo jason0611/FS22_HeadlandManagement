@@ -75,6 +75,8 @@
 			<text name="hlmgui_contourWidthSetting" text="Distanza dal bordo del campo" />
 			<text name="hlmgui_contour_keepDistance" text="Mantenere la distanza attuale"/>
 			<text name="hlmgui_contourWidthChangeSetting" text="Aumenta automaticamente la distanza" />
+			<text name="hlmgui_contourWidthSettingInputTitle" text="Distanza manuale"/>
+			<text name="hlmgui_contour_manualWidth" text="Impostazione manuale"/>
 		
 			<text name="hlmgui_gpsControl" text="Impostazioni GPS"/>
 			<text name="hlmgui_gpsSetting" text="Metti in pausa il GPS"/>

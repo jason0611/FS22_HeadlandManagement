@@ -74,6 +74,8 @@
 		<text name="hlmgui_contourWidthSetting" text="Abstand zum Feldrand"/>
 		<text name="hlmgui_contour_keepDistance" text="Aktuellen Abstand beibehalten"/>
 		<text name="hlmgui_contourWidthChangeSetting" text="Abstand automatisch erhöhen"/>
+		<text name="hlmgui_contourWidthSettingInputTitle" text="Manueller Abstand"/>
+		<text name="hlmgui_contour_manualWidth" text="Manuelle Einstellung"/>
 		
 		<text name="hlmgui_gpsControl" text="GPS-Einstellungen"/>
 		<text name="hlmgui_gpsSetting" text="GPS Spurführung pausieren"/>

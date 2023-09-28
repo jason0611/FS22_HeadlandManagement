@@ -17,7 +17,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, false)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 2)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -212,7 +212,10 @@ function HeadlandManagement.initSpecialization()
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourFrontActive", "Front sensor state", true)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthAdaption", "Adapt width in headland mode", false)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthMeasurement", "Automatic mode state", false)
+		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWidthManualMode", "Contour width is set manually", false)
+		schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?)."..key.."#contourWidthManualInput", "Manual input value", 3.0)
 		schemaSavegame:register(XMLValueType.FLOAT, "vehicles.vehicle(?)."..key.."#contourWidth", "Contour width", 0.0)
+		schemaSavegame:register(XMLValueType.INT, "vehicles.vehicle(?)."..key.."#contourTrack", "Actual track for counter", 0)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourShowLines", "Show contour lines", true)
 		schemaSavegame:register(XMLValueType.BOOL, "vehicles.vehicle(?)."..key.."#contourWorkedArea", "Contour on worked area or on field border", false)
 		
@@ -386,6 +389,8 @@ function HeadlandManagement:onLoad(savegame)
 	spec.contourTriggerMeasurement = false		-- trigger measurement as soon as it is possible
 	spec.contourWidthAdaption = false			-- adapt width in headland mode
 	spec.contourWidthMeasurement = true			-- automatic mode state
+	spec.contourWidthManualMode = false			-- manual width setting active
+	spec.contourWidthManualInput = 1			-- manual width input value
 	spec.triggerContourStateChange = false		-- cg on standby (headland mode active)
 	spec.contourWidth = 0
 	spec.contourTrack = 0
@@ -673,9 +678,16 @@ function HeadlandManagement:onPostLoad(savegame)
 			spec.contourFrontActive = xmlFile:getValue(key.."#contourFrontActive", spec.contourFrontActive)
 			spec.contourWidthAdaption = xmlFile:getValue(key.."#contourWidthAdaption", spec.contourWidthAdaption)
 			spec.contourWidthMeasurement = xmlFile:getValue(key.."#contourWidthMeasurement", spec.contourWidthMeasurement)
+			spec.contourWidthManualMode = xmlFile:getValue(key.."#contourWidthManualMode", spec.contourWidthManualMode)
+			spec.contourWidthManualInput = xmlFile:getValue(key.."#contourWidthManualInput", spec.contourWidthManualInput)
 			spec.contourWidth = xmlFile:getValue(key.."#contourWidth", spec.contourWidth)
+			spec.contourTrack = xmlFile:getValue(key.."#contourTrack", spec.contourTrack)
 			spec.contourWorkedArea = xmlFile:getValue(key.."#contourWorkedArea", spec.contourWorkedArea)
 			spec.contourShowLines = xmlFile:getValue(key.."#contourShowLines", spec.contourShowLines)
+			
+			if spec.contourWidthManualMode then
+				spec.contourWidth = spec.contourWidthManualInput * spec.contourTrack
+			end
 			
 			dbgprint("onPostLoad : Loaded whole data set using key "..key, 1)
 		end
@@ -761,7 +773,10 @@ function HeadlandManagement:saveToXMLFile(xmlFile, key, usedModNames)
 		xmlFile:setValue(key.."#contourFrontActive", spec.contourFrontActive)
 		xmlFile:setValue(key.."#contourWidthAdaption", spec.contourWidthAdaption)
 		xmlFile:setValue(key.."#contourWidthMeasurement", spec.contourWidthMeasurement)
+		xmlFile:setValue(key.."#contourWidthManualMode", spec.contourWidthManualMode)
+		xmlFile:setValue(key.."#contourWidthManualInput", spec.contourWidthManualInput)
 		xmlFile:setValue(key.."#contourWidth", spec.contourWidth)
+		xmlFile:setValue(key.."#contourTrack", math.floor(spec.contourTrack)) -- can be 1.5
 		xmlFile:setValue(key.."#contourWorkedArea", spec.contourWorkedArea)
 		xmlFile:setValue(key.."#contourShowLines", spec.contourShowLines)
 		
@@ -803,6 +818,18 @@ function HeadlandManagement:onReadStream(streamId, connection)
 		spec.autoResume = streamReadBool(streamId)
 		spec.autoResumeOnTrigger = streamReadBool(streamId)
 		spec.useDiffLock = streamReadBool(streamId)
+		spec.contour = streamReadInt8(streamId)
+		spec.contourMultiMode = streamReadBool(streamId)
+		spec.contourNoSwap = streamReadBool(streamId)
+		spec.contourFrontActive = streamReadBool(streamId)
+		spec.contourWidtAdaption = streamReadBool(streamId)
+		spec.contourWidthMeasurement = streamReadBool(streamId)
+		spec.contourWidthManualMode = streamReadBool(streamId)
+		spec.contourWidthManualInput = streamReadFloat32(streamId)
+		spec.contourWidth = streamReadFloat32(streamId)
+		spec.contourTrack = streamReadInt8(streamId) / 2 -- can be 1.5 
+		spec.contourWorkedArea = streamReadBool(streamId)
+		spec.contourShowLines = streamReadBool(streamId)
 	end
 end
 
@@ -839,6 +866,18 @@ function HeadlandManagement:onWriteStream(streamId, connection)
 		streamWriteBool(streamId, spec.autoResume)
 		streamWriteBool(streamId, spec.autoResumeOnTrigger)
 		streamWriteBool(streamId, spec.useDiffLock)
+		streamWriteBool(streamId, spec.contour)
+		streamWriteBool(streamId, spec.contourMultiMode)
+		streamWriteBool(streamId, spec.contourNoSwap)
+		streamWriteBool(streamId, spec.contourFrontActive)
+		streamWriteBool(streamId, spec.contourWidtAdaption)
+		streamWriteBool(streamId, spec.contourWidthMeasurement)
+		streamWriteBool(streamId, spec.contourWidthManualMode)
+		streamWriteFloat32(streamId, spec.contourWidthManualInput)
+		streamWriteFloat32(streamId, spec.contourWidth)
+		streamWriteInt8(streamId, spec.contourTrack * 2) -- can be 1.5
+		streamWriteBool(streamId, spec.contourWorkedArea)
+		streamWriteBool(streamId, spec.contourShowLines)
 	end
 end
 	
@@ -878,6 +917,18 @@ function HeadlandManagement:onReadUpdateStream(streamId, timestamp, connection)
 				spec.autoResume = streamReadBool(streamId)
 				spec.autoResumeOnTrigger = streamReadBool(streamId)
 				spec.useDiffLock = streamReadBool(streamId)
+				spec.contour = streamReadInt8(streamId)
+				spec.contourMultiMode = streamReadBool(streamId)
+				spec.contourNoSwap = streamReadBool(streamId)
+				spec.contourFrontActive = streamReadBool(streamId)
+				spec.contourWidtAdaption = streamReadBool(streamId)
+				spec.contourWidthMeasurement = streamReadBool(streamId)
+				spec.contourWidthManualMode = streamReadBool(streamId)
+				spec.contourWidthManualInput = streamReadFloat32(streamId)
+				spec.contourWidth = streamReadFloat32(streamId)
+				spec.contourTrack = streamReadInt8(streamId) / 2
+				spec.contourWorkedArea = streamReadBool(streamId)
+				spec.contourShowLines = streamReadBool(streamId)
 				spec.unworkedArea = streamReadInt8(streamId)
 			end
 		end
@@ -920,6 +971,18 @@ function HeadlandManagement:onWriteUpdateStream(streamId, connection, dirtyMask)
 				streamWriteBool(streamId, spec.autoResume)
 				streamWriteBool(streamId, spec.autoResumeOnTrigger)
 				streamWriteBool(streamId, spec.useDiffLock)
+				streamWriteBool(streamId, spec.contour)
+				streamWriteBool(streamId, spec.contourMultiMode)
+				streamWriteBool(streamId, spec.contourNoSwap)
+				streamWriteBool(streamId, spec.contourFrontActive)
+				streamWriteBool(streamId, spec.contourWidtAdaption)
+				streamWriteBool(streamId, spec.contourWidthMeasurement)
+				streamWriteBool(streamId, spec.contourWidthManualMode)
+				streamWriteFloat32(streamId, spec.contourWidthManualInput)
+				streamWriteFloat32(streamId, spec.contourWidth)
+				streamWriteInt8(streamId, spec.contourTrack * 2)
+				streamWriteBool(streamId, spec.contourWorkedArea)
+				streamWriteBool(streamId, spec.contourShowLines)
 				streamWriteInt8(streamId, spec.unworkedArea)
 			end
 		end
@@ -1709,7 +1772,11 @@ function HeadlandManagement:onUpdate(dt)
 			elseif not spec.contourSetActive then
 				dbgprint("onUpdate : contourWidthAdaption", 2)
 				spec.contourTrack = spec.contourTrack == 1.5 and 2 or spec.contourTrack + 1
-				spec.contourWidth = math.floor(spec.vehicleWidth * 0.5) + math.floor(spec.vehicleWidth) * (spec.contourTrack-1)
+				if spec.contourWidthManualMode then
+					spec.contourWidth = spec.contourWidthManualInput * spec.contourTrack
+				else
+					spec.contourWidth = math.floor(spec.vehicleWidth * 0.5) + math.floor(spec.vehicleWidth) * (spec.contourTrack-1)
+				end
 			end
 			spec.contourSetActive = false
 		end
@@ -1948,7 +2015,7 @@ function HeadlandManagement:onDraw(dt)
 		end
 		
 		-- debug: show contour guidance line
-		if spec.contourShowLines and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
+		if spec.isOn and spec.contourShowLines and not spec.contourSetActive and not spec.isActive and spec.contour ~= 0 and spec.contourPr ~= nil and spec.contourPo1 ~= nil then
 			local xr, yr, zr = unpack(spec.contourPr)
 			local xo1, yo1, zo1 = unpack(spec.contourPo1)
 			local xf1, yf1, zf1 = unpack(spec.contourPf1)
