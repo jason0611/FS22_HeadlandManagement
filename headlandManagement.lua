@@ -124,6 +124,17 @@ function addHLMconfig(xmlFile, superfunc, baseXMLName, baseDir, customEnvironmen
 		or category == "FENDTPACKCATEGORY"
 		or category == "FD_CASEPACKCATEGORY"
 		or category == "SDFCORE4"
+		or category == "SDFCORE4H"
+		or category == "SDFCORE4L"
+		or category == "SDFCORE4S"
+		or category == "SDFCORE5A"
+		or category == "SDFCORE5AH"
+		or category == "SDFCORE5AL"
+		or category == "SDFCORE5AS"
+		or category == "SDFCORE5N"
+		or category == "SDFCORE5NH"
+		or category == "SDFCORE5NL"
+		or category == "SDFCORE5NS"
 		)
 		
 		and	configurations ~= nil
