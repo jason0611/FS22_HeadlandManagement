@@ -1636,8 +1636,8 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, true); end
 			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, true); end
 			if spec.actStep == HeadlandManagement.WAITTIME3 and spec.action[HeadlandManagement.WAITTIME3] and spec.plowToWaitFor ~= nil then HeadlandManagement.waitOnPlow(self, spec.plowToWaitFor); end
+			if spec.actStep == HeadlandManagement.MAXSTEP then spec.waitTime = 0 end
 			-- Deactivation
-			if spec.actStep == -HeadlandManagement.MAXSTEP then spec.waitTime = 0 end
 			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, false); end
 			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, false); end
 			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime, spec.plowToWaitFor = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2, true, true); end
@@ -2304,6 +2304,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						local upperAlpha = jointDesc.upperAlpha
 						local lowerAlpha = jointDesc.lowerAlpha
 						moveTime = jointDesc.moveTimeBackup * math.abs(upperAlpha - lowerAlpha)
+						dbgprint("raiseImplements : animSpeed fix applied", 2)
 					end
 					
 					-- if actImplement.spec_plow == nil then
@@ -2311,7 +2312,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 					-- end
 					
 					waitTime = math.max(waitTime, moveTime)
-					dbgprint("raiseImplement : spec.waitTime = "..tostring(spec.waitTime).." / waitTime = "..tostring(waitTime).." / moveTime = "..tostring(moveTime), 2)
+					dbgprint("raiseImplements : spec.waitTime = "..tostring(spec.waitTime).." / waitTime = "..tostring(waitTime).." / moveTime = "..tostring(moveTime), 2)
 				else 
 					print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: Function restricted to first attacher joint")
 					backImpl = true
