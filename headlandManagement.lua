@@ -1636,15 +1636,16 @@ function HeadlandManagement:onUpdate(dt)
 			if spec.actStep == HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, true); end
 			if spec.actStep == HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, true); end
 			if spec.actStep == HeadlandManagement.WAITTIME3 and spec.action[HeadlandManagement.WAITTIME3] and spec.plowToWaitFor ~= nil then HeadlandManagement.waitOnPlow(self, spec.plowToWaitFor); end
+			if spec.actStep == HeadlandManagement.MAXSTEP then spec.waitTime = 0 end
 			-- Deactivation
 			if spec.actStep == -HeadlandManagement.STOPGPS and spec.action[HeadlandManagement.STOPGPS] then HeadlandManagement.stopGPS(self, false); end
 			if spec.actStep == -HeadlandManagement.STOPPTO and spec.action[HeadlandManagement.STOPPTO] then HeadlandManagement.stopPTO(self, false); end
 			if spec.actStep == -HeadlandManagement.TURNPLOW and spec.action[HeadlandManagement.TURNPLOW] then spec.waitTime, spec.plowToWaitFor = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 2, true, true); end
 			--if spec.actStep == -HeadlandManagement.WAITTIME2 and spec.action[HeadlandManagement.WAITTIME2] and spec.useCenterPlow then HeadlandManagement.wait(self, spec.waitTime * 2, dt); end
 			if spec.actStep == -HeadlandManagement.WAITTIME2 and spec.action[HeadlandManagement.WAITTIME2] and spec.plowToWaitFor ~= nil then HeadlandManagement.waitOnPlow(self, spec.plowToWaitFor); end
-			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT2 and spec.action[HeadlandManagement.RAISEIMPLEMENT2] then spec.waitTime = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, true, false); end
 			if spec.actStep == -HeadlandManagement.WAITONTRIGGER and spec.action[HeadlandManagement.WAITONTRIGGER] then HeadlandManagement.waitOnTrigger(self, false); end
-			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
+			if spec.actStep == -HeadlandManagement.RAISEIMPLEMENT1 and spec.action[HeadlandManagement.RAISEIMPLEMENT1] then spec.waitTime = HeadlandManagement.raiseImplements(self, false, spec.useTurnPlow, spec.useCenterPlow, 1, false, true); end
 			if spec.actStep == -HeadlandManagement.DIFFLOCK and spec.action[HeadlandManagement.DIFFLOCK] then HeadlandManagement.disableDiffLock(self, false, useEV); end
 			if spec.actStep == -HeadlandManagement.CRABSTEERING and spec.action[HeadlandManagement.CRABSTEERING] then HeadlandManagement.crabSteering(self, false, spec.useCrabSteeringTwoStep); end
 			if spec.actStep == -HeadlandManagement.WAITTIME1 and spec.action[HeadlandManagement.WAITTIME1] then HeadlandManagement.wait(self, spec.waitTime, dt); end
@@ -1655,6 +1656,7 @@ function HeadlandManagement:onUpdate(dt)
 			spec.isActive = false
 			spec.triggerContourStateChange = true
 			spec.override = false
+			spec.waitTime = 0
 			--spec.evOverride = false
 			spec.turnHeading = nil
 			-- reset underground sensor
@@ -2097,8 +2099,8 @@ end
 
 function HeadlandManagement.wait(self, waitTime, dt)
 	local spec = self.spec_HeadlandManagement
-	dbgprint("wait : waitTime = "..tostring(waitTime), 4)
-	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 4)
+	dbgprint("wait : waitTime = "..tostring(waitTime), 2)
+	dbgprint("wait : waitCounter: "..tostring(spec.waitCounter), 2)
 	if spec.waitCounter == nil then
 		spec.waitCounter = 0
 	end
@@ -2252,7 +2254,7 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 	local spec = self.spec_HeadlandManagement
     dbgprint("raiseImplements : raise: "..tostring(raise).." / turnPlow: "..tostring(turnPlow).." / round: "..tostring(round).." / front: "..tostring(front).." / back: "..tostring(back))
     
-    local waitTime = 0
+    local waitTime = spec.waitTime or 0
     local plowToWaitFor = nil
 	local allImplements = self:getRootVehicle():getChildVehicles()
 	
@@ -2295,11 +2297,22 @@ function HeadlandManagement.raiseImplements(self, raise, turnPlow, centerPlow, r
 						dbgprint("raiseImplements : Back implement")
 					end 
 					
-					local moveTime = actVehicle.spec_attacherJoints.attacherJoints[jointDescIndex].moveTime or 0
+					local moveTime = jointDesc.moveTime or 0
+
+					-- fix value for realismAddon_RpmAnimSpeed
+					if not raise and jointDesc.moveTimeBackup ~= nil then
+						local upperAlpha = jointDesc.upperAlpha
+						local lowerAlpha = jointDesc.lowerAlpha
+						moveTime = jointDesc.moveTimeBackup * math.abs(upperAlpha - lowerAlpha)
+						dbgprint("raiseImplements : animSpeed fix applied", 2)
+					end
+					
 					-- if actImplement.spec_plow == nil then
 					--	moveTime = 0
 					-- end
+					
 					waitTime = math.max(waitTime, moveTime)
+					dbgprint("raiseImplements : spec.waitTime = "..tostring(spec.waitTime).." / waitTime = "..tostring(waitTime).." / moveTime = "..tostring(moveTime), 2)
 				else 
 					print("HeadlandManagement :: raiseImplement : AttacherVehicle not set: Function restricted to first attacher joint")
 					backImpl = true
