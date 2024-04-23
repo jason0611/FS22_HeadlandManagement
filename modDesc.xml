@@ -107,8 +107,9 @@ V2.3.2.0
 - Contour guidance: Setting of manual working width added
 
 V2.3.3.0
-- Support for Farming Duds' SDF Pack
-			
+- Contour guidance: The distance to the edge of the field can now also be freely selected as an option, track guidance further optimised
+- Support for the SDF Pack of the Farming Duds added
+- Incompatibility with FS22_realismAddon_rpmAnimSpeed (Modelleicher) fixed
 ]]>
 		</en>	
 		<de>
@@ -212,7 +213,9 @@ V2.3.2.0
 - Konturführung: Manuelle Einstellung des Arbeitsabstands ergänzt
 
 V2.3.3.0
+- Konturführung: Der Abstand zum Feldrand kann nun optional auch frei gewählt werden, Spurführung weiter optimiert
 - Unterstützung für das SDF Pack der Farming Duds ergänzt
+- Inkompatibilität mit FS22_realismAddon_rpmAnimSpeed (Modelleicher) behoben
 			
 ]]>
 		</de>
@@ -305,7 +308,9 @@ V2.3.2.0
 - Guidage du contour : Réglage manuel de la distance de travail ajouté
 
 V2.3.3.0
-- Ajout du support pour le SDF Pack des Farming Duds
+- Guidage des contours : la distance par rapport au bord du champ peut désormais être choisie librement en option, le guidage des traces est encore optimisé.
+- Prise en charge du SDF Pack des Farming Duds ajoutée
+- Correction de l'incompatibilité avec FS22_realismAddon_rpmAnimSpeed (Modelleicher)
 
 ]]>
 		</fr>
