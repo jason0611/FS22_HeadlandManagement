@@ -1875,7 +1875,7 @@ end
 
 function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
-	if self:getIsActive() and spec.exists then
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle then
 
 		-- keybindings 
 		if spec.isActive then
