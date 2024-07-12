@@ -17,7 +17,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME)
+GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")
@@ -1875,7 +1875,7 @@ end
 
 function HeadlandManagement:onDraw(dt)
 	local spec = self.spec_HeadlandManagement
-	if self:getIsActive() and spec.exists then
+	if self:getIsActive() and spec.exists and self == g_currentMission.controlledVehicle then
 
 		-- keybindings 
 		if spec.isActive then
