@@ -110,6 +110,10 @@ V2.3.3.0
 - Contour guidance: The distance to the edge of the field can now also be freely selected as an option, track guidance further optimised
 - Support for the SDF Pack of the Farming Duds added
 - Incompatibility with FS22_realismAddon_rpmAnimSpeed (Modelleicher) fixed
+
+V2.3.3.1
+- Goeweil-Fix
+
 ]]>
 		</en>	
 		<de>
@@ -216,7 +220,10 @@ V2.3.3.0
 - Konturführung: Der Abstand zum Feldrand kann nun optional auch frei gewählt werden, Spurführung weiter optimiert
 - Unterstützung für das SDF Pack der Farming Duds ergänzt
 - Inkompatibilität mit FS22_realismAddon_rpmAnimSpeed (Modelleicher) behoben
-			
+
+V2.3.3.1
+- Goeweil-Fix
+
 ]]>
 		</de>
 		<fr>
@@ -312,6 +319,9 @@ V2.3.3.0
 - Prise en charge du SDF Pack des Farming Duds ajoutée
 - Correction de l'incompatibilité avec FS22_realismAddon_rpmAnimSpeed (Modelleicher)
 
+V2.3.3.1
+- Goeweil-Fix
+
 ]]>
 		</fr>
 		<cz>
@@ -393,6 +403,18 @@ V2.3.1.0
 - Vedení po obrysech: Optimalizace parametrů
 - Vedení obrysů: Parametry vedení obrysů lze nyní měnit prostřednictvím konzoly a jsou uloženy v adresáři modSettings.
 - Měření vozidla: Zlepšení určení šířky vozidla
+
+V2.3.2.0
+- Vedení obrysů: Přidáno ruční nastavení pracovní šířky
+
+V2.3.3.0
+- Vedení obrysů: Vzdálenost k okraji pole lze nyní také volitelně zvolit, navádění po stopách je dále optimalizováno
+- Přidána podpora pro balíček SDF Farmářské doupě
+- Opravena nekompatibilita s FS22_realismAddon_rpmAnimSpeed (Modelleicher)
+
+V2.3.3.1
+- Goeweil-Fix
+
 ]]>
 		</cz>
 		<it>
@@ -474,12 +496,24 @@ V2.3.1.0
 - Guida di contorno: ottimizzazione dei parametri
 - Guida al contorno: i parametri della guida al contorno possono ora essere modificati tramite la console e sono salvati nella directory modSettings
 - Misurazione del veicolo: determinazione della larghezza del veicolo migliorata
+
+V2.3.2.0
+- Guida ai contorni: Aggiunta dell'impostazione della larghezza di lavoro manuale
+
+V2.3.3.0
+- Guida per contorni: La distanza dal bordo del campo può ora essere selezionata liberamente come opzione, la guida dei binari è stata ulteriormente ottimizzata.
+- Aggiunto il supporto per il pacchetto SDF di Farming Duds
+- Incompatibilità con FS22_realismAddon_rpmAnimSpeed (Modelleicher) corretta
+
+V2.3.3.1
+- Correzione di Goeweil
+
 ]]>
 		</it>
 	    
  	</description>	
     <multiplayer supported="true"/>
-	<iconFilename>modIcon.dds</iconFilename>
+	<iconFilename>icon_HeadlandMngt.dds</iconFilename>
 	<extraSourceFiles>
     	<sourceFile filename="headlandManagementRegister.lua" />
     </extraSourceFiles>
