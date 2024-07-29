@@ -1822,15 +1822,15 @@ function HeadlandManagement:onUpdateTick(dt, isActiveForInput, isActiveForInputI
 		end
 		
 		spec.contourPr, spec.contourPi1, spec.contourPi2, spec.contourPi3, spec.contourPf1, spec.contourPf2, spec.contourPf3, spec.contourPo1, spec.contourPo2, spec.contourPo3 = getContourPoints(self)
-		local xi1, yi1, zi1 = unpack(spec.contourPi1)
-		local xi2, yi2, zi2 = unpack(spec.contourPi2)
-		local xi3, yi3, zi3 = unpack(spec.contourPi3)
-		local xf1, yf1, zf1 = unpack(spec.contourPf1)
-		local xf2, yf2, zf2 = unpack(spec.contourPf2)
-		local xf3, yf3, zf3 = unpack(spec.contourPf3)
-		local xo1, yo1, zo1 = unpack(spec.contourPo1)
-		local xo2, yo2, zo2 = unpack(spec.contourPo2)
-		local xo3, yo3, zo3 = unpack(spec.contourPo3)
+		local xi1, yi1, zi1 = unpack(spec.contourPi1) -- inside measurement (on field): inside limit
+		local xi2, yi2, zi2 = unpack(spec.contourPi2) -- inside measurement (on field): distance point
+		local xi3, yi3, zi3 = unpack(spec.contourPi3) -- inside measurement (on field): outside limit 
+		local xf1, yf1, zf1 = unpack(spec.contourPf1) -- forward measurement (on field): inside limit
+		local xf2, yf2, zf2 = unpack(spec.contourPf2) -- forward measurement (on field): distance point
+		local xf3, yf3, zf3 = unpack(spec.contourPf3) -- forward maesurement (on field): outside limit
+		local xo1, yo1, zo1 = unpack(spec.contourPo1) -- outside measurement (off field): inside limit
+		local xo2, yo2, zo2 = unpack(spec.contourPo2) -- outside measurement (off field): distance point
+		local xo3, yo3, zo3 = unpack(spec.contourPo3) -- outside measurement (off field): outside limit
 		
 		local courseCorrection = 0
 		
