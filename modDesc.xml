@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="80">
 	<author>Glowins Modschmiede</author>
-	<version>2.3.3.3</version>
+	<version>2.3.3.4</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68, A-intheCode</contributors >
 
 	<title>
@@ -114,6 +114,9 @@ V2.3.3.0
 V2.3.3.1
 - Goeweil-Fix
 
+V2.3.4.0
+- Contour guidance: Guidance along the machined area revised
+- SDF-Pack 2.0 of the Farming Dud's added
 ]]>
 		</en>	
 		<de>
@@ -225,8 +228,8 @@ V2.3.3.1
 - Goeweil-Fix
 
 V2.3.4.0
-- Konturführung: Verbesserte Führung entlang des bearbeiteten Bereichs
-
+- Konturführung: Führung entlang des bearbeiteten Bereichs überarbeitet
+- SDF-Pack 2.0 der Farming Dud's ergänzt
 ]]>
 		</de>
 		<fr>
@@ -325,6 +328,9 @@ V2.3.3.0
 V2.3.3.1
 - Goeweil-Fix
 
+V2.3.4.0
+- Guidage des contours : Guidage le long de la zone travaillée revu
+- Ajout du pack SDF 2.0 des Farming Dud's
 ]]>
 		</fr>
 		<cz>
@@ -418,6 +424,9 @@ V2.3.3.0
 V2.3.3.1
 - Goeweil-Fix
 
+V2.3.4.0
+- Vedení obrysu: Upraveno vedení podél obrobené plochy
+- Přidán SDF-Pack 2.0 farmářských Dudů
 ]]>
 		</cz>
 		<it>
@@ -511,6 +520,9 @@ V2.3.3.0
 V2.3.3.1
 - Correzione di Goeweil
 
+V2.3.4.0
+- Guida ai contorni: revisione della guida lungo l'area lavorata
+- Aggiunta del pacchetto SDF 2.0 dei Dud agricoli
 ]]>
 		</it>
 	    
