@@ -17,7 +17,7 @@ if HeadlandManagement.MOD_NAME == nil then HeadlandManagement.MOD_NAME = g_curre
 HeadlandManagement.MODSETTINGSDIR = g_currentModSettingsDirectory
 
 source(g_currentModDirectory.."tools/gmsDebug.lua")
-GMSDebug:init(HeadlandManagement.MOD_NAME, true, 1)
+GMSDebug:init(HeadlandManagement.MOD_NAME, false)
 GMSDebug:enableConsoleCommands("hlmDebug")
 
 source(g_currentModDirectory.."gui/HeadlandManagementGui.lua")

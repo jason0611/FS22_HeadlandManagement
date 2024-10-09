@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="80">
 	<author>Glowins Modschmiede</author>
-	<version>2.3.3.4</version>
+	<version>2.3.4.0</version>
 	<contributors>Agrarplay und LU Wohnzimmer, Kynuska, Gonimy-Vetrom, Lactic68, Markus33-ITA, PapaTim68, A-intheCode</contributors >
 
 	<title>
@@ -115,7 +115,7 @@ V2.3.3.1
 - Goeweil-Fix
 
 V2.3.4.0
-- Contour guidance: Guidance along the processed area reworked
+- Contour guidance: Guidance along processed area reworked
 - SDF-Pack 2.0 of the Farming Dud's added
 ]]>
 		</en>	
