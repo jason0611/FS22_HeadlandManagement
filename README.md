@@ -1,7 +1,7 @@
 # FS22_HeadlandManagement
 https://farming-simulator.com/mod.php?mod_id=228759
 
-**(HeadlandManagement for FS25 is already work in progress)**
+**(HeadlandManagement for FS25 is already pending for ModHub testing)**
 
 Headland management for tractors, field sprayers, mowers and harvesters.
 
